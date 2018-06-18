@@ -132,7 +132,7 @@ class FactsCarousel(object):
             always_ask=True,
             prompt_agent=used_prompt,
         )
-        self.backup_callback(self.curr_fact, self.curx)
+        self.backup_callback()
         self.refresh_fact()
         return used_prompt
 
