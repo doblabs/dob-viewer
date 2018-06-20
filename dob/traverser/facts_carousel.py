@@ -304,10 +304,12 @@ class FactsCarousel(object):
     def scroll_left(self, event):
         """"""
         self.decrement()
+        self.reset_cursor_left_column()
 
     def scroll_right(self, event):
         """"""
         self.increment()
+        self.reset_cursor_left_column()
 
     def edit_fact(self, event):
         """"""
@@ -343,10 +345,19 @@ class FactsCarousel(object):
     def scroll_down(self, event):
         """"""
         self.content.buffer.cursor_down(self.scrollable_height - 1)
+        self.reset_cursor_left_column()
 
     def scroll_up(self, event):
         """"""
         self.content.buffer.cursor_up(self.scrollable_height - 1)
+        self.reset_cursor_left_column()
+
+    def reset_cursor_left_column(self):
+        self.content.buffer.cursor_left(
+            # PPT returns a relative distance, e.g., -7, or 0 if already there.
+            # A similar command, get_cursor_left_position(), return -1 or 0.
+            -self.content.buffer.document.get_start_of_line_position()
+        )
 
     def decrement(self):
         """"""
