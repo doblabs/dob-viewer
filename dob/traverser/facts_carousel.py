@@ -472,6 +472,6 @@ class FactsCarousel(object):
 
     def refresh_scrollable(self):
         self.content.buffer.read_only = Never()
-        self.content.buffer.text = self.curr_fact.description
+        self.content.buffer.text = self.curr_fact.description or ''
         self.content.buffer.read_only = Always()
 
