@@ -445,12 +445,14 @@ class FactsCarousel(object):
 
         def showing_fact():
             if self.curx == -1:
-                context = _('stored')
+                context = _('Old')
                 location = 'ID #{}'.format(self.curr_fact.pk)
             else:
-                context = _('new')
-                location = '{} of {}'.format(self.curx + 1, len(self.new_facts))
-            text = _('Showing {} fact {}').format(context, location)
+                context = _('New')
+                location = '{:>{}} of {}'.format(
+                    self.curx + 1, len(str(len(self.new_facts))), len(self.new_facts),
+                )
+            text = _('{} Fact {}').format(context, location)
             return text
 
         def helping_text():
