@@ -239,6 +239,8 @@ class FactsCarousel(object):
         ctrl_s = KeyBond('c-s', brief=_('save'), action=self.finish_command)
         page_up = KeyBond('pageup', brief=None, action=self.scroll_up)
         page_down = KeyBond('pagedown', brief=None, action=self.scroll_down)
+        arrow_left = KeyBond(Keys.Left, brief=None, action=self.scroll_left)
+        arrow_right = KeyBond(Keys.Right, brief=None, action=self.scroll_right)
 
         # The order here is the order used in the footer help.
         self.key_bonds = []
@@ -255,6 +257,8 @@ class FactsCarousel(object):
         self.key_bonds.append(ctrl_s)
         self.key_bonds.append(page_up)
         self.key_bonds.append(page_down)
+        self.key_bonds.append(arrow_left)
+        self.key_bonds.append(arrow_right)
 
         for keyb in self.key_bonds:
             key_bindings.add(keyb.keycode)(keyb.action)
