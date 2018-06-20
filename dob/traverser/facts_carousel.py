@@ -27,6 +27,7 @@ from prompt_toolkit.application import Application
 from prompt_toolkit.eventloop import use_asyncio_event_loop
 from prompt_toolkit.filters import Always, Never
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.keys import Keys
 from prompt_toolkit.layout import HSplit, Layout
 from prompt_toolkit.layout.containers import to_container
 from prompt_toolkit.styles import Style
@@ -103,7 +104,7 @@ class FactsCarousel(object):
                 confirmed = self.process_exit_request()
                 if not confirmed:
                     self.enduring_edit = True  # Keep looping.
-            else:
+            elif not self.enduring_edit:
                 confirmed_facts = True  # All done; user looked at all Facts.
         return confirmed_facts
 
@@ -131,6 +132,7 @@ class FactsCarousel(object):
             self.curr_fact,
             always_ask=True,
             prompt_agent=used_prompt,
+            restrict_edit=self.restrict_edit,
         )
         self.backup_callback()
         self.refresh_fact()
@@ -214,13 +216,20 @@ class FactsCarousel(object):
         return style
 
     def setup_key_bindings(self):
+        return self.setup_key_bindings_view_only()
+
+    def setup_key_bindings_view_only(self):
         key_bindings = KeyBindings()
 
-        clack_j = KeyBond('j', brief=_('backward'), action=self.scroll_left)
-        clack_k = KeyBond('k', brief=_('forward'), action=self.scroll_right)
+        clack_j = KeyBond('j', brief=_('bwd'), action=self.scroll_left)
+        clack_k = KeyBond('k', brief=_('fwd'), action=self.scroll_right)
         clack_h = KeyBond('h', brief=None, action=self.cursor_up_one)
         clack_l = KeyBond('l', brief=None, action=self.cursor_down_one)
-        clack_e = KeyBond('e', brief=_('edit fact'), action=self.edit_fact)
+        # FIXME: (lb): Make (e) toggle inline editing...
+        clack_e = KeyBond('e', brief=_('edit:'), action=self.edit_fact)
+        clack_a = KeyBond('a', brief=_('-act.'), action=self.edit_actegory)
+        clack_t = KeyBond('t', brief=_('-tags'), action=self.edit_tags)
+        clack_d = KeyBond('d', brief=_('-descrip'), action=self.edit_description)
         ctrl_c = KeyBond('c-c', brief=_('quit'), action=self.cancel_command)
         # (lb): Be default, Ctrl-q is wired to something else, maybe a Readline-ish
         # function. In my experience, pressing it changes the cursor to the caret, ^,
@@ -238,6 +247,9 @@ class FactsCarousel(object):
         self.key_bonds.append(clack_h)
         self.key_bonds.append(clack_l)
         self.key_bonds.append(clack_e)
+        self.key_bonds.append(clack_a)
+        self.key_bonds.append(clack_d)
+        self.key_bonds.append(clack_t)
         self.key_bonds.append(ctrl_c)
         self.key_bonds.append(ctrl_q)
         self.key_bonds.append(ctrl_s)
@@ -265,6 +277,7 @@ class FactsCarousel(object):
     def runloop(self):
         self.confirm_exit = False
         self.enduring_edit = False
+        self.restrict_edit = ''
         if self.async_enable:
             # Tell prompt_toolkit to use asyncio.
             use_asyncio_event_loop()
@@ -295,6 +308,24 @@ class FactsCarousel(object):
     def edit_fact(self, event):
         """"""
         self.enduring_edit = True
+        event.app.exit()
+
+    def edit_actegory(self, event):
+        """"""
+        self.enduring_edit = True
+        self.restrict_edit = 'actegory'
+        event.app.exit()
+
+    def edit_tags(self, event):
+        """"""
+        self.enduring_edit = True
+        self.restrict_edit = 'tags'
+        event.app.exit()
+
+    def edit_description(self, event):
+        """"""
+        self.enduring_edit = True
+        self.restrict_edit = 'description'
         event.app.exit()
 
     def cursor_up_one(self, event):
