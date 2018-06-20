@@ -78,10 +78,35 @@ class FactsCarousel(object):
         #     File "/usr/lib/python3.5/signal.py", line 47, in signal
         #   TypeError: signal handler must be signal.SIG_IGN, signal.SIG_DFL,
         #       or a callable object
-        self.async_enable = True
+        #
+        # Argh. I'm getting a stack trace after importing and saving 100s of
+        # facts. Doesn't happen on smaller test file, just a really big actual
+        # factual live import file I have...
+        #
+        #  Exception ignored in: <bound method BaseEventLoop.__del__
+        #       of <_UnixSelectorEventLoop running=False closed=True debug=False>>
+        #  Traceback (most recent call last):
+        #    File "/usr/lib/python3.5/asyncio/base_events.py", line 431, in __del__
+        #    File "/usr/lib/python3.5/asyncio/unix_events.py", line 58, in close
+        #    File "/usr/lib/python3.5/asyncio/unix_events.py", line 139,
+        #           in remove_signal_handler
+        #    File "/usr/lib/python3.5/signal.py", line 47, in signal
+        #  TypeError: signal handler must be signal.SIG_IGN, signal.SIG_DFL,
+        #    or a callable object
+        #
+        # I looked at the PPT docs but didn't glean much.
+        #
+        #   https://python-prompt-toolkit.readthedocs.io/
+        #     en/2.0/pages/advanced_topics/asyncio.html
+        #
+        # And I'm not really versed in asyncio... so, well, disable this.
+        self.async_enable = False
 
     def gallop(self):
         self.stand_up()
+        if self.async_enable:
+            # Tell prompt_toolkit to use asyncio.
+            use_asyncio_event_loop()
         confirmed_facts = self.run_edit_loop()
         return confirmed_facts
 
@@ -283,8 +308,6 @@ class FactsCarousel(object):
         self.enduring_edit = False
         self.restrict_edit = ''
         if self.async_enable:
-            # Tell prompt_toolkit to use asyncio.
-            use_asyncio_event_loop()
             # Run application async.
             asyncio.get_event_loop().run_until_complete(
                 self.application.run_async().to_asyncio_future(),
