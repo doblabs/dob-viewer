@@ -368,6 +368,8 @@ class FactsCarousel(object):
         else:
             self.curx = -1
             prev_fact = self.controller.facts.antecedent(self.curr_fact)
+            if prev_fact is None:
+                self.curx = 0
         if prev_fact is None:
             return
         self.refresh_fact(prev_fact)
