@@ -76,7 +76,6 @@ class PlaceableFact(Fact):
 
     @property
     def dirty(self):
-        # MAYBE/FIXME: Set dirty_reasons if fact.pk < 0, on new PlaceableFact.
         return self.unstored or len(self.dirty_reasons) > 0
 
     def reset_orig(self):
