@@ -454,3 +454,95 @@ class EditsManager(object):
         """"""
         self.conjoined.jump_rift_inc()
 
+    # ***
+
+    def save_edited_facts(self):
+        """"""
+        # 2019-01-23 22:28: (lb): I wrote this quick in the past hour.
+        # Seems to work. Guess we'll see how stable it is!
+
+        def _save_edited_facts():
+            curr_fact = self.curr_fact
+            # 2019-01-23 20:46: Just assume the Carousel handled conflicts?
+            # LATER/BACKLOG: What about if store changed in background?
+            #   - Or would changed Facts have PK marked deleted?
+            #     Would error propagate on changed db?
+            edited_facts = self.prepared_facts
+            ignore_pks = [fact.pk for fact in edited_facts]
+            keep_fact, saved_facts = save_edited_trustworthy(
+                edited_facts, ignore_pks, self.curr_fact.pk,
+            )
+            keep_fact = reset_editing(keep_fact, saved_facts, curr_fact)
+            # Return fact for zone_manager to jump to.
+            return keep_fact, saved_facts
+
+        def save_edited_trustworthy(edited_facts, ignore_pks, looking_for_pk):
+            keep_fact = None
+            saved_facts = []
+            for edit_fact in edited_facts:
+                new_fact = save_edited_fact(edit_fact, ignore_pks)
+                if new_fact is None:
+                    # Something went wrong, and we displayed an error.
+                    # Return now, and leave the store in a Bad State.
+                    # Users are encouraged to keep their data stores
+                    # under revision control so that they can recover
+                    # from blunders such as these. And we should make
+                    # sure our code is tough and resilient and stable.
+                    # I.e., we don't need to bother handling this error
+                    # better; just don't cause an error.
+                    return None, None  # Short-circuit return!
+                saved_facts.append(new_fact)
+                if edit_fact.pk == looking_for_pk:
+                    keep_fact = new_fact
+                update_edited_fact(edit_fact, new_fact)
+            return keep_fact, saved_facts
+
+        def save_edited_fact(edit_fact, ignore_pks):
+            try:
+                return self.controller.facts.save(
+                    edit_fact, ignore_pks=ignore_pks,
+                )
+            except Exception as err:
+                # A failure on a CLI command (without PPT interface) might do:
+                #   import traceback
+                #   traceback.print_exc()
+                #   dob_in_user_exit(str(err))
+                # But Carousel has a popup message handler.
+                self.error_callback(errmsg='Failed to save fact!\n\n  “{}”'.format(err))
+                return None
+
+        def update_edited_fact(edit_fact, new_fact):
+            # PK is different for saved fact, and old fact is marked deleted.
+            # (lb): It's easier to reset editing than to try to update state.
+            #   So just a few affirmations, and then moving along.
+            self.controller.affirm(new_fact.pk > edit_fact.pk)
+            self.controller.affirm(edit_fact.deleted)
+            self.controller.affirm(new_fact.orig_fact is None)
+            self.controller.affirm(self.edit_facts[edit_fact.pk] is edit_fact)
+            pass
+
+        def reset_editing(keep_fact, saved_facts, curr_fact):
+            if not saved_facts:
+                return curr_fact
+            if keep_fact is None:
+                keep_fact = curr_fact
+                curr_fact.orig_fact = None
+                curr_fact.next_fact = None
+                curr_fact.prev_fact = None
+            # Because saving creates new Fact IDs, and because
+            # it'd be a pain to update either all affected
+            # Facts' IDs (think not only prepared_facts/conjoined.facts,
+            # but also redo_undo.undo, redo_undo.redo, conjoined.by_pk,
+            # and most importantly, all the Facts' next_fact and prev_fact
+            # pointers!), reset every place that has a reference to any
+            # Facts.
+            # See also: self.setup_edit_help()
+            keep_fact.orig_fact = None
+            keep_fact.next_fact = None
+            keep_fact.prev_fact = None
+            self.setup_editing(edit_facts=[keep_fact], orig_facts=[])
+            self.curr_fact = keep_fact
+            return keep_fact
+
+        return _save_edited_facts()
+
