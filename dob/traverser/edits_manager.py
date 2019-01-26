@@ -251,7 +251,9 @@ class EditsManager(object):
         self.redo_undo.add_undoable(was_facts, what)
 
     def recompose_lookups(self, edit_facts):
-        self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
+        noop = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
+        if noop:
+            return
         for idx, edit_fact in enumerate(edit_facts):
             # 2018-08-04 12:29: EXPLAIN: idx == 0 ?? Why?
             self.manage_edited_dirty_deleted(edit_fact, undelete=(idx == 0))
