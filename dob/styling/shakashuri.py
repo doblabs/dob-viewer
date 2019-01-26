@@ -22,6 +22,15 @@ from prompt_toolkit.styles import Style
 
 def carousel_style():
     style = Style([
+
+        # FIXME/2018-07-10 08:52: Harmupf. I want --no-color to work,
+        #   but implementing that may require knowing how the
+        #   customization of colors will work.
+        #   ... you may need an chjson parser!
+
+        # A palette:
+        #  http://paletton.com/#uid=3000u0kg0qB6pHIb0vBljljq+fD
+
         # Default Fact.description frame background.
         # ('content-area', 'bg:#00aa00 #000000'),
         # ('content-area', 'bg:#D0EB9A #000000'),
