@@ -106,24 +106,30 @@ class ZoneLowdown(object):
             return formatted
 
         def showing_fact():
-            curr_fact = self.carousel.edits_manager.curr_fact
-            if 'interval-gap' in curr_fact.dirty_reasons:
-                context = _('Gap')
-                location = _("of {0}").format(curr_fact.format_delta(style=''))
-            elif curr_fact.pk > 0:
-                context = _('Old')
-                location = _("ID #{0}").format(curr_fact.pk)
-            else:
-                num_unstored = self.carousel.edits_manager.curr_fact_group_count
-                context = _('New')
-                location = _("{1:>{0}} of {2}").format(
-                    self.carousel.edits_manager.curr_fact_group_index,
-                    len(str(num_unstored)),
-                    num_unstored,
-                )
             curr_edit = self.carousel.edits_manager.curr_edit
-            deleted = _(' [del]') if curr_edit.deleted else ""
-            text = _("{0} Fact {1}{2}").format(context, location, deleted)
+            if 'interval-gap' in curr_edit.dirty_reasons:
+                context = _('Gap')
+                location = _("of {0}").format(curr_edit.format_delta(style=''))
+                deleted = _(' [edit to add]')
+            else:
+                if curr_edit.pk > 0:
+                    # 2019-01-26: (lb): For parallelism, I had a similar prefix,
+                    #   context = _('Old')
+                    # here, but I think it looks funny to call a Fact "Old".
+                    context = ''
+                    location = _("ID #{0}").format(curr_edit.pk)
+                else:
+                    num_unstored = self.carousel.edits_manager.edit_fact_count
+                    context = _('New')
+                    location = _("{0:>{1}} of {2}").format(
+                        self.carousel.edits_manager.edit_fact_index + 1,
+                        len(str(num_unstored)),
+                        num_unstored,
+                    )
+                deleted = _(' [del]') if curr_edit.deleted else ""
+            text = _("{0}{1}Fact {2}{3}").format(
+                context, ' ' if context else '', location, deleted,
+            )
             return text
 
         return _format_lowdown_text()
