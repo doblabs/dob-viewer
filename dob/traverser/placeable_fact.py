@@ -143,3 +143,13 @@ class PlaceableFact(Fact):
             and ('interval-gap' not in self.dirty_reasons)
         )
 
+    # *** Linked list methods.
+
+    @property
+    def has_next_fact(self):
+        return self.next_fact is not None
+
+    @property
+    def has_prev_fact(self):
+        return self.prev_fact is not None
+
