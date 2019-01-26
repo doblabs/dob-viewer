@@ -27,6 +27,8 @@ from prompt_toolkit.widgets import Label, TextArea
 from nark.helpers.parse_time import parse_dated
 
 from .dialog_overlay import show_message
+from .zone_details_time_end import ZoneDetails_TimeEnd
+from .zone_details_time_start import ZoneDetails_TimeStart
 from ..helpers.exceptions import catch_action_exception
 from ..helpers.fix_times import (
     insert_forcefully,
@@ -40,7 +42,10 @@ __all__ = [
 ]
 
 
-class ZoneDetails(object):
+class ZoneDetails(
+    ZoneDetails_TimeStart,
+    ZoneDetails_TimeEnd,
+):
     """"""
     def __init__(self, carousel):
         self.carousel = carousel
@@ -100,16 +105,6 @@ class ZoneDetails(object):
 
         def add_header_duration():
             self.label_duration = self.add_header_parts('duration')
-
-        def add_header_start_time():
-            self.widgets_start = add_header_parts(
-                'start', 'start_fmt_local', editable=True,
-            )
-
-        def add_header_end_time():
-            self.widgets_end = add_header_parts(
-                'end', 'end_fmt_local_nowwed', editable=True,
-            )
 
         def add_header_activity():
             self.widgets_activity = self.add_header_parts('activity', 'activity_name')
@@ -195,12 +190,6 @@ class ZoneDetails(object):
         diff_tuples = self.facts_diff.diff_line_tuples_style(orig_val, edit_val)
         self.label_duration.val_label.text = diff_tuples
 
-    def refresh_time_start(self):
-        self.refresh_val_widgets(self.widgets_start)
-
-    def refresh_time_end(self):
-        self.refresh_val_widgets(self.widgets_end)
-
     def refresh_activity(self):
         self.refresh_val_widgets(self.widgets_activity)
 
@@ -235,32 +224,6 @@ class ZoneDetails(object):
         self.replace_val_container(
             keyval_widgets.text_area, keyval_widgets, 'class:header-focus',
         )
-
-    # ***
-
-    @catch_action_exception
-    def edit_time_start(self, event=None, focus=True):
-        if focus:
-            edit_fact = self.facts_diff.edit_fact
-            start_fmt_local = edit_fact.start_fmt_local
-            self.widgets_start.orig_val = start_fmt_local
-            self.widgets_start.text_area.text = start_fmt_local
-            self.edit_time_focus(self.widgets_start)
-            return True
-        else:
-            return self.edit_time_leave(self.widgets_start)
-
-    @catch_action_exception
-    def edit_time_end(self, event=None, focus=True):
-        if focus:
-            edit_fact = self.facts_diff.edit_fact
-            end_fmt_local_or_now = edit_fact.end_fmt_local_or_now
-            self.widgets_end.orig_val = end_fmt_local_or_now
-            self.widgets_end.text_area.text = end_fmt_local_or_now
-            self.edit_time_focus(self.widgets_end)
-            return True
-        else:
-            return self.edit_time_leave(self.widgets_end)
 
     # ***
 
@@ -395,34 +358,6 @@ class ZoneDetails(object):
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
                 apply_edit_time_removed_end(edit_fact)
 
-        def apply_edit_time_removed_start(edit_fact):
-            # Nothing ventured, nothing gained. Ignore deleted start. (We could
-            # instead choose to do nothing, or choose to warn-tell user they're
-            # an idiot and cannot clear the start time, or we could just behave
-            # like a successful edit (by moving focus back to the matter (Fact
-            # description) control) but not actually edit anything. Or we could
-            # just do nothing. (User can tab-away and then we'll repopulate we
-            # unedited time.)
-            self.carousel.controller.affirm(edit_fact.start is not None)
-            self.widgets_start.text_area.text = edit_fact.start_fmt_local
-            if passive:
-                # User is tabbing away. We've reset the start, so let them.
-                return
-            # User hit 'enter'. Annoy them with a warning.
-            show_message_cannot_clear_start()
-
-        def apply_edit_time_removed_end(edit_fact):
-            if edit_fact.end is None:
-                # Already cleared; nothing changed.
-                return
-            if not self.carousel.controller.is_final_fact(edit_fact):
-                self.widgets_end.text_area.text = edit_fact.end_fmt_local_or_now
-                # Always warn user, whether they hit 'enter' or are tabbing away.
-                show_message_cannot_clear_end()
-            else:
-                edit_fact.end = None
-                self.carousel.controller.affirm(False)
-
         # ***
 
         def apply_edit_time_changed(edit_fact, edit_text):
@@ -441,18 +376,6 @@ class ZoneDetails(object):
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
                 applied = apply_edit_time_end(edit_fact, edit_time)
             check_conflicts_and_confirm(edit_fact, was_fact, applied)
-
-        def apply_edit_time_start(edit_fact, edit_time):
-            if edit_fact.start == edit_time:
-                return False
-            edit_fact.start = edit_time
-            return True
-
-        def apply_edit_time_end(edit_fact, edit_time):
-            if edit_fact.end == edit_time:
-                return False
-            edit_fact.end = edit_time
-            return True
 
         def check_conflicts_and_confirm(edit_fact, was_fact, applied):
             if not applied:
