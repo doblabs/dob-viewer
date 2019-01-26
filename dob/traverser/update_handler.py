@@ -56,6 +56,8 @@ class UpdateHandler(object):
             hot_notif = _("Already at oldest change")  # Like Vim says!
         else:
             self.zone_manager.rebuild_viewable()
+            # FIXME: Do not exceed terminal width.
+            #  hot_notif = _("Restored: {0}").format(edited_fact.short)
             hot_notif = _("Undid last change. Press Ctrl-y to redo")
         self.zone_manager.update_status(hot_notif)
 
@@ -68,6 +70,8 @@ class UpdateHandler(object):
                 hot_notif = _("Already at newest change")  # Same says Vim.
         else:
             self.zone_manager.rebuild_viewable()
+            # FIXME: Do not exceed terminal width.
+            #  hot_notif = _("Restored: {0}").format(edited_fact.short)
             hot_notif = _("Redid last change. Press Ctrl-z to undo")
         self.zone_manager.update_status(hot_notif)
 
@@ -79,6 +83,9 @@ class UpdateHandler(object):
         """"""
         self.zone_manager.rebuild_viewable()
         pass  # FIXME: Implement
+        # FIXME/2019-01-15 13:51: For undo/redo, you'll need to leave
+        # copy of new split Fact with copies of original Fact's
+        # prev and next fact pointers, so that wires do not get crossed.
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
