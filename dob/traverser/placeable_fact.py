@@ -139,7 +139,3 @@ class PlaceableFact(Fact):
     def dirty(self):
         return self.unstored or len(self.dirty_reasons) > 0
 
-    @property
-    def unstored(self):
-        return (not self.pk) or (self.pk < 0)
-
