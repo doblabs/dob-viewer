@@ -20,6 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
+import time
+
 from prompt_toolkit.layout.containers import to_container
 from prompt_toolkit.widgets import Label
 
@@ -33,19 +35,34 @@ class ZoneLowdown(object):
     def __init__(self, carousel):
         self.carousel = carousel
         self.hot_notif = ''
+        self.notif_expiry = None
 
     def standup(self):
         pass
 
-    def update_status(self, hot_notif):
+    def update_status(self, hot_notif, clear_after_secs=None):
         self.hot_notif = hot_notif
         self.status_label.text = hot_notif
+        self.reset_notif_expiry(clear_after_secs)
+
+    LOWDOWN_NOTIFY_MESSAGE_LIFETIME_SECS = 2.71828
+
+    def reset_notif_expiry(self, clear_after_secs=None):
+        if clear_after_secs is None:
+            clear_after_secs = ZoneLowdown.LOWDOWN_NOTIFY_MESSAGE_LIFETIME_SECS
+        if not clear_after_secs:
+            self.notif_expiry = None
+        else:
+            self.notif_expiry = time.time() + clear_after_secs
 
     # ***
 
     def selectively_refresh(self):
-        # FIXME: Implement this.
-        pass
+        # Clear status messages after timeout.
+        if self.notif_expiry and time.time() >= self.notif_expiry:
+            self.hot_notif = ''  # So format_lowdown_text prints PK.
+            formatted_text = self.format_lowdown_text()
+            self.update_status(hot_notif=formatted_text, clear_after_secs=0)
 
     # ***
 
