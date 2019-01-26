@@ -124,6 +124,7 @@ class ClipboardEdit(object):
             edit_fact.activity = restore_fact.activity
             edit_fact.tags = restore_fact.tags
             edit_fact.description = restore_fact.description
+            self.controller.affirm(edit_fact.orig_fact)
             self.redo_undo.add_undoable([edit_fact.copy()], before_paste.what)
 
         def paste_cnt_increment(edit_fact, paste_val):
