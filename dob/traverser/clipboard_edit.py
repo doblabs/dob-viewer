@@ -84,6 +84,10 @@ class ClipboardEdit(object):
                 pasted_what = _('description')
             else:
                 self.controller.affirm(paste_what == 'fact')
+                # MAYBE: Add a paste-all meta option? Or is cycle-pasting ok?
+                #  edit_fact.activity = paste_val.activity
+                #  edit_fact.tags = paste_val.tags
+                #  edit_fact.description = paste_val.description
                 pasted_what = paste_copied_fact(edit_fact, paste_val)
             return pasted_what
 
