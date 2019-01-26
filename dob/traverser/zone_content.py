@@ -296,5 +296,5 @@ class ZoneContent(object):
             self.scroll_bottom(event)
         else:
             self.scroll_top(event)
-        self.carousel.rebuild_viewable()
+        self.rebuild_viewable()
 
