@@ -137,5 +137,9 @@ class PlaceableFact(Fact):
 
     @property
     def dirty(self):
-        return self.unstored or len(self.dirty_reasons) > 0
+        # MAYBE/FIXME: Set dirty_reasons if fact.pk < 0, on new PlaceableFact.
+        return (
+            (self.unstored or len(self.dirty_reasons) > 0)
+            and ('interval-gap' not in self.dirty_reasons)
+        )
 
