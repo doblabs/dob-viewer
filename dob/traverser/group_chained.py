@@ -23,8 +23,8 @@ from gettext import gettext as _
 from sortedcontainers import SortedKeyList
 
 __all__ = [
-    'sorted_facts_list',
     'GroupChained',
+    'sorted_facts_list',
 ]
 
 
