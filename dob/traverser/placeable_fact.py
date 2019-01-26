@@ -61,6 +61,55 @@ class PlaceableFact(Fact):
         # SKIP: next_fact, prev_fact.
         return new_fact
 
+    def squash(self, other, squash_sep=''):
+        # (lb): The squash is a useful end user application feature for existing
+        # facts, and I'm not sure what else it might be used for, so I'm putting
+        # a bunch of asserts here to force you to re-read this comment when next
+        # this code blows up because new usage and you realize you can assuredly
+        # delete this comment and one or all of these assert and you will likely
+        # be just fine.
+        assert other.pk is None or other.pk < 0
+        assert not self.deleted
+        assert not other.deleted
+        assert not other.split_from
+        # When squashing, the first fact should have a start, but not an end.
+        # And we do not care about other; it could have a start, or an end, or
+        # neither.
+        assert self.start
+        assert not self.end
+
+        self.end = other.start or other.end
+
+        if other.activity_name or other.category_name:
+            # (lb): MAYBE: Do we care that this is destructive?
+            self.activity = other.activity
+
+        self.tags_replace(self.tags + other.tags)
+
+        self.description_squash(other, squash_sep)
+
+        self.dirty_reasons.add('squash')
+        if self.end:
+            self.dirty_reasons.add('stopped')
+            self.dirty_reasons.add('end')
+
+        other.deleted = True
+        # For completeness, and to make verification easier.
+        other.start = self.start
+        other.end = self.end
+
+        other.dirty_reasons.add('deleted-squashed')
+
+    def description_squash(self, other, squash_sep=''):
+        if not other.description:
+            return
+        # (lb): Build local desc. copy, because setter stores None, never ''.
+        new_description = self.description or ''
+        new_description += squash_sep if new_description else ''
+        new_description += other.description
+        self.description = new_description
+        other.description = None
+
     @classmethod
     def create_from_factoid(cls, factoid, *args, **kwargs):
         """
