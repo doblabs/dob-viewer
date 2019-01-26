@@ -68,8 +68,8 @@ class ActionManager(object):
     def setup_key_bindings_normal(self):
         bindings = []
         bindings += key_bonds_global(self.key_action_map)
-        bindings += key_bonds_update(self.carousel.update_handler)
-        bindings += key_bonds_undo_redo(self.carousel.update_handler)
+        bindings += key_bonds_update(self.key_action_map)
+        bindings += key_bonds_undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 
         self.key_bindings_normal = make_bindings(bindings)
