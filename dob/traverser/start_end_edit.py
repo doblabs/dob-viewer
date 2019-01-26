@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with 'dob'.  If not, see <http://www.gnu.org/licenses/>.
-"""Fact Editing State Machine"""
+"""Fact Editing Start and End Time Adjuster"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -28,7 +28,8 @@ class StartEndEdit(object):
     def __init__(self, edits_manager):
         self.controller = edits_manager.controller
         self.redo_undo = edits_manager.redo_undo
-        self.edits_manager = edits_manager
+        self.editable_fact_prev = edits_manager.editable_fact_prev
+        self.editable_fact_next = edits_manager.editable_fact_next
 
     # ***
 
@@ -82,12 +83,12 @@ class StartEndEdit(object):
     def time_adjust_editable_prev(self, edit_fact, *attrs):
         if 'start' not in attrs:
             return None
-        return self.edits_manager.editable_fact_prev(edit_fact)
+        return self.editable_fact_prev(edit_fact)
 
     def time_adjust_editable_next(self, edit_fact, *attrs):
         if 'end' not in attrs:
             return None
-        return self.edits_manager.editable_fact_next(edit_fact)
+        return self.editable_fact_next(edit_fact)
 
     # ***
 
