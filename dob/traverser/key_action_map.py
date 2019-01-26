@@ -38,33 +38,16 @@ class KeyActionMap(object):
 
         self.update_handler = carousel.update_handler
 
-    # ***
-
-    @ZoneContent.Decorators.reset_showing_help
-    def ignore_key_press_noop(self, event):
-        """"""
-        pass
-
-    # ###
-
-    def cancel_command(self, event):
-        self.carousel.cancel_command(event)
-
-    def cancel_softly(self, event):
-        self.carousel.cancel_softly(event)
-
-    def finish_command(self, event):
-        self.carousel.finish_command(event)
-
-    # ###
-
-    def focus_next(self, event):
-        self.zone_manager.focus_next(event)
-
-    def focus_previous(self, event):
-        self.zone_manager.focus_previous(event)
+    # #### Key bindings wired by key_bonds_global().
 
     # ***
+
+    def rotate_help(self, event):
+        self.zone_content.rotate_help(event)
+
+    # ***
+
+    # Next/Prev: Fact
 
     def scroll_left(self, event):
         self.zone_manager.scroll_left(event)
@@ -72,22 +55,21 @@ class KeyActionMap(object):
     def scroll_right(self, event):
         self.zone_manager.scroll_right(event)
 
+    # Next/Prev: Day
+
     def scroll_left_day(self, event):
         self.zone_manager.scroll_left_day(event)
 
     def scroll_right_day(self, event):
         self.zone_manager.scroll_right_day(event)
 
+    # Next/Prev: Rift
+
     def scroll_fact_last(self, event):
         self.zone_manager.scroll_fact_last(event)
 
     def scroll_fact_first(self, event):
         self.zone_manager.scroll_fact_first(event)
-
-    # ###
-
-    def rotate_help(self, event):
-        self.zone_content.rotate_help(event)
 
     # ***
 
@@ -96,6 +78,23 @@ class KeyActionMap(object):
 
     def cursor_down_one(self, event):
         self.zone_content.cursor_down_one(event)
+
+    # ***
+
+    def finish_command(self, event):
+        self.carousel.finish_command(event)
+
+    def cancel_command(self, event):
+        self.carousel.cancel_command(event)
+
+    def cancel_softly(self, event):
+        self.carousel.cancel_softly(event)
+
+    # ***
+
+    @ZoneContent.Decorators.reset_showing_help
+    def ignore_key_press_noop(self, event):
+        pass
 
     # ***
 
@@ -111,7 +110,7 @@ class KeyActionMap(object):
     def scroll_bottom(self, event):
         self.zone_content.scroll_bottom(event)
 
-    # ###
+    # ***
 
     def edit_time_start(self, event):
         self.zone_details.edit_time_start(event)
@@ -119,7 +118,15 @@ class KeyActionMap(object):
     def edit_time_end(self, event):
         self.zone_details.edit_time_end(event)
 
-    # ###
+    # #### Key bindings wired by key_bonds_shared().
+
+    def focus_next(self, event):
+        self.zone_manager.focus_next(event)
+
+    def focus_previous(self, event):
+        self.zone_manager.focus_previous(event)
+
+    # #### Key bindings wired by key_bonds_update().
 
     def edit_time_decrement_start(self, event):
         self.update_handler.edit_time_decrement_start(event)
