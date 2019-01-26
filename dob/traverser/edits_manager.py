@@ -40,19 +40,18 @@ class EditsManager(object):
         error_callback=None,
     ):
         self.controller = controller
+        self.setup_editing(edit_facts, orig_facts)
+        self._dirty_callback = dirty_callback
         self.error_callback = error_callback
 
+    # ***
+
+    def setup_editing(self, edit_facts, orig_facts):
+        """"""
         self.setup_container(edit_facts, orig_facts)
-
         self.setup_edit_facts(edit_facts)
-
         self.setup_review_confirmation()
-
-        self.setup_redo_undo()
-        self.setup_clipboard()
-        self.setup_time_edit()
-
-        self._dirty_callback = dirty_callback
+        self.setup_edit_help()
 
     # ***
 
@@ -90,17 +89,24 @@ class EditsManager(object):
         self.conjoined.add_facts(more_facts)
 
     def setup_edit_facts(self, edit_facts):
-        self.edit_facts = {}
-        for fact in edit_facts:
-            if not fact.dirty:
-                continue
-            self.edit_facts[fact.pk] = fact
+        # Dirty facts, on stand up, will only include import facts, or fact
+        # entered on command line; but will ignore fact read from store, e.g.,
+        # `dob edit -1` will start up with an empty self.edit_facts (and the
+        # one fact loaded from the store will be help in the conjoined.groups).
+        self.edit_facts = {fact.pk: fact for fact in edit_facts if fact.dirty}
 
     # ***
 
     def setup_review_confirmation(self):
-        self.virgin_fact_pks = set([fact.pk for fact in self.conjoined.facts])
+        self.verify_fact_pks = set([fact.pk for fact in self.conjoined.facts])
         self.viewed_fact_pks = set()
+
+    # ***
+
+    def setup_edit_help(self):
+        self.setup_redo_undo()
+        self.setup_clipboard()
+        self.setup_time_edit()
 
     def setup_redo_undo(self):
         self.redo_undo = RedoUndoEdit(self)
@@ -138,7 +144,7 @@ class EditsManager(object):
 
     @property
     def user_viewed_all_new_facts(self):
-        return self.virgin_fact_pks.issubset(self.viewed_fact_pks)
+        return self.verify_fact_pks.issubset(self.viewed_fact_pks)
 
     @property
     def curr_edit(self):
@@ -216,7 +222,8 @@ class EditsManager(object):
         # might pop the Fact if the user did not edit anything.
         if edit_fact is None:
             edit_fact = self.editable_fact()
-        self.redo_undo.add_undoable([edit_fact.copy()], what)
+        was_fact = edit_fact.copy()
+        self.add_undoable([was_fact], what)
         return edit_fact
 
     def apply_edits(self, *edit_facts):
@@ -309,33 +316,25 @@ class EditsManager(object):
 
     def restore_facts(self, restore_facts):
         self.curr_fact = restore_facts[0]
-        edit_copies = self.restore_edit_facts(restore_facts)
+        were_facts = self.restore_edit_facts(restore_facts)
         self.dirty_callback()
-        return edit_copies
+        return were_facts
 
     def restore_edit_facts(self, restore_facts):
-        edit_copies = []
+        were_facts = []
         for restore_fact in restore_facts:
-            edit_copy = self.restore_edit_fact(restore_fact)
-            edit_copies.append(edit_copy)
-        return edit_copies
+            was_fact = self.restore_edit_fact(restore_fact)
+            were_facts.append(was_fact)
+        return were_facts
 
     def restore_edit_fact(self, restore_fact):
         edit_fact = self.editable_fact(restore_fact)
-        edit_copy = edit_fact.copy()
-        self.restore_edited_fact(edit_fact, restore_fact)
-        orig_fact = restore_fact.orig_fact
+        was_fact = edit_fact.copy()
+        edit_fact.restore_edited(restore_fact)
+        self.controller.affirm(restore_fact.orig_fact)
+        orig_fact = restore_fact.orig_fact or restore_fact
         self.update_edited_fact(edit_fact, orig_fact)
-        return edit_copy
-
-    def restore_edited_fact(self, edit_fact, restore_fact):
-        edit_fact.start = restore_fact.start
-        edit_fact.end = restore_fact.end
-        edit_fact.activity = restore_fact.activity
-        edit_fact.tags = list(restore_fact.tags)
-        edit_fact.description = restore_fact.description
-        edit_fact.deleted = bool(restore_fact.deleted)
-        edit_fact.dirty_reasons = set(list(restore_fact.dirty_reasons))
+        return was_fact
 
     # ***
 
