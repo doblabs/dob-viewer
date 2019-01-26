@@ -30,12 +30,7 @@ from .dialog_overlay import show_message
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart
 from ..helpers.exceptions import catch_action_exception
-from ..helpers.fix_times import (
-    insert_forcefully,
-    must_complete_times,
-    resolve_overlapping,
-    DEFAULT_SQUASH_SEP
-)
+from ..helpers.fix_times import must_complete_times
 
 __all__ = [
     'ZoneDetails',
