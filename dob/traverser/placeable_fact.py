@@ -34,6 +34,7 @@ FactoidSource = namedtuple(
 
 class PlaceableFact(Fact):
     """"""
+
     def __init__(
         self,
         *args,
