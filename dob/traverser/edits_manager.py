@@ -72,10 +72,30 @@ class EditsManager(object):
 
         def apply_orig_facts(edit_facts, orig_lkup):
             for edit_fact in edit_facts:
-                try:
-                    edit_fact.orig_fact = orig_lkup[edit_fact.pk]
-                except KeyError:
-                    edit_fact.orig_fact = edit_fact
+                apply_orig_fact(edit_fact, orig_lkup)
+
+        def apply_orig_fact(edit_fact, orig_lkup):
+            self.controller.affirm(edit_fact.orig_fact is None)
+            try:
+                # NOTE: For facts from the store loaded on start, this is the
+                # only reference to them. (For facts loaded later from the
+                # store, they're stored on self.edit_facts only until they're
+                # edited, then they, too, become just an orig_fact reference
+                # on an edit_fact, or a fact on the undo/redo stack.
+                edit_fact.orig_fact = orig_lkup[edit_fact.pk]
+            except KeyError:
+                edit_fact.orig_fact = 0
+            if edit_fact.orig_fact:
+                assign_orig_fact(edit_fact, orig_lkup)
+                # Note that claim_time_span changes the group key, but
+                # the group has not been added to the conjoined.groups
+                # container yet (so no need to use self.curr_group_rekeyed).
+                self.conjoined.claim_time_span(*edit_fact.orig_fact.times)
+
+        def assign_orig_fact(edit_fact, orig_lkup):
+            self.controller.affirm(edit_fact.orig_fact is not edit_fact)
+            self.controller.affirm(edit_fact.orig_fact.orig_fact is None)
+            edit_fact.orig_fact.orig_fact = 0
 
         _setup_container()
 
