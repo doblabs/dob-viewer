@@ -97,6 +97,8 @@ def key_bonds_global(handler):
     key_bonds_global = [
         KeyBond('?', action=handler.rotate_help),
         #
+        KeyBond('m-=', action=handler.dev_breakpoint),
+        #
         KeyBond('j', action=handler.jump_fact_dec),
         KeyBond('k', action=handler.jump_fact_inc),
         KeyBond(Keys.Left, action=handler.jump_fact_dec),
