@@ -63,6 +63,11 @@ def key_bonds_shared(handler):
 def key_bonds_edit_time(handler):
     key_bonds_edit_time = [
         KeyBond('enter', action=handler.editable_text_enter),
+        # By default, PPT will add any key we don't capture to active widget's
+        # buffer, but we'll override so we can ignore alphabetics [letters].
+        KeyBond(Keys.Any, action=handler.editable_text_any_key),
+        # FIXME/BACKLOG/2019-01-21: Ctrl-q should work while editing time.
+        #  - And from any other state: editing act@gory, editing tags, anything else?
     ]
     return key_bonds_edit_time
 

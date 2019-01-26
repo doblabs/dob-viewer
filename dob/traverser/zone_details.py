@@ -318,7 +318,18 @@ class ZoneDetails(object):
 
     # ***
 
-    def editable_text_any_key(self, _event=None):
+    def editable_text_any_key(self, event=None):
+        self.carousel.controller.client_logger.debug('event: {}'.format(event))
+        # Ignore all alpha characters except those for [t|T]imezone delimiter.
+        if event.data.isalpha() and event.data not in ('t', 'T'):
+            return
+        # Like PPT's basic binding's filter=insert_mode, or vi's filter=vi_replace_mode.
+        # "Insert data at cursor position."
+        # PPT basic binding's self-insert:
+        #   event.current_buffer.insert_text(event.data * event.arg)
+        # PPT vi binding's vi_replace_mode:
+        #  event.current_buffer.insert_text(event.data, overwrite=True)
+        event.current_buffer.insert_text(event.data)
         self.editable_was_edited = True
 
     # ***
