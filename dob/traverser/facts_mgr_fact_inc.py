@@ -14,164 +14,214 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with 'dob'.  If not, see <http://www.gnu.org/licenses/>.
-"""FactsManager_Incrementer"""
+"""FactsManager_FactInc"""
 
 from __future__ import absolute_import, unicode_literals
 
+from nark.items.fact import UntilTimeStops
+
 __all__ = [
-    'FactsManager_Incrementer',
+    'FactsManager_FactInc',
 ]
 
 
-class FactsManager_Incrementer(object):
+# SYNC_ME: Keep FactsManager_FactDec and FactsManager_FactInc synced.
+#   That, or write a generic base class, but that sounds painfuller to maintain.
+#   then simply running meld as necessary:
+#
+#       meld facts_mgr_fact_dec.py facts_mgr_fact_inc.py &
+class FactsManager_FactInc(object):
     """"""
-    def increment(self):
+    def jump_fact_inc(self):
         """"""
-        def _increment():
+        def _jump_fact_inc():
+            # Check first if we've reached the ending of all time.
+            is_final_fact = (self.curr_index == (len(self.curr_group) - 1))
+            if is_final_fact and self.curr_group.until_time_stops:
+                return None
+            # Each facts group represents a contiguous block of time that is
+            # being managed by dob, and to ignore anything in the store from
+            # that time. Find either the next fact under dob's control,
+            # or one from the store (that we'll wire into dob in a later step).
             next_fact = fetch_next_fact()
-            if next_fact is None:
-                self.curr_fact.next_fact = -1
-            next_fact = maybe_fill_gap(next_fact)
+            # Each fact's next_fact and prev_fact links are not wired until
+            # we inspect them here for gaps -- meaning, we fill in the gap facts
+            # reactively, as the user traverses the facts in the carousel. Now.
+            next_fact = fill_gap_until(next_fact)
+            # If we've reached the ending of all time, there's nothing following.
             if next_fact is None:
                 return None
-            self.controller.affirm(self.curr_fact < next_fact)
-            self._curr_fact = next_fact
-            self._jump_time_reference = None
-            self.client_logger_state('increment')
+            # Just a sanity check. Note that we use fact.times for >, otherwise
+            # sorty_tuple is used, which also sorts by PK, which masks 2 facts
+            # at same time but with unique IDs.
+            # - This also shows that we update self.curr_index already, and
+            #   maybe self.curr_group, but not self.curr_fact (so the state
+            #   is outta sorts).
+            self.controller.affirm(self.curr_fact.end <= next_fact.start)
+            # We (re)wired the fact to the group earlier; now rewire the group.
+            self.fulfill_jump(next_fact, reason='fact-inc')
+            # See if we've identified the boundary of the known factiverse.
+            if (next_fact.end is None) or (next_fact.end is UntilTimeStops):
+                self.controller.affirm(self.curr_group.until_time_stops)
             return next_fact
+
+        # ***
 
         def fetch_next_fact():
-            if self.curr_fact.next_fact is -1:
-                # next_fact is -1 when it's final known fact, either in a
-                # group of new Facts, or in group of Facts found in store.
-                self.controller.affirm((self.curr_index + 1) == len(self.curr_group))
-                return fetch_first_from_next_group()
-            elif self.curr_fact.next_fact is not None:
-                # next_fact points to an actual Fact, which is the following
-                # Fact in the current group.
-                self.controller.affirm(self.curr_index < len(self.curr_group))
-                return fetch_next_from_curr_group_redux()
+            # Check curr_fact.curr_index, and not curr_fact.has_next_fact,
+            # because the facts may not all be wired yet.
+            self.curr_index < (len(self.curr_group) - 1)
+            if self.curr_index < (len(self.curr_group) - 1):
+                return from_curr_group_increment()
             else:
-                # next_fact is None until we verify next fact.
-                return fetch_next_from_a_group_or_store()
+                # Choose between fact from store or next group (if any).
+                return from_next_group_or_store()
 
-        def fetch_first_from_next_group():
-            first_from_next_group, next_group_index = peek_first_from_next_group()
-            if first_from_next_group is None:
-                return None
-            self.curr_group = self.groups[next_group_index]
-            self.curr_index = 0
-            self.controller.affirm(first_from_next_group is self.curr_group[0])
-            return first_from_next_group
+        # ***
 
-        def peek_first_from_next_group():
-            next_fact = None
-            next_group_index = self.groups.index(self.curr_group) + 1
-            if next_group_index < len(self.groups):
-                next_fact = self.groups[next_group_index][0]
-            return next_fact, next_group_index
-
-        def fetch_next_from_curr_group_redux():
+        def from_curr_group_increment():
             self.curr_index += 1
             next_from_curr_group = self.curr_group[self.curr_index]
-            self.controller.affirm(self.curr_fact.next_fact is next_from_curr_group)
-            self.controller.affirm(next_from_curr_group.prev_fact is self.curr_fact)
             return next_from_curr_group
 
-        def fetch_next_from_a_group_or_store():
-            next_from_store = fetch_next_from_store()
-            if (self.curr_index + 1) < len(self.curr_group):
-                return compare_curr_group_to_store(next_from_store)
-            else:
-                return compare_next_group_to_store(next_from_store)
-
-        def fetch_next_from_store():
-            next_from_store = self.controller.facts.subsequent(self.curr_fact)
-            if not next_from_store:
-                # On final fact.
-                self.curr_fact.next_fact = -1
-                return None
-            elif next_from_store.pk in self.by_pk.keys():
-                # Fact from store was previously added to the container.
-                return None
-            next_from_store.orig_fact = next_from_store
-            return next_from_store
-
-        def compare_curr_group_to_store(next_from_store):
-            next_from_curr_group = self.curr_group[self.curr_index + 1]
-            if next_from_store and next_from_store < next_from_curr_group:
-                next_fact = curr_group_add_next(next_from_store)
-                return next_fact
-            else:
-                if next_from_store:
-                    self.add_facts([next_from_store])
-                self.curr_index += 1
-                self.curr_fact.next_fact = next_from_curr_group
-                next_from_curr_group.prev_fact = self.curr_fact
-                return next_from_curr_group
-
-        def compare_next_group_to_store(next_from_store):
-            first_from_next_group, next_group_index = peek_first_from_next_group()
-            if not next_from_store and not first_from_next_group:
-                return None
-            if first_from_next_group and (
-                (not next_from_store) or (first_from_next_group < next_from_store)
-            ):
-                next_fact = maybe_collapse_group(first_from_next_group, next_group_index)
-                if next_from_store:
-                    self.add_facts([next_from_store])
-            else:
-                next_fact = curr_group_add_next(next_from_store)
-            return next_fact
-
-        def maybe_collapse_group(next_fact, next_group_index):
-            if next_fact.unstored != self.curr_fact.unstored:
-                self.curr_fact.next_fact = -1
-                self.curr_group = self.groups[next_group_index]
-                self.curr_index = 0
-            else:
-                if next_fact.start == self.curr_fact.end:
-                    self.curr_fact.next_fact = next_fact
-                    next_fact.prev_fact = self.curr_fact
-                next_group = self.groups.pop(next_group_index)
-                group_index = self.groups.index(self.curr_group)
-                self.curr_group += next_group
-                self.curr_index += 1
-                self.curr_group_update_keys(group_index, next_fact)
-            self.controller.affirm(self.curr_group[self.curr_index] is next_fact)
-            return next_fact
+        # ***
 
         def curr_group_add_next(next_fact):
             self.controller.affirm(self.curr_fact.next_fact is None)
-            if next_fact.start == self.curr_fact.end:
-                self.curr_fact.next_fact = next_fact
-                next_fact.prev_fact = self.curr_fact
-            # (lb): Because sorting is based on curr_group[0], we don't need
-            # to re-sort self.groups, but might as well, to be consistent.
             self.curr_group_add(next_fact)
-            self.curr_index += 1
-            self.controller.affirm(
-                self.curr_group[self.curr_index] is next_fact
-            )
+            if self.curr_group[self.curr_index] is not next_fact:
+                self.curr_index += 1
+            self.controller.affirm(self.curr_group[self.curr_index] is next_fact)
+
+        # ***
+
+        def from_next_group_or_store():
+            next_from_store = self.fetch_next_from_store()
+            if exists_in_between_groups(next_from_store):
+                # Add the fact to the group, but do not wire yet,
+                # as we may add a gap fact, if necessary.
+                curr_group_add_next(next_from_store)
+                return next_from_store
+            # No facts between this group and next group;
+            # or there are no facts from store
+            #  nor is there a next group.
+            return squash_group_next()
+
+        # ^^^
+
+        def exists_in_between_groups(next_from_store):
+            if next_from_store is None:
+                return False
+            next_group, next_group_index = fetch_next_group()
+            if next_group is None:
+                return True
+            if next_from_store.end > next_group.time_since:
+                return False
+            self.controller.affirm(next_from_store.start >= self.curr_group.time_until)
+            return True
+
+        def fetch_next_group():
+            next_group_index = self.groups.index(self.curr_group) + 1
+            if next_group_index < len(self.groups):
+                return self.groups[next_group_index], next_group_index
+            return None, None
+
+        # ^^^
+
+        def squash_group_next():
+            self.controller.affirm(self.curr_index == (len(self.curr_group) - 1))
+            next_group, next_group_index = fetch_next_group()
+            if next_group is None:
+                return None
+            return collapse_group(next_group, next_group_index)
+
+        def collapse_group(next_group, next_group_index):
+            next_fact = next_group[0]
+            with self.curr_group_rekeyed():
+                # The rekeyed fcn., pops curr_group, so decrement next index.
+                next_group_index -= 1
+                _next_group = self.groups.pop(next_group_index)
+                self.controller.affirm(next_group is _next_group)
+                self.curr_index += 1
+                # Note that addition returns a new object, e.g.,
+                #  self.curr_group += next_group
+                # sets self.curr_group to a new object -- but curr_group_rekeyed
+                # adds back the original group object, so do in-place addition.
+                # Note that slice operator calls __setitem__ for each fact,
+                # whereas addition calls __add__ or __radd__ just once.
+                self.curr_group[:] = self.curr_group + next_group
+            self.controller.affirm(self.curr_group[self.curr_index] is next_fact)
             return next_fact
 
-        def maybe_fill_gap(next_fact):
-            gap_fact = None
+        # ***
+
+        def fill_gap_until(next_fact):
+            if (next_fact is not None) and next_fact.has_prev_fact:
+                self.controller.affirm(next_fact.prev_fact is self.curr_fact)
+                return next_fact
+            self.controller.affirm(not self.curr_fact.has_next_fact)
             if next_fact is None:
-                self.controller.affirm(self.curr_fact.next_fact is -1)
-                if self.curr_fact.end is not None:
-                    gap_fact = self.fact_from_interval_gap(
-                        self.curr_fact.end, None,
-                    )
-            elif self.curr_fact.end != next_fact.start:
-                self.controller.affirm(self.curr_fact.next_fact is None)
+                gap_or_next = fill_gap_until_users_life_ended()
+            else:
+                gap_or_next = fill_gap_until_next_fact(next_fact)
+            if gap_or_next is None:
+                return None
+            if gap_or_next is not next_fact:
+                curr_group_add_next(gap_or_next)
+            wire_two_facts_until(gap_or_next, next_fact)
+            return gap_or_next
+
+        def fill_gap_until_users_life_ended():
+            gap_fact = self.fact_from_interval_gap(
+                self.curr_fact.end, None,
+            )
+            return gap_fact
+
+        def fill_gap_until_next_fact(next_fact):
+            if next_fact.start == self.curr_fact.end:
+                gap_fact = next_fact
+            elif 'interval-gap' in next_fact.dirty_reasons:
+                # Next fact is already unedited interval gap, so just edit its time.
+                next_fact.start = self.curr_fact.end
+                gap_fact = next_fact
+            else:
                 gap_fact = self.fact_from_interval_gap(
                     self.curr_fact.end, next_fact.start,
                 )
-            if gap_fact is None:
-                return next_fact
-            self.insert_gap_next(gap_fact)
             return gap_fact
 
-        return _increment()
+        def wire_two_facts_until(gap_or_next, next_fact):
+            if next_fact is not None:
+                if next_fact is not gap_or_next:
+                    self.wire_two_facts_neighborly(gap_or_next, next_fact)
+                else:
+                    self.wire_two_facts_neighborly(self.curr_fact, gap_or_next)
+            self.controller.affirm(self.curr_fact.end == gap_or_next.start)
+            self.controller.affirm(gap_or_next.prev_fact is self.curr_fact)
+            self.controller.affirm(self.curr_fact.next_fact is gap_or_next)
+            return gap_or_next
+
+        return _jump_fact_inc()
+
+    # ***
+
+    def fetch_next_from_store(self, ref_time=None):
+        ref_time = ref_time or self.curr_group.time_until
+        # Search forward from the end time of the group (rather than,
+        # say, calling subsequent(self.curr_fact)), so that we skip time
+        # that's currently under our control.
+        next_from_store = self.controller.facts.subsequent(ref_time=ref_time)
+        if not next_from_store:
+            # No more later facts from store.
+            return None
+
+        # Next fact should at least have a start time.
+        self.controller.affirm(next_from_store.start)
+        # In case we decide to keep this fact, make it safe.
+        next_from_store.orig_fact = 0  # The orig_fact is... itself!
+        # The caller will figure out if the next fact from the
+        # store is one that is not yet under our control; or if it's
+        # one we already know about (in which case, there exists a
+        # group already blocking that time window).
+        return next_from_store
 
