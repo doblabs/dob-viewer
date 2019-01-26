@@ -137,10 +137,15 @@ class EditsManager(object):
     @curr_fact.setter
     def curr_fact(self, curr_fact):
         """"""
+        self.controller.client_logger.debug('{}'.format(curr_fact.short))
         if self.conjoined.curr_fact is not curr_fact:
             self.clipboard.reset_paste()
         self.conjoined.curr_fact = curr_fact
         self.viewed_fact_pks.add(curr_fact.pk)
+
+    def jumped_fact(self, jump_fact):
+        # Jump to shim to the setter.
+        self.curr_fact = jump_fact
 
     @property
     def user_viewed_all_new_facts(self):
@@ -148,6 +153,13 @@ class EditsManager(object):
 
     @property
     def curr_edit(self):
+        """
+        Returns the currently edited fact, or the original fact if
+        nothing being edited. Because this might return the original,
+        uneditable fact, he caller is not expected to edit the fact.
+        (See editable_fact() for retrieving the editable equivalent
+        of this function.)
+        """
         try:
             return self.edit_facts[self.curr_fact.pk]
         except KeyError:
