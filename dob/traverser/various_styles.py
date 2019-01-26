@@ -25,6 +25,9 @@ __all__ = [
 ]
 
 
+# FIXME/BACKLOG/2019-01-21: Try JSON.
+#  See comments below about reading user-customizable hJSON.
+
 def default():
     """Default defines all options so tweaked stylings may omit any."""
     styling = {}
@@ -34,6 +37,9 @@ def default():
         ('interval-gap', 'bg:#000000 #FFFFFF'),
         ('unsaved-fact', 'bg:#000000 #FFFFFF'),
         ('category-sleep', 'bg:#000000 #FFFFFF'),
+
+        # FIXME/2019-01-21: Are we missing any class'es, like
+        #   'header' | 'footer' | 'header-focus' ???
     ]
     styling['header-help_text'] = 'bg:#000000 #FFFFFF bold'
     styling['root-app_align'] = 'LEFT'
@@ -46,6 +52,12 @@ def default():
 def color():
     styling = default()
     styling['container-syles'] = [
+
+        # FIXME/2018-07-10 08:52: Harmupf. I want --no-color to at least work,
+        #   and implementing that may require knowing how the customization
+        #   of colors will work.
+        #   ... you need an chjson parser!
+
         # Loosely based on such and such color palette:
         #
         #   http://paletton.com/#uid=3000u0kg0qB6pHIb0vBljljq+fD
@@ -72,8 +84,17 @@ def color():
         # ('unsaved-fact', 'bg:#639797 #000000'),
         ('unsaved-fact', 'bg:#D0EB9A #000000'),
 
+        # FIXME/BACKLOG/2019-01-21: ... so many "backlog" items...:
+        #   2018-07-28: Do this soon: Separate file for data-dependent styles.
+        #   Or maybe merge styles. What works best for deciding which files to
+        #   import and which functions to call?
+        # FIXME: BACKLOG: User-selectable category highlights.
+        #
+        # ('category-sleep', 'bg:#009900 #000000'),
         ('category-sleep', 'bg:#CA85AC #000000'),
 
+        # FIXME/2019-01-21: Are we missing any class'es, like
+        #   'header' | 'footer' ???
         ('header-focus', 'bg:#00FFFF #0000FF'),
     ]
     styling['header-help_text'] = 'fg:#5F5FFF bold'
@@ -89,6 +110,9 @@ def light():
         ('interval-gap', 'bg:#FFFFFF #000000'),
         ('unsaved-fact', 'bg:#FFFFFF #000000'),
         ('category-sleep', 'bg:#FFFFFF #000000'),
+
+        # FIXME/2019-01-21: Are we missing any class'es, like
+        #   'header' | 'footer' | 'header-focus' ???
     ]
     styling['header-help_text'] = 'bg:#FFFFFF #000000 bold'
     styling['root-app_align'] = 'LEFT'
@@ -103,6 +127,9 @@ def night():
         ('interval-gap', 'bg:#000000 #FFFFFF'),
         ('unsaved-fact', 'bg:#000000 #FFFFFF'),
         ('category-sleep', 'bg:#000000 #FFFFFF'),
+
+        # FIXME/2019-01-21: Are we missing any class'es, like
+        #   'header' | 'footer' | 'header-focus' ???
     ]
     styling['header-help_text'] = 'bg:#000000 #FFFFFF bold'
     styling['root-app_align'] = 'LEFT'
