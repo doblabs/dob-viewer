@@ -586,6 +586,12 @@ class ZoneDetails(object):
         # But there's not much utility in that.
         pass
 
+    @catch_action_exception
+    def fact_reset_fact(self, event):
+        # FIXME/2019-01-14 13:42: Implement this.
+        self.controller.affirm(False)  # Not *yet* implemented.
+        pass
+
     # ***
 
     def make_header_label(self, header_text='', dont_extend_width=False):
