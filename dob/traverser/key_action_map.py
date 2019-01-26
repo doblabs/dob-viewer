@@ -18,6 +18,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from functools import update_wrapper
+
 from .zone_content import ZoneContent
 
 __all__ = [
@@ -38,10 +40,33 @@ class KeyActionMap(object):
 
         self.update_handler = carousel.update_handler
 
+    # ***
+
+    class Decorators(object):
+        @classmethod
+        def debug_log_trace_enter_leave(cls, func):
+            def trace_enter_leave_wrapper(obj, event, *args, **kwargs):
+                # 2019-01-17: [lb]: I added this wrapper to help delimit debug
+                # trace messages (to determine where each command's messages
+                # begin and end). But it might later be useful for other tasks,
+                # such as profiling. So leaving here, but with a note that says,
+                # yeah, this code has little utility to the end consumer, other
+                # than to make the developer more comfortable in the code jungle.
+                debug = obj.carousel.controller.client_logger.debug
+                debug('ENTER: “{}”'.format(func.__name__))
+                func(obj, event, *args, **kwargs)
+                # Include a visual delimiter to make it easy to scan log trace
+                # and see groups of messages belonging to each command.
+                delim = '                                🍩 🍌 🚿 🍖 🛀 🐎 🛁 👋 🌵 🐵 🌊'
+                debug('LEAVE: “{}”\n{}'.format(func.__name__, delim))
+
+            return update_wrapper(trace_enter_leave_wrapper, func)
+
     # #### Key bindings wired by key_bonds_global().
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     def rotate_help(self, event):
         self.zone_content.rotate_help(event)
 
@@ -49,124 +74,158 @@ class KeyActionMap(object):
 
     # Next/Prev: Fact
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_left(self, event):
         self.zone_manager.scroll_left(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_right(self, event):
         self.zone_manager.scroll_right(event)
 
     # Next/Prev: Day
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_left_day(self, event):
         self.zone_manager.scroll_left_day(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_right_day(self, event):
         self.zone_manager.scroll_right_day(event)
 
     # Next/Prev: Rift
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_fact_last(self, event):
         self.zone_manager.scroll_fact_last(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_fact_first(self, event):
         self.zone_manager.scroll_fact_first(event)
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     def cursor_up_one(self, event):
         self.zone_content.cursor_up_one(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def cursor_down_one(self, event):
         self.zone_content.cursor_down_one(event)
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     def finish_command(self, event):
         self.carousel.finish_command(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def cancel_command(self, event):
         self.carousel.cancel_command(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def cancel_softly(self, event):
         self.carousel.cancel_softly(event)
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     @ZoneContent.Decorators.reset_showing_help
     def ignore_key_press_noop(self, event):
         pass
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_up(self, event):
         self.zone_content.scroll_up(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_down(self, event):
         self.zone_content.scroll_down(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_top(self, event):
         self.zone_content.scroll_top(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def scroll_bottom(self, event):
         self.zone_content.scroll_bottom(event)
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_start(self, event):
         self.zone_details.edit_time_start(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_end(self, event):
         self.zone_details.edit_time_end(event)
 
     # #### Key bindings wired by key_bonds_shared().
 
+    @Decorators.debug_log_trace_enter_leave
     def focus_next(self, event):
         self.zone_manager.focus_next(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def focus_previous(self, event):
         self.zone_manager.focus_previous(event)
 
     # #### Key bindings wired by key_bonds_update().
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_start(self, event):
         self.update_handler.edit_time_decrement_start(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_increment_start(self, event):
         self.update_handler.edit_time_increment_start(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_end(self, event):
         self.update_handler.edit_time_decrement_end(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_increment_end(self, event):
         self.update_handler.edit_time_increment_end(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_both(self, event):
         self.update_handler.edit_time_decrement_both(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_increment_both(self, event):
         self.update_handler.edit_time_increment_both(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_split(self, event):
         self.update_handler.fact_split(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_wipe(self, event):
         self.update_handler.fact_wipe(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_copy_fact(self, event):
         self.update_handler.fact_copy_fact(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_cut(self, event):
         self.update_handler.fact_cut(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_paste(self, event):
         self.update_handler.fact_paste(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_copy_activity(self, event):
         self.update_handler.fact_copy_activity(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_copy_tags(self, event):
         self.update_handler.fact_copy_tags(event)
 
+    @Decorators.debug_log_trace_enter_leave
     def fact_copy_description(self, event):
         self.update_handler.fact_copy_description(event)
 
