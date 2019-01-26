@@ -172,23 +172,17 @@ class FactsManager(
     def add_facts(self, facts):
         if not facts:
             return
-        old_facts = []
-        new_facts = []
+
+        grouped_facts = []
         for fact in facts:
             self.controller.affirm(fact.pk not in self.by_pk.keys())
             self.by_pk[fact.pk] = fact
-            if not fact.unstored:
-                old_facts.append(fact)
-            else:
-                new_facts.append(fact)
-                # For creating new Facts.
+            grouped_facts.append(fact)
+            # For creating new Facts.
+            if fact.unstored:
                 self.last_fact_pk = min(self.last_fact_pk, fact.pk)
-        for facts in [new_facts, old_facts]:
-            if not facts:
-                continue
-            group_chained = GroupChained(facts)
-            self.groups.add(group_chained)
-        return
+
+        self.groups.add(GroupChained(grouped_facts))
 
     # ***
 
