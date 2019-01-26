@@ -113,8 +113,12 @@ class ZoneManager(object):
     def build_application_layout(self):
         layout = Layout(
             container=self.root,
-            # Will set later:
+            # Will get set later:
             #   focused_element
+            # EXPLAIN/2019-01-21: How does focused_element get set?
+            #  Automatically? Side effect of another call?
+            #  The Layout() constructor has a focused_element attr,
+            #   but we do not need to set it.
         )
         return layout
 
@@ -161,7 +165,15 @@ class ZoneManager(object):
     # ***
 
     def rebuild_viewable(self):
-        """"""
+        """
+        rebuild_viewable is called to update the view after the user edits a
+        fact or navigates to a different fact.
+
+        HINT: If the view gets messed up, say by a pdb session, this function
+        will not redraw everything. See instead:
+
+            self.application.renderer.clear()
+        """
         self.reset_diff_fact()
         self.rebuild_containers()
         self.assemble_focus_jumps()
@@ -216,10 +228,14 @@ class ZoneManager(object):
 
     @catch_action_exception
     def focus_next(self, event):
+        # Note also:
+        #   prompt_toolkit.key_binding.bindings.focus.focus_next
         self.focus_move(lambda index: (index + 1) % len(self.focus_chain))
 
     @catch_action_exception
     def focus_previous(self, event):
+        # Note also:
+        #   prompt_toolkit.key_binding.bindings.focus.focus_previous
         self.focus_move(lambda index: (index or len(self.focus_chain)) - 1)
 
     def focus_move(self, index_f):
@@ -260,6 +276,11 @@ class ZoneManager(object):
             self.update_status(noop_msg)
 
     # ***
+
+    # (lb): NOTE/2019-01-24: There are no explicit jump-week or jump-month,
+    # etc., commands, but if the user keeps the 'J' or 'K' keys pressed
+    # (the prev and next day commands) for an extended length of time, the
+    # Carousel will start jumping by larger time increments.
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
