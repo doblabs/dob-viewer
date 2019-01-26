@@ -43,6 +43,16 @@ class GroupChained(object):
     def __init__(self, facts=None):
         self.facts = sorted_facts_list(facts)
 
+    # ***
+
+    def __add__(self, other):
+        return GroupChained(facts=self.facts + other.facts)
+
+    def __radd__(self, other):
+        return GroupChained(facts=other.facts + self.facts)
+
+    # ***
+
     def __delitem__(self, key):
         del self.facts[key]
 
@@ -65,11 +75,7 @@ class GroupChained(object):
     def __len__(self):
         return len(self.facts)
 
-    def __str__(self):
-        pks = [str(fact.pk) for fact in self.facts]
-        return _(
-            "‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}"
-        ).format(self.first_time, self.final_time, len(pks), ', '.join(pks))
+    # ***
 
     def __eq__(self, other):
         if self is other:
@@ -86,11 +92,13 @@ class GroupChained(object):
         # Not called...
         return self.sorty_tuple < other.sorty_tuple
 
-    def __add__(self, other):
-        return GroupChained(facts=self.facts + other.facts)
+    # ***
 
-    def __radd__(self, other):
-        return GroupChained(facts=other.facts + self.facts)
+    def __str__(self):
+        pks = [str(fact.pk) for fact in self.facts]
+        return _(
+            "‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}"
+        ).format(self.first_time, self.final_time, len(pks), ', '.join(pks))
 
     @property
     def sorty_tuple(self):
