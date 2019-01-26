@@ -20,11 +20,14 @@ from __future__ import absolute_import, unicode_literals
 
 from sortedcontainers import SortedKeyList
 
-from .facts_mgr_dec import FactsManager_Decrementer
-from .facts_mgr_inc import FactsManager_Incrementer
-from .facts_mgr_jump_day import FactsManager_JumpDay
-from .facts_mgr_jump_final import FactsManager_JumpFinal
-from .facts_mgr_jump_first import FactsManager_JumpFirst
+from .facts_mgr_fact_dec import FactsManager_FactDec
+from .facts_mgr_fact_inc import FactsManager_FactInc
+from .facts_mgr_gap import FactsManager_Gap
+from .facts_mgr_jump import FactsManager_Jump
+from .facts_mgr_jump_time import FactsManager_JumpTime
+from .facts_mgr_rift import FactsManager_Rift
+from .facts_mgr_rift_inc import FactsManager_RiftInc
+from .facts_mgr_rift_dec import FactsManager_RiftDec
 from .group_chained import GroupChained
 from .placeable_fact import PlaceableFact
 
@@ -34,27 +37,31 @@ __all__ = [
 
 
 class FactsManager(
-    FactsManager_Decrementer,
-    FactsManager_Incrementer,
-    FactsManager_JumpDay,
-    FactsManager_JumpFinal,
-    FactsManager_JumpFirst,
+    FactsManager_FactDec,
+    FactsManager_FactInc,
+    FactsManager_Gap,
+    FactsManager_Jump,
+    FactsManager_JumpTime,
+    FactsManager_Rift,
+    FactsManager_RiftDec,
+    FactsManager_RiftInc,
 ):
     """"""
 
     # ***
 
-    def __init__(self, controller):
+    def __init__(self, controller, on_jumped_fact, *args, **kwargs):
+        super(FactsManager, self).__init__(controller, *args, **kwargs)
+
         self.controller = controller
+        self.on_jumped_fact = on_jumped_fact
+        self.debug = controller.client_logger.debug
         self.groups = self.sorted_contiguous_facts_list()
         self.by_pk = {}
         self.last_fact_pk = 0
-
         self._curr_fact = None
         self.curr_group = None
         self.curr_index = None
-
-        self.jump_time_reference = None
 
     def sorted_contiguous_facts_list(self):
         sorted_contiguous_facts_list = SortedKeyList(
@@ -72,7 +79,6 @@ class FactsManager(
     def curr_fact(self, curr_fact):
         if self.curr_fact is curr_fact:
             return
-        self._jump_time_reference = None
         group, index = self.locate_fact(curr_fact)
         self._curr_fact = curr_fact
         self.curr_group = group
@@ -90,15 +96,19 @@ class FactsManager(
         index = group.index(some_fact)
         return group, index
 
+    # ***
+
     def update_fact(self, some_fact):
         def _update_fact():
             group, index = self.locate_fact(some_fact)
             old_fact = group[index]
             group[index] = some_fact
+
             # Fix group sorty_tuple key.
             self.curr_group_update_keys(index, some_fact)
             rewire_links(old_fact)
             self.by_pk[some_fact.pk] = some_fact
+
             rewire_curr(old_fact, group, index)
 
         def rewire_links(old_fact):
