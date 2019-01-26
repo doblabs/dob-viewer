@@ -163,7 +163,9 @@ class FactsManager(
 
     @property
     def debug__str(self):
-        return '█→ ' + ' ←██→ '.join([str(group) for group in self.groups]) + ' ←█'
+        return '  ' + '\n  '.join(
+            ['GRP #{}: {}'.format(idx, grp) for idx, grp in enumerate(self.groups)]
+        )
 
     # ***
 
