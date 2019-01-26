@@ -195,7 +195,7 @@ class Carousel(object):
     def prompt_fact_edits(self, used_prompt):
         try:
             used_prompt = self.user_prompt_edit_fact(used_prompt)
-        except KeyboardInterrupt as err:
+        except KeyboardInterrupt:
             self.enduring_edit = False
             self.confirm_exit = True
         else:
