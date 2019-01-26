@@ -30,7 +30,6 @@ from .facts_mgr_rift import FactsManager_Rift
 from .facts_mgr_rift_inc import FactsManager_RiftInc
 from .facts_mgr_rift_dec import FactsManager_RiftDec
 from .group_chained import GroupChained
-from .placeable_fact import PlaceableFact
 
 __all__ = [
     'FactsManager',
