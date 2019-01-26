@@ -154,8 +154,15 @@ def key_bonds_global(handler):
         KeyBond('home', action=handler.scroll_top),
         KeyBond('end', action=handler.scroll_bottom),
         #
+        # FIXME/BACKLOG/2019-01-24: FEATURE: Press 's' or 'e' 2nd time to clear time?
+        #   E.g., click 's' to start editing start, then 's' again to clear it.
         KeyBond('s', action=handler.edit_time_start),
         KeyBond('e', action=handler.edit_time_end),
+        #
+        # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
+        #   KeyBond('/', action=zone_lowdown.start_search),
+        # FIXME/BACKLOG: Filter feature.
+        #   (By tag; matching text; dates; days of the week; etc.)
     ]
     return key_bonds_global
 
@@ -164,8 +171,13 @@ def key_bonds_global(handler):
 
 def key_bonds_update(handler):
     key_bonds_update = [
-        #
+        # Raw Fact Editing. With a Capital E.
         KeyBond('E', action=handler.edit_fact),
+        # Edit act@gory, description, and tags using prompt__awesome.
+        # (lb): This is pretty cool. prompt_awesome was built first,
+        # and then I got comfortable with PPT and built the Carousel,
+        # and then I was able to stick one inside the other, and it's
+        # just awesome awesome now.
         KeyBond('a', action=handler.edit_actegory),
         KeyBond('d', action=handler.edit_description),
         KeyBond('t', action=handler.edit_tags),
@@ -174,25 +186,14 @@ def key_bonds_update(handler):
         KeyBond('s-right', action=handler.edit_time_increment_start),
         KeyBond('c-left', action=handler.edit_time_decrement_end),
         KeyBond('c-right', action=handler.edit_time_increment_end),
-        # Terminator: Shift+Ctrl+Left/+Right: Resize the terminal left/right.
+        # FIXME/2019-01-21: Can you check if running in Terminator
+        #  and warn-tell user. And/Or: Customize Key Binding feature.
+        # In Terminator: Shift+Ctrl+Left/+Right: Resize the terminal left/right.
+        #  (lb): I've disabled the 2 bindings in Terminator,
+        #   so this works for me... so fixing it is a low priority!
         KeyBond('c-s-left', action=handler.edit_time_decrement_both),
         KeyBond('c-s-right', action=handler.edit_time_increment_both),
         #
-        # (lb): 2018-06-28: Remaining are WIP. And I'm undecided on
-        #       bindings. Maybe Alt-key bindings for Split & Clear?
-        #       I like c-w and c-e because they're adjacent keys.
-        #       Or m-w and m-e could also work, and then Ctrl-W is
-        #       not confused with typical "close" command (whatever
-        #       that would mean in Carousel context).
-        # FIXME/2018-06-28: (lb): I'll clean this up. Eventually.
-        #
-        # KeyBond('c-p', action=handler.fact_split),
-        # KeyBond('c-w', action=handler.fact_split),
-        # KeyBond('c-t', action=handler.fact_split),
-        #
-        # KeyBond('c-e', action=handler.fact_wipe),
-        # KeyBond('m-w', action=handler.fact_wipe),
-        # KeyBond('c-a', action=handler.fact_wipe),
         KeyBond('m-p', action=handler.fact_split),
         KeyBond('m-e', action=handler.fact_wipe),
         #
@@ -200,8 +201,6 @@ def key_bonds_update(handler):
         KeyBond('c-x', action=handler.fact_cut),
         KeyBond('c-v', action=handler.fact_paste),
         #
-        # MAYBE/2018-07-19 09:07: Are these still useful bindings?
-        # KeyBond(('F', 'c-c'), action=handler.fact_copy_all),
         KeyBond(('A', 'c-c'), action=handler.fact_copy_activity),
         KeyBond(('T', 'c-c'), action=handler.fact_copy_tags),
         KeyBond(('D', 'c-c'), action=handler.fact_copy_description),
