@@ -55,7 +55,7 @@ class ZoneDetails_TimeStart(object):
 
     # ***
 
-    def apply_edit_time_removed_start(edit_fact):
+    def apply_edit_time_removed_start(self, edit_fact, passive=False):
         # Nothing ventured, nothing gained. Ignore deleted start. (We could
         # instead choose to do nothing, or choose to warn-tell user they're
         # an idiot and cannot clear the start time, or we could just behave
@@ -67,15 +67,51 @@ class ZoneDetails_TimeStart(object):
         self.widgets_start.text_area.text = edit_fact.start_fmt_local
         if passive:
             # User is tabbing away. We've reset the start, so let them.
-            return
+            return True
         # User hit 'enter'. Annoy them with a warning.
-        show_message_cannot_clear_start()
+        return False
 
     # ***
 
     def apply_edit_time_start(self, edit_fact, edit_time):
         if edit_fact.start == edit_time:
+            # Nothing changed.
             return False
-        edit_fact.start = edit_time
+        edited_facts = [edit_fact]
+        edits_manager = self.carousel.edits_manager
+        # Make undoable.
+        was_fact = edit_fact.copy()
+        undoable_facts = [was_fact]
+        # Prohibit completely shadowing other facts' time windows, but allow
+        # changing one fact's times to shorten the times of prev or next fact.
+        edit_prev = edits_manager.editable_fact_prev(edit_fact)
+        best_time = edit_time
+        if edit_prev and edit_prev.start and (best_time < edit_prev.start):
+            # MAGIC_NUMBER: Adjust adjacent fact's time to be no less that 1 minute.
+            #   MAYBE: Resurrect fact_min_delta and use in this context?
+            best_time = edit_prev.start + timedelta(minutes=1)
+            if edit_prev and edit_prev.end and (best_time > edit_prev.end):
+                best_time = edit_prev.end
+        edit_fact.start = best_time
+        # If the edited time encroached on the neighbor, or if the neighbor
+        # is an unedited gap fact, edit thy neighbor.
+        if edit_prev:
+            if (
+                (edit_fact.start < edit_prev.end)
+                or ('interval-gap' in edit_prev.dirty_reasons)
+            ):
+                undoable_facts.append(edit_prev.copy())
+                edit_prev.end = edit_fact.start
+                edited_facts.append(edit_prev)
+            if edit_fact.start == edit_prev.end:
+                edit_fact.prev_fact = edit_prev
+                edit_prev.next_fact = edit_fact
+            else:
+                edit_fact.prev_fact = None
+                edit_prev.next_fact = None
+        else:
+            edit_fact.prev_fact = None
+        edits_manager.add_undoable(undoable_facts, what='header-edit')
+        edits_manager.apply_edits(*edited_facts)
         return True
 
