@@ -183,9 +183,12 @@ class EditsManager(object):
 
     @property
     def prepared_facts(self):
+        """
+        Returns list of edited and new facts to persist (to database, export file, etc.).
+        """
         prepared_facts_from_edit = sorted_facts_list(self.edit_facts.values())
         prepared_facts_from_view = [
-            fact for fact in self.conjoined.facts if fact.pk < 0 or fact.dirty
+            fact for fact in self.conjoined.facts if fact.dirty
         ]
         self.controller.affirm(prepared_facts_from_edit == prepared_facts_from_view)
         return prepared_facts_from_edit
