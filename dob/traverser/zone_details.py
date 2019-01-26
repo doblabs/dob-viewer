@@ -270,8 +270,14 @@ class ZoneDetails(object):
         self.send_cursor_right_to_end(keyval_widgets.text_area.buffer)
         # Wire a few simple bindings for editing (mostly rely on PPT's VI mode.)
         self.carousel.action_manager.wire_keys_edit_time()
+
+        # FIXME/BACKLOG/2019-01-21: Config options: Make EditingMode configurable.
+        #
         # (lb): Will VI mode be useful? Perhaps for a little easy `r`eplace,
-        # among other helpful features? Note that you gotta 'escape' first.
+        #   among other helpful features? Note that you gotta 'escape' first.
+        # (lb): 2019-01-21: I think Ctrl-w is VI mode? Or readline?
+        #   Anyway, I like the Ctrl-w delete word feature, so want
+        #   to note that in docs per EditingMode, if it applies.
         self.carousel.zone_manager.application.editing_mode = EditingMode.VI
 
     # ***
@@ -333,6 +339,16 @@ class ZoneDetails(object):
         self.editable_was_edited = True
 
     # ***
+
+    # FIXME/BACKLOG/2019-01-21: Notify user if time changed to not delete adjacent.
+    #   - Test current behavior. Old hamster would delete facts if you extended one
+    #     and showed others. I don't like that behavior! User can delete Facts first,
+    #     and then fill in the empty time! (Or someone else can submit a PR so long
+    #     as the destructive behavior is not the default.)
+    #   - Probably use footer to show message; but could instead use popup modal.
+
+    # FIXME/BACKLOG/2019-01-21: Need way to cancel after editing time:
+    #   Possible key binding: ctrl-q, escape, q, etc.
 
     @catch_action_exception
     def editable_text_enter(self, event=None, passive=False):
@@ -456,12 +472,17 @@ class ZoneDetails(object):
             edited_fact_update_label_text()
 
         def edited_fact_conflicts(edit_fact):
+            # FIXME/2019-01-22: What's the story here? Should never have conflicts!
+            #   So do we need to call this function?
+            #   Also, if user has edited other facts, shouldn't other_edits be set?
             conflicts = must_complete_times(
                 self.carousel.controller,
                 new_facts=[edit_fact],
                 progress=None,
                 ongoing_okay=True,
                 leave_blanks=True,
+                # FIXME/2019-01-21: (lb): Do we need to send edit_mgr.edit_facts
+                #   or anything? Need to test/understand conflicts better.
                 other_edits={},
                 suppress_barf=True,
             )
