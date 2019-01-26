@@ -300,6 +300,7 @@ class Carousel(object):
     def cancel_command(self, event):
         """"""
         self.confirm_exit = True
+        self.enduring_edit = False
         event.app.exit()
 
     @catch_action_exception
@@ -325,6 +326,7 @@ class Carousel(object):
         #        Then again, how much do I care? Import should be rare.
         if not self.edits_manager.is_dirty:
             self.confirm_exit = True
+            self.enduring_edit = False
             event.app.exit()
 
     @catch_action_exception
