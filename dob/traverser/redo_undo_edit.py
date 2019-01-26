@@ -37,6 +37,7 @@ class RedoUndoEdit(object):
     """"""
     def __init__(self, edits_manager):
         self.controller = edits_manager.controller
+        self.debug = edits_manager.controller.client_logger.debug
         self.edits_manager = edits_manager
         self.undo = []
         self.redo = []
@@ -71,7 +72,8 @@ class RedoUndoEdit(object):
         latest_changes = self.undo_peek()
         if latest_changes.facts == some_facts:
             # Nothing changed.
-            self.undo.pop()
+            toss_changes = self.undo.pop()
+            self.debug('pop!: no.: {}'.format(len(toss_changes)))
         else:
             # Since we left something different on the undo, the redo is kaput.
             self.redo = []
@@ -81,6 +83,7 @@ class RedoUndoEdit(object):
     def undo_last_edit(self, restore_facts):
         try:
             undo_changes = self.undo.pop()
+            self.debug('pop!: no.: {}'.format(len(undo_changes)))
         except IndexError:
             undone = False
         else:
@@ -92,6 +95,7 @@ class RedoUndoEdit(object):
     def redo_last_undo(self, restore_facts):
         try:
             redo_changes = self.redo.pop()
+            self.debug('pop!: no.: {}'.format(len(redo_changes)))
         except IndexError:
             redone = False
         else:
@@ -101,9 +105,9 @@ class RedoUndoEdit(object):
         return redone
 
     def restore_facts(self, fact_changes, restore_facts):
-        edit_copies = restore_facts(fact_changes.facts)
+        were_facts = restore_facts(fact_changes.facts)
         latest_changes = UndoRedoTuple(
-            edit_copies, time=fact_changes.time, what=fact_changes.what,
+            were_facts, time=fact_changes.time, what=fact_changes.what,
         )
         return latest_changes
 
@@ -116,16 +120,24 @@ class RedoUndoEdit(object):
 
     def remove_undo_if_same_facts_edited(self, newest_changes):
         latest_changes = self.undo_peek()
+
         if latest_changes.what != newest_changes.what:
+            self.debug('!what: no.: {}'.format(len(newest_changes)))
             return newest_changes
+
         if (
             (time.time() - latest_changes.time)
             > RedoUndoEdit.DISTINCT_CHANGES_THRESHOLD
         ):
+            self.debug('!time: no.: {}'.format(len(newest_changes)))
             return newest_changes
 
         latest_pks = set([changed.pk for changed in latest_changes.facts])
         if latest_pks != set([edit_fact.pk for edit_fact in newest_changes.facts]):
+            self.debug('!pks: no.: {}'.format(len(newest_changes)))
             return newest_changes
-        return self.undo.pop()
+
+        latest_undo = self.undo.pop()
+        self.debug('pop!: no.: {}'.format(len(latest_undo)))
+        return latest_undo
 
