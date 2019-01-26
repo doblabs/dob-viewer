@@ -83,16 +83,14 @@ class GroupChained(object):
         if self is other:
             return True
         if (other is not None) and isinstance(other, GroupChained):
-            other = other.sorty_tuple
-        return self.sorty_tuple == other
+            other = other.times
+        return self.times == other
 
     def __gt__(self, other):
-        # Not called...
-        return self.sorty_tuple > other.sorty_tuple
+        return self.times > other.times
 
     def __lt__(self, other):
-        # Not called...
-        return self.sorty_tuple < other.sorty_tuple
+        return self.times < other.times
 
     # ***
 
