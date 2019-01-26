@@ -83,7 +83,10 @@ class EditsManager(object):
     def add_facts(self, more_facts):
         for fact in more_facts:
             if fact.orig_fact is None:
-                fact.orig_fact = fact  # (lb): Makes me dizzy.
+                # Rather than be self-referential and set, say, fact.orig_fact = fact,
+                # we use a magic placeholder, 0, that happens to be non-truthy, and
+                # indicates that this fact is the original, unedited copy of itself.
+                fact.orig_fact = 0
         self.conjoined.add_facts(more_facts)
 
     def setup_edit_facts(self, edit_facts):
@@ -132,7 +135,6 @@ class EditsManager(object):
             self.clipboard.reset_paste()
         self.conjoined.curr_fact = curr_fact
         self.viewed_fact_pks.add(curr_fact.pk)
-        self.controller.affirm(curr_fact.orig_fact is not None)
 
     @property
     def user_viewed_all_new_facts(self):
@@ -147,8 +149,7 @@ class EditsManager(object):
 
     @property
     def curr_orig(self):
-        curr_orig = self.curr_fact.orig_fact
-        return curr_orig
+        return self.curr_fact.orig_fact or self.curr_fact
 
     # ***
 
@@ -174,17 +175,39 @@ class EditsManager(object):
     # ***
 
     def editable_fact(self, ref_fact=None):
+        self.controller.client_logger.debug(
+            'ref_fact: {}'.format(ref_fact and ref_fact.short),
+        )
         # Copy Fact on demand for user to edit, if we haven't made one already.
+        # Note that ref_fact is only set from restore_edit_fact, i.e., a fact
+        # from the redo_undo stack.
         ref_fact = ref_fact or self.curr_fact
         try:
             edit_fact = self.edit_facts[ref_fact.pk]
+            # On dob-import, the original import facts are put in self.edit_facts.
+            # So make a copy if what's in edit_facts is the original. (Later, when
+            # update_lookups is called via update_edited_fact to update edit_facts,
+            # we'll reference this new copy (and this new copy will keep the orig_fact
+            # object alive).)
+            if not edit_fact.orig_fact:
+                self.controller.affirm(edit_fact.orig_fact is 0)
+                edit_fact = edit_fact.copy()
+            elif edit_fact is self.curr_fact:
+                # Don't edit the curr_fact, which is in conjoined.groups,
+                # because it could change conjoined.groups[].sorty_tuple,
+                # which then creates issues later when groups.index is
+                # called in conjoined.update_fact.
+                edit_fact = edit_fact.copy()
         except KeyError:
-            # 2018-07-30 21:57: Not sure we need orig_fact or not...
-            edit_fact = ref_fact.orig_fact.copy()
-            # (lb): Fact might later be placed in self.edit_facts via:
-            #  update_edited_fact, editable_fact_prev, editable_fact_next
-            # if the operation that needs edit_fact actually changes it.
-            # Because edit_facts stores edited facts that need to be saved.
+            # Use the latest version of the fact, not orig_fact.
+            edit_fact = ref_fact.copy()
+            self.controller.affirm(
+                (edit_fact.orig_fact is ref_fact)
+                or (edit_fact.orig_fact is ref_fact.orig_fact)
+            )
+            # (lb): Fact might later be placed in self.edit_facts via
+            # update_edited_fact if the operation that needs edit_fact
+            # actually changes it.
         return edit_fact
 
     def undoable_editable_fact(self, what, edit_fact=None):
@@ -221,7 +244,7 @@ class EditsManager(object):
         edit_fact.deleted = False
 
     def manage_edited_edit_facts(self, edit_fact):
-        orig_fact = edit_fact.orig_fact
+        orig_fact = edit_fact.orig_fact or edit_fact
         self.update_edited_fact(edit_fact, orig_fact)
 
     def update_edited_fact(self, edit_fact, orig_fact):
@@ -269,7 +292,7 @@ class EditsManager(object):
                 ref_time=self.controller.now,
             )
             self.controller.affirm(latest_fact is not None)
-            latest_fact.orig_fact = latest_fact
+            latest_fact.orig_fact = 0
             # FIXME: When latest_fact is None => what's empty carousel state?
             self.add_facts([latest_fact])
         return self.conjoined.groups[-1]
