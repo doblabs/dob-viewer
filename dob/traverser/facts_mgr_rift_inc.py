@@ -14,32 +14,28 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with 'dob'.  If not, see <http://www.gnu.org/licenses/>.
-"""FactsManager_JumpFinal"""
+"""FactsManager_RiftInc"""
 
 from __future__ import absolute_import, unicode_literals
 
 from ..cmds_list.fact import find_latest_fact
 
 __all__ = [
-    'FactsManager_JumpFinal',
+    'FactsManager_RiftInc',
 ]
 
 
-class FactsManager_JumpFinal(object):
+class FactsManager_RiftInc(object):
     """"""
-    def scroll_fact_last(self):
+    def jump_rift_inc(self):
         """"""
-        def _facts_mgr_jump_final():
-            self.client_logger_state('jump-final-start')
-            final_group, final_fact = group_latest(ceil_groups())
-            self.controller.affirm(final_fact.next_fact in [None, -1])
-            self._curr_fact = final_fact
-            self.curr_group = final_group
-            self.curr_index = len(self.groups[-1]) - 1
-            self.controller.affirm(self.curr_index >= 0)
-            self._jump_time_reference = None
-            self.client_logger_state('jump-final-after')
-            return final_fact
+        def _jump_rift_inc():
+            next_fact = self.find_rift_fact(is_next=True)
+            if next_fact is None:
+                _final_group, final_fact = group_latest(ceil_groups())
+                next_fact = final_fact
+                self.fulfill_jump(next_fact, reason='rift-inc')
+            return next_fact
 
         def ceil_groups():
             if (
@@ -72,7 +68,8 @@ class FactsManager_JumpFinal(object):
             final_fact = final_group[-1]
             if final_group is not self.groups[-1]:
                 return final_group, final_fact
-            if final_fact.next_fact is -1:
+            if final_group.until_time_stops:
+                # Look no further! (To test: press `G` a bunch.)
                 return final_group, final_fact
             self.controller.affirm(final_fact.next_fact is None)
             latest_fact = find_latest_fact(self.controller)
@@ -84,7 +81,7 @@ class FactsManager_JumpFinal(object):
                     self.controller.affirm(latest_fact.orig_fact is not None)
                 except KeyError:
                     self.controller.affirm(latest_fact.orig_fact is None)
-                    latest_fact.orig_fact = latest_fact
+                    latest_fact.orig_fact = 0
                     self.add_facts([latest_fact])
             if (
                 (not latest_fact)
@@ -92,16 +89,12 @@ class FactsManager_JumpFinal(object):
                 or (latest_fact.pk == final_fact.pk)
                 or (latest_fact < final_fact)
             ):
-                final_fact.next_fact = -1  # No more later Facts!
                 return final_group, final_fact
-            latest_fact.next_fact = -1
-            # If the new_facts were after latest_fact, we'll have
-            # loaded latest_fact, but we'll be showing the final
-            # new, next Fact.
+            # If the new_facts were after latest_fact, we'll have loaded
+            # latest_fact, but we'll be showing the final new, next Fact.
             final_group = self.groups[-1]
             latest_fact = final_group[-1]
-            latest_fact.next_fact = -1
             return final_group, latest_fact
 
-        return _facts_mgr_jump_final()
+        return _jump_rift_inc()
 
