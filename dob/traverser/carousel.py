@@ -30,6 +30,7 @@ from prompt_toolkit.eventloop import use_asyncio_event_loop
 from nark.helpers.dev.profiling import profile_elapsed
 
 from .action_manager import ActionManager
+from .dialog_overlay import show_message
 from .edits_manager import EditsManager
 from .update_handler import UpdateHandler
 from .zone_content import ZoneContent
@@ -68,6 +69,7 @@ class Carousel(object):
             edit_facts=edit_facts,
             orig_facts=orig_facts,
             dirty_callback=dirty_callback,
+            error_callback=self.error_callback,
         )
 
         self.action_manager = ActionManager(self)
@@ -358,4 +360,13 @@ class Carousel(object):
     def finish_command(self, event):
         """"""
         event.app.exit()
+
+    # ***
+
+    def error_callback(self, errmsg):
+        show_message(
+            self.zone_manager.root,
+            _('Wah wah'),
+            _("dob is buggy! {0}").format(errmsg),
+        )
 

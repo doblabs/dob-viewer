@@ -37,8 +37,10 @@ class EditsManager(object):
         edit_facts=None,
         orig_facts=None,
         dirty_callback=None,
+        error_callback=None,
     ):
         self.controller = controller
+        self.error_callback = error_callback
 
         self.setup_container(edit_facts, orig_facts)
 
