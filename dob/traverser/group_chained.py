@@ -22,6 +22,8 @@ from gettext import gettext as _
 
 from sortedcontainers import SortedKeyList
 
+from ..helpers import integer_range_groupify
+
 __all__ = [
     'GroupChained',
     'sorted_facts_list',
@@ -95,10 +97,28 @@ class GroupChained(object):
     # ***
 
     def __str__(self):
-        pks = [str(fact.pk) for fact in self.facts]
+        def range_str(grp):
+            if len(grp) == 0:
+                return 'No IDs!'
+            elif len(grp) == 1:
+                return '{}'.format(grp[0])
+            else:
+                lhs = grp[0]
+                rhs = grp[-1]
+                if grp[1] < 0:
+                    lhs, rhs = rhs, lhs
+                return '{} to {}'.format(lhs, rhs)
+
+        def assemble_pk_ranges():
+            pks = [str(fact.pk) for fact in self.facts]
+            grouped = integer_range_groupify(pks)
+            pk_ranges = ', '.join([range_str(grp) for grp in grouped])
+            return len(pks), pk_ranges
+
+        num_pks, pk_ranges = assemble_pk_ranges()
         return _(
             "‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}"
-        ).format(self.first_time, self.final_time, len(pks), ', '.join(pks))
+        ).format(self.time_since, self.time_until, num_pks, pk_ranges)
 
     @property
     def sorty_tuple(self):
