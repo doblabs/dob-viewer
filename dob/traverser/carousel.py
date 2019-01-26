@@ -114,46 +114,18 @@ class Carousel(object):
     # ***
 
     def setup_async(self):
-        # (lb): This doesn't need to run async, but maybe in the future?
-        # In fact, you shouldn't see any runtime difference except in the
-        # event an exception is raised, and then sometimes, after the our
-        # error handlers are the exception continues to raise, you half the
-        # time see additional output (but not always), such as:
-        #   Exception ignored in: <bound method BaseEventLoop.__del__
-        #       of <_UnixSelectorEventLoop running=False closed=True debug=False>>
-        #   Traceback (most recent call last):
-        #     File "/usr/lib/python3.5/asyncio/base_events.py", line 431, in __del__
-        #     File "/usr/lib/python3.5/asyncio/unix_events.py", line 58, in close
-        #     File ".../asyncio/unix_events.py", line 139, in remove_signal_handler
-        #     File "/usr/lib/python3.5/signal.py", line 47, in signal
-        #   TypeError: signal handler must be signal.SIG_IGN, signal.SIG_DFL,
-        #       or a callable object
-        #
-        # Argh. I'm getting a stack trace after importing and saving 100s of
-        # facts. Doesn't happen on smaller test file, just a really big actual
-        # factual live import file I have...
-        #
-        #  Exception ignored in: <bound method BaseEventLoop.__del__
-        #       of <_UnixSelectorEventLoop running=False closed=True debug=False>>
-        #  Traceback (most recent call last):
-        #    File "/usr/lib/python3.5/asyncio/base_events.py", line 431, in __del__
-        #    File "/usr/lib/python3.5/asyncio/unix_events.py", line 58, in close
-        #    File "/usr/lib/python3.5/asyncio/unix_events.py", line 139,
-        #           in remove_signal_handler
-        #    File "/usr/lib/python3.5/signal.py", line 47, in signal
-        #  TypeError: signal handler must be signal.SIG_IGN, signal.SIG_DFL,
-        #    or a callable object
-        #
-        # I looked at the PPT docs but didn't glean much.
-        #
-        #   https://python-prompt-toolkit.readthedocs.io/
-        #     en/2.0/pages/advanced_topics/asyncio.html
-        #
-        # And I'm not really versed in asyncio... so, well, disable this.
-        self.async_enable = True
+        # 2019-01-25: (lb): We run asynchronously to support such features as
+        # tick_tock_now, which keeps the ongoing fact's end clock time updated.
+        # However, working with asyncio can be somewhat tricky. So, should you
+        # need to disable it, here's a switch.
+        self._async_enable = True
         self._confirm_exit = False
         self.asyncio_future1 = None
         self.asyncio_future2 = None
+
+    @property
+    def async_enable(self):
+        return self._async_enable
 
     @property
     def confirm_exit(self):
