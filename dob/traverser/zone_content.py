@@ -167,14 +167,21 @@ class ZoneContent(object):
     @catch_action_exception
     def scroll_down(self, event):
         """"""
+        view_height = self.view_height()
+        self.content.buffer.cursor_down(view_height)
+        self.reset_cursor_left_column()
+
+    def view_height(self):
         view_height = self.scrollable_height - 1
         if self.content.buffer.document.cursor_position_row == 0:
             # If cursor is at home posit, first page down moves cursor
             # to bottom of view. So scroll additional page, otherwise
             # user would have to press PageDown twice to see more text.
             view_height *= 2
-        self.content.buffer.cursor_down(view_height)
-        self.reset_cursor_left_column()
+        self.carousel.controller.client_logger.debug(
+            'view_height: {}'.format(view_height)
+        )
+        return view_height
 
     @catch_action_exception
     def scroll_up(self, event):
