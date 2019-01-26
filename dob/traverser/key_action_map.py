@@ -174,6 +174,22 @@ class KeyActionMap(object):
     # #### Key bindings wired by key_bonds_update().
 
     @Decorators.debug_log_trace_enter_leave
+    def edit_fact(self, event):
+        self.update_handler.edit_fact(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_actegory(self, event):
+        self.update_handler.edit_actegory(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_description(self, event):
+        self.update_handler.edit_description(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_tags(self, event):
+        self.update_handler.edit_tags(event)
+
+    @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_start(self, event):
         self.update_handler.edit_time_decrement_start(event)
 
@@ -228,4 +244,19 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def fact_copy_description(self, event):
         self.update_handler.fact_copy_description(event)
+
+    # #### Key bindings wired by key_bonds_undo_redo().
+
+    @Decorators.debug_log_trace_enter_leave
+    def undo_command(self, event):
+        self.update_handler.undo_command(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def redo_command(self, event):
+        self.update_handler.redo_command(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def fact_reset_fact(self, event):
+        self.update_handler.fact_reset_fact(event)
+
 
