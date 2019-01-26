@@ -486,7 +486,7 @@ class ZoneDetails(object):
         def show_message_cannot_clear_start():
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Well poop'),
+                _('Try again'),
                 _(
                     "You may not clear a Fact's start time.\n\n"
                     "Enter a valid date and time, clock time, or relative time."
@@ -496,14 +496,14 @@ class ZoneDetails(object):
         def show_message_cannot_clear_end():
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Well poop'),
+                _('You lose'),
                 _("You may not clear a Fact's end time unless it is the final Fact."),
             )
 
         def show_message_cannot_parse_time(edit_text):
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Well poop'),
+                _('Wah wah'),
                 _("Did not compute: {0}").format(edit_text),
             )
 
