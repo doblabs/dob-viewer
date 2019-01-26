@@ -91,8 +91,8 @@ class ZoneDetails(
         def add_meta_lines():
             # Skipping: add_header_midpoint.
             add_header_duration()
-            add_header_start_time()
-            add_header_end_time()
+            self.add_header_start_time()
+            self.add_header_end_time()
             # Skipping: add_header_fact_pk.
             # Skipping: add_header_deleted.
             # Skipping: add_header_split_from.
@@ -353,10 +353,16 @@ class ZoneDetails(
 
         def apply_edit_time_removed(edit_fact):
             if self.active_widgets is self.widgets_start:
-                apply_edit_time_removed_start(edit_fact)
+                okay = self.apply_edit_time_removed_start(edit_fact, passive)
+                if not okay:
+                    # User hit 'enter'. Annoy them with a warning.
+                    show_message_cannot_clear_start()
             else:
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
-                apply_edit_time_removed_end(edit_fact)
+                okay = self.apply_edit_time_removed_end(edit_fact)
+                if not okay:
+                    # Always warn user, whether they hit 'enter' or are tabbing away.
+                    show_message_cannot_clear_end()
 
         # ***
 
@@ -371,10 +377,10 @@ class ZoneDetails(
         def apply_edit_time_valid(edit_fact, edit_time):
             was_fact = edit_fact.copy()
             if self.active_widgets is self.widgets_start:
-                applied = apply_edit_time_start(edit_fact, edit_time)
+                applied = self.apply_edit_time_start(edit_fact, edit_time)
             else:
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
-                applied = apply_edit_time_end(edit_fact, edit_time)
+                applied = self.apply_edit_time_end(edit_fact, edit_time)
             check_conflicts_and_confirm(edit_fact, was_fact, applied)
 
         def check_conflicts_and_confirm(edit_fact, was_fact, applied):
