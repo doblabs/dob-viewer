@@ -99,7 +99,7 @@ class ZoneDetails(object):
         # ***
 
         def add_header_duration():
-            self.label_duration = add_header_parts('duration')
+            self.label_duration = self.add_header_parts('duration')
 
         def add_header_start_time():
             self.widgets_start = add_header_parts(
@@ -112,13 +112,19 @@ class ZoneDetails(object):
             )
 
         def add_header_activity():
-            self.widgets_activity = add_header_parts('activity', 'activity_name')
+            self.widgets_activity = self.add_header_parts('activity', 'activity_name')
 
         def add_header_category():
-            self.widgets_category = add_header_parts('category', 'category_name')
+            self.widgets_category = self.add_header_parts('category', 'category_name')
 
         def add_header_tags():
-            self.widgets_tags = add_header_parts(
+            # FIXME/BACKLOG/2018-07-19: Long tags can extend width,
+            #   but do not wrap the line. Need to manually break?
+            #   See: wrap_on_whitespace_maybe
+            # FIXME/2018-07-28: Fix tags display: with 2+ tags, inserting
+            #   newlines makes the height dance. But keeping for now, as not
+            #   many Facts (o' mine) with two or more tags.
+            self.widgets_tags = self.add_header_parts(
                 'tags',
                 'tags_tuples',
                 split_lines=True,
@@ -131,27 +137,6 @@ class ZoneDetails(object):
 
         # ***
 
-        def add_header_parts(show_name, fact_attr=None, editable=False, **kwargs):
-            keyval_parts = ZoneDetails.HeaderKeyVal(
-                index=len(self.children),
-                fact_attr=fact_attr,
-                diff_kwargs=kwargs,
-                key_parts=self.make_header_name_parts(show_name),
-                val_label=self.make_header_label(),
-                text_area=TextArea(height=1) if editable else None,
-            )
-            self.children.append(
-                VSplit(
-                    children=[
-                        *keyval_parts.key_parts,
-                        keyval_parts.val_label,
-                    ],
-                )
-            )
-            return keyval_parts
-
-        # ***
-
         def build_container():
             details_container = HSplit(children=self.children)
             return details_container
@@ -159,6 +144,27 @@ class ZoneDetails(object):
         # ***
 
         return _rebuild_viewable()
+
+    # ***
+
+    def add_header_parts(self, show_name, fact_attr=None, editable=False, **kwargs):
+        keyval_parts = ZoneDetails.HeaderKeyVal(
+            index=len(self.children),
+            fact_attr=fact_attr,
+            diff_kwargs=kwargs,
+            key_parts=self.make_header_name_parts(show_name),
+            val_label=self.make_header_label(),
+            text_area=TextArea(height=1) if editable else None,
+        )
+        self.children.append(
+            VSplit(
+                children=[
+                    *keyval_parts.key_parts,
+                    keyval_parts.val_label,
+                ],
+            )
+        )
+        return keyval_parts
 
     # ***
 
