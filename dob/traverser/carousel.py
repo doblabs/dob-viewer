@@ -351,3 +351,40 @@ class Carousel(object):
             _('{0}').format(errmsg),
         )
 
+    # ***
+
+    def dev_breakpoint(self, event):
+        if not self.controller.client_config['devmode']:
+            self.controller.client_logger.warning(
+                _('Please enable ‘devmode’ to use live debugging.')
+            )
+            return
+        self.pdb_set_trace(event)
+
+    def pdb_set_trace(self, event):
+        import pdb
+        # Just some convenience variables for the developer.
+        # F841: local variable '...' is assigned to but never used
+        edits = self.edits_manager  # noqa: F841
+        facts = self.edits_manager.conjoined  # noqa: F841
+        groups = self.edits_manager.conjoined.groups  # noqa: F841
+        # Reset terminal I/O to fix interactive pdb stdin echo.
+        self.pdb_break_enter()
+        pdb.set_trace()
+        pass  # Poke around; print variables; then [c]ontinue.
+        self.pdb_break_leave(event)
+
+    def pdb_break_enter(self):
+        self.controller.pdb_break_enter()
+
+    def pdb_break_leave(self, event=None):
+        self.controller.pdb_break_leave()
+        # Redraw everything. But don't both with invalidate, e.g.,:
+        #   self.carousel.zone_manager.application.invalidate()
+        # but rather find the renderer and clear that.
+        # This'll also reset the cursor, so nice!
+        self.controller.affirm(
+            (event is None) or (event.app is self.zone_manager.application),
+        )
+        self.zone_manager.application.renderer.clear()
+
