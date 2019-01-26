@@ -90,6 +90,8 @@ class UpdateHandler(object):
     @ZoneContent.Decorators.reset_showing_help
     def fact_split(self, event):
         """"""
+        self.carousel.controller.affirm(False)  # FIXME: Implement.
+
         self.zone_manager.rebuild_viewable()
         pass  # FIXME: Implement
         # FIXME/2019-01-15 13:51: For undo/redo, you'll need to leave
@@ -109,6 +111,7 @@ class UpdateHandler(object):
     @ZoneContent.Decorators.reset_showing_help
     def fact_cut(self, event):
         """"""
+        self.carousel.controller.affirm(False)  # FIXME: Implement.
         self.zone_manager.rebuild_viewable()
         pass  # FIXME: Implement
 
