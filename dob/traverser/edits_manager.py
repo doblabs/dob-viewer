@@ -272,45 +272,41 @@ class EditsManager(object):
         self.update_edited_fact(edit_fact, orig_fact)
 
     def update_edited_fact(self, edit_fact, orig_fact):
-        def _update_edited_fact():
-            self.controller.affirm(edit_fact.pk == orig_fact.pk)
-            self.controller.affirm(edit_fact is not orig_fact)
-            if edit_fact != orig_fact:
-                update_lookups(edit_fact)
-            else:
-                remove_unedited(orig_fact.pk)
-
-        def update_lookups(edit_fact):
+        self.controller.affirm(edit_fact is not orig_fact)
+        self.controller.affirm(edit_fact.pk == orig_fact.pk)
+        if edit_fact.dirty:
+            # Update or add reference to latest edit.
             self.edit_facts[edit_fact.pk] = edit_fact
-            self.conjoined.update_fact(edit_fact)
-
-        def remove_unedited(fact_pk):
+        else:
+            self.controller.affirm(not orig_fact.dirty)
             try:
                 # Forget edited fact that's no longer different than orig.
-                self.edit_facts.pop(fact_pk)  # Ignoring: popped fact.
+                self.edit_facts.pop(orig_fact.pk)  # Ignoring: popped fact.
             except KeyError:
                 pass
-            self.conjoined.factory_reset(fact_pk)
-
-        _update_edited_fact()
+        # Always update the facts_manager, no matter edit_facts.
+        self.conjoined.update_fact(edit_fact)
 
     # ***
 
     def stand_up(self):
-        self.prepare_curr_fact()
+        def _standup():
+            assert len(self.conjoined.groups) > 0
+            assert len(self.conjoined.groups[0]) > 0
+            ensure_view_facts()
+            self.conjoined.place_time_rifts()
+            self.curr_fact = self.conjoined.find_first_dirty()
 
-    def prepare_curr_fact(self):
-        last_group = self.ensure_view_facts()
-        first_last_fact = last_group[0]
-        if first_last_fact.unstored:
-            # Importing new facts; start with the first.
-            self.curr_fact = first_last_fact
-        else:
-            # Editing existing facts; start with the latest.
-            self.curr_fact = last_group[-1]
+        def ensure_view_facts():
+            """
+            Ensure at least 1 fact is loaded, because
+            there is no empty Carousel state!.
+            """
+            if len(list(self.conjoined.facts)):
+                return
+            at_least_load_latest_fact()
 
-    def ensure_view_facts(self):
-        if not len(list(self.conjoined.facts)):
+        def at_least_load_latest_fact():
             self.controller.affirm(len(self.conjoined.groups) == 0)
             latest_fact = self.controller.facts.antecedent(
                 ref_time=self.controller.now,
@@ -319,7 +315,8 @@ class EditsManager(object):
             latest_fact.orig_fact = 0
             # FIXME: When latest_fact is None => what's empty carousel state?
             self.add_facts([latest_fact])
-        return self.conjoined.groups[-1]
+
+        return _standup()
 
     # ***
 
