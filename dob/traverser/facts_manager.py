@@ -109,23 +109,32 @@ class FactsManager(
     def update_fact(self, some_fact):
         def _update_fact():
             group, index = self.locate_fact(some_fact)
+            groups_index = self.groups.index(group)
+
             old_fact = group[index]
             group[index] = some_fact
 
             # Fix group sorty_tuple key.
-            self.curr_group_update_keys(index, some_fact)
+            self.contiguous_group_update_keys(group, groups_index, some_fact)
+
             rewire_links(old_fact)
+
+            self.controller.affirm(self.by_pk[some_fact.pk] is some_fact)
             self.by_pk[some_fact.pk] = some_fact
 
             rewire_curr(old_fact, group, index)
 
         def rewire_links(old_fact):
-            some_fact.prev_fact = old_fact.prev_fact
-            some_fact.next_fact = old_fact.next_fact
-            if old_fact.prev_fact is not None:
-                old_fact.prev_fact.next_fact = some_fact
-            if old_fact.next_fact is not None:
-                old_fact.next_fact.prev_fact = some_fact
+            if old_fact.has_prev_fact:
+                some_fact.prev_fact = old_fact.prev_fact
+            if old_fact.has_next_fact:
+                some_fact.next_fact = old_fact.next_fact
+
+            if some_fact.has_prev_fact:
+                some_fact.prev_fact.next_fact = some_fact
+
+            if some_fact.has_next_fact:
+                some_fact.next_fact.prev_fact = some_fact
 
         def rewire_curr(old_fact, group, index):
             if self._curr_fact is old_fact:
@@ -260,11 +269,26 @@ class FactsManager(
             self.curr_group.add(some_fact)
             self.by_pk[some_fact.pk] = some_fact
 
-    def curr_group_update_keys(self, group_index, *facts):
-        self.groups.pop(group_index)
-        for some_fact in facts:
-            self.by_pk[some_fact.pk] = some_fact
-        self.groups.add(self.curr_group)
+    def new_fact_wire_links(self, some_fact):
+        # FIXME/2019-01-21: (lb): Momentaneous fact wiring needs to be special!
+        self.controller.affirm(some_fact.start != some_fact.end)
+        if self.curr_fact.start == some_fact.end:
+            self.controller.affirm(self.curr_fact.prev_fact is None)
+            self.curr_fact.prev_fact = some_fact
+            some_fact.next_fact = self.curr_fact
+        if self.curr_fact.end == some_fact.start:
+            self.controller.affirm(self.curr_fact.next_fact is None)
+            self.curr_fact.next_fact = some_fact
+            some_fact.prev_fact = self.curr_fact
+
+    def contiguous_group_update_keys(self, group, groups_index, *facts):
+        with self.curr_group_rekeyed(group, groups_index):
+            for some_fact in facts:
+                # We already know about the facts, right? Just re-pointed at edited fact?
+                self.controller.affirm(some_fact.pk in self.by_pk)
+                self.by_pk[some_fact.pk] = some_fact
+
+    # ***
 
     @property
     def facts(self):
