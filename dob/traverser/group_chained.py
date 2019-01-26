@@ -74,6 +74,11 @@ class GroupChained(object):
             # value is a (Placeable)Fact.
             self.facts.add(value)
 
+    # ***
+
+    def __iter__(self):
+        return iter(self.facts)
+
     def __len__(self):
         return len(self.facts)
 
