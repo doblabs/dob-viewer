@@ -172,12 +172,12 @@ class EditsManager(object):
     # ***
 
     @property
-    def curr_fact_group_count(self):
-        return len(self.conjoined.curr_group)
+    def edit_fact_count(self):
+        return len(self.edit_facts)
 
     @property
-    def curr_fact_group_index(self):
-        return self.conjoined.group_index
+    def edit_fact_index(self):
+        return sorted_facts_list(self.edit_facts.values()).index(self.curr_fact)
 
     # ***
 
