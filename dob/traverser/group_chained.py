@@ -31,7 +31,10 @@ __all__ = [
 def sorted_facts_list(facts=None):
     sorted_facts_list = SortedKeyList(
         iterable=facts,
-        key=lambda item: item.sorty_tuple,
+        # Use sorty_times, not sorty_tuple, to ignore PKs. Otherwise, two facts
+        # with the same PK would not appear as equivalent, which would make the
+        # fact-finding insertion/update/removal code less easily maintainable.
+        key=lambda item: item.sorty_times,
     )
     return sorted_facts_list
 
