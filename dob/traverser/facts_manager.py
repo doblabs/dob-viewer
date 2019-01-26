@@ -83,6 +83,11 @@ class FactsManager(
         self._curr_fact = curr_fact
         self.curr_group = group
         self.curr_index = index
+        # (lb): 2019-01-21: This seems unnecessary, but why not.
+        #   "In the name of coveragggggggggge!!!!!!!"
+        # 2019-01-23: Hahaha, it fired on self.curr_group.time_since not
+        #   having been extended after collapse_group! Hooray, affirm usage!
+        self.controller.affirm(self.curr_group.contains_fact_time([curr_fact]))
 
     def locate_fact(self, some_fact):
         insert_at = self.groups.bisect_key_left(some_fact.sorty_tuple)
