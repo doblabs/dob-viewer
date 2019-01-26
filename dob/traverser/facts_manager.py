@@ -247,11 +247,18 @@ class FactsManager(
         )
 
     def curr_group_add(self, some_fact):
-        # Ensures that self.groups._keys is up to date.
-        self.groups.remove(self.curr_group)
-        self.curr_group.add(some_fact)
-        self.by_pk[some_fact.pk] = some_fact
-        self.groups.add(self.curr_group)
+        # The new fact is not yet wired.
+        self.controller.affirm(some_fact.next_fact is None)
+        self.controller.affirm(some_fact.prev_fact is None)
+        # The new fact is not a known fact. (Because of groups'
+        # time_since/time_until windows, we shouldn't find Facts
+        # from the store amongst open time whose PKs we've seen.)
+        self.controller.affirm(some_fact.pk not in self.by_pk.keys())
+        self.new_fact_wire_links(some_fact)
+
+        with self.curr_group_rekeyed():
+            self.curr_group.add(some_fact)
+            self.by_pk[some_fact.pk] = some_fact
 
     def curr_group_update_keys(self, group_index, *facts):
         self.groups.pop(group_index)
