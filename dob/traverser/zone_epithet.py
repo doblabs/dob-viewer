@@ -18,8 +18,6 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from gettext import gettext as _
-
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 
@@ -34,6 +32,9 @@ class ZoneEpithet(object):
         self.carousel = carousel
 
     def standup(self):
+        # FIXME/2019-01-21: Old comment: "Rename style key".
+        #   Probably compile list of style names first
+        #   and make sure they each fit a common theme.
         self.header_help_style = self.carousel.chosen_style['header-help_text']
 
     # ***
@@ -86,50 +87,6 @@ class ZoneEpithet(object):
         tod_humanize = self.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
         self.interval_banner.text = self.bannerize(interval_text)
-
-    # ***
-
-    def basic_instructions(self):
-        def _basic_instructions():
-            help_text = colorful_banner_town()
-            parts = []
-            parts += [('', '\n')]
-            parts += [(self.header_help_style, help_text)]
-            parts += [('', '\n')]
-            return parts
-
-        def helpful_instructions():
-            if self.carousel.edits_manager.new_facts:
-                instruct = _("Verify facts being imported.")
-            else:
-                instruct = _("Browse and edit facts.")
-            help_text = '{} {}'.format(
-                instruct,
-                _("Press '?' for complete help. Ctrl-S to save, or Ctrl-C to quit."),
-            )
-            return help_text
-
-        def colorful_banner_town():
-            banner = '''
-╔═════════════════════════════════════════════════════════════════════════════════╗
-║ ╭─────────────────────────────────────────────────────────────────────────────╮ ║
-║ │                    A dob a day keeps the Hamsters at bay                    │ ║
-║ ╰─────────────────────────────────────────────────────────────────────────────╯ ║
-╚═════════════════════════════════════════════════════════════════════════════════╝
-            '''.strip()
-            banner = '''
-  ╭─────────────────────────────────────────────────────────────────────────────╮
-  │                    A dob a day keeps the Hamsters at bay                    │
-  ╰─────────────────────────────────────────────────────────────────────────────╯
-            '''.lstrip("\n").rstrip()
-            banner = '''
-╭─────────────────────────────────────────────────────────────────────────────────────────╮
-│                         A dob a day keeps the Hamsters at bay                           │
-╰─────────────────────────────────────────────────────────────────────────────────────────╯
-            '''.lstrip("\n").rstrip()  # noqa: E501 line too long (91 > 89 characters)
-            return banner
-
-        return _basic_instructions()
 
     # ***
 
