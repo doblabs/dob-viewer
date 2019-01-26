@@ -18,6 +18,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from contextlib import contextmanager
 from sortedcontainers import SortedKeyList
 
 from .facts_mgr_fact_dec import FactsManager_FactDec
@@ -178,6 +179,72 @@ class FactsManager(
             group_chained = GroupChained(facts)
             self.groups.add(group_chained)
         return
+
+    # ***
+
+    @contextmanager
+    def curr_group_rekeyed(self, group=None, group_index=None):
+        # Ensures that self.groups._keys is up to date.
+
+        # The group's facts order should not change, but the group's
+        # key might change, if some_fact is being prepended to the
+        # group, because self.curr_group.facts[0].sorty_tuple.
+        # As such, remove and re-add the group, so that SortedKeyList
+        # can update, e.g., self.groups._maxes is set when a group is
+        # updated, so really a group is invariant once it's added to
+        # the sorted list. (If we didn't re-add the group, things happen,
+        # like, self.groups.index(self.curr_group) will not find the
+        # group if its sorty_tuple < _maxes.)
+        group = group or self.curr_group
+        if group_index is None:
+            # MAYBE/2019-01-21: self.groups.index will raise ValueError
+            #  if you edited the first or final fact while the group is
+            #  still part of the sorted_contiguous_facts_list() container.
+            # This is not, like, a moral issue, or anything, but for the
+            #  sake of our code, anything that changes the group should
+            #  be aware of this.
+            # However, if we find that maintaining the code as such starts
+            #  to become painful -- should this dance become more difficult
+            #  -- we could fallback and walk self.groups for an object match.
+            try:
+                group_index = self.groups.index(group)
+            except ValueError:
+                # MAYBE/2019-01-21: See long comment from a few lines back.
+                #  Look for exact group object match (i.e., instead of using
+                #  sorty_tuple value). This is because groups.index uses
+                #  _maxes and compares key values, ignoring object identity.
+                #   and group.sorty_tuple changes based on its facts, and
+                #   when we extend the time window. (lb): Log comment....
+                self.controller.affirm(False)  # Unexpected path, but may work:
+                for idx, grp in enumerate(self.groups):
+                    if grp is group:
+                        group_index = idx
+                        break
+                if group_index is None:
+                    raise
+
+        if group_index is not None:
+            # NOTE: Use pop(), specifying an index, rather than remove(),
+            #       which uses a key value, because sorty_tuple might already
+            #       be invalid.
+            self.groups.pop(group_index)
+
+        yield
+
+        self.groups.add(group)
+
+        now_group_index = self.groups.index(group)
+        self.controller.affirm(
+            (group_index is None) or (group_index == now_group_index)
+        )
+
+        # Caller is responsible for wiring prev/next references.
+
+        self.debug(
+            '\n- group.sorty_tuple: {}\n-    groups._maxes: {}'.format(
+                group.sorty_tuple, self.groups._maxes,
+            )
+        )
 
     def curr_group_add(self, some_fact):
         # Ensures that self.groups._keys is up to date.
