@@ -462,29 +462,28 @@ class ZoneDetails(object):
 
         def edited_fact_check_conflicts(edit_fact, was_fact):
             conflicts = edited_fact_conflicts(edit_fact)
+            # (lb): 2019-01-21: This code is untested
+            #   and should be unreachable, because the
+            #   apply_edit_time_start/apply_edit_time_end
+            #   functions will not allow conflicts. At
+            #   least not as currently writ.
+            self.controller.affirm(not conflicts)
             if not ask_user_confirm_conflicts(conflicts):
-                # Not confirmed! Leave the edit widget date unchanged.
-                edit_fact = was_fact
-                return
-            allow_momentaneous = self.carousel.controller.config['allow_momentaneous']
-            # FIXME: Do not ignore return value, resolved/edited_conflicts.
-            resolve_overlapping(
-                edit_fact,
-                conflicts,
-                squash_sep='??',
-                allow_momentaneous=allow_momentaneous,
-            )
-            conflicts = insert_forcefully(
-                self.carousel.controller, edit_fact, DEFAULT_SQUASH_SEP,
-            )
-            if not ask_user_confirm_conflicts(conflicts):
-                # Not confirmed! Leave the edit widget date unchanged.
-                edit_fact = was_fact
-                return
-            edits_manager = self.carousel.edits_manager
-            edits_manager.add_undoable([was_fact], what='header-edit')
-            edits_manager.apply_edits(edit_fact)
-            edited_fact_update_label_text()
+                # (lb): 2019-01-21: Interface prevents (precludes) conflicts.
+                assert False
+                # Otherwise we might want to do, say:
+                #   # Not confirmed! Leave the edit widget date unchanged.
+                #   edit_fact = was_fact
+                #   return
+
+            # FIXME/2019-01-21: Test creating conflicts
+            #   (probably by using edit-raw-fact feature 'E'
+            #   so you can set start and end simultaneously).
+            # (lb): FIXME: I'm guessing we don't look for conflicts correctly.
+            # - Look for overlap with fact_manager.groups time_since/time_until,
+            # - and then look in store for time window not covered by groups.
+            # - then either shorten edited fact to fit available time,
+            #    or if no available time then show error message.
 
         def edited_fact_conflicts(edit_fact):
             # FIXME/2019-01-22: What's the story here? Should never have conflicts!
@@ -494,7 +493,6 @@ class ZoneDetails(object):
                 self.carousel.controller,
                 new_facts=[edit_fact],
                 progress=None,
-                ongoing_okay=True,
                 leave_blanks=True,
                 # FIXME/2019-01-21: (lb): Do we need to send edit_mgr.edit_facts
                 #   or anything? Need to test/understand conflicts better.
@@ -509,8 +507,16 @@ class ZoneDetails(object):
         def ask_user_confirm_conflicts(conflicts):
             if not conflicts:
                 return True
-            # FIXME: Implement this.
-            return False
+            # (lb): User should never encounter conflicts from within the
+            # Carousel, at least that's my current thinking. The user could
+            # encounter conflicts on import, or inserting or editing using
+            # the command line. But we can prevent conflicts from within the
+            # interface -- by disallowing start and end edits that would be
+            # destructive -- and the user can delete or otherwise move facts
+            # around in other ways to avoid ever needing this behaviour.
+            # FIXME/2019-01-21 22:29: TEST: Edit raw fact and make start/end
+            #   overlap existing Facts from store and/or Carousel.
+            assert False
 
         def edited_fact_update_label_text():
             if self.active_widgets is self.widgets_start:
