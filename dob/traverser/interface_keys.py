@@ -195,7 +195,7 @@ def key_bonds_update(handler):
         KeyBond('c-s-right', action=handler.edit_time_increment_both),
         #
         KeyBond('m-p', action=handler.fact_split),
-        KeyBond('m-e', action=handler.fact_wipe),
+        KeyBond('m-e', action=handler.fact_erase),
         #
         KeyBond('c-c', action=handler.fact_copy_fact),
         KeyBond('c-x', action=handler.fact_cut),

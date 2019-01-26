@@ -218,8 +218,8 @@ class KeyActionMap(object):
         self.update_handler.fact_split(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def fact_wipe(self, event):
-        self.update_handler.fact_wipe(event)
+    def fact_erase(self, event):
+        self.update_handler.fact_erase(event)
 
     @Decorators.debug_log_trace_enter_leave
     def fact_copy_fact(self, event):

@@ -82,9 +82,10 @@ class UpdateHandler(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def fact_wipe(self, event):
+    def fact_erase(self, event):
         """"""
         # FIXME: Implement with undo, or provide other way to recover.
+        self.carousel.controller.affirm(False)  # FIXME: Implement.
         self.zone_manager.rebuild_viewable()
         pass  # FIXME: Implement
 
