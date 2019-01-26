@@ -105,6 +105,9 @@ class ZoneContent(object):
             content_width -= 1
             return content_width
 
+        # FIXME/BACKLOG/2019-01-21: Another old comment:
+        #   Make `lexer` style option... or config option.
+
         def content_text_area(content_width):
             # Layout for displaying Fact description.
             # The Frame creates the border.
@@ -249,6 +252,11 @@ class ZoneContent(object):
         return content_text
 
     def wrap_on_whitespace_maybe(self, content_text):
+        # FIXME/BACKLOG/2019-01-21: Old comment:
+        #   Make KeyBinding for toggling wrapping.
+        #        Ideally, 3 options: wrap, no wrap, scrollbar.
+        #          For now, wrap and no-wrap,
+        #            (lb): b/c I do not know if horizontal scrollbar is easily doable.
         if not self.enable_wrapping:
             return content_text
         lines_wrapped = ''
