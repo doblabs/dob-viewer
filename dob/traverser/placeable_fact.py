@@ -58,7 +58,7 @@ class PlaceableFact(Fact):
         new_fact = super(PlaceableFact, self).copy(*args, **kwargs)
         new_fact.dirty_reasons = set(list(self.dirty_reasons))
         new_fact.parsed_source = self.parsed_source
-        new_fact.orig_fact = self.orig_fact
+        new_fact.orig_fact = self.orig_fact or self
         # SKIP: next_fact, prev_fact.
         return new_fact
 
