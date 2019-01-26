@@ -97,22 +97,23 @@ def key_bonds_global(handler):
     key_bonds_global = [
         KeyBond('?', action=handler.rotate_help),
         #
-        KeyBond('j', action=handler.scroll_left),
-        KeyBond('k', action=handler.scroll_right),
-        KeyBond(Keys.Left, action=handler.scroll_left),
-        KeyBond(Keys.Right, action=handler.scroll_right),
+        KeyBond('j', action=handler.jump_fact_dec),
+        KeyBond('k', action=handler.jump_fact_inc),
+        KeyBond(Keys.Left, action=handler.jump_fact_dec),
+        KeyBond(Keys.Right, action=handler.jump_fact_inc),
         #
+        KeyBond('J', action=handler.jump_day_dec),
+        KeyBond('K', action=handler.jump_day_inc),
         # NOTE: It's not, say, 'm-left', but Escape-Arrow.
         # Ahahahaha, alt-arrows are special to Terminator, durp!
-        KeyBond((Keys.Escape, Keys.Left), action=handler.scroll_left_day),
-        KeyBond((Keys.Escape, Keys.Right), action=handler.scroll_right_day),
-        KeyBond('J', action=handler.scroll_left_day),
-        KeyBond('K', action=handler.scroll_right_day),
+        KeyBond((Keys.Escape, Keys.Left), action=handler.jump_day_dec),
+        KeyBond((Keys.Escape, Keys.Right), action=handler.jump_day_inc),
         #
-        KeyBond('G', action=handler.scroll_fact_last),
-        KeyBond(('g', 'g'), action=handler.scroll_fact_first),
-        # MAYBE:
-        #  KeyBond('M', action=handler.scroll_fact_middle),
+        KeyBond(('g', 'g'), action=handler.jump_rift_dec),
+        KeyBond('G', action=handler.jump_rift_inc),
+        # (lb): Not every Vim key needs to be mapped, e.g.,
+        #  KeyBond('M', action=handler.jump_fact_midpoint),
+        # seems capricious, i.e., why implement if not just because we can?
         #
         KeyBond('h', action=handler.cursor_up_one),
         KeyBond('l', action=handler.cursor_down_one),

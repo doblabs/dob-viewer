@@ -81,32 +81,32 @@ class KeyActionMap(object):
     # Next/Prev: Fact
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_left(self, event):
-        self.zone_manager.scroll_left(event)
+    def jump_fact_dec(self, event):
+        self.zone_manager.jump_fact_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_right(self, event):
-        self.zone_manager.scroll_right(event)
+    def jump_fact_inc(self, event):
+        self.zone_manager.jump_fact_inc(event)
 
     # Next/Prev: Day
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_left_day(self, event):
-        self.zone_manager.scroll_left_day(event)
+    def jump_day_dec(self, event):
+        self.zone_manager.jump_day_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_right_day(self, event):
-        self.zone_manager.scroll_right_day(event)
+    def jump_day_inc(self, event):
+        self.zone_manager.jump_day_inc(event)
 
     # Next/Prev: Rift
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_fact_last(self, event):
-        self.zone_manager.scroll_fact_last(event)
+    def jump_rift_dec(self, event):
+        self.zone_manager.jump_rift_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def scroll_fact_first(self, event):
-        self.zone_manager.scroll_fact_first(event)
+    def jump_rift_inc(self, event):
+        self.zone_manager.jump_rift_inc(event)
 
     # ***
 

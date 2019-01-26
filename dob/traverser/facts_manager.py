@@ -64,30 +64,6 @@ class FactsManager(
 
     # ***
 
-    def client_logger_state(self, caller_name):
-        self.controller.client_logger.warning(
-            '{}: curr_fact: {}'.format(
-                caller_name, self.curr_fact.short,
-            )
-        )
-        self.controller.client_logger.warning(
-            '{}: curr_group: {}'.format(
-                caller_name, self.curr_group,
-            )
-        )
-        self.controller.client_logger.warning(
-            '{}: curr_index: {}'.format(
-                caller_name, self.curr_index,
-            )
-        )
-        self.controller.client_logger.warning(
-            '{}: len(groups): {} / self: {}'.format(
-                caller_name, len(self.groups), self.debug__str,
-            )
-        )
-
-    # ***
-
     @property
     def curr_fact(self):
         return self._curr_fact
@@ -216,53 +192,4 @@ class FactsManager(
         if len(self.groups) < 2:
             return False
         return self.groups[0][0].unstored
-
-    # ***
-
-    def fact_from_interval_gap(self, since_time, until_time):
-        self.controller.affirm((not until_time) or (since_time < until_time))
-        self.last_fact_pk -= 1
-        gap_fact = PlaceableFact(
-            pk=self.last_fact_pk,
-            activity=None,
-            start=since_time,
-            end=until_time,
-        )
-        gap_fact.dirty_reasons.add('interval-gap')
-        # Mark deleted until edited, so gap is not saved unless edited.
-        gap_fact.deleted = True
-        gap_fact.orig_fact = gap_fact
-        return gap_fact
-
-    def insert_gap_prev(self, gap_fact):
-        if self.curr_fact.prev_fact is None:
-            self.curr_index += 1
-            self.curr_group_add(gap_fact)
-            self.curr_fact.prev_fact = gap_fact
-            gap_fact.next_fact = self.curr_fact
-        else:
-            self.controller.affirm(self.curr_fact.prev_fact is -1)
-            gap_fact.next_fact = -1
-            self.add_facts([gap_fact])
-            self.curr_group = self.groups[0]
-            self.curr_index = 0
-        self.controller.affirm(
-            self.curr_group[self.curr_index] is gap_fact
-        )
-
-    def insert_gap_next(self, gap_fact):
-        if self.curr_fact.next_fact is None:
-            # Leave: self.curr_index.
-            self.curr_group_add(gap_fact)
-            self.curr_fact.next_fact = gap_fact
-            gap_fact.prev_fact = self.curr_fact
-        else:
-            self.controller.affirm(self.curr_fact.next_fact is -1)
-            gap_fact.prev_fact = -1
-            self.add_facts([gap_fact])
-            self.curr_group = self.groups[-1]
-            self.curr_index = 0
-        self.controller.affirm(
-            self.curr_group[self.curr_index] is gap_fact
-        )
 

@@ -178,6 +178,7 @@ class ZoneManager(object):
         self.rebuild_containers()
         self.assemble_focus_jumps()
         self.selectively_refresh()
+        self.carousel.controller.client_logger.debug(_('rebuilt and refreshed'))
 
     def reset_diff_fact(self):
         orig_fact = self.carousel.edits_manager.curr_orig
@@ -255,25 +256,17 @@ class ZoneManager(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def scroll_fact_first(self, event):
+    def jump_fact_dec(self, event):
         """"""
-        was_curr = self.carousel.edits_manager.curr_fact
-        self.carousel.edits_manager.scroll_fact_first()
-        self.refresh_fact_or_notify_noop(was_curr, _("Already on first Fact"))
+        prev_fact = self.carousel.edits_manager.jump_fact_dec()
+        self.finalize_jump_dec(prev_fact)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def scroll_fact_last(self, event):
+    def jump_fact_inc(self, event):
         """"""
-        was_curr = self.carousel.edits_manager.curr_fact
-        self.carousel.edits_manager.scroll_fact_last()
-        self.refresh_fact_or_notify_noop(was_curr, _("Already on final Fact"))
-
-    def refresh_fact_or_notify_noop(self, was_curr, noop_msg):
-        if was_curr is not self.carousel.edits_manager.curr_fact:
-            self.rebuild_viewable()
-        else:
-            self.update_status(noop_msg)
+        next_fact = self.carousel.edits_manager.jump_fact_inc()
+        self.finalize_jump_inc(next_fact)
 
     # ***
 
@@ -284,48 +277,60 @@ class ZoneManager(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def scroll_left(self, event):
+    def jump_day_dec(self, event):
         """"""
-        prev_fact = self.carousel.edits_manager.decrement()
-        self.refresh_scrolled_left(prev_fact)
+        prev_fact = self.carousel.edits_manager.jump_day_dec()
+        self.finalize_jump_dec(prev_fact)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def scroll_right(self, event):
+    def jump_day_inc(self, event):
         """"""
-        next_fact = self.carousel.edits_manager.increment()
-        self.refresh_scrolled_right(next_fact)
-
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def scroll_left_day(self, event):
-        """"""
-        prev_fact = self.carousel.edits_manager.decrement_one_day()
-        self.refresh_scrolled_left(prev_fact)
-
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def scroll_right_day(self, event):
-        """"""
-        next_fact = self.carousel.edits_manager.increment_one_day()
-        self.refresh_scrolled_right(next_fact)
+        next_fact = self.carousel.edits_manager.jump_day_inc()
+        self.finalize_jump_inc(next_fact)
 
     # ***
 
-    def refresh_scrolled_left(self, prev_fact):
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def jump_rift_dec(self, event):
         """"""
-        self.refresh_scrolled(prev_fact, _("Viewing earliest Fact"))
+        was_curr = self.carousel.edits_manager.curr_fact
+        self.carousel.edits_manager.jump_rift_dec()
+        self.refresh_fact_or_notify_noop(was_curr, _("Already on first Fact"))
 
-    def refresh_scrolled_right(self, next_fact):
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def jump_rift_inc(self, event):
         """"""
-        self.refresh_scrolled(next_fact, _("Viewing latest Fact"))
+        was_curr = self.carousel.edits_manager.curr_fact
+        self.carousel.edits_manager.jump_rift_inc()
+        self.refresh_fact_or_notify_noop(was_curr, _("Already on final Fact"))
 
-    def refresh_scrolled(self, curr_fact, not_scrolled_msg):
+    def refresh_fact_or_notify_noop(self, was_curr, noop_msg):
+        if was_curr is not self.carousel.edits_manager.curr_fact:
+            self.rebuild_viewable()
+        else:
+            self.update_status(noop_msg)
+
+    # ***
+
+    def finalize_jump_dec(self, prev_fact):
+        """"""
+        self.finalize_jump(prev_fact, noop_msg=_("Viewing earliest Fact"))
+
+    def finalize_jump_inc(self, next_fact):
+        """"""
+        self.finalize_jump(next_fact, noop_msg=_("Viewing latest Fact"))
+
+    def finalize_jump(self, curr_fact, noop_msg, jump_msg=''):
         if curr_fact is None:
-            self.update_status(not_scrolled_msg)
+            self.update_status(noop_msg)
         else:
             self.zone_content.reset_cursor_left_column()
             self.rebuild_viewable()
+            if jump_msg:
+                self.update_status(jump_msg)
 
     # ***
 

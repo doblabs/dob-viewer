@@ -349,50 +349,50 @@ class EditsManager(object):
     # ***
 
     def editable_fact_prev(self, edit_fact):
-        prev_fact = self.decrement()
+        prev_fact = self.jump_fact_dec()
         if prev_fact is None:
             return None
         edit_prev = self.editable_fact()
-        _curr_fact = self.increment()
+        _curr_fact = self.jump_fact_inc()
         self.controller.affirm(_curr_fact.pk == edit_fact.pk)
         return edit_prev
 
     def editable_fact_next(self, edit_fact):
-        next_fact = self.increment()
+        next_fact = self.jump_fact_inc()
         if next_fact is None:
             return None
         edit_next = self.editable_fact()
-        _curr_fact = self.decrement()
+        _curr_fact = self.jump_fact_dec()
         self.controller.affirm(_curr_fact.pk == edit_fact.pk)
         return edit_next
 
     # ***
 
-    def decrement(self):
+    def jump_fact_dec(self):
         """"""
-        return self.conjoined.decrement()
+        return self.conjoined.jump_fact_dec()
 
-    def increment(self):
+    def jump_fact_inc(self):
         """"""
-        return self.conjoined.increment()
+        return self.conjoined.jump_fact_inc()
 
     # ***
 
-    def scroll_fact_first(self):
+    def jump_day_dec(self):
         """"""
-        self.conjoined.scroll_fact_first()
+        return self.conjoined.jump_day_dec()
 
-    def scroll_fact_last(self):
+    def jump_day_inc(self):
         """"""
-        self.conjoined.scroll_fact_last()
+        return self.conjoined.jump_day_inc()
 
     # ***
 
-    def decrement_one_day(self):
+    def jump_rift_dec(self):
         """"""
-        return self.conjoined.decrement_one_day()
+        self.conjoined.jump_rift_dec()
 
-    def increment_one_day(self):
+    def jump_rift_inc(self):
         """"""
-        return self.conjoined.increment_one_day()
+        self.conjoined.jump_rift_inc()
 
