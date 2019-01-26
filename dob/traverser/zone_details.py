@@ -305,10 +305,16 @@ class ZoneDetails(object):
             return refresh_keyval()
 
         def was_edited():
-            self.carousel.controller.client_logger.warning(
-                'orig_val: {}'.format(keyval_widgets.orig_val)
-            )
+            debug_log_text()
             return keyval_widgets.text_area.text != keyval_widgets.orig_val
+
+        def debug_log_text():
+            self.carousel.controller.client_logger.debug(
+                'text_area.text: {} / orig_val: {}'.format(
+                    keyval_widgets.text_area.text,
+                    keyval_widgets.orig_val,
+                )
+            )
 
         def refresh_keyval():
             # Refresh labels now, so that old value isn't shown briefly and then
@@ -372,6 +378,9 @@ class ZoneDetails(object):
             return leave_okayed[0]
 
         def apply_edited_time(edit_fact, edit_text):
+            self.carousel.controller.client_logger.debug(
+                'editable_text_enter: edit_text: {}'.format(edit_text)
+            )
             if not edit_text:
                 apply_edit_time_removed(edit_fact)
             else:
@@ -491,6 +500,9 @@ class ZoneDetails(object):
                 #   or anything? Need to test/understand conflicts better.
                 other_edits={},
                 suppress_barf=True,
+            )
+            self.carousel.controller.client_logger.debug(
+                'no. conflicts found: {}'.format(len(conflicts))
             )
             return conflicts
 
