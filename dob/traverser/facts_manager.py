@@ -184,6 +184,43 @@ class FactsManager(
 
         self.groups.add(GroupChained(grouped_facts))
 
+    def claim_time_span(self, since, until):
+        owning_group = None
+
+        sorty_tuple = (since, since)
+
+        inserts_at = self.groups.bisect_key_left(sorty_tuple)
+        # Because bisect_key_left, either the start of the indexed
+        # group matches, or the time falls before the group indexed.
+        if inserts_at < len(self.groups):
+            if since == self.groups[inserts_at].time_since:
+                owning_group = self.groups[inserts_at]
+            else:
+                self.controller.affirm(since < self.groups[inserts_at].time_since)
+        if (owning_group is None) and (inserts_at > 0):
+            before_it = inserts_at - 1
+            self.controller.affirm(since > self.groups[before_it].time_since)
+            if since <= self.groups[before_it].time_until:
+                owning_group = self.groups[before_it]
+            # else, since is between 2 groups; until might extend
+            # past 2nd of the groups, which we'll check for later.
+
+        if inserts_at == 0:
+            # Because bisect_key_left, leftmost group
+            # only matches if start exactly matches.
+            if since == self.groups[0][0].start:
+                owning_group = self.groups[0]
+
+        else:
+            # Time span precedes all existing groups' spans.
+            self.controller.affirm(since < self.groups[0].time_since)
+
+        if owning_group is None:
+            owning_group = GroupChained()
+
+        with self.curr_group_rekeyed(owning_group):
+            owning_group.claim_time_span(since, until)
+
     # ***
 
     @contextmanager
