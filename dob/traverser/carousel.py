@@ -344,3 +344,10 @@ class Carousel(object):
             _("dob is buggy! {0}").format(errmsg),
         )
 
+    def show_plugin_error(self, errmsg):
+        show_message(
+            self.zone_manager.root,
+            _('Oops!'),
+            _('{0}').format(errmsg),
+        )
+
