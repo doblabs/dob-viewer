@@ -31,8 +31,8 @@ __all__ = [
 class ZoneDetails_TimeStart(object):
     """"""
 
-    def add_header_start_time():
-        self.widgets_start = add_header_parts(
+    def add_header_start_time(self):
+        self.widgets_start = self.add_header_parts(
             'start', 'start_fmt_local', editable=True,
         )
 
@@ -73,7 +73,7 @@ class ZoneDetails_TimeStart(object):
 
     # ***
 
-    def apply_edit_time_start(edit_fact, edit_time):
+    def apply_edit_time_start(self, edit_fact, edit_time):
         if edit_fact.start == edit_time:
             return False
         edit_fact.start = edit_time

@@ -31,8 +31,8 @@ __all__ = [
 class ZoneDetails_TimeEnd(object):
     """"""
 
-    def add_header_end_time():
-        self.widgets_end = add_header_parts(
+    def add_header_end_time(self):
+        self.widgets_end = self.add_header_parts(
             'end', 'end_fmt_local_nowwed', editable=True,
         )
 
@@ -69,7 +69,7 @@ class ZoneDetails_TimeEnd(object):
 
     # ***
 
-    def apply_edit_time_end(edit_fact, edit_time):
+    def apply_edit_time_end(self, edit_fact, edit_time):
         if edit_fact.end == edit_time:
             return False
         edit_fact.end = edit_time
