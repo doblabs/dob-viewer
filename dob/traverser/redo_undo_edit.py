@@ -74,9 +74,11 @@ class RedoUndoEdit(object):
             # Nothing changed.
             toss_changes = self.undo.pop()
             self.debug('pop!: no.: {}'.format(len(toss_changes)))
+            return True
         else:
             # Since we left something different on the undo, the redo is kaput.
             self.redo = []
+            return False
 
     # ***
 
