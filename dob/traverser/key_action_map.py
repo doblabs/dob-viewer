@@ -72,6 +72,12 @@ class KeyActionMap(object):
 
     # ***
 
+    @Decorators.debug_log_trace_enter_leave
+    def dev_breakpoint(self, event):
+        self.carousel.dev_breakpoint(event)
+
+    # ***
+
     # Next/Prev: Fact
 
     @Decorators.debug_log_trace_enter_leave
