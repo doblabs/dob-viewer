@@ -60,7 +60,9 @@ class EditsManager(object):
         def _setup_container():
             orig_lkup = orig_facts_lookup(orig_facts)
             apply_orig_facts(edit_facts, orig_lkup)
-            self.conjoined = FactsManager(self.controller)
+            self.conjoined = FactsManager(
+                self.controller, on_jumped_fact=self.jumped_fact,
+            )
             self.add_facts(edit_facts)
 
         def orig_facts_lookup(orig_facts):
