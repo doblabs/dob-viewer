@@ -22,6 +22,8 @@ from gettext import gettext as _
 
 from sortedcontainers import SortedKeyList
 
+from nark.items.fact import SinceTimeBegan, UntilTimeStops
+
 from ..helpers import integer_range_groupify
 
 __all__ = [
@@ -42,8 +44,16 @@ def sorted_facts_list(facts=None):
 
 
 class GroupChained(object):
+    """
+    A GroupChained represents an order list of Facts.
+    In the context of the Carousel, the ordered list
+    is also guaranteed to be contiguous, and may contain
+    a mix of stored Facts, new Facts, and gap Facts.
+    Or even no Facts, if group is simply claiming time.
+    """
     def __init__(self, facts=None):
         self.facts = sorted_facts_list(facts)
+        self.reset_time_window()
 
     # ***
 
@@ -69,6 +79,7 @@ class GroupChained(object):
             # value is a slice().
             for fact in value.facts:
                 self.facts.add(fact)
+            self.claim_fact_time(value.facts)
         except AttributeError:
             # For, e.g., self.group[0] = ...
             # value is a (Placeable)Fact.
@@ -123,26 +134,75 @@ class GroupChained(object):
             "‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}"
         ).format(self.time_since, self.time_until, num_pks, pk_ranges)
 
+    # ***
+
+    def claim_fact_time(self, facts=None):
+        """NOTE: This function changes the SortedKeyList key, beware!"""
+        if facts is None:
+            facts = self.facts
+        if not facts:
+            return
+        until = facts[-1].end or UntilTimeStops
+        self.claim_time_span(since=facts[0].start, until=until)
+
+    def claim_time_span(self, since=None, until=None):
+        """NOTE: This function changes the SortedKeyList key, beware!"""
+        # Handle since time.
+        if self.time_since is None:
+            self.time_since = since
+        elif since is not None:
+            self.time_since = min(self.time_since, since)
+        # Handle until time.
+        if self.time_until is None:
+            self.time_until = until
+        elif until is not None:
+            self.time_until = max(self.time_until, until)
+
+    def contains_fact_time(self, facts=None):
+        if facts is None:
+            facts = self.facts
+        if not facts:
+            return
+        if (
+            (facts[0].start < self.time_since)
+            or (
+                (facts[-1].end is None)
+                and (self.time_until < UntilTimeStops)
+            )
+            or (
+                (facts[-1].end is not None)
+                and (facts[-1].end > self.time_until)
+            )
+        ):
+            return False
+        return True
+
     @property
     def sorty_tuple(self):
-        if len(self.facts) == 0:
-            return None
-        return self.facts[0].sorty_tuple
+        return (self.time_since, self.time_until, )
+
+    def reset_time_window(self):
+        # Default to time window not defined (as opposed to empty
+        # (impossible) time window achieved with (UntilTimeStops,
+        # SinceTimeBegan)).
+        self.time_since = None
+        self.time_until = None
+        self.claim_fact_time()
 
     @property
-    def first_time(self):
-        if len(self.facts) == 0:
-            return None
-        return self.facts[0].start
+    def since_time_began(self):
+        return self.time_since is SinceTimeBegan
 
     @property
-    def final_time(self):
-        if len(self.facts) == 0:
-            return None
-        return self.facts[-1].end
+    def until_time_stops(self):
+        return self.time_until is UntilTimeStops
+
+    # ***
 
     def add(self, some_fact):
+        # Caller Beware: This changes the group key!
         self.facts.add(some_fact)
+        self.claim_fact_time([some_fact])
 
     def bisect_key_left(self, key):
         return self.facts.bisect_key_left(key)
@@ -154,5 +214,5 @@ class GroupChained(object):
         for index, fact in enumerate(self.facts):
             if some_fact.pk == fact.pk:
                 return index
-        return ValueError("Fact with PK '{0}' is not in list".format(some_fact.pk))
+        raise ValueError("Fact with PK '{0}' is not in list".format(some_fact.pk))
 
