@@ -527,10 +527,24 @@ class ZoneDetails(object):
 
     @catch_action_exception
     def undo_command(self, event):
-        pass
+        # FIXME/2019-01-21: Is this correct? Use case:
+        #   - Press 'e'; edit 'end'; press Enter to apply change.
+        #   - Press 'e' again; edit 'end'; press Ctrl-z.
+        #   - Expect: previous (intermediate) end time, not original end time!
+        #   - For original end time: press 'R' reset!
+        orig_fact = self.facts_diff.orig_fact
+        # FIXME/2019-01-14 18:11: Localization/l10n/timezone'ation...
+        #                           start_fmt_local vs start_fmt_utc, and end...
+        # When editing, reset widget to unedited time (do not go through undo stack).
+        if self.active_widgets is self.widgets_start:
+            event.current_buffer.text = orig_fact.start_fmt_local
+        elif self.active_widgets is self.widgets_end:
+            event.current_buffer.text = orig_fact.end_fmt_local
 
     @catch_action_exception
     def redo_command(self, event):
+        # We could restore the edited time that the user undid.
+        # But there's not much utility in that.
         pass
 
     # ***
