@@ -90,14 +90,16 @@ class FactsManager(
         self.controller.affirm(self.curr_group.contains_fact_time([curr_fact]))
 
     def locate_fact(self, some_fact):
-        insert_at = self.groups.bisect_key_left(some_fact.sorty_tuple)
+        inserts_at = self.groups.bisect_key_left(some_fact.sorty_tuple)
         if (
-            (insert_at < len(self.groups)) and
-            (self.groups[insert_at][0].pk == some_fact.pk)
+            (inserts_at < len(self.groups))
+            and (self.groups[inserts_at])
+            and (self.groups[inserts_at][0].pk == some_fact.pk)
         ):
-            group = self.groups[insert_at]
+            group = self.groups[inserts_at]
         else:
-            group = self.groups[insert_at - 1]
+            group = self.groups[inserts_at - 1]
+        # The index raises ValueError if the fact is not in the group.
         index = group.index(some_fact)
         return group, index
 
