@@ -144,11 +144,77 @@ class Carousel(object):
         if self.async_enable:
             # Tell prompt_toolkit to use asyncio.
             use_asyncio_event_loop()
+            # Get the OS thread's event loop.
             self.event_loop = asyncio.get_event_loop()
         confirmed_facts = self.run_edit_loop()
-        if self.async_enable:
-            self.event_loop.close()
+
+        # (lb): We did not start the event loop, so we should not stop it, e.g.,:
+        #     self.async_enable and self.event_loop and self.event_loop.stop()
+        # which I mention only because I generally like to clean up after myself.
+        # (Nonetheless, it's harmless if the application is exiting anyway.
+        #  It merely sets a boolean: `event_loop._stopping = True`.)
+
+        # CLOSED_LOOP: (lb): Remember duration until self.event_loop.close()
+        # called. At least until we figure out how to wait() to avoid kludge.
+        #
+        # FIXME/2019-01-27: Disable close_countdown and find better solution.
+        # (And leaving this code-comment until that solution is discovered.)
+        #
+        #     if self.async_enable:
+        #         self.close_countdown = time.time()
+
         return self.edits_manager.prepared_facts if confirmed_facts else []
+
+    def whoa_nellie(self):
+        """"""
+        # CLOSED_LOOP: (lb): If we do not clean up properly (or fake it, and
+        # drag our feet after quitting the Carousel, but before exiting app),
+        # you might experience a RuntimeError such as:
+        #
+        #     Exception in thread Thread-12:
+        #     Traceback (most recent call last):
+        #       File "/usr/lib/python3.6/threading.py", line 916,
+        #         in _bootstrap_inner
+        #           self.run()
+        #       ...
+        #       File "/usr/lib/python3.6/asyncio/base_events.py", line 366,
+        #         in _check_closed
+        #           raise RuntimeError('Event loop is closed')
+        #     RuntimeError: Event loop is closed
+        #
+        # 2019-01-27: I think this is reproducible on a large dob-import, after
+        # pressing <Ctrl-s> to exit the Carousel and beginning persisting Facts.
+        #
+        # My first guess was the tick-tock task, but there are 5 threads' stack
+        # traces (like the example reprinted above) printed to the terminal.
+        # So maybe PPT has some other input processing or what not going on.
+        #
+        # (Also, note that we bounce around between 3 different uses of PPT,
+        # stopping one to start another. 2 uses of PPT -- editing the act@gory
+        # and editing tags -- are run without the event loop, whereas the other
+        # use, running the Carousel, uses the event loop. There could be some
+        # clean up or waiting not happening between uses.)
+        #
+        # I tried calling other functions (based on suggestions I found online), e.g.,
+        #
+        #     self.event_loop.run_until_complete(very_long_coroutine())
+        #     ...
+        #     self.event_loop.stop()
+        #     self.event_loop.run_forever()
+        #     self.event_loop.close()
+        #
+        # but none of that helped.
+        #
+        # (lb): I've seen the error with a ½ sec. wait; but never with 1 second.
+        #   But there's no way I'm imposing 1 sec. wait. We'll find another way.
+        #
+        #   NAH:
+        #
+        #     wait_at_least_secs = 1.0
+        #     remaining = wait_at_least_secs - (time.time() - self.close_countdown)
+        #     if remaining > 0:
+        #         time.sleep(remaining)
+        #         pass
 
     @property
     def prepared_facts(self):
