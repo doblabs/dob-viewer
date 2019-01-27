@@ -24,6 +24,7 @@ import asyncio
 # (lb): We're using Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
 import click
+import time
 
 from prompt_toolkit.eventloop import use_asyncio_event_loop
 
@@ -74,7 +75,8 @@ class Carousel(object):
 
         self.action_manager = ActionManager(self)
         self.update_handler = UpdateHandler(self)
-        self.zone_manager = ZoneManager(self)
+        # We'll set up the ZoneManager each time we use the event_loop.
+        self.zone_manager = None
 
     # ***
 
@@ -120,8 +122,6 @@ class Carousel(object):
         # need to disable it, here's a switch.
         self._async_enable = True
         self._confirm_exit = False
-        self.asyncio_future1 = None
-        self.asyncio_future2 = None
 
     @property
     def async_enable(self):
@@ -133,14 +133,12 @@ class Carousel(object):
 
     @confirm_exit.setter
     def confirm_exit(self, confirm_exit):
-        if confirm_exit and self.asyncio_future2 is not None:
-            self.asyncio_future2.cancel()
         self._confirm_exit = confirm_exit
 
     # ***
 
     def gallop(self):
-        self.standup()
+        self.standup_once()
         if self.async_enable:
             # Tell prompt_toolkit to use asyncio.
             use_asyncio_event_loop()
@@ -243,6 +241,16 @@ class Carousel(object):
                     self.enduring_edit = True  # Keep looping.
             elif not self.enduring_edit:
                 confirmed_facts = True  # All done; user looked at all Facts.
+
+            # CPR_ISSUE: An ever-so-brief pause after editing, before returning
+            # to the Carousel, apparently precludes the Cursor Position Request
+            # problem (which is documented in a comment in runloop_async).
+            # 2019-01-27: (lb): I added this sleep before I added standup_always.
+            #   MAYBE/2019-01-27: (lb): TEST: Determine if this sleep still
+            #   necessary. Or just leave it, it's painless.
+            if self.enduring_edit:
+                time.sleep(0.01)
+
         return confirmed_facts
 
     def process_exit_request(self):
@@ -287,8 +295,11 @@ class Carousel(object):
 
     # ***
 
-    def standup(self):
+    def standup_once(self):
         self.edits_manager.stand_up()
+
+    def standup_always(self):
+        self.zone_manager = ZoneManager(self)
         self.zone_manager.standup()
         self.update_handler.standup()
         self.action_manager.standup()
@@ -298,25 +309,98 @@ class Carousel(object):
 
     def runloop(self):
         self.confirm_exit = False
-        self.enduring_edit = False
+        # Use enduring_edit as a trinary to know if the Carousel's run-loop
+        # completes unexpectedly (it'll be None), or if the user interacted
+        # with the application and it exited its loop deliberately (it'll be
+        # True or False).
+        self.enduring_edit = None
         self.restrict_edit = ''
+        rerun_cnt = 0
+        keep_running = True
+        # MAGIC_NUMBER: CPR_ISSUE: Do not rerun > once, lest stuck in feedback loop.
+        while keep_running and rerun_cnt < 2:
+            keep_running = self.runloop_run()
+            rerun_cnt += 1
+
+    def runloop_run(self):
         profile_elapsed('To dob runloop')
         if self.async_enable:
-            # This call draws the app, but it doesn't run its event loop.
-            run_async = self.zone_manager.application.run_async()
-            self.asyncio_future1 = run_async.to_asyncio_future()
-            self.asyncio_future2 = asyncio.ensure_future(self.tick_tock_now())
-            tasks = [self.asyncio_future1, self.asyncio_future2]
-            self.event_loop.run_until_complete(asyncio.wait(tasks))
-            # PPT reuses the event_loop, so close it only on application
-            # exit (and don't *not* close it, or an errant signal fires
-            # later and asyncio crashes not being able to handle it).
+            rerun = self.runloop_async()
+            return rerun
         else:
             self.zone_manager.application.run()
+            return False
+
+    def runloop_async(self):
+        # CPR_ISSUE: (lb): A Funky Business upon Rerunning Carousel.
+        #
+        # After the user edits the description, or the act@gory, or tags, the
+        # application returns to the Carousel. But sometimes the Carousel
+        # completes immediately. Then our code, not seeing enduring_edit,
+        # exits, though the user was expecting to see the Carousel again.
+        #
+        # The user also sees what looks like CPR (cursor position request)
+        # input on the terminal, for instance,
+        #
+        #     ^[[12;1R>
+        #
+        # I cannot deterministically reproduce the behavior other than to
+        # cycle between the Carousel and editing, mashing keys to jump
+        # quickly between states, and occasionally saving.
+        #
+        # We can kludge around the behavior by rerunning the Carousel if
+        # it completely quickly (i.e., in less time then then use could have
+        # interacted with it). (Though this introduces additional pitfalls,
+        # like falling into an infinite feedback loop. Just be careful!)
+        rerun = False
+
+        # CPR_ISSUE: (lb): 2019-01-27: This might be the Ultimate Fix, by which
+        # I mean I added this code last, and it might all that's needed to get
+        # around the CPR issue (in which case, the `enduring_edit is None`
+        # kludge below may be unnecessary).
+        self.standup_always()
+
+        # This call draws the app, but it doesn't run its event loop.
+        # (So you'll see some of the Carousel code run.)
+        run_async = self.zone_manager.application.run_async()
+
+        # Get a handle on the application's Future.
+        app_fut = run_async.to_asyncio_future()
+
+        # Create the tick-tock task.
+        tck_asyn = self.tick_tock_now(app_fut)
+        tck_fut = asyncio.ensure_future(tck_asyn)
+        # Leave tck_fut out of tasks and manage separately.
+        tasks = [app_fut,]
+
+        self.event_loop.run_until_complete(asyncio.wait(tasks))
+
+        # Check if the Carousel exited deliberately or not.
+        if self.enduring_edit is None:
+            # CPR_ISSUE: (lb): Look in PPT for ask_for_cpr: this sends the CPR:
+            #   Query Cursor Position: <ESC>[6n
+            # The other junk you see on the terminal are cursor positions:
+            #   Report Cursor Position: <ESC>[{ROW};{COLUMN}R
+            # If code gets stuck in a loop, the request acts like Schrödinger's
+            # cat and changes value each time it prints to the terminal, e.g.,
+            #   ^[[11;1R^[[11;9R^[[11;17R^[[11;26R^[[11;35R
+            #           ^[[12;9R^[[12;17R^...
+            # (In other cases, you might see `;226R;226R;226R...` instead).
+            # Ref:
+            #   prompt_toolkit/renderer.py
+            #       request_absolute_cursor_position
+            self.controller.client_logger.warning('KLUDGE! Re-running Carousel.')
+            rerun = True
+
+        self.controller.affirm(app_fut.done())
+        tck_fut.cancel()
+        asyncio.wait([tck_fut, ])
+
+        return rerun
 
     # ***
 
-    async def tick_tock_now(self):
+    async def tick_tock_now(self, asyncio_future1):
         """"""
         async def _tick_tock_now():
             tocking = True
@@ -324,7 +408,7 @@ class Carousel(object):
                 tocking = await tick_tock_loop()
 
         async def tick_tock_loop():
-            if self.asyncio_future1.done():
+            if asyncio_future1.done():
                 return False
             if not await sleep_to_refresh():
                 return False
