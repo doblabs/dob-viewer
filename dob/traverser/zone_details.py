@@ -20,6 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
+from datetime import datetime
+
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.widgets import Label, TextArea
@@ -366,10 +368,13 @@ class ZoneDetails(
                 edit_time = parse_dated(edit_text, time_now, cruftless=True)
             except ParserInvalidDatetimeException as err:
                 # E.g., try entering date "2019-01-27 18."
-                edit_time = None
-                edit_text = str(err)
-            if edit_time is None:
-                show_message_cannot_parse_time(edit_text)
+                parse_err = str(err)
+            else:
+                self.carousel.controller.affirm(isinstance(edit_time, datetime))
+                parse_err = None
+
+            if parse_err:
+                show_message_cannot_parse_time(parse_err)
             else:
                 apply_edit_time_valid(edit_fact, edit_time)
 
