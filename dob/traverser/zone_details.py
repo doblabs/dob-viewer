@@ -479,8 +479,8 @@ class ZoneDetails(
         def show_message_cannot_parse_time(edit_text):
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Wah wah'),
-                _("Did not compute: {0}").format(edit_text),
+                _('Drat!'),
+                edit_text,
             )
 
         def show_message_and_deny_leave(*args, **kwargs):
