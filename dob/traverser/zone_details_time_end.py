@@ -61,7 +61,7 @@ class ZoneDetails_TimeEnd(object):
         if edit_fact.end is None:
             # Already cleared; nothing changed.
             return True
-        if not self.carousel.controller.is_final_fact(edit_fact):
+        if not self.carousel.edits_manager.conjoined.is_final_fact(edit_fact):
             self.widgets_end.text_area.text = edit_fact.end_fmt_local_or_now
             return False
         else:

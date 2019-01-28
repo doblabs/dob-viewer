@@ -340,3 +340,13 @@ class FactsManager(
             return False
         return self.groups[0][0].unstored
 
+    # ***
+
+    def is_final_fact(self, edit_fact):
+        group, index = self.locate_fact(edit_fact)
+        if not group.until_time_stops:
+            return False
+        if not index == len(group) - 1:
+            return False
+        return True
+
