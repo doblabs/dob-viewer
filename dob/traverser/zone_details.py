@@ -408,17 +408,15 @@ class ZoneDetails(
             #    or if no available time then show error message.
 
         def edited_fact_conflicts(edit_fact):
-            # FIXME/2019-01-22: What's the story here? Should never have conflicts!
-            #   So do we need to call this function?
-            #   Also, if user has edited other facts, shouldn't other_edits be set?
+            # Skip all unstored, edited Facts.
+            other_edits = {fact.pk: fact for fact in self.carousel.edits_manager.prepared_facts}
+
             conflicts = must_complete_times(
                 self.carousel.controller,
                 new_facts=[edit_fact],
                 progress=None,
                 leave_blanks=True,
-                # FIXME/2019-01-21: (lb): Do we need to send edit_mgr.edit_facts
-                #   or anything? Need to test/understand conflicts better.
-                other_edits={},
+                other_edits=other_edits,
                 suppress_barf=True,
             )
             self.carousel.controller.client_logger.debug(
