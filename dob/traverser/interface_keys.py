@@ -26,6 +26,7 @@ from ..prompters.interface_bonds import KeyBond
 __all__ = [
     'key_bonds_edit_time',
     'key_bonds_normal',
+    'key_bonds_save_and_quit',
     'key_bonds_shared',
     'key_bonds_update',
     'key_bonds_undo_redo',
@@ -54,9 +55,27 @@ def key_bonds_widget_focus(handler):
     key_bonds_widget_focus = [
         KeyBond('tab', action=handler.focus_next),
         KeyBond('s-tab', action=handler.focus_previous),
-        KeyBond('c-q', action=handler.cancel_command),
     ]
     return key_bonds_widget_focus
+
+
+# ***
+
+def key_bonds_save_and_quit(handler):
+    key_bonds_save_and_quit = [
+        # Save Facts command is where you'd expect it.
+        KeyBond('c-s', action=handler.finish_command),
+        # User can soft-cancel if they have not edited.
+        KeyBond('q', action=handler.cancel_softly),
+        # User can always real-quit, but prompted if edits.
+        KeyBond('c-q', action=handler.cancel_command),
+        # NOTE: Using 'escape' to exit is slow because PPT waits to
+        #       see if escape sequence follows (which it wouldn't, after
+        #       an 'escape', but meta-combinations start with an escape).
+        #   tl;dr: 'escape' to exit slow b/c alias resolution.
+        KeyBond('escape', action=handler.cancel_softly),
+    ]
+    return key_bonds_save_and_quit
 
 
 # ***
@@ -67,8 +86,6 @@ def key_bonds_edit_time(handler):
         # By default, PPT will add any key we don't capture to active widget's
         # buffer, but we'll override so we can ignore alphabetics [letters].
         KeyBond(Keys.Any, action=handler.editable_text_any_key),
-        # FIXME/BACKLOG/2019-01-21: Ctrl-q should work while editing time.
-        #  - And from any other state: editing act@gory, editing tags, anything else?
     ]
     return key_bonds_edit_time
 
@@ -120,13 +137,6 @@ def key_bonds_normal(handler):
         #
         KeyBond('h', action=handler.cursor_up_one),
         KeyBond('l', action=handler.cursor_down_one),
-        #
-        KeyBond('c-s', action=handler.finish_command),
-        KeyBond('q', action=handler.cancel_softly),
-        # NOTE: Using 'escape' to exit is slow because PPT waits to
-        #       see if escape sequence follows (which it wouldn't, after
-        #       an 'escape', but meta-combinations start with an escape).
-        KeyBond('escape', action=handler.cancel_softly),
         #
         # FIXME: Oh, maybe make complicated handlers rather than hacking PPT lib?
         # NOTE: If you want to see how key presses map to KeyPresses, try:

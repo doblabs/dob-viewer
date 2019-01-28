@@ -118,7 +118,7 @@ class KeyActionMap(object):
     def cursor_down_one(self, event):
         self.zone_content.cursor_down_one(event)
 
-    # ***
+    # #### Key bindings wired by key_bonds_save_and_quit().
 
     @Decorators.debug_log_trace_enter_leave
     def finish_command(self, event):
@@ -139,7 +139,7 @@ class KeyActionMap(object):
     def ignore_key_press_noop(self, event):
         pass
 
-    # ***
+    # #### Key bindings wired by key_bonds_normal().
 
     @Decorators.debug_log_trace_enter_leave
     def scroll_up(self, event):
