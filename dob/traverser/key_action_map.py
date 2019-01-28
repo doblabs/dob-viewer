@@ -62,7 +62,7 @@ class KeyActionMap(object):
 
             return update_wrapper(trace_enter_leave_wrapper, func)
 
-    # #### Key bindings wired by key_bonds_global().
+    # #### Key bindings wired by key_bonds_normal().
 
     # ***
 

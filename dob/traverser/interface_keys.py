@@ -25,7 +25,7 @@ from ..prompters.interface_bonds import KeyBond
 
 __all__ = [
     'key_bonds_edit_time',
-    'key_bonds_global',
+    'key_bonds_normal',
     'key_bonds_shared',
     'key_bonds_update',
     'key_bonds_undo_redo',
@@ -93,8 +93,8 @@ def key_bonds_undo_redo(handler):
 
 # ***
 
-def key_bonds_global(handler):
-    key_bonds_global = [
+def key_bonds_normal(handler):
+    key_bonds_normal = [
         KeyBond('?', action=handler.rotate_help),
         #
         KeyBond('m-=', action=handler.dev_breakpoint),
@@ -167,7 +167,7 @@ def key_bonds_global(handler):
         # FIXME/BACKLOG: Filter feature.
         #   (By tag; matching text; dates; days of the week; etc.)
     ]
-    return key_bonds_global
+    return key_bonds_normal
 
 
 # ***
