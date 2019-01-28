@@ -512,10 +512,13 @@ class EditsManager(object):
                 return None
 
         def update_edited_fact(edit_fact, new_fact):
-            # PK is different for saved fact, and old fact is marked deleted.
+            # PK is different for saved fact, and old fact is marked deleted;
+            #   except for ongoing Fact, which retains its ID.
+            # MAYBE/2019-01-27: If ongoing Fact's description is edited, should
+            #   behave like any other Fact being edited, and should get new ID.
             # (lb): It's easier to reset editing than to try to update state.
             #   So just a few affirmations, and then moving along.
-            self.controller.affirm(new_fact.pk > edit_fact.pk)
+            self.controller.affirm(new_fact.pk >= edit_fact.pk)
             self.controller.affirm(edit_fact.deleted)
             self.controller.affirm(new_fact.orig_fact is None)
             self.controller.affirm(self.edit_facts[edit_fact.pk] is edit_fact)
