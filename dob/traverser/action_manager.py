@@ -63,7 +63,10 @@ class ActionManager(object):
         self.setup_key_bindings_edit_time()
 
     def setup_key_bindings_shared(self):
-        self.key_bindings_shared = key_bonds_widget_focus(self.key_action_map)
+        bindings = []
+        bindings += key_bonds_widget_focus(self.key_action_map)
+
+        self.key_bindings_shared = bindings
 
     def setup_key_bindings_normal(self):
         bindings = []
