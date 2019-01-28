@@ -48,13 +48,15 @@ def make_bindings(key_bonds):
 
     return key_bindings
 
-
 # ***
 
 def key_bonds_widget_focus(handler):
     key_bonds_widget_focus = [
         KeyBond('tab', action=handler.focus_next),
         KeyBond('s-tab', action=handler.focus_previous),
+        # Bindings to edit time are always available (and toggle focus when repeated).
+        KeyBond('s', action=handler.edit_time_start),
+        KeyBond('e', action=handler.edit_time_end),
     ]
     return key_bonds_widget_focus
 
@@ -167,11 +169,6 @@ def key_bonds_normal(handler):
         KeyBond('pagedown', action=handler.scroll_down),
         KeyBond('home', action=handler.scroll_top),
         KeyBond('end', action=handler.scroll_bottom),
-        #
-        # FIXME/BACKLOG/2019-01-24: FEATURE: Press 's' or 'e' 2nd time to clear time?
-        #   E.g., click 's' to start editing start, then 's' again to clear it.
-        KeyBond('s', action=handler.edit_time_start),
-        KeyBond('e', action=handler.edit_time_end),
         #
         # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
         #   KeyBond('/', action=zone_lowdown.start_search),

@@ -211,9 +211,9 @@ class ZoneManager(object):
     # ***
 
     def assemble_focus_jumps(self):
-        content_control = self.zone_content.content.control
-        start_control = self.zone_details.widgets_start.text_area.control
-        end_control = self.zone_details.widgets_end.text_area.control
+        content_control = self.content_control
+        start_control = self.widget_control_time_start
+        end_control = self.widget_control_time_end
 
         self.focus_chain = [
             content_control,
@@ -226,6 +226,8 @@ class ZoneManager(object):
             start_control: self.zone_details.edit_time_start,
             end_control: self.zone_details.edit_time_end,
         }
+
+        self.focus_recent = content_control
 
     @catch_action_exception
     def focus_next(self, event):
@@ -248,9 +250,52 @@ class ZoneManager(object):
         if not defocused:
             return
         curr_index = self.focus_chain.index(curr_control)
+        curr_index = self.focus_index(curr_control)
         next_index = index_f(curr_index)
         next_control = self.focus_chain[next_index]
         self.focus_surround[next_control](focus=True)
+        self.focus_recent = curr_control
+
+    def focus_index(self, which_control=None):
+        if which_control is None:
+            which_control = self.layout.current_control
+        which_index = self.focus_chain.index(which_control)
+        return which_index
+
+    @property
+    def content_control(self):
+        return self.zone_content.content.control
+
+    @property
+    def widget_control_time_end(self):
+        return self.zone_details.widgets_end.text_area.control
+
+    @property
+    def widget_control_time_start(self):
+        return self.zone_details.widgets_start.text_area.control
+
+    # ***
+
+    @catch_action_exception
+    # SKIP: @ZoneContent.Decorators.reset_showing_help
+    def toggle_focus_time_end(self, event):
+        self.toggle_focus_time(self.widget_control_time_end)
+
+    @catch_action_exception
+    # SKIP: @ZoneContent.Decorators.reset_showing_help
+    def toggle_focus_time_start(self, event):
+        self.toggle_focus_time(self.widget_control_time_start)
+
+    def toggle_focus_time(self, time_control):
+        focus = self.layout.current_control is not time_control
+        if focus:
+            which_index = self.focus_index(time_control)
+        else:
+            # (lb): Toggling to recent sorta feels weird.
+            #   which_index = self.focus_index(self.focus_recent)
+            # Toggling between content and time feels more natural.
+            which_index = self.focus_index(self.content_control)
+        self.focus_move(lambda index: which_index)
 
     # ***
 
