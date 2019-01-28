@@ -172,8 +172,6 @@ class ZoneDetails(
         # We don't need to refresh except for ongoing fact.
         orig_fact = self.facts_diff.orig_fact
         edit_fact = self.facts_diff.edit_fact
-        if (orig_fact.end is not None) and (edit_fact.end is not None):
-            return
         # Update times and spans based off <now>.
         self.refresh_duration()
         self.refresh_time_end()
