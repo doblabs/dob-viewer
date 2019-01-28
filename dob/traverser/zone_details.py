@@ -24,6 +24,7 @@ from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.widgets import Label, TextArea
 
+from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
 
 from .dialog_overlay import show_message
@@ -361,7 +362,12 @@ class ZoneDetails(
 
         def apply_edit_time_changed(edit_fact, edit_text):
             time_now = self.carousel.controller.now
-            edit_time = parse_dated(edit_text, time_now, cruftless=True)
+            try:
+                edit_time = parse_dated(edit_text, time_now, cruftless=True)
+            except ParserInvalidDatetimeException as err:
+                # E.g., try entering date "2019-01-27 18."
+                edit_time = None
+                edit_text = str(err)
             if edit_time is None:
                 show_message_cannot_parse_time(edit_text)
             else:
