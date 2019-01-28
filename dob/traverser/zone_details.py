@@ -389,7 +389,7 @@ class ZoneDetails(
             #   apply_edit_time_start/apply_edit_time_end
             #   functions will not allow conflicts. At
             #   least not as currently writ.
-            self.controller.affirm(not conflicts)
+            self.carousel.controller.affirm(not conflicts)
             if not ask_user_confirm_conflicts(conflicts):
                 # (lb): 2019-01-21: Interface prevents (precludes) conflicts.
                 assert False
