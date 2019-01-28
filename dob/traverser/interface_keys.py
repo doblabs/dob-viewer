@@ -29,6 +29,7 @@ __all__ = [
     'key_bonds_shared',
     'key_bonds_update',
     'key_bonds_undo_redo',
+    'key_bonds_widget_focus',
     'make_bindings',
 ]
 
@@ -49,13 +50,13 @@ def make_bindings(key_bonds):
 
 # ***
 
-def key_bonds_shared(handler):
-    key_bonds_shared = [
+def key_bonds_widget_focus(handler):
+    key_bonds_widget_focus = [
         KeyBond('tab', action=handler.focus_next),
         KeyBond('s-tab', action=handler.focus_previous),
         KeyBond('c-q', action=handler.cancel_command),
     ]
-    return key_bonds_shared
+    return key_bonds_widget_focus
 
 
 # ***

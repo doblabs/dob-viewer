@@ -21,9 +21,9 @@ from __future__ import absolute_import, unicode_literals
 from .interface_keys import (
     key_bonds_edit_time,
     key_bonds_normal,
-    key_bonds_shared,
     key_bonds_update,
     key_bonds_undo_redo,
+    key_bonds_widget_focus,
     make_bindings
 )
 from .key_action_map import KeyActionMap
@@ -63,7 +63,7 @@ class ActionManager(object):
         self.setup_key_bindings_edit_time()
 
     def setup_key_bindings_shared(self):
-        self.key_bindings_shared = key_bonds_shared(self.key_action_map)
+        self.key_bindings_shared = key_bonds_widget_focus(self.key_action_map)
 
     def setup_key_bindings_normal(self):
         bindings = []

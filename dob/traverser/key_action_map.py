@@ -167,7 +167,7 @@ class KeyActionMap(object):
     def edit_time_end(self, event):
         self.zone_details.edit_time_end(event)
 
-    # #### Key bindings wired by key_bonds_shared().
+    # #### Key bindings wired by key_bonds_widget_focus().
 
     @Decorators.debug_log_trace_enter_leave
     def focus_next(self, event):
