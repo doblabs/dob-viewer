@@ -37,7 +37,11 @@ class FactsManager_FactInc(object):
         def _jump_fact_inc():
             # Check first if we've reached the ending of all time.
             is_final_fact = (self.curr_index == (len(self.curr_group) - 1))
-            if is_final_fact and self.curr_group.until_time_stops:
+            if (
+                is_final_fact
+                and not self.curr_fact.end
+                and self.curr_group.until_time_stops
+            ):
                 return None
             # Each facts group represents a contiguous block of time that is
             # being managed by dob, and to ignore anything in the store from
