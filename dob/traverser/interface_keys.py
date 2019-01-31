@@ -67,7 +67,7 @@ def key_bonds_widget_focus(handler):
 def key_bonds_save_and_quit(handler):
     key_bonds_save_and_quit = [
         # Save Facts command is where you'd expect it.
-        KeyBond('c-s', action=handler.finish_command),
+        KeyBond('c-s', action=handler.save_edited_facts),
         # User can soft-cancel if they have not edited.
         KeyBond('q', action=handler.cancel_softly),
         # User can always real-quit, but prompted if edits.

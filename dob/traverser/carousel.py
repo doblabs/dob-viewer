@@ -26,6 +26,7 @@ import asyncio
 import click
 import time
 
+from inflector import Inflector, English
 from prompt_toolkit.eventloop import use_asyncio_event_loop
 
 from nark.helpers.dev.profiling import profile_elapsed
@@ -54,6 +55,7 @@ class Carousel(object):
         orig_facts,
         dirty_callback,
         dry,
+        running_save=False,
     ):
         self.controller = controller
 
@@ -77,6 +79,8 @@ class Carousel(object):
         self.update_handler = UpdateHandler(self)
         # We'll set up the ZoneManager each time we use the event_loop.
         self.zone_manager = None
+
+        self.running_save = running_save
 
     # ***
 
@@ -481,9 +485,40 @@ class Carousel(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def finish_command(self, event):
+    def save_edited_facts(self, event):
         """"""
-        event.app.exit()
+        if not self.running_save:
+            # Import command. Save after exiting Carousel.
+            # (lb): I tried running-save, but something something
+            #  failed on negative PK not found; so I added this.
+            #  (This is how save originally worked, before I wired
+            #  running-save; whatever, import command is special,
+            #  forcing user to exit to finish saving is fine.)
+            self.enduring_edit = False
+            event.app.exit()
+            return
+
+        curr_fact, saved_facts = self.edits_manager.save_edited_facts()
+        if saved_facts is None:
+            # Indicates error during save, and error message was displayed.
+            return
+        if not saved_facts:
+            curr_fact = None
+        if saved_facts:
+            self.controller.post_process(
+                self.controller,
+                saved_facts,
+                show_plugin_error=self.show_plugin_error,
+            )
+        edit_cnt = len(saved_facts)
+        self.zone_manager.finalize_jump(
+            curr_fact,
+            noop_msg=_('Nothing to save'),
+            jump_msg=_('Saved {} {}'.format(
+                edit_cnt,
+                Inflector(English).conditional_plural(edit_cnt, 'fact'),
+            )),
+        )
 
     # ***
 
