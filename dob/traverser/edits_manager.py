@@ -300,8 +300,15 @@ class EditsManager(object):
         edit_fact.dirty_reasons.add('unsaved-fact')
         if not undelete:
             return
-        # If gap-fact, clear its highlight.
+
+        # If user edited gap-fact, ensure returned by prepared_facts;
+        # and clear its highlight.
         edit_fact.dirty_reasons.discard('interval-gap')
+
+        # An interval-gap is not necessarily marked deleted,
+        #  but if edited, we should make sure it no longer is.
+        # Also, if any Fact was marked deleted, but user edited
+        #  it, should also make sure not deleted.
         edit_fact.deleted = False
 
     def manage_edited_edit_facts(self, edit_fact):
