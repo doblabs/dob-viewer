@@ -177,6 +177,7 @@ class ZoneDetails(
         edit_fact = self.facts_diff.edit_fact
         # Update times and spans based off <now>.
         self.refresh_duration()
+        # Update the <now> time duration the FactsDiff shows.
         self.refresh_time_end()
 
     # ***
@@ -228,6 +229,8 @@ class ZoneDetails(
         # Swap out a container in the layout.
         self.replace_val_container_text_area(keyval_widgets)
         # Focus the newly placed container.
+        # MAYBE/2019-01-28: (lb): This is highly coupled, to say the least.
+        #   Should maybe have zone_manager pass a focus callback.
         self.carousel.zone_manager.layout.focus(keyval_widgets.text_area)
         # Move the cursor to the end of the exit field,
         # e.g., if there's a date and time already set,
@@ -353,10 +356,14 @@ class ZoneDetails(
                 if not okay:
                     # User hit 'enter'. Annoy them with a warning.
                     show_message_cannot_clear_start()
+                # else, passive=True, and widget was reset to orig start
+                # (because removing a Fact's start time is never allowed).
             else:
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
                 okay = self.apply_edit_time_removed_end(edit_fact)
-                if not okay:
+                if okay:
+                    apply_edit_time_valid(edit_fact, edit_time=None)
+                else:
                     # Always warn user, whether they hit 'enter' or are tabbing away.
                     show_message_cannot_clear_end()
 
@@ -381,42 +388,40 @@ class ZoneDetails(
         def apply_edit_time_valid(edit_fact, edit_time):
             was_fact = edit_fact.copy()
             if self.active_widgets is self.widgets_start:
+                was_time = edit_fact.start_fmt_local
                 applied = self.apply_edit_time_start(edit_fact, edit_time)
             else:
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
+                was_time = edit_fact.end_fmt_local_or_now
                 applied = self.apply_edit_time_end(edit_fact, edit_time)
-            check_conflicts_and_confirm(edit_fact, was_fact, applied)
+            check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied)
 
-        def check_conflicts_and_confirm(edit_fact, was_fact, applied):
+        def check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied):
             if not applied:
                 # Nothing changed; no-op.
                 return
-            edited_fact_check_conflicts(edit_fact, was_fact)
+            edited_fact_check_conflicts(edit_fact, was_fact, was_time)
 
-        def edited_fact_check_conflicts(edit_fact, was_fact):
+        def edited_fact_check_conflicts(edit_fact, was_fact, was_time):
+            # (lb): The application interface mostly precludes conflicts.
+            #   The apply_edit_time_start/apply_edit_time_end methods do
+            #   not allow conflicts with other Facts. But user can create a
+            #   conflict with the Fact itself, e.g., by changing the end time
+            #   to come before the start.
             conflicts = edited_fact_conflicts(edit_fact)
-            # (lb): 2019-01-21: This code is untested
-            #   and should be unreachable, because the
-            #   apply_edit_time_start/apply_edit_time_end
-            #   functions will not allow conflicts. At
-            #   least not as currently writ.
-            self.carousel.controller.affirm(not conflicts)
-            if not ask_user_confirm_conflicts(conflicts):
-                # (lb): 2019-01-21: Interface prevents (precludes) conflicts.
-                assert False
-                # Otherwise we might want to do, say:
-                #   # Not confirmed! Leave the edit widget date unchanged.
-                #   edit_fact = was_fact
-                #   return
-
-            # FIXME/2019-01-21: Test creating conflicts
-            #   (probably by using edit-raw-fact feature 'E'
-            #   so you can set start and end simultaneously).
-            # (lb): FIXME: I'm guessing we don't look for conflicts correctly.
-            # - Look for overlap with fact_manager.groups time_since/time_until,
-            # - and then look in store for time window not covered by groups.
-            # - then either shorten edited fact to fit available time,
-            #    or if no available time then show error message.
+            if conflicts:
+                self.carousel.controller.affirm(len(conflicts) == 1)
+                conflict_msg = conflicts[0][2]
+                show_message_conflicts_found(conflict_msg)
+                # Reset the Fact, otherwise the edit will stick!
+                # Ha! Note that we already did the deed, so go through undo-redo!
+                #   # Won't work! Screws up prev/next links, and leaves undo!:
+                #   edit_fact.end = was_fact.end
+                #   edit_fact.start = was_fact.start
+                undone = self.carousel.edits_manager.undo_last_edit()
+                self.carousel.controller.affirm(undone)
+                # Update the control text.
+                self.active_widgets.text_area.text = was_time
 
         def edited_fact_conflicts(edit_fact):
             # Skip all unstored, edited Facts.
@@ -481,6 +486,13 @@ class ZoneDetails(
                 self.carousel.zone_manager.root,
                 _('Drat!'),
                 edit_text,
+            )
+
+        def show_message_conflicts_found(conflict_msg):
+            show_message_and_deny_leave(
+                self.carousel.zone_manager.root,
+                _('Not so fast!'),
+                conflict_msg,
             )
 
         def show_message_and_deny_leave(*args, **kwargs):
