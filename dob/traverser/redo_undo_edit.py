@@ -62,6 +62,17 @@ class RedoUndoEdit(object):
                 ),
             )
 
+    def clear_changes(self, which, whence=''):
+        which.clear()
+        if self.controller.client_config['devmode']:
+            self.controller.client_logger.debug(
+                '{}: cleared changes from: {}'
+                .format(
+                    whence,
+                    which is self.undo and 'undo' or 'redo',
+                ),
+            )
+
     # ***
 
     def add_undoable(self, copied_facts, what):
@@ -99,7 +110,7 @@ class RedoUndoEdit(object):
             return None
         else:
             # Since what's on the undo is different, the redo is kaput.
-            self.redo = []
+            self.clear_changes(self.redo, 'remove_undo_if_nothing_changed')
             return last_edits.pristine
 
     # ***
@@ -142,8 +153,7 @@ class RedoUndoEdit(object):
         )
 
         # This seals the deal; what's on the undo is different, and the redo is kaput.
-        #? Here, or in remove_undo_if_nothing_changed?
-        #   self.redo = []
+        self.clear_changes(self.redo, 'update_undo_altered')
 
     # ***
 
