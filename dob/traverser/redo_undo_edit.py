@@ -44,9 +44,36 @@ class RedoUndoEdit(object):
 
     # ***
 
+    def append_changes(self, which, urt_changes, whence=''):
+        which.append(urt_changes)
+        # 2019-01-28: (lb): Added this method, and whence, to make
+        # debugging easier for issues related to prev/next links.
+        if self.controller.client_config['devmode']:
+            self.controller.client_logger.debug(
+                '{}: no. changes: {} / to: {}'
+                .format(
+                    whence,
+                    len(urt_changes.pristine),
+                    which is self.undo and 'undo' or 'redo',
+                ),
+            )
+            for idx, fact in enumerate(urt_changes.pristine):
+                self.controller.client_logger.debug(
+                        '\n- # {:d}.: {}\n  prev: {}\n  next: {}'
+                    .format(
+                        idx,
+                        fact.short,
+                        fact.prev_fact and fact.prev_fact.short or '<no prev_fact>',
+                        fact.next_fact and fact.next_fact.short or '<no next_fact>',
+                    ),
+                )
+
+    # ***
+
     def add_undoable(self, copied_facts, what):
         undoable = UndoRedoTuple(copied_facts, time.time(), what)
-        self.undo.append(undoable)
+        # Caller is responsible for calling update_undo_altered later.
+        self.append_changes(self.undo, undoable, whence='add_undoable')
 
     def undo_peek(self):
         try:
@@ -91,7 +118,7 @@ class RedoUndoEdit(object):
         else:
             undone = True
             changes_copies = self.restore_facts(undo_changes, restore_facts)
-            self.redo.append(changes_copies)
+            self.append_changes(self.redo, changes_copies, whence='undo_last_edit')
         return undone
 
     def redo_last_undo(self, restore_facts):
@@ -103,7 +130,7 @@ class RedoUndoEdit(object):
         else:
             redone = True
             changes_copies = self.restore_facts(redo_changes, restore_facts)
-            self.undo.append(changes_copies)
+            self.append_changes(self.undo, changes_copies, whence='redo_last_undo')
         return redone
 
     def restore_facts(self, fact_changes, restore_facts):
