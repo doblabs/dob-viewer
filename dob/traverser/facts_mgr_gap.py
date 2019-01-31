@@ -41,6 +41,8 @@ class FactsManager_Gap(object):
         # Mark deleted until edited, so gap is not saved unless edited.
         gap_fact.deleted = True
         gap_fact.orig_fact = 0  # self-referential
+        # Add to undo stack. Sorta tricky. Sorta a hack.
+        self.on_insert_fact(gap_fact)
         return gap_fact
 
     def wire_two_facts_neighborly(self, fact_1, fact_2):

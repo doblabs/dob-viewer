@@ -109,20 +109,43 @@ class RedoUndoEdit(object):
 
     # ***
 
-    def update_undo_altered(self, edit_facts):
-        undo_changes = self.undo.pop()
+    def update_undo_altered(self, edit_facts, append=False):
+        try:
+            undo_changes = self.undo.pop()
+        except IndexError:
+            self.controller.affirm(append)
+            return
+
         self.controller.affirm(
-            (undo_changes.altered is None)
-            or (undo_changes.altered == edit_facts)
+            (
+                (not append)
+                and (
+                    (undo_changes.altered is None)
+                    or (undo_changes.altered == edit_facts)
+                )
+            )
+            or (
+                append
+                and (
+                    not set([fact.pk for fact in undo_changes.altered])
+                    .intersection(set([fact.pk for fact in edit_facts]))
+                )
+            )
         )
+
+        if append:
+            edit_facts = undo_changes.altered + edit_facts
+
         undoable = UndoRedoTuple(
             undo_changes.pristine, edit_facts, undo_changes.time, undo_changes.what,
         )
+
         self.append_changes(
             self.undo,
             undoable,
             whence='update_undo_altered-{}'.format(undoable.what),
         )
+
         # This seals the deal; what's on the undo is different, and the redo is kaput.
         #? Here, or in remove_undo_if_nothing_changed?
         #   self.redo = []

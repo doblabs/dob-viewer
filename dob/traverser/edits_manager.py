@@ -60,7 +60,9 @@ class EditsManager(object):
             orig_lkup = orig_facts_lookup(orig_facts)
             apply_orig_facts(edit_facts, orig_lkup)
             self.conjoined = FactsManager(
-                self.controller, on_jumped_fact=self.jumped_fact,
+                self.controller,
+                on_jumped_fact=self.jumped_fact,
+                on_insert_fact=self.insert_fact,
             )
             self.add_facts(edit_facts)
 
@@ -164,6 +166,9 @@ class EditsManager(object):
             self.clipboard.reset_paste()
         self.conjoined.curr_fact = curr_fact
         self.viewed_fact_pks.add(curr_fact.pk)
+
+    def insert_fact(self, gap_fact):
+        self.redo_undo.update_undo_altered([gap_fact], append=True)
 
     def jumped_fact(self, jump_fact):
         # Jump to shim to the setter.

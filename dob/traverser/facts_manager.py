@@ -50,10 +50,11 @@ class FactsManager(
 
     # ***
 
-    def __init__(self, controller, on_jumped_fact, *args, **kwargs):
+    def __init__(self, controller, on_insert_fact, on_jumped_fact, *args, **kwargs):
         super(FactsManager, self).__init__(controller, *args, **kwargs)
 
         self.controller = controller
+        self.on_insert_fact = on_insert_fact
         self.on_jumped_fact = on_jumped_fact
         self.debug = controller.client_logger.debug
         self.groups = self.sorted_contiguous_facts_list()
