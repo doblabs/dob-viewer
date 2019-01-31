@@ -216,3 +216,6 @@ class GroupChained(object):
                 return index
         raise ValueError("Fact with PK '{0}' is not in list".format(some_fact.pk))
 
+    def pop(self, index):
+        return self.facts.pop(index)
+
