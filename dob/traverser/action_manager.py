@@ -19,6 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from .interface_keys import (
+    key_bonds_clipboard,
     key_bonds_edit_time,
     key_bonds_normal,
     key_bonds_save_and_quit,
@@ -74,6 +75,7 @@ class ActionManager(object):
         bindings = []
         bindings += key_bonds_normal(self.key_action_map)
         bindings += key_bonds_update(self.key_action_map)
+        bindings += key_bonds_clipboard(self.key_action_map)
         bindings += key_bonds_undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 

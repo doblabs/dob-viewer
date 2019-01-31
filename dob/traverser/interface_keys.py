@@ -24,6 +24,7 @@ from prompt_toolkit.keys import Keys
 from ..prompters.interface_bonds import KeyBond
 
 __all__ = [
+    'key_bonds_clipboard',
     'key_bonds_edit_time',
     'key_bonds_normal',
     'key_bonds_save_and_quit',
@@ -207,6 +208,11 @@ def key_bonds_update(handler):
         #
         KeyBond('m-p', action=handler.fact_split),
         KeyBond('m-e', action=handler.fact_erase),
+    ]
+    return key_bonds_update
+
+def key_bonds_clipboard(handler):
+    key_bonds_clipboard = [
         #
         KeyBond('c-c', action=handler.fact_copy_fact),
         KeyBond('c-x', action=handler.fact_cut),
@@ -216,5 +222,5 @@ def key_bonds_update(handler):
         KeyBond(('T', 'c-c'), action=handler.fact_copy_tags),
         KeyBond(('D', 'c-c'), action=handler.fact_copy_description),
     ]
-    return key_bonds_update
+    return key_bonds_clipboard
 

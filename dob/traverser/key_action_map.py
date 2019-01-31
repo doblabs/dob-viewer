@@ -226,6 +226,8 @@ class KeyActionMap(object):
     def fact_erase(self, event):
         self.update_handler.fact_erase(event)
 
+    # #### Key bindings wired by key_bonds_clipboard().
+
     @Decorators.debug_log_trace_enter_leave
     def fact_copy_fact(self, event):
         self.update_handler.fact_copy_fact(event)
