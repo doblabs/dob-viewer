@@ -52,6 +52,20 @@ class PlaceableFact(Fact):
         self.next_fact = None
         self.prev_fact = None
 
+    @property
+    def short(self):
+        friendly = (
+            '0x{:12x} / 🏭 {} / {} to {:23} / prev: {:12x} / next: {:12x}'.format(
+                id(self),
+                self.pk is not None and '{:06d}'.format(self.pk) or '<None>',
+                self.start_fmt_local,
+                self.end_fmt_local or '..........now..........',
+                self.prev_fact and id(self.prev_fact) or 0,
+                self.next_fact and id(self.next_fact) or 0,
+            )
+        )
+        return friendly
+
     def copy(self, *args, **kwargs):
         """
         """
