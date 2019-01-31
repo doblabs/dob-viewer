@@ -46,7 +46,7 @@ class FactsManager_Jump(object):
     def debug_log_facts_mgr_state(self, caller_name):
         self.debug(
             '{}: len(groups): {} / curr_index: {}\n'
-            '- grps:\n{}\n-    grp: {}\n-    fct: {}'
+            '- grps:\n{}\n- cgrp: {}\n- curr: {}'
             .format(
                 caller_name,
                 len(self.groups),
