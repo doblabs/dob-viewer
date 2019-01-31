@@ -38,9 +38,11 @@ class StartEndEdit(object):
             edit_prev = self.time_adjust_editable_prev(edit_fact, *attrs)
             edit_next = self.time_adjust_editable_next(edit_fact, *attrs)
 
-            debug_log_facts('0', edit_fact, edit_prev, edit_next)
+            debug_log_facts('edit-time-begin', edit_fact, edit_prev, edit_next)
 
-            edit_what = 'adjust-time'
+            edit_what = 'adjust-time-{}'.format(
+                delta_time.total_seconds() >= 0 and 'pos' or 'neg',
+            )
             newest_changes = self.redo_undo.undoable_changes(
                 edit_what, edit_fact, edit_prev, edit_next,
             )
@@ -53,7 +55,7 @@ class StartEndEdit(object):
             if edit_next and edit_next.start < edit_fact.end:
                 edit_next.start = edit_fact.end
 
-            debug_log_facts('1', edit_fact, edit_prev, edit_next)
+            debug_log_facts('edit-time-final', edit_fact, edit_prev, edit_next)
 
             last_undo_or_newest_changes = (
                 self.redo_undo.remove_undo_if_same_facts_edited(
@@ -67,14 +69,14 @@ class StartEndEdit(object):
             return edit_prev, edit_next
 
         def debug_log_facts(prefix, edit_fact, edit_prev, edit_next):
-            debug_log_fact_short('edit_fact/{}'.format(prefix), edit_fact)
-            debug_log_fact_short('edit_prev/{}'.format(prefix), edit_prev)
-            debug_log_fact_short('edit_next/{}'.format(prefix), edit_next)
-
-        def debug_log_fact_short(label, some_fact):
-            self.controller.client_logger.debug('{}: 0x{:08x}: {}'.format(
-                label, id(some_fact), some_fact and some_fact.short,
-            ))
+            self.controller.client_logger.debug(
+                '{}\n- edit: {}\n- prev: {}\n- next: {}'.format(
+                    prefix,
+                    edit_fact and edit_fact.short or '<no such fact>',
+                    edit_prev and edit_prev.short or '<no such fact>',
+                    edit_next and edit_next.short or '<no such fact>',
+                ),
+            )
 
         return _edit_time_adjust()
 
