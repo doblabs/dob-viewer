@@ -265,7 +265,8 @@ class UpdateHandler(object):
     def edit_time_adjust(self, delta_mins, *attrs):
         delta_time = self.edit_time_multiplier(delta_mins)
         self.edits_manager.edit_time_adjust(delta_time, *attrs)
-        self.zone_manager.rebuild_viewable()
+        self.zone_manager.reset_diff_fact()
+        self.zone_manager.selectively_refresh()
 
     # Hahaha, (lb): The time_adjust multiplier is a somewhat ridiculous feature.
     #   I'm not sure how useful it is.
