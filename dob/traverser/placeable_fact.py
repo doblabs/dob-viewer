@@ -57,7 +57,7 @@ class PlaceableFact(Fact):
         friendly = (
             '0x{:12x} / 🏭 {} / {} to {:23} / prev: {:12x} / next: {:12x}'.format(
                 id(self),
-                self.pk is not None and '{:06d}'.format(self.pk) or '<None>',
+                self.pk is not None and '{:6d}'.format(self.pk) or '<None>',
                 self.start_fmt_local,
                 self.end_fmt_local or '..........now..........',
                 self.prev_fact and id(self.prev_fact) or 0,
