@@ -86,12 +86,12 @@ class FactsManager_Jump(object):
             # Find the group index nearest ref_time. We use UntilTimeStops
             # so the index is 1 greater than group index for most matches
             # (all except the final ongoing fact group).
-            sorty_tuple = (ref_time, UntilTimeStops)
-            inserts_at = self.groups.bisect_key_left(sorty_tuple)
+            sorty_times = (ref_time, UntilTimeStops)
+            inserts_at = self.groups.bisect_key_left(sorty_times)
 
             # Check for ongoing fact group.
             if inserts_at == (len(self.groups) - 1):
-                if sorty_tuple == self.groups[-1].sorty_tuple:
+                if sorty_times == self.groups[-1].sorty_times:
                     return self.groups[-1], self.groups[-1][0], True
 
             # If inserts_at is 0, ref_time is before any group's since_time,
@@ -111,11 +111,11 @@ class FactsManager_Jump(object):
 
             try_group = self.groups[inserts_at - 1]
             self.controller.affirm(ref_time >= try_group.time_since)
-            self.controller.affirm(sorty_tuple != try_group.sorty_tuple)
+            self.controller.affirm(sorty_times != try_group.sorty_times)
 
             # Check whether within group time window.
             if ref_time <= try_group.time_until:
-                fact_index = try_group.bisect_key_left(sorty_tuple)
+                fact_index = try_group.bisect_key_left(sorty_times)
                 best_fact = match_group_later_index(try_group, fact_index, ref_time)
                 return try_group, best_fact, True
 
@@ -214,7 +214,7 @@ class FactsManager_Jump(object):
         ):
             self.debug('ref_time: {}'.format(ref_time))
             self.debug(
-                'near_group: {}'.format(fact_group.sorty_tuple)
+                'near_group: {}'.format(fact_group.sorty_times)
             )
             self.debug(
                 'nerst_fact: {}'.format(nearest_fact and nearest_fact.short)

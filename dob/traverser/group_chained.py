@@ -178,7 +178,7 @@ class GroupChained(object):
         return True
 
     @property
-    def sorty_tuple(self):
+    def sorty_times(self):
         return (self.time_since, self.time_until, )
 
     def reset_time_window(self):

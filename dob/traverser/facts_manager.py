@@ -66,7 +66,7 @@ class FactsManager(
 
     def sorted_contiguous_facts_list(self):
         sorted_contiguous_facts_list = SortedKeyList(
-            key=lambda group_chained: (group_chained.sorty_tuple),
+            key=lambda group_chained: (group_chained.sorty_times),
         )
         return sorted_contiguous_facts_list
 
@@ -161,9 +161,9 @@ class FactsManager(
     def claim_time_span(self, since, until):
         owning_group = None
 
-        sorty_tuple = (since, since)
+        sorty_times = (since, since)
 
-        inserts_at = self.groups.bisect_key_left(sorty_tuple)
+        inserts_at = self.groups.bisect_key_left(sorty_times)
         # Because bisect_key_left, either the start of the indexed
         # group matches, or the time falls before the group indexed.
         if inserts_at < len(self.groups):
@@ -236,13 +236,13 @@ class FactsManager(
 
         # The group's facts order should not change, but the group's
         # key might change, if some_fact is being prepended to the
-        # group, because self.curr_group.facts[0].sorty_tuple.
+        # group, because self.curr_group.facts[0].sorty_times.
         # As such, remove and re-add the group, so that SortedKeyList
         # can update, e.g., self.groups._maxes is set when a group is
         # updated, so really a group is invariant once it's added to
         # the sorted list. (If we didn't re-add the group, things happen,
         # like, self.groups.index(self.curr_group) will not find the
-        # group if its sorty_tuple < _maxes.)
+        # group if its sorty_times < _maxes.)
         group = group or self.curr_group
         if group_index is None:
             # MAYBE/2019-01-21: self.groups.index will raise ValueError
@@ -259,9 +259,9 @@ class FactsManager(
             except ValueError:
                 # MAYBE/2019-01-21: See long comment from a few lines back.
                 #  Look for exact group object match (i.e., instead of using
-                #  sorty_tuple value). This is because groups.index uses
+                #  sorty_times value). This is because groups.index uses
                 #  _maxes and compares key values, ignoring object identity.
-                #   and group.sorty_tuple changes based on its facts, and
+                #   and group.sorty_times changes based on its facts, and
                 #   when we extend the time window. (lb): Log comment....
                 self.controller.affirm(False)  # Unexpected path, but may work:
                 for idx, grp in enumerate(self.groups):
@@ -273,7 +273,7 @@ class FactsManager(
 
         if group_index is not None:
             # NOTE: Use pop(), specifying an index, rather than remove(),
-            #       which uses a key value, because sorty_tuple might already
+            #       which uses a key value, because sorty_times might already
             #       be invalid.
             self.groups.pop(group_index)
 
@@ -293,9 +293,9 @@ class FactsManager(
     def logger_debug_groups(self, whence='', group=None):
         group = group or self.curr_group
         self.debug(
-            '{}\n- group.sorty_tuple: {}\n-    groups._maxes: {}'.format(
+            '{}\n- group.sorty_times: {}\n-    groups._maxes: {}'.format(
                 whence,
-                group and group.sorty_tuple or '<curr_group is None>',
+                group and group.sorty_times or '<curr_group is None>',
                 self.groups._maxes,
             )
         )
