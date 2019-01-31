@@ -91,11 +91,15 @@ class FactsManager(
         self.controller.affirm(self.curr_group.contains_fact_time([curr_fact]))
 
     def locate_fact(self, some_fact):
-        inserts_at = self.groups.bisect_key_left(some_fact.sorty_tuple)
+        inserts_at = self.groups.bisect_key_left(some_fact.sorty_times)
         if (
             (inserts_at < len(self.groups))
             and (self.groups[inserts_at])
-            and (self.groups[inserts_at][0].pk == some_fact.pk)
+            # (lb): 2019-01-31: We had been comparing PKs here:
+            #   and (self.groups[inserts_at][0].pk == some_fact.pk)
+            # but I'm pretty sure we want to check the time window.
+            #  (Such glaring confidence, I know!)
+            and (self.groups[inserts_at][0].sorty_times == some_fact.sorty_times)
         ):
             group = self.groups[inserts_at]
         else:
