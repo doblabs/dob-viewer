@@ -152,11 +152,11 @@ class UpdateHandler(object):
     def fact_paste(self, event):
         """"""
         def _fact_paste():
-            hot_notif = process_paste()
+            paste_what = self.edits_manager.paste_copied_meta()
+            hot_notif = paste_response(paste_what)
             self.zone_manager.update_status(hot_notif)
 
-        def process_paste():
-            paste_what = self.edits_manager.paste_copied_meta()
+        def paste_response(paste_what):
             if not paste_what:
                 return _("Nothing copied, nothing pasted")
             else:
