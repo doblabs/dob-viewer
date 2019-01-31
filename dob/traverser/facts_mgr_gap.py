@@ -40,7 +40,8 @@ class FactsManager_Gap(object):
         gap_fact.dirty_reasons.add('interval-gap')
         # Mark deleted until edited, so gap is not saved unless edited.
         gap_fact.deleted = True
-        gap_fact.orig_fact = 0  # self-referential
+        # No exceptions! All Fact copies must eventually lead to the original.
+        gap_fact.orig_fact = gap_fact.copy()
         # Add to undo stack. Sorta tricky. Sorta a hack.
         self.on_insert_fact(gap_fact)
         return gap_fact
