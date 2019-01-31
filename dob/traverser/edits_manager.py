@@ -265,9 +265,13 @@ class EditsManager(object):
 
     def apply_edits(self, *edit_facts):
         # Called on paste, edit-time, and after carousel prompts user for edits.
+        # Note that edit_time_adjust has 3 facts (curr, prev, next) and 1 of the
+        #   latter times may be None. Extract that None entry here.
         edit_facts = list(filter(None, edit_facts))
         self.update_redo_undo_and_conjoined(edit_facts)
         self.dirty_callback()
+        # Show the first edited Fact (and ensure Carousel showing a wired
+        # Fact, in case what was curr_fact was removed during the edit).
         self.curr_fact = self.conjoined.locate_wired(edit_facts[0])
 
     def add_undoable(self, was_facts, what):
@@ -360,8 +364,13 @@ class EditsManager(object):
         return redone
 
     def restore_facts(self, pristine, altered):
+        # 2019-01-31: (lb): I think we can skip manage_edited_dirty_deleted
+        # (managing 'interval-gap') because that's encoded in redo-undo Facts.
+
         for edit_fact in pristine:
+            self.controller.affirm(edit_fact.orig_fact is not 0)
             self.update_edited_fact(edit_fact, edit_fact.orig_fact)
+
         self.conjoined.apply_edits(edit_facts=pristine, last_edits=altered)
         # Jump to the "main" Fact that was edited.
         self.curr_fact = self.conjoined.locate_wired(pristine[0])
