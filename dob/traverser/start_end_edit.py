@@ -57,14 +57,23 @@ class StartEndEdit(object):
 
             debug_log_facts('edit-time-final', edit_fact, edit_prev, edit_next)
 
-            last_undo_or_newest_changes = (
+            # If same Facts edited with same tool within DISTINCT_CHANGES_THRESHOLD
+            # time, pop the previous undo.
+            _last_undo_or_newest_changes = (
                 self.redo_undo.remove_undo_if_same_facts_edited(
                     newest_changes,
                 )
             )
 
             # In lieu of having called add_undoable, add the changes to the undo stack.
-            self.redo_undo.undo.append(last_undo_or_newest_changes)
+            # 2019-01-28: (lb): This is a little coupled (that is, I think that
+            # StartEndEdit should not know about the redo-undo mechanism).
+            self.redo_undo.append_changes(
+                self.redo_undo.undo,
+                newest_changes,
+                whence='edit_time_adjust',
+            )
+            # The caller calls apply_edits() to update fact_manager.
 
             return edit_prev, edit_next
 
