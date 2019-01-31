@@ -42,7 +42,7 @@ class ZoneEpithet(object):
     def rebuild_viewable(self):
         """"""
         def _rebuild_viewable():
-            self.facts_diff = self.carousel.zone_manager.facts_diff
+            self.zone_manager = self.carousel.zone_manager
             assemble_children()
             self.epithet_container = build_container()
             self.refresh_all_children()
@@ -84,7 +84,7 @@ class ZoneEpithet(object):
     # ***
 
     def refresh_interval(self):
-        tod_humanize = self.facts_diff.edit_fact.time_of_day_humanize
+        tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
         self.interval_banner.text = self.bannerize(interval_text)
 

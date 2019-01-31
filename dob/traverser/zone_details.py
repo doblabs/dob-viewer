@@ -76,7 +76,7 @@ class ZoneDetails(
     def rebuild_viewable(self):
         """"""
         def _rebuild_viewable():
-            self.facts_diff = self.carousel.zone_manager.facts_diff
+            self.zone_manager = self.carousel.zone_manager
             assemble_children()
             self.details_container = build_container()
             self.refresh_all_children()
@@ -173,8 +173,8 @@ class ZoneDetails(
 
     def selectively_refresh(self):
         # We don't need to refresh except for ongoing fact.
-        orig_fact = self.facts_diff.orig_fact
-        edit_fact = self.facts_diff.edit_fact
+        orig_fact = self.zone_manager.facts_diff.orig_fact
+        edit_fact = self.zone_manager.facts_diff.edit_fact
         # Update times and spans based off <now>.
         self.refresh_duration()
         # Update the <now> time duration the FactsDiff shows.
@@ -183,8 +183,8 @@ class ZoneDetails(
     # ***
 
     def refresh_duration(self):
-        orig_val, edit_val = self.facts_diff.diff_time_elapsed(show_now=True)
-        diff_tuples = self.facts_diff.diff_line_tuples_style(orig_val, edit_val)
+        orig_val, edit_val = self.zone_manager.facts_diff.diff_time_elapsed(show_now=True)
+        diff_tuples = self.zone_manager.facts_diff.diff_line_tuples_style(orig_val, edit_val)
         self.label_duration.val_label.text = diff_tuples
 
     def refresh_activity(self):
@@ -198,7 +198,7 @@ class ZoneDetails(
 
     def refresh_val_widgets(self, keyval_widgets):
         self.carousel.controller.affirm(keyval_widgets.fact_attr)
-        diff_tuples = self.facts_diff.diff_attrs(
+        diff_tuples = self.zone_manager.facts_diff.diff_attrs(
             keyval_widgets.fact_attr, **keyval_widgets.diff_kwargs
         )
         keyval_widgets.val_label.text = diff_tuples
@@ -335,7 +335,7 @@ class ZoneDetails(
             # only if one already exists, but fact may be unedited, in which case
             # it'd return the original, unedited fact. So use the editable fact we
             # made earlier.
-            edit_fact = self.facts_diff.edit_fact
+            edit_fact = self.zone_manager.facts_diff.edit_fact
             apply_edited_time(edit_fact, edit_text)
             return leave_okayed[0]
 
@@ -456,10 +456,10 @@ class ZoneDetails(
 
         def edited_fact_update_label_text():
             if self.active_widgets is self.widgets_start:
-                diff_tuples = self.facts_diff.diff_attrs('start_fmt_local')
+                diff_tuples = self.zone_manager.facts_diff.diff_attrs('start_fmt_local')
             else:
                 self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
-                diff_tuples = self.facts_diff.diff_attrs('end_fmt_local_nowwed')
+                diff_tuples = self.zone_manager.facts_diff.diff_attrs('end_fmt_local_nowwed')
             self.active_widgets.val_label.text = diff_tuples
 
         # ***
@@ -520,7 +520,7 @@ class ZoneDetails(
         #   - Press 'e' again; edit 'end'; press Ctrl-z.
         #   - Expect: previous (intermediate) end time, not original end time!
         #   - For original end time: press 'R' reset!
-        orig_fact = self.facts_diff.orig_fact
+        orig_fact = self.zone_manager.facts_diff.orig_fact
         # FIXME/2019-01-14 18:11: Localization/l10n/timezone'ation...
         #                           start_fmt_local vs start_fmt_utc, and end...
         # When editing, reset widget to unedited time (do not go through undo stack).

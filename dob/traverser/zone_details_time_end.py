@@ -44,7 +44,7 @@ class ZoneDetails_TimeEnd(object):
     @catch_action_exception
     def edit_time_end(self, event=None, focus=True):
         if focus:
-            edit_fact = self.facts_diff.edit_fact
+            edit_fact = self.zone_manager.facts_diff.edit_fact
             # Use or-now, unlike start time, because there's on one possible
             # open-ended fact (without an end time) and it'd be the latest fact.
             end_fmt_local_or_now = edit_fact.end_fmt_local_or_now

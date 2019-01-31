@@ -44,7 +44,7 @@ class ZoneDetails_TimeStart(object):
     @catch_action_exception
     def edit_time_start(self, event=None, focus=True):
         if focus:
-            edit_fact = self.facts_diff.edit_fact
+            edit_fact = self.zone_manager.facts_diff.edit_fact
             start_fmt_local = edit_fact.start_fmt_local
             self.widgets_start.orig_val = start_fmt_local
             self.widgets_start.text_area.text = start_fmt_local
