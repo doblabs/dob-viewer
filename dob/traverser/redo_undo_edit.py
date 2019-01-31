@@ -84,6 +84,7 @@ class RedoUndoEdit(object):
     # ***
 
     def undoable_changes(self, what, *edit_facts):
+        edit_facts = list(filter(None, edit_facts))
         edit_fact_copies = [
             edit_fact.copy() for edit_fact in edit_facts if edit_fact is not None
         ]
