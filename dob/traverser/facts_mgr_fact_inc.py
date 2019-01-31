@@ -67,6 +67,7 @@ class FactsManager_FactInc(object):
             # See if we've identified the boundary of the known factiverse.
             if (next_fact.end is None) or (next_fact.end is UntilTimeStops):
                 self.controller.affirm(self.curr_group.until_time_stops)
+            self.controller.client_logger.debug('\n- next: {}'.format(next_fact.short))
             return next_fact
 
         # ***

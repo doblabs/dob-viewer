@@ -78,6 +78,7 @@ class FactsManager_FactDec(object):
                 with self.fact_group_rekeyed():
                     self.curr_group.claim_time_span(since=SinceTimeBegan)
                 self.controller.affirm(self.curr_group.since_time_began)
+            self.controller.client_logger.debug('\n- prev: {}'.format(prev_fact.short))
             return prev_fact
 
         # ***
