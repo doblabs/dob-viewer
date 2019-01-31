@@ -164,7 +164,7 @@ class FactsManager(
     @property
     def debug__str(self):
         return '  ' + '\n  '.join(
-            ['GRP #{}: {}'.format(idx, grp) for idx, grp in enumerate(self.groups)]
+            ['#{:3}: {}'.format(idx, grp) for idx, grp in enumerate(self.groups)]
         )
 
     # ***
@@ -182,7 +182,10 @@ class FactsManager(
             if fact.unstored:
                 self.last_fact_pk = min(self.last_fact_pk, fact.pk)
 
-        self.groups.add(GroupChained(grouped_facts))
+        group = GroupChained(grouped_facts)
+        self.groups.add(group)
+
+        self.logger_debug_groups('add_facts', group=group)
 
     def claim_time_span(self, since, until):
         owning_group = None
@@ -279,13 +282,20 @@ class FactsManager(
             (group_index is None) or (group_index == now_group_index)
         )
 
+        self.logger_debug_groups('fact_group_rekeyed', group=group)
+
         # Caller is responsible for wiring prev/next references.
 
+    def logger_debug_groups(self, whence='', group=None):
+        group = group or self.curr_group
         self.debug(
-            '\n- group.sorty_tuple: {}\n-    groups._maxes: {}'.format(
-                group.sorty_tuple, self.groups._maxes,
+            '{}\n- group.sorty_tuple: {}\n-    groups._maxes: {}'.format(
+                whence,
+                group and group.sorty_tuple or '<curr_group is None>',
+                self.groups._maxes,
             )
         )
+        self.debug('\n{}'.format(self.debug__str))
 
     def curr_group_add(self, some_fact):
         # The new fact is not yet wired.

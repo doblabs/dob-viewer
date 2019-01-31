@@ -157,7 +157,9 @@ class EditsManager(object):
     @curr_fact.setter
     def curr_fact(self, curr_fact):
         """"""
-        self.controller.client_logger.debug('{}'.format(curr_fact.short))
+        self.controller.client_logger.debug(
+            '\n- curr: {}'.format(curr_fact.short),
+        )
         if self.conjoined.curr_fact is not curr_fact:
             self.clipboard.reset_paste()
         self.conjoined.curr_fact = curr_fact
@@ -259,6 +261,7 @@ class EditsManager(object):
             edit_fact = self.editable_fact()
         was_fact = edit_fact.copy()
         self.add_undoable([was_fact], what)
+        # Caller is responsible for calling this class' apply_edits later.
         return edit_fact
 
     def apply_edits(self, *edit_facts):
