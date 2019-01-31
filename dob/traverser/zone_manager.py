@@ -186,6 +186,9 @@ class ZoneManager(object):
         # a copy of the orig_fact; but it does not make an undo.
         edit_fact = self.carousel.edits_manager.editable_fact()
         self.facts_diff = FactsDiff(orig_fact, edit_fact, formatted=True)
+        self.carousel.controller.client_logger.debug(
+            'facts_diff: {}'.format(self.facts_diff),
+        )
 
     def rebuild_containers(self):
         epithet_container = self.zone_epithet.rebuild_viewable()
