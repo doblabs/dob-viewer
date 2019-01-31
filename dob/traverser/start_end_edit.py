@@ -18,6 +18,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from .redo_undo_edit import UndoRedoTuple
+
 __all__ = [
     'StartEndEdit',
 ]
@@ -27,14 +29,21 @@ class StartEndEdit(object):
     """"""
     def __init__(self, edits_manager):
         self.controller = edits_manager.controller
-        self.redo_undo = edits_manager.redo_undo
-        self.editable_fact_prev = edits_manager.editable_fact_prev
+        # MAYBE/2019-01-31: (lb): This class is tightly coupled.
+        #  We might as well concede defeat and make this class a
+        #  part of an EditsManager hierarchy (like the FactsManager
+        #  classes).
+        self.restore_facts = edits_manager.restore_facts
+        self.editable_fact = edits_manager.editable_fact
         self.editable_fact_next = edits_manager.editable_fact_next
+        self.editable_fact_prev = edits_manager.editable_fact_prev
+        self.redo_undo = edits_manager.redo_undo
 
     # ***
 
-    def edit_time_adjust(self, edit_fact, delta_time, *attrs):
+    def edit_time_adjust(self, delta_time, *attrs):
         def _edit_time_adjust():
+            edit_fact = self.editable_fact()
             edit_prev = self.time_adjust_editable_prev(edit_fact, *attrs)
             edit_next = self.time_adjust_editable_next(edit_fact, *attrs)
 
@@ -43,6 +52,8 @@ class StartEndEdit(object):
             edit_what = 'adjust-time-{}'.format(
                 delta_time.total_seconds() >= 0 and 'pos' or 'neg',
             )
+            # Get an UndoRedoTuple from a copy of the Facts we're about to edit.
+            # And set UndoRedoTuple.altered to the new copies.
             newest_changes = self.redo_undo.undoable_changes(
                 edit_what, edit_fact, edit_prev, edit_next,
             )
@@ -57,25 +68,55 @@ class StartEndEdit(object):
 
             debug_log_facts('edit-time-final', edit_fact, edit_prev, edit_next)
 
+            # (lb): Ug, more coupling. Because we are managing the redo-undo stack
+            # specially here (possibly removing the latest undo, and squishing it
+            # with the new edits), we do not want to call edits_manager.apply_edits,
+            # which calls update_redo_undo_and_conjoined, which fiddles with redo_undo.
+            # Instead, do things piecemeal: pop the latest undo; squish it; push it back;
+            # clear the redo; and use the restore_facts method to fix wiring (update the
+            # edits_manager.edit_facts and facts_manager.by_pk lookups, and update the
+            # facts_manager fact-groups).
+
             # If same Facts edited with same tool within DISTINCT_CHANGES_THRESHOLD
             # time, pop the previous undo.
-            _last_undo_or_newest_changes = (
+            last_undo_or_newest_changes = (
                 self.redo_undo.remove_undo_if_same_facts_edited(
                     newest_changes,
                 )
             )
+            self.controller.affirm(
+                (newest_changes is last_undo_or_newest_changes)
+                or (newest_changes.pristine == last_undo_or_newest_changes.altered)
+            )
+
+            # Create the freshest undo. It might be squished with an earlier
+            # undo created by the user within DISTINCT_CHANGES_THRESHOLD ago,
+            # in which case, the pristine Facts are from the previous undo.
+            # In all cases, the altered Facts are the ones we just edited.
+            undoable = UndoRedoTuple(
+                last_undo_or_newest_changes.pristine,
+                newest_changes.altered,
+                last_undo_or_newest_changes.time,
+                last_undo_or_newest_changes.what,
+            )
 
             # In lieu of having called add_undoable, add the changes to the undo stack.
-            # 2019-01-28: (lb): This is a little coupled (that is, I think that
-            # StartEndEdit should not know about the redo-undo mechanism).
             self.redo_undo.append_changes(
                 self.redo_undo.undo,
-                newest_changes,
+                undoable,
                 whence='edit_time_adjust',
             )
-            # The caller calls apply_edits() to update fact_manager.
+            # This invalidates the redo stack.
+            self.redo_undo.clear_changes(self.redo_undo.redo, 'edit_time_adjust')
 
-            return edit_prev, edit_next
+            self.restore_facts(
+                newest_changes.altered,
+                # This is a little tricky: the Facts currently wired in the
+                # FactsManager were altered by the previous Undo that we might
+                # be replacing if within DISTINCT_CHANGES_THRESHOLD, so use
+                # these Facts to fix the wiring.
+                newest_changes.pristine,
+            )
 
         def debug_log_facts(prefix, edit_fact, edit_prev, edit_next):
             self.controller.client_logger.debug(

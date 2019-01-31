@@ -427,11 +427,7 @@ class EditsManager(object):
     # ***
 
     def edit_time_adjust(self, delta_time, *attrs):
-        edit_fact = self.editable_fact()
-        edit_prev, edit_next = self.time_edit.edit_time_adjust(
-            edit_fact, delta_time, *attrs,
-        )
-        self.apply_edits(edit_fact, edit_prev, edit_next)
+        self.time_edit.edit_time_adjust(delta_time, *attrs)
 
     # ***
 
