@@ -177,7 +177,9 @@ class ZoneDetails(
         edit_fact = self.zone_manager.facts_diff.edit_fact
         # Update times and spans based off <now>.
         self.refresh_duration()
-        # Update the <now> time duration the FactsDiff shows.
+        # Update start time, should its time have been adjusted.
+        self.refresh_time_start()
+        # Update the <now> time duration that FactsDiff shows.
         self.refresh_time_end()
 
     # ***
