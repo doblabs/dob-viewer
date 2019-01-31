@@ -202,22 +202,22 @@ class RedoUndoEdit(object):
         latest_changes = self.undo_peek()
 
         if latest_changes.what != newest_changes.what:
-            self.debug('!what: no.: {}'.format(len(newest_changes)))
+            self.debug('!what: no.: {}'.format(len(newest_changes.pristine)))
             return newest_changes
 
         if (
             (time.time() - latest_changes.time)
             > RedoUndoEdit.DISTINCT_CHANGES_THRESHOLD
         ):
-            self.debug('!time: no.: {}'.format(len(newest_changes)))
+            self.debug('!time: no.: {}'.format(len(newest_changes.pristine)))
             return newest_changes
 
         latest_pks = set([changed.pk for changed in latest_changes.pristine])
         if latest_pks != set([edit_fact.pk for edit_fact in newest_changes.pristine]):
-            self.debug('!pks: no.: {}'.format(len(newest_changes)))
+            self.debug('!pks: no.: {}'.format(len(newest_changes.pristine)))
             return newest_changes
 
         latest_undo = self.undo.pop()
-        self.debug('pop!: no.: {}'.format(len(latest_undo)))
+        self.debug('pop!: no.: {}'.format(len(latest_undo.pristine)))
         return latest_undo
 
