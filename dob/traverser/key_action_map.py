@@ -53,12 +53,11 @@ class KeyActionMap(object):
                 # yeah, this code has little utility to the end consumer, other
                 # than to make the developer more comfortable in the code jungle.
                 debug = obj.carousel.controller.client_logger.debug
-                debug('ENTER: “{}”'.format(func.__name__))
+                debug('🚿 🐎 ENTER 👋 🍩 “{}”'.format(func.__name__))
                 func(obj, event, *args, **kwargs)
                 # Include a visual delimiter to make it easy to scan log trace
                 # and see groups of messages belonging to each command.
-                delim = '                                🍩 🍌 🚿 🍖 🛀 🐎 🛁 👋 🌵 🐵 🌊'
-                debug('LEAVE: “{}”\n{}'.format(func.__name__, delim))
+                debug('🍖 🛀 LEAVE 🐵 🍌 “{}”'.format(func.__name__))
 
             return update_wrapper(trace_enter_leave_wrapper, func)
 
