@@ -235,10 +235,18 @@ class EditsManager(object):
                 self.controller.affirm(edit_fact.orig_fact is 0)
                 edit_fact = edit_fact.copy()
             elif edit_fact is self.curr_fact:
-                # Don't edit the curr_fact, which is in conjoined.groups,
-                # because it could change conjoined.groups[].sorty_tuple,
-                # which then creates issues later when groups.index is
-                # called in conjoined.update_fact.
+                # (lb): The FactsManager fact-groups are wired with the latest
+                # edit of the Fact, so if the user wants to edit a Fact again, be
+                # sure to pass them a Fact copy, lest they edit the one that is
+                # already part of a fact-group. (Editing a Fact once it is part of
+                # a SortedKeyList causes a number of problems. For one, the group
+                # key, conjoined.groups[n].sorty_times, returns a different value,
+                # but, internally, the _maxes value is unchanged. This causes the
+                # group to behave oddly. And the only way to ensure that _maxes is
+                # updated is to remove and reinsert the Fact, but to remove the
+                # Fact, we need to be able to identify it. Hence, we cannot have
+                # other code inadvertently mucking with a Fact once it's been
+                # added to the group-fact container. So return a copy.)
                 edit_fact = edit_fact.copy()
         except KeyError:
             # Use the latest version of the fact, not orig_fact.
