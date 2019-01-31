@@ -89,7 +89,7 @@ class EditsManager(object):
                 assign_orig_fact(edit_fact, orig_lkup)
                 # Note that claim_time_span changes the group key, but
                 # the group has not been added to the conjoined.groups
-                # container yet (so no need to use self.curr_group_rekeyed).
+                # container yet (so no need to use self.fact_group_rekeyed).
                 self.conjoined.claim_time_span(*edit_fact.orig_fact.times)
 
         def assign_orig_fact(edit_fact, orig_lkup):

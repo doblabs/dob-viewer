@@ -218,13 +218,13 @@ class FactsManager(
         if owning_group is None:
             owning_group = GroupChained()
 
-        with self.curr_group_rekeyed(owning_group):
+        with self.fact_group_rekeyed(owning_group):
             owning_group.claim_time_span(since, until)
 
     # ***
 
     @contextmanager
-    def curr_group_rekeyed(self, group=None, group_index=None):
+    def fact_group_rekeyed(self, group=None, group_index=None):
         # Ensures that self.groups._keys is up to date.
 
         # The group's facts order should not change, but the group's
@@ -297,7 +297,7 @@ class FactsManager(
         self.controller.affirm(some_fact.pk not in self.by_pk.keys())
         self.new_fact_wire_links(some_fact)
 
-        with self.curr_group_rekeyed():
+        with self.fact_group_rekeyed():
             self.curr_group.add(some_fact)
             self.by_pk[some_fact.pk] = some_fact
 

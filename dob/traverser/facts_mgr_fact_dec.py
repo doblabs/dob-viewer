@@ -75,7 +75,7 @@ class FactsManager_FactDec(object):
             self.fulfill_jump(prev_fact, reason='fact-dec')
             # See if we've identified the boundary of the known factiverse.
             if prev_fact.start <= self.beginning_of_time:
-                with self.curr_group_rekeyed():
+                with self.fact_group_rekeyed():
                     self.curr_group.claim_time_span(since=SinceTimeBegan)
                 self.controller.affirm(self.curr_group.since_time_began)
             return prev_fact
@@ -153,13 +153,13 @@ class FactsManager_FactDec(object):
 
         def collapse_group(prev_group, prev_group_index):
             prev_fact = prev_group[-1]
-            with self.curr_group_rekeyed():
+            with self.fact_group_rekeyed():
                 _prev_group = self.groups.pop(prev_group_index)
                 self.controller.affirm(prev_group is _prev_group)
                 self.curr_index = len(prev_group) - 1
                 # Note that addition returns a new object, e.g.,
                 #  self.curr_group = prev_group + self.curr_group
-                # sets self.curr_group to a new object -- but curr_group_rekeyed
+                # sets self.curr_group to a new object -- but fact_group_rekeyed
                 # adds back the original group object, so do in-place addition.
                 # Note that slice operator calls __setitem__ for each fact,
                 # whereas addition calls __add__ or __radd__ just once.

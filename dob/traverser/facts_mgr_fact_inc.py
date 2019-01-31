@@ -141,7 +141,7 @@ class FactsManager_FactInc(object):
 
         def collapse_group(next_group, next_group_index):
             next_fact = next_group[0]
-            with self.curr_group_rekeyed():
+            with self.fact_group_rekeyed():
                 # The rekeyed fcn., pops curr_group, so decrement next index.
                 next_group_index -= 1
                 _next_group = self.groups.pop(next_group_index)
@@ -149,7 +149,7 @@ class FactsManager_FactInc(object):
                 self.curr_index += 1
                 # Note that addition returns a new object, e.g.,
                 #  self.curr_group += next_group
-                # sets self.curr_group to a new object -- but curr_group_rekeyed
+                # sets self.curr_group to a new object -- but fact_group_rekeyed
                 # adds back the original group object, so do in-place addition.
                 # Note that slice operator calls __setitem__ for each fact,
                 # whereas addition calls __add__ or __radd__ just once.
