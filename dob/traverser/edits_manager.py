@@ -217,16 +217,10 @@ class EditsManager(object):
 
     # ***
 
-    def editable_fact(self, ref_fact=None):
-        self.controller.client_logger.debug(
-            'ref_fact: {}'.format(ref_fact and ref_fact.short),
-        )
+    def editable_fact(self):
         # Copy Fact on demand for user to edit, if we haven't made one already.
-        # Note that ref_fact is only set from restore_edit_fact, i.e., a fact
-        # from the redo_undo stack.
-        ref_fact = ref_fact or self.curr_fact
         try:
-            edit_fact = self.edit_facts[ref_fact.pk]
+            edit_fact = self.edit_facts[self.curr_fact.pk]
             # On dob-import, the original import facts are put in self.edit_facts.
             # So make a copy if what's in edit_facts is the original. (Later, when
             # update_lookups is called via update_edited_fact to update edit_facts,
@@ -243,10 +237,10 @@ class EditsManager(object):
                 edit_fact = edit_fact.copy()
         except KeyError:
             # Use the latest version of the fact, not orig_fact.
-            edit_fact = ref_fact.copy()
+            edit_fact = self.curr_fact.copy()
             self.controller.affirm(
-                (edit_fact.orig_fact is ref_fact)
-                or (edit_fact.orig_fact is ref_fact.orig_fact)
+                (edit_fact.orig_fact is self.curr_fact)
+                or (edit_fact.orig_fact is self.curr_fact.orig_fact)
             )
             # (lb): Fact might later be placed in self.edit_facts via
             # update_edited_fact if the operation that needs edit_fact
@@ -255,8 +249,8 @@ class EditsManager(object):
 
     def undoable_editable_fact(self, what, edit_fact=None):
         # Always push the Fact onto the undo stack, should it be edited.
-        # The caller will call recompose_lookups() after editing, which
-        # might pop the Fact if the user did not edit anything.
+        # The caller calls update_redo_undo_and_conjoined() after editing,
+        # which might pop the Fact if the user did not edit anything.
         if edit_fact is None:
             edit_fact = self.editable_fact()
         was_fact = edit_fact.copy()
@@ -267,20 +261,31 @@ class EditsManager(object):
     def apply_edits(self, *edit_facts):
         # Called on paste, edit-time, and after carousel prompts user for edits.
         edit_facts = list(filter(None, edit_facts))
-        self.recompose_lookups(edit_facts)
+        self.update_redo_undo_and_conjoined(edit_facts)
         self.dirty_callback()
+        self.curr_fact = self.conjoined.locate_wired(edit_facts[0])
 
     def add_undoable(self, was_facts, what):
         self.redo_undo.add_undoable(was_facts, what)
 
-    def recompose_lookups(self, edit_facts):
-        noop = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
-        if noop:
+    def update_redo_undo_and_conjoined(self, edit_facts):
+        pristine = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
+        if not pristine:
             return
+
         for idx, edit_fact in enumerate(edit_facts):
             # 2018-08-04 12:29: EXPLAIN: idx == 0 ?? Why?
+            #  Oh, only unmark interval-gap if it's first fact in edit_facts,
+            #  which indicates user deliberately edited gap-fact; as opposed
+            #  to if gap-fact is later in edit_facts, and then it was edited
+            #  by time adjust of another fact. Feels like could be better way.
             self.manage_edited_dirty_deleted(edit_fact, undelete=(idx == 0))
             self.manage_edited_edit_facts(edit_fact)
+
+        self.conjoined.apply_edits(edit_facts, pristine)
+
+        # Update undo with edited Facts.
+        self.redo_undo.update_undo_altered(edit_facts)
 
     def manage_edited_dirty_deleted(self, edit_fact, undelete=False):
         edit_fact.dirty_reasons.add('unsaved-fact')
@@ -307,8 +312,6 @@ class EditsManager(object):
                 self.edit_facts.pop(orig_fact.pk)  # Ignoring: popped fact.
             except KeyError:
                 pass
-        # Always update the facts_manager, no matter edit_facts.
-        self.conjoined.update_fact(edit_fact)
 
     # ***
 
@@ -351,27 +354,13 @@ class EditsManager(object):
         redone = self.redo_undo.redo_last_undo(self.restore_facts)
         return redone
 
-    def restore_facts(self, restore_facts):
-        self.curr_fact = restore_facts[0]
-        were_facts = self.restore_edit_facts(restore_facts)
+    def restore_facts(self, pristine, altered):
+        for edit_fact in pristine:
+            self.update_edited_fact(edit_fact, edit_fact.orig_fact)
+        self.conjoined.apply_edits(edit_facts=pristine, last_edits=altered)
+        # Jump to the "main" Fact that was edited.
+        self.curr_fact = self.conjoined.locate_wired(pristine[0])
         self.dirty_callback()
-        return were_facts
-
-    def restore_edit_facts(self, restore_facts):
-        were_facts = []
-        for restore_fact in restore_facts:
-            was_fact = self.restore_edit_fact(restore_fact)
-            were_facts.append(was_fact)
-        return were_facts
-
-    def restore_edit_fact(self, restore_fact):
-        edit_fact = self.editable_fact(restore_fact)
-        was_fact = edit_fact.copy()
-        edit_fact.restore_edited(restore_fact)
-        self.controller.affirm(restore_fact.orig_fact)
-        orig_fact = restore_fact.orig_fact or restore_fact
-        self.update_edited_fact(edit_fact, orig_fact)
-        return was_fact
 
     # ***
 
@@ -529,7 +518,7 @@ class EditsManager(object):
                 saved_facts.append(new_fact)
                 if edit_fact.pk == looking_for_pk:
                     keep_fact = new_fact
-                update_edited_fact(edit_fact, new_fact)
+                update_saved_edited_fact(edit_fact, new_fact)
             return keep_fact, saved_facts
 
         def save_edited_fact(edit_fact, ignore_pks):
@@ -546,7 +535,7 @@ class EditsManager(object):
                 self.error_callback(errmsg='Failed to save fact!\n\n  “{}”'.format(err))
                 return None
 
-        def update_edited_fact(edit_fact, new_fact):
+        def update_saved_edited_fact(edit_fact, new_fact):
             # PK is different for saved fact, and old fact is marked deleted;
             #   except for ongoing Fact, which retains its ID.
             # MAYBE/2019-01-27: If ongoing Fact's description is edited, should

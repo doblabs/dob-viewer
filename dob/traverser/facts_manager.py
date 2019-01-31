@@ -103,45 +103,15 @@ class FactsManager(
         index = group.index(some_fact)
         return group, index
 
+    def locate_wired(self, ref_fact):
+        try:
+            group, index = self.locate_fact(ref_fact)
+        except KeyError:
+            return None
+        else:
+            return group[index]
+
     # ***
-
-    def update_fact(self, some_fact):
-        def _update_fact():
-            group, index = self.locate_fact(some_fact)
-            groups_index = self.groups.index(group)
-
-            old_fact = group[index]
-            group[index] = some_fact
-
-            # Fix group sorty_tuple key.
-            self.contiguous_group_update_keys(group, groups_index, some_fact)
-
-            rewire_links(old_fact)
-
-            self.controller.affirm(self.by_pk[some_fact.pk] is some_fact)
-            self.by_pk[some_fact.pk] = some_fact
-
-            rewire_curr(old_fact, group, index)
-
-        def rewire_links(old_fact):
-            if old_fact.has_prev_fact:
-                some_fact.prev_fact = old_fact.prev_fact
-            if old_fact.has_next_fact:
-                some_fact.next_fact = old_fact.next_fact
-
-            if some_fact.has_prev_fact:
-                some_fact.prev_fact.next_fact = some_fact
-
-            if some_fact.has_next_fact:
-                some_fact.next_fact.prev_fact = some_fact
-
-        def rewire_curr(old_fact, group, index):
-            if self._curr_fact is old_fact:
-                self._curr_fact = some_fact
-                self.curr_group = group
-                self.curr_index = index
-
-        _update_fact()
 
     def factory_reset(self, fact_pk):
         some_fact = self.by_pk[fact_pk]
@@ -223,6 +193,39 @@ class FactsManager(
 
         with self.fact_group_rekeyed(owning_group):
             owning_group.claim_time_span(since, until)
+
+    # ***
+
+    def apply_edits(self, edit_facts, last_edits):
+        group, _index = self.locate_fact(last_edits[0])
+
+        with self.fact_group_rekeyed(group):
+
+            # Clear time windows of edited facts, as times may have changed.
+            for last_edit in last_edits:
+                last_index = group.index(last_edit)
+                group_fact = group.pop(last_index)
+                self.controller.affirm(group_fact == last_edit)
+
+                if group_fact.has_prev_fact:
+                    group_fact.prev_fact.next_fact = None
+                if group_fact.has_next_fact:
+                    group_fact.next_fact.prev_fact = None
+
+                group_fact.prev_fact = None
+                group_fact.next_fact = None
+
+                del self.by_pk[group_fact.pk]
+
+            for edit_fact in edit_facts:
+                # Rather than try to rewire the Facts, e.g., by calling
+                #   self.new_fact_wire_links(edit_fact)
+                # leave the Facts unwired, and let the normal _inc/_dec
+                # navigation methods fix the wiring.
+                edit_fact.next_fact = None
+                edit_fact.prev_fact = None
+                group.add(edit_fact)
+                self.by_pk[edit_fact.pk] = edit_fact
 
     # ***
 
@@ -322,13 +325,6 @@ class FactsManager(
             self.controller.affirm(self.curr_fact.next_fact is None)
             self.curr_fact.next_fact = some_fact
             some_fact.prev_fact = self.curr_fact
-
-    def contiguous_group_update_keys(self, group, groups_index, *facts):
-        with self.curr_group_rekeyed(group, groups_index):
-            for some_fact in facts:
-                # We already know about the facts, right? Just re-pointed at edited fact?
-                self.controller.affirm(some_fact.pk in self.by_pk)
-                self.by_pk[some_fact.pk] = some_fact
 
     # ***
 

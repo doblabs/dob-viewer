@@ -23,13 +23,12 @@ from collections import namedtuple
 
 __all__ = [
     'RedoUndoEdit',
-    # Private:
-    #   'UndoRedoTuple',
+    'UndoRedoTuple',
 ]
 
 
 UndoRedoTuple = namedtuple(
-    'UndoRedoTuple', ('facts', 'time', 'what'),
+    'UndoRedoTuple', ('pristine', 'altered', 'time', 'what'),
 )
 
 
@@ -71,7 +70,7 @@ class RedoUndoEdit(object):
     # ***
 
     def add_undoable(self, copied_facts, what):
-        undoable = UndoRedoTuple(copied_facts, time.time(), what)
+        undoable = UndoRedoTuple(copied_facts, None, time.time(), what)
         # Caller is responsible for calling update_undo_altered later.
         self.append_changes(self.undo, undoable, whence='add_undoable')
 
@@ -79,7 +78,7 @@ class RedoUndoEdit(object):
         try:
             return self.undo[-1]
         except IndexError:
-            return UndoRedoTuple([], None, None)
+            return UndoRedoTuple([], [], None, None)
 
     # ***
 
@@ -90,23 +89,43 @@ class RedoUndoEdit(object):
         ]
         self.controller.affirm(len(edit_fact_copies) > 0)
         undoable_changes = UndoRedoTuple(
-            edit_fact_copies, time.time(), what=what,
+            edit_fact_copies, edit_facts, time.time(), what=what,
         )
         return undoable_changes
 
     # ***
 
-    def remove_undo_if_nothing_changed(self, some_facts):
-        latest_changes = self.undo_peek()
-        if latest_changes.facts == some_facts:
+    def remove_undo_if_nothing_changed(self, edit_facts):
+        last_edits = self.undo_peek()
+        if last_edits.pristine == edit_facts:
             # Nothing changed.
             toss_changes = self.undo.pop()
             self.debug('pop!: no.: {}'.format(len(toss_changes)))
-            return True
+            return None
         else:
-            # Since we left something different on the undo, the redo is kaput.
+            # Since what's on the undo is different, the redo is kaput.
             self.redo = []
-            return False
+            return last_edits.pristine
+
+    # ***
+
+    def update_undo_altered(self, edit_facts):
+        undo_changes = self.undo.pop()
+        self.controller.affirm(
+            (undo_changes.altered is None)
+            or (undo_changes.altered == edit_facts)
+        )
+        undoable = UndoRedoTuple(
+            undo_changes.pristine, edit_facts, undo_changes.time, undo_changes.what,
+        )
+        self.append_changes(
+            self.undo,
+            undoable,
+            whence='update_undo_altered-{}'.format(undoable.what),
+        )
+        # This seals the deal; what's on the undo is different, and the redo is kaput.
+        #? Here, or in remove_undo_if_nothing_changed?
+        #   self.redo = []
 
     # ***
 
@@ -135,9 +154,12 @@ class RedoUndoEdit(object):
         return redone
 
     def restore_facts(self, fact_changes, restore_facts):
-        were_facts = restore_facts(fact_changes.facts)
+        restore_facts(fact_changes.pristine, fact_changes.altered)
         latest_changes = UndoRedoTuple(
-            were_facts, time=fact_changes.time, what=fact_changes.what,
+            pristine=fact_changes.altered,
+            altered=fact_changes.pristine,
+            time=fact_changes.time,  # Not really meaningful anymore.
+            what=fact_changes.what,
         )
         return latest_changes
 
@@ -162,8 +184,8 @@ class RedoUndoEdit(object):
             self.debug('!time: no.: {}'.format(len(newest_changes)))
             return newest_changes
 
-        latest_pks = set([changed.pk for changed in latest_changes.facts])
-        if latest_pks != set([edit_fact.pk for edit_fact in newest_changes.facts]):
+        latest_pks = set([changed.pk for changed in latest_changes.pristine])
+        if latest_pks != set([edit_fact.pk for edit_fact in newest_changes.pristine]):
             self.debug('!pks: no.: {}'.format(len(newest_changes)))
             return newest_changes
 
