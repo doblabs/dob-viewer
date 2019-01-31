@@ -84,13 +84,14 @@ class ZoneDetails_TimeEnd(object):
         # changing one fact's times to shorten the times of prev or next fact.
         edit_next = edits_manager.editable_fact_next(edit_fact)
         best_time = edit_time
-        if edit_next and edit_next.end and (best_time > edit_next.end):
+        if best_time and edit_next and edit_next.end and (best_time > edit_next.end):
             # MAGIC_NUMBER: Adjust adjacent fact's time to be no less that 1 minute.
             #   MAYBE: Resurrect fact_min_delta and use in this context?
             best_time = edit_next.end - timedelta(minutes=1)
             if edit_next and edit_next.start and (best_time < edit_next.start):
                 best_time = edit_next.start
         edit_fact.end = best_time
+        self.carousel.controller.affirm(edit_time is not None)
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_next:
