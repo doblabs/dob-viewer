@@ -48,24 +48,19 @@ class RedoUndoEdit(object):
         # 2019-01-28: (lb): Added this method, and whence, to make
         # debugging easier for issues related to prev/next links.
         if self.controller.client_config['devmode']:
+            facts_shorts = ''
+            if urt_changes.altered:
+                for idx, fact in enumerate(urt_changes.altered):
+                    facts_shorts += ('\n- # {:d}.: {}'.format(idx, fact.short,))
             self.controller.client_logger.debug(
-                '{}: no. changes: {} / to: {}'
+                '{}: no. changes: {} / to: {}{}'
                 .format(
                     whence,
                     len(urt_changes.pristine),
                     which is self.undo and 'undo' or 'redo',
+                    facts_shorts,
                 ),
             )
-            for idx, fact in enumerate(urt_changes.pristine):
-                self.controller.client_logger.debug(
-                        '\n- # {:d}.: {}\n  prev: {}\n  next: {}'
-                    .format(
-                        idx,
-                        fact.short,
-                        fact.prev_fact and fact.prev_fact.short or '<no prev_fact>',
-                        fact.next_fact and fact.next_fact.short or '<no next_fact>',
-                    ),
-                )
 
     # ***
 
