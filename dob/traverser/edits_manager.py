@@ -391,9 +391,41 @@ class EditsManager(object):
         if not self.clipboard.clipboard:
             return None
         edit_fact = self.undoable_editable_fact(what='paste-copied')
-        pasted_what = self.clipboard.paste_copied_meta(edit_fact)
+        pasted_what = self.clipboard.paste_copied_meta(
+            edit_fact, self.reset_copied_meta,
+        )
         self.apply_edits(edit_fact)
+
         return pasted_what
+
+    def reset_copied_meta(self, edit_fact):
+        # The clipboard has a cycle mechanism (self.clipboard.paste_cnt) that
+        # cycles over different attributes to paste as the user repeats the
+        # same command. E.g., first press pastes activity. Next press pastes
+        # the tags. Third pastes description. And fourth pastes everything.
+        # Between each paste, the fact is reset, so only one attribute gets
+        # changed, and there's only one undo item created.
+
+        # The first undo is the one we created in paste_copied_meta.
+        _latest_changes = self.redo_undo.undo.pop()
+        self.controller.affirm(len(_latest_changes.pristine) == 1)
+        self.controller.affirm(_latest_changes.pristine[0] == edit_fact)
+
+        # The second undo is the one created the last time this method called.
+        before_paste = self.redo_undo.undo.pop()
+        self.controller.affirm(len(before_paste.pristine) == 1)
+
+        # Reset edit_fact in place.
+        restore_fact = before_paste.pristine[0]
+        edit_fact.activity = restore_fact.activity
+        edit_fact.tags = restore_fact.tags
+        edit_fact.description = restore_fact.description
+        self.controller.affirm(edit_fact.orig_fact)
+
+        # Start a new undo (sets UndoRedoTuple.pristine with copy of edit_fact).
+        self.redo_undo.add_undoable([edit_fact.copy()], before_paste.what)
+        # EditManager.paste_copied_meta calls its apply_edits after
+        # calling this method, which ensures UndoRedoTuple.altered is set.
 
     # ***
 

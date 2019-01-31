@@ -62,7 +62,7 @@ class ClipboardEdit(object):
 
     # ***
 
-    def paste_copied_meta(self, edit_fact):
+    def paste_copied_meta(self, edit_fact, reset_fact):
         """"""
         def _paste_copied_meta(edit_fact):
             if not self.clipboard:
@@ -115,17 +115,7 @@ class ClipboardEdit(object):
         def restore_fact_pre_paste(edit_fact):
             if self.paste_cnt is None:
                 return
-            _latest_changes = self.redo_undo.undo.pop()
-            self.controller.affirm(len(_latest_changes.facts) == 1)
-            self.controller.affirm(_latest_changes.facts[0] == edit_fact)
-            before_paste = self.redo_undo.undo.pop()
-            self.controller.affirm(len(before_paste.facts) == 1)
-            restore_fact = before_paste.facts[0]
-            edit_fact.activity = restore_fact.activity
-            edit_fact.tags = restore_fact.tags
-            edit_fact.description = restore_fact.description
-            self.controller.affirm(edit_fact.orig_fact)
-            self.redo_undo.add_undoable([edit_fact.copy()], before_paste.what)
+            reset_fact(edit_fact)
 
         def paste_cnt_increment(edit_fact, paste_val):
             paste_cnt = None
