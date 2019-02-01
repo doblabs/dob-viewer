@@ -20,6 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from .placeable_fact import PlaceableFact
 
+from nark.items.activity import Activity
+
 __all__ = [
     'FactsManager_Gap',
 ]
@@ -31,9 +33,10 @@ class FactsManager_Gap(object):
     def fact_from_interval_gap(self, since_time, until_time):
         self.controller.affirm((not until_time) or (since_time < until_time))
         self.last_fact_pk -= 1
+        activity = Activity(name='')  # (lb): Meh. Seems like Fact should do.
         gap_fact = PlaceableFact(
             pk=self.last_fact_pk,
-            activity=None,
+            activity=activity,
             start=since_time,
             end=until_time,
         )
