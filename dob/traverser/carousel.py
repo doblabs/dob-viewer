@@ -55,7 +55,6 @@ class Carousel(object):
         orig_facts,
         dirty_callback,
         dry,
-        running_save=False,
     ):
         self.controller = controller
 
@@ -79,8 +78,6 @@ class Carousel(object):
         self.update_handler = UpdateHandler(self)
         # We'll set up the ZoneManager each time we use the event_loop.
         self.zone_manager = None
-
-        self.running_save = running_save
 
     # ***
 
