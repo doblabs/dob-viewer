@@ -480,21 +480,24 @@ class Carousel(object):
             self.enduring_edit = False
             event.app.exit()
 
+
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def save_edited_facts(self, event):
-        """"""
-        if not self.running_save:
-            # Import command. Save after exiting Carousel.
-            # (lb): I tried running-save, but something something
-            #  failed on negative PK not found; so I added this.
-            #  (This is how save originally worked, before I wired
-            #  running-save; whatever, import command is special,
-            #  forcing user to exit to finish saving is fine.)
-            self.enduring_edit = False
-            event.app.exit()
-            return
+    def save_edited_and_exit(self, event):
+        # (lb): Exit Carousel, then Save. Traditional Import behavior
+        # (before running save/save_edited_and_live was implemented).
+        self.enduring_edit = False
+        event.app.exit()
+        return
 
+
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def save_edited_and_live(self, event):
+        """"""
+        # MAYBE/TESTME/2019-02-01: (lb): If running save on dob-import, use progger?
+        # - Import save can take a while (because checks for conflicts on each Fact)
+        #   -- do we need a Carousel progress display (progger)?
         curr_fact, saved_facts = self.edits_manager.save_edited_facts()
         if saved_facts is None:
             # Indicates error during save, and error message was displayed.

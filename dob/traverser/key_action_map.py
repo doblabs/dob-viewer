@@ -120,8 +120,12 @@ class KeyActionMap(object):
     # #### Key bindings wired by key_bonds_save_and_quit().
 
     @Decorators.debug_log_trace_enter_leave
-    def save_edited_facts(self, event):
-        self.carousel.save_edited_facts(event)
+    def save_edited_and_live(self, event):
+        self.carousel.save_edited_and_live(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def save_edited_and_exit(self, event):
+        self.carousel.save_edited_and_exit(event)
 
     @Decorators.debug_log_trace_enter_leave
     def cancel_command(self, event):
