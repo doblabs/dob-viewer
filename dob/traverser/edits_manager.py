@@ -543,7 +543,7 @@ class EditsManager(object):
                 saved_facts.append(new_fact)
                 if edit_fact.pk == looking_for_pk:
                     keep_fact = new_fact
-                update_saved_edited_fact(edit_fact, new_fact)
+                affirm_saved_edited_fact(edit_fact, new_fact)
             return keep_fact, saved_facts
 
         def save_edited_fact(edit_fact, ignore_pks):
@@ -562,18 +562,27 @@ class EditsManager(object):
                 self.error_callback(errmsg='Failed to save fact!\n\n  “{}”'.format(err))
                 return None
 
-        def update_saved_edited_fact(edit_fact, new_fact):
-            # PK is different for saved fact, and old fact is marked deleted;
-            #   except for ongoing Fact, which retains its ID.
-            # MAYBE/2019-01-27: If ongoing Fact's description is edited, should
-            #   behave like any other Fact being edited, and should get new ID.
+        def affirm_saved_edited_fact(edit_fact, new_fact):
             # (lb): It's easier to reset editing than to try to update state.
             #   So just a few affirmations, and then moving along.
-            self.controller.affirm(new_fact.pk >= edit_fact.pk)
-            self.controller.affirm(edit_fact.deleted)
+            #   (The caller will return the saved curr_fact, and we'll
+            #   rebuild the Carousel with that one Fact. Everything else
+            #   will be rebuilt from scratch.)
+            if edit_fact.pk:
+                # PK is different for saved fact, and old fact is marked deleted;
+                #   except for ongoing Fact, which retains its ID.
+                if edit_fact.pk != new_fact.pk:
+                    self.controller.affirm(new_fact.pk >= edit_fact.pk)
+                    self.controller.affirm(edit_fact.deleted)
+                else:
+                    self.controller.affirm(not edit_fact.deleted)
+                self.controller.affirm(self.edit_facts[edit_fact.pk] is edit_fact)
+            else:
+                # PK is None, so new Fact.
+                self.controller.affirm(not edit_fact.deleted)
+                self.controller.affirm(not new_fact.deleted)
+                self.controller.affirm(new_fact.pk > 0)
             self.controller.affirm(new_fact.orig_fact is None)
-            self.controller.affirm(self.edit_facts[edit_fact.pk] is edit_fact)
-            pass
 
         def reset_editing(keep_fact, saved_facts, curr_fact):
             if not saved_facts:
