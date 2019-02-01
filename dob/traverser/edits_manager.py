@@ -552,6 +552,8 @@ class EditsManager(object):
                     edit_fact, ignore_pks=ignore_pks,
                 )
             except Exception as err:
+                import traceback
+                self.controller.client_logger.debug(traceback.format_exc())
                 # A failure on a CLI command (without PPT interface) might do:
                 #   import traceback
                 #   traceback.print_exc()
