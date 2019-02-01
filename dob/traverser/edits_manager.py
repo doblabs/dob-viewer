@@ -519,13 +519,13 @@ class EditsManager(object):
             edited_facts = self.prepared_facts
             ignore_pks = [fact.pk for fact in edited_facts]
             keep_fact, saved_facts = save_edited_trustworthy(
-                edited_facts, ignore_pks, self.curr_fact.pk,
+                edited_facts, ignore_pks,
             )
             keep_fact = reset_editing(keep_fact, saved_facts, curr_fact)
             # Return fact for zone_manager to jump to.
             return keep_fact, saved_facts
 
-        def save_edited_trustworthy(edited_facts, ignore_pks, looking_for_pk):
+        def save_edited_trustworthy(edited_facts, ignore_pks):
             keep_fact = None
             saved_facts = []
             for edit_fact in edited_facts:
@@ -541,12 +541,18 @@ class EditsManager(object):
                     # better; just don't cause an error.
                     return None, None  # Short-circuit return!
                 saved_facts.append(new_fact)
-                if edit_fact.pk == looking_for_pk:
+                if edit_fact is self.curr_fact:
                     keep_fact = new_fact
                 affirm_saved_edited_fact(edit_fact, new_fact)
             return keep_fact, saved_facts
 
         def save_edited_fact(edit_fact, ignore_pks):
+            # (lb): SIMILAR: edits_manager.save_edited_fact, create.save_fact.
+            if edit_fact.pk and edit_fact.pk < 0:
+                edit_fact.pk = None
+            if edit_fact.pk is None and edit_fact.deleted:
+                controller.client_logger.debug('{}: {}'.format(_('Dead fact'), edit_fact.short))
+                return []
             try:
                 return self.controller.facts.save(
                     edit_fact, ignore_pks=ignore_pks,
