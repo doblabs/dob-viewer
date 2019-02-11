@@ -120,7 +120,8 @@ class FactsManager_FactInc(object):
             next_group, next_group_index = fetch_next_group()
             if next_group is None:
                 return True
-            if next_from_store.end > next_group.time_since:
+            next_from_store_end = next_from_store.end or UntilTimeStops
+            if next_from_store_end > next_group.time_since:
                 return False
             self.controller.affirm(next_from_store.start >= self.curr_group.time_until)
             return True
