@@ -225,10 +225,16 @@ class FactsManager_FactDec(object):
 
     def fetch_prev_from_store(self, ref_time=None):
         ref_time = ref_time or self.curr_group.time_since
+        # Momentaneous Facts support.
+        ref_fact = None
+        if ref_time == self.curr_group[0].start:
+            ref_fact = self.curr_group[0]
         # Search backward from the start time of the group (rather than,
         # say, calling antecedent(self.curr_fact)), so that we skip time
         # that's currently under our control.
-        prev_from_store = self.controller.facts.antecedent(ref_time=ref_time)
+        prev_from_store = self.controller.facts.antecedent(
+            fact=ref_fact, ref_time=ref_time,
+        )
         if not prev_from_store:
             # No more prior facts from store.
             return None

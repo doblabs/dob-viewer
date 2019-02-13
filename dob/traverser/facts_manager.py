@@ -315,8 +315,12 @@ class FactsManager(
             self.by_pk[some_fact.pk] = some_fact
 
     def new_fact_wire_links(self, some_fact):
-        # FIXME/2019-01-21: (lb): Momentaneous fact wiring needs to be special!
-        self.controller.affirm(some_fact.start != some_fact.end)
+        # 2019-02-13: (lb): Just a *momentaneous* FYI. (Feature should be all wired now.)
+        if some_fact.start == some_fact.end:
+            self.controller.client_logger.warning(
+                'Found MOMENTANEOUS: {}'.format(some_fact.short),
+            )
+
         if self.curr_fact.start == some_fact.end:
             self.controller.affirm(self.curr_fact.prev_fact is None)
             self.curr_fact.prev_fact = some_fact

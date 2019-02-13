@@ -213,14 +213,21 @@ class FactsManager_FactInc(object):
 
     def fetch_next_from_store(self, ref_time=None):
         ref_time = ref_time or self.curr_group.time_until
+        # To process momentaneous Facts properly (and, e.g., to avoid finding
+        # the same empty-time Fact again and again), send the Fact to the data
+        # store lookup method, so that it can use the PK in the query.
+        ref_fact = None
+        if ref_time == self.curr_group[-1].end:
+            ref_fact = self.curr_group[-1]
         # Search forward from the end time of the group (rather than,
         # say, calling subsequent(self.curr_fact)), so that we skip time
         # that's currently under our control.
-        next_from_store = self.controller.facts.subsequent(ref_time=ref_time)
+        next_from_store = self.controller.facts.subsequent(
+            fact=ref_fact, ref_time=ref_time,
+        )
         if not next_from_store:
             # No more later facts from store.
             return None
-
         # Next fact should at least have a start time.
         self.controller.affirm(next_from_store.start)
         # In case we decide to keep this fact, make it safe.
