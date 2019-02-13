@@ -118,12 +118,6 @@ class FactsManager(
 
     # ***
 
-    def factory_reset(self, fact_pk):
-        some_fact = self.by_pk[fact_pk]
-        some_fact.reset_orig()
-
-    # ***
-
     def __getitem__(self, key):
         if key is 0:
             return self.groups[0][0]

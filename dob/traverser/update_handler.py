@@ -75,15 +75,6 @@ class UpdateHandler(object):
             hot_notif = _("Redid last change. Press Ctrl-z to undo")
         self.zone_manager.update_status(hot_notif)
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_reset_fact(self, event):
-        """"""
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
-
-        self.edits_manager.fact_reset_fact()
-        self.zone_manager.update_status(_("Reset fact edits"))
-
     # ***
 
     @catch_action_exception

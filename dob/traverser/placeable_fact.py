@@ -76,17 +76,6 @@ class PlaceableFact(Fact):
         # SKIP: next_fact, prev_fact.
         return new_fact
 
-    def restore_edited(self, restore_fact):
-        self.start = restore_fact.start
-        self.end = restore_fact.end
-        self.activity = restore_fact.activity
-        self.tags = list(restore_fact.tags)
-        self.description = restore_fact.description
-        self.deleted = bool(restore_fact.deleted)
-        self.dirty_reasons = set(list(restore_fact.dirty_reasons))
-        assert self.orig_fact is restore_fact.orig_fact
-        # SKIP: next_fact, prev_fact.
-
     def squash(self, other, squash_sep=''):
         # (lb): The squash is a useful end user application feature for existing
         # facts, and I'm not sure what else it might be used for, so I'm putting

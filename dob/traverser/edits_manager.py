@@ -413,7 +413,7 @@ class EditsManager(object):
             return None
         edit_fact = self.undoable_editable_fact(what='paste-copied')
         pasted_what = self.clipboard.paste_copied_meta(
-            edit_fact, self.reset_copied_meta,
+            edit_fact, reset_fact=self.reset_copied_meta,
         )
         self.apply_edits(edit_fact)
 

@@ -266,8 +266,3 @@ class KeyActionMap(object):
     def redo_command(self, event):
         self.update_handler.redo_command(event)
 
-    @Decorators.debug_log_trace_enter_leave
-    def fact_reset_fact(self, event):
-        self.update_handler.fact_reset_fact(event)
-
-
