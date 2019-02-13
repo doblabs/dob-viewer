@@ -97,20 +97,39 @@ class FactsManager_FactInc(object):
             if self.curr_group[self.curr_index] is not next_fact:
                 self.curr_index += 1
             self.controller.affirm(self.curr_group[self.curr_index] is next_fact)
+            return next_fact
 
         # ***
 
         def from_next_group_or_store():
             next_from_store = self.fetch_next_from_store()
+            if overlaps_current_fact(next_from_store):
+                return fix_overlapping_fact(next_from_store)
             if exists_in_between_groups(next_from_store):
                 # Add the fact to the group, but do not wire yet,
                 # as we may add a gap fact, if necessary.
-                curr_group_add_next(next_from_store)
-                return next_from_store
+                return curr_group_add_next(next_from_store)
             # No facts between this group and next group;
             # or there are no facts from store
             #  nor is there a next group.
             return squash_group_next()
+
+        # ^^^
+
+        def overlaps_current_fact(next_from_store):
+            if next_from_store is None:
+                return False
+            return next_from_store.start < self.curr_group.time_until
+
+        def fix_overlapping_fact(next_from_store):
+            un_undoable_fact_next = next_from_store.copy()
+            un_undoable_fact_next.start = self.curr_group.time_until
+            un_undoable_fact_next.end = max(
+                un_undoable_fact_next.end,
+                self.curr_group.time_until,
+            )
+            un_undoable_fact_next.dirty_reasons.add('overlapped')
+            return curr_group_add_next(un_undoable_fact_next)
 
         # ^^^
 

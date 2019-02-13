@@ -477,11 +477,17 @@ class EditsManager(object):
 
     def jump_fact_dec(self):
         """"""
-        return self.conjoined.jump_fact_dec()
+        prev_fact = self.conjoined.jump_fact_dec()
+        if prev_fact and prev_fact.dirty:
+            self.update_edited_fact(prev_fact, prev_fact.orig_fact)
+        return prev_fact
 
     def jump_fact_inc(self):
         """"""
-        return self.conjoined.jump_fact_inc()
+        next_fact = self.conjoined.jump_fact_inc()
+        if next_fact and next_fact.dirty:
+            self.update_edited_fact(next_fact, next_fact.orig_fact)
+        return next_fact
 
     # ***
 

@@ -109,20 +109,39 @@ class FactsManager_FactDec(object):
                 # we already decremented to reference.
                 self.curr_index += 1
             self.controller.affirm(self.curr_group[self.curr_index] is prev_fact)
+            return prev_fact
 
         # ***
 
         def from_prev_group_or_store():
             prev_from_store = self.fetch_prev_from_store()
+            if overlaps_current_fact(prev_from_store):
+                return fix_overlapping_fact(prev_from_store)
             if exists_in_between_groups(prev_from_store):
                 # Add the fact to the group, but do not wire yet,
                 # as we may add a gap fact, if necessary.
-                curr_group_add_prev(prev_from_store)
-                return prev_from_store
+                return curr_group_add_prev(prev_from_store)
             # No facts between this group and previous group;
             # or there are no facts from store
             #  nor is there a previous group.
             return squash_group_prev()
+
+        # ^^^
+
+        def overlaps_current_fact(prev_from_store):
+            if prev_from_store is None:
+                return False
+            return prev_from_store.end > self.curr_group.time_since
+
+        def fix_overlapping_fact(prev_from_store):
+            un_undoable_fact_prev = prev_from_store.copy()
+            un_undoable_fact_prev.end = self.curr_group.time_since
+            un_undoable_fact_prev.start = min(
+                un_undoable_fact_prev.start,
+                self.curr_group.time_since,
+            )
+            un_undoable_fact_prev.dirty_reasons.add('overlapped')
+            return curr_group_add_prev(un_undoable_fact_prev)
 
         # ^^^
 
