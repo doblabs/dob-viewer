@@ -285,11 +285,6 @@ class FactsManager(
 
         self.groups.add(group)
 
-        now_group_index = self.groups.index(group)
-        self.controller.affirm(
-            (group_index is None) or (group_index == now_group_index)
-        )
-
         self.logger_debug_groups('fact_group_rekeyed', group=group)
 
         # Caller is responsible for wiring prev/next references.
