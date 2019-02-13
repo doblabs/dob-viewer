@@ -365,11 +365,15 @@ class ZoneManager(object):
 
     def finalize_jump_dec(self, prev_fact):
         """"""
-        self.finalize_jump(prev_fact, noop_msg=_("Viewing earliest Fact"))
+        self.finalize_jump(
+            prev_fact, noop_msg=_("Viewing earliest Fact"),
+        )
 
     def finalize_jump_inc(self, next_fact):
         """"""
-        self.finalize_jump(next_fact, noop_msg=_("Viewing latest Fact"))
+        self.finalize_jump(
+            next_fact, noop_msg=_("Viewing latest Fact"),
+        )
 
     def finalize_jump(self, curr_fact, noop_msg, jump_msg=''):
         if curr_fact is None:
