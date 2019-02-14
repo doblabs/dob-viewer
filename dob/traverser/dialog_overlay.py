@@ -18,6 +18,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from gettext import gettext as _
+
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.eventloop import ensure_future, From, Future, Return
 from prompt_toolkit.layout.containers import Float, HSplit
@@ -27,8 +29,8 @@ from prompt_toolkit.widgets import Button, Dialog, Label
 __all__ = [
     'show_message',
     # Private:
-    #  'MessageDialog',
-    #  'show_dialog_as_float',
+    #   'MessageDialog',
+    #   'show_dialog_as_float',
 ]
 
 
@@ -49,7 +51,7 @@ class MessageDialog(object):
         def set_done():
             self.future.set_result(None)
 
-        ok_button = Button(text='OK', handler=(lambda: set_done()))
+        ok_button = Button(text=_('OK'), handler=(lambda: set_done()))
 
         self.dialog = Dialog(
             title=title,
@@ -58,7 +60,8 @@ class MessageDialog(object):
             ]),
             buttons=[ok_button],
             width=D(preferred=80),
-            modal=True)
+            modal=True,
+        )
 
     def __pt_container__(self):
         return self.dialog
