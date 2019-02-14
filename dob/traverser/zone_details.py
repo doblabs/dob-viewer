@@ -47,6 +47,8 @@ class ZoneDetails(
     def __init__(self, carousel):
         self.carousel = carousel
         self.active_widgets = None
+        # Convenience attrs.
+        self.affirm = self.carousel.controller.affirm
 
     class HeaderKeyVal(object):
         def __init__(
@@ -171,9 +173,6 @@ class ZoneDetails(
     # ***
 
     def selectively_refresh(self):
-        # We don't need to refresh except for ongoing fact.
-        orig_fact = self.zone_manager.facts_diff.orig_fact
-        edit_fact = self.zone_manager.facts_diff.edit_fact
         # Update times and spans based off <now>.
         self.refresh_duration()
         # Update start time, should its time have been adjusted.
@@ -184,8 +183,12 @@ class ZoneDetails(
     # ***
 
     def refresh_duration(self):
-        orig_val, edit_val = self.zone_manager.facts_diff.diff_time_elapsed(show_now=True)
-        diff_tuples = self.zone_manager.facts_diff.diff_line_tuples_style(orig_val, edit_val)
+        orig_val, edit_val = self.zone_manager.facts_diff.diff_time_elapsed(
+            show_now=True,
+        )
+        diff_tuples = self.zone_manager.facts_diff.diff_line_tuples_style(
+            orig_val, edit_val,
+        )
         self.label_duration.val_label.text = diff_tuples
 
     def refresh_activity(self):
@@ -198,7 +201,7 @@ class ZoneDetails(
         self.refresh_val_widgets(self.widgets_tags)
 
     def refresh_val_widgets(self, keyval_widgets):
-        self.carousel.controller.affirm(keyval_widgets.fact_attr)
+        self.affirm(keyval_widgets.fact_attr)
         diff_tuples = self.zone_manager.facts_diff.diff_attrs(
             keyval_widgets.fact_attr, **keyval_widgets.diff_kwargs
         )
@@ -244,7 +247,7 @@ class ZoneDetails(
 
     def edit_time_leave(self, keyval_widgets):
         def _edit_time_leave():
-            self.carousel.controller.affirm(
+            self.affirm(
                 (self.active_widgets is None)
                 or (keyval_widgets is self.active_widgets)
             )
@@ -350,7 +353,7 @@ class ZoneDetails(
                 # else, passive=True, and widget was reset to orig start
                 # (because removing a Fact's start time is never allowed).
             else:
-                self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
+                self.affirm(self.active_widgets is self.widgets_end)
                 okay = self.apply_edit_time_removed_end(edit_fact)
                 if okay:
                     apply_edit_time_valid(edit_fact, edit_time=None)
@@ -368,7 +371,7 @@ class ZoneDetails(
                 # E.g., try entering date "2019-01-27 18."
                 parse_err = str(err)
             else:
-                self.carousel.controller.affirm(isinstance(edit_time, datetime))
+                self.affirm(isinstance(edit_time, datetime))
                 parse_err = None
 
             if parse_err:
@@ -382,7 +385,7 @@ class ZoneDetails(
                 was_time = edit_fact.start_fmt_local
                 applied = self.apply_edit_time_start(edit_fact, edit_time)
             else:
-                self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
+                self.affirm(self.active_widgets is self.widgets_end)
                 was_time = edit_fact.end_fmt_local_or_now
                 applied = self.apply_edit_time_end(edit_fact, edit_time)
             check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied)
@@ -401,7 +404,7 @@ class ZoneDetails(
             #   to come before the start.
             conflicts = edited_fact_conflicts(edit_fact)
             if conflicts:
-                self.carousel.controller.affirm(len(conflicts) == 1)
+                self.affirm(len(conflicts) == 1)
                 conflict_msg = conflicts[0][2]
                 show_message_conflicts_found(conflict_msg)
                 # Reset the Fact, otherwise the edit will stick!
@@ -410,13 +413,15 @@ class ZoneDetails(
                 #   edit_fact.end = was_fact.end
                 #   edit_fact.start = was_fact.start
                 undone = self.carousel.edits_manager.undo_last_edit()
-                self.carousel.controller.affirm(undone)
+                self.affirm(undone)
                 # Update the control text.
                 self.active_widgets.text_area.text = was_time
 
         def edited_fact_conflicts(edit_fact):
             # Skip all unstored, edited Facts.
-            other_edits = {fact.pk: fact for fact in self.carousel.edits_manager.prepared_facts}
+            other_edits = {
+                fact.pk: fact for fact in self.carousel.edits_manager.prepared_facts
+            }
 
             conflicts = must_complete_times(
                 self.carousel.controller,
@@ -447,10 +452,14 @@ class ZoneDetails(
 
         def edited_fact_update_label_text():
             if self.active_widgets is self.widgets_start:
-                diff_tuples = self.zone_manager.facts_diff.diff_attrs('start_fmt_local')
+                diff_tuples = self.zone_manager.facts_diff.diff_attrs(
+                    'start_fmt_local'
+                )
             else:
-                self.carousel.controller.affirm(self.active_widgets is self.widgets_end)
-                diff_tuples = self.zone_manager.facts_diff.diff_attrs('end_fmt_local_nowwed')
+                self.affirm(self.active_widgets is self.widgets_end)
+                diff_tuples = self.zone_manager.facts_diff.diff_attrs(
+                    'end_fmt_local_nowwed'
+                )
             self.active_widgets.val_label.text = diff_tuples
 
         # ***

@@ -557,7 +557,9 @@ class EditsManager(object):
             if edit_fact.pk and edit_fact.pk < 0:
                 edit_fact.pk = None
             if edit_fact.pk is None and edit_fact.deleted:
-                controller.client_logger.debug('{}: {}'.format(_('Dead fact'), edit_fact.short))
+                self.controller.client_logger.debug(
+                    'Deleted fact: {}'.format(edit_fact.short)
+                )
                 return []
             try:
                 return self.controller.facts.save(

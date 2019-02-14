@@ -372,7 +372,7 @@ class Carousel(object):
         tck_asyn = self.tick_tock_now(app_fut)
         tck_fut = asyncio.ensure_future(tck_asyn)
         # Leave tck_fut out of tasks and manage separately.
-        tasks = [app_fut,]
+        tasks = [app_fut, ]
 
         self.event_loop.run_until_complete(asyncio.wait(tasks))
 
@@ -480,7 +480,6 @@ class Carousel(object):
             self.enduring_edit = False
             event.app.exit()
 
-
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def save_edited_and_exit(self, event):
@@ -489,7 +488,6 @@ class Carousel(object):
         self.enduring_edit = False
         event.app.exit()
         return
-
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help

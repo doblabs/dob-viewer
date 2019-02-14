@@ -131,7 +131,14 @@ class AlertResponseDialog(object):
         return self.dialog
 
 
-def alert_and_question(root_container, title, label_text, prompt_ok, prompt_no, on_close):
+def alert_and_question(
+    root_container,
+    title='',
+    label_text='',
+    prompt_ok=_('OK'),
+    prompt_no=_('Cancel'),
+    on_close=lambda x: None,
+):
     def coroutine():
         ar_dialog = AlertResponseDialog(
             title=title,

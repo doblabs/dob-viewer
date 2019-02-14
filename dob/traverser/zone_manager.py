@@ -398,8 +398,11 @@ class ZoneManager(object):
             alert_and_question(
                 self.root,
                 title=_('Overlapping Fact'),
-                label_text=_('A Fact loaded from the data store overlaps an adjacent Fact.')
-                + '\n\n' + _('The Fact has been updated and is staged to be saved.'),
+                label_text=_(
+                    'A Fact loaded from the data store overlaps an adjacent Fact.'
+                ) + '\n\n' + _(
+                    'The Fact has been updated and is staged to be saved.'
+                ),
                 prompt_ok=_('Got it!'),
                 prompt_no=_('Keep reminding me'),
                 on_close=self.on_alert_overlapped_close,
