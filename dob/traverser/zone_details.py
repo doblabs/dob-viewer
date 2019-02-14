@@ -22,7 +22,6 @@ from gettext import gettext as _
 
 from datetime import datetime
 
-from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.widgets import Label, TextArea
 
@@ -241,15 +240,6 @@ class ZoneDetails(
         # Wire a few simple bindings for editing (mostly rely on PPT's VI mode.)
         self.carousel.action_manager.wire_keys_edit_time()
 
-        # FIXME/BACKLOG/2019-01-21: Config options: Make EditingMode configurable.
-        #
-        # (lb): Will VI mode be useful? Perhaps for a little easy `r`eplace,
-        #   among other helpful features? Note that you gotta 'escape' first.
-        # (lb): 2019-01-21: I think Ctrl-w is VI mode? Or readline?
-        #   Anyway, I like the Ctrl-w delete word feature, so want
-        #   to note that in docs per EditingMode, if it applies.
-        self.carousel.zone_manager.application.editing_mode = EditingMode.VI
-
     # ***
 
     def edit_time_leave(self, keyval_widgets):
@@ -285,7 +275,6 @@ class ZoneDetails(
             # updated, which looks weird. Rather, update label first, then show.
             self.selectively_refresh()
             self.replace_val_container_label(self.active_widgets)
-            self.carousel.zone_manager.application.editing_mode = None
             self.active_widgets = None
             return True
 
