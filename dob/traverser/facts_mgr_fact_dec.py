@@ -141,6 +141,8 @@ class FactsManager_FactDec(object):
                 self.curr_group.time_since,
             )
             un_undoable_fact_prev.dirty_reasons.add('overlapped')
+            # (lb): A hack to tell other UX components to alert user.
+            un_undoable_fact_prev.dirty_reasons.add('alert-user')
             return curr_group_add_prev(un_undoable_fact_prev)
 
         # ^^^

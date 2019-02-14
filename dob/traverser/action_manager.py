@@ -57,12 +57,17 @@ class ActionManager(object):
         application = self.carousel.zone_manager.application
         application.key_bindings = self.key_bindings_edit_time
 
+    def wire_keys_modal(self):
+        application = self.carousel.zone_manager.application
+        application.key_bindings = self.key_bindings_modal
+
     # ***
 
     def setup_key_bindings(self):
         self.setup_key_bindings_shared()
         self.setup_key_bindings_normal()
         self.setup_key_bindings_edit_time()
+        self.setup_key_bindings_modal()
 
     def setup_key_bindings_shared(self):
         bindings = []
@@ -88,4 +93,9 @@ class ActionManager(object):
         bindings += self.key_bindings_shared
 
         self.key_bindings_edit_time = make_bindings(bindings)
+
+    def setup_key_bindings_modal(self):
+        bindings = []
+
+        self.key_bindings_modal = make_bindings(bindings)
 

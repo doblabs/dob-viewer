@@ -34,6 +34,7 @@ from prompt_toolkit.widgets import Box, Label
 from nark.helpers.facts_diff import FactsDiff
 
 from . import various_styles
+from .dialog_overlay import alert_and_question
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
 from .zone_epithet import ZoneEpithet
@@ -55,6 +56,9 @@ class ZoneManager(object):
         self.zone_details = ZoneDetails(self.carousel)
         self.zone_content = ZoneContent(self.carousel)
         self.zone_lowdown = ZoneLowdown(self.carousel)
+
+        self.alert_showing = False
+        self.silence_alert_overlapped = False
 
     # ***
 
@@ -365,15 +369,52 @@ class ZoneManager(object):
 
     def finalize_jump_dec(self, prev_fact):
         """"""
-        self.finalize_jump(
+        self.finalize_jump_check_overlapped(
             prev_fact, noop_msg=_("Viewing earliest Fact"),
         )
 
     def finalize_jump_inc(self, next_fact):
         """"""
-        self.finalize_jump(
+        self.finalize_jump_check_overlapped(
             next_fact, noop_msg=_("Viewing latest Fact"),
         )
+
+    def finalize_jump_check_overlapped(self, curr_fact, noop_msg):
+        def _finalize_jump_check_overlapped():
+            jump_msg = ''
+            if curr_fact and 'alert-user' in curr_fact.dirty_reasons:
+                curr_fact.dirty_reasons.discard('alert-user')
+                # 2019-02-13: (lb): Currently, only 'overlapped' causes this.
+                self.carousel.controller.affirm(
+                    curr_fact.dirty_reasons == set(['overlapped']),
+                )
+                popop_modal_alert_overlapped_fact()
+                jump_msg = _('ALERT! Corrected overlapping Fact times. Save to commit.')
+            self.finalize_jump(curr_fact, noop_msg, jump_msg)
+
+        def popop_modal_alert_overlapped_fact():
+            if self.silence_alert_overlapped:
+                return
+            alert_and_question(
+                self.root,
+                title=_('Overlapping Fact'),
+                label_text=_('A Fact loaded from the data store overlaps an adjacent Fact.')
+                + '\n\n' + _('The Fact has been updated and is staged to be saved.'),
+                prompt_ok=_('Got it!'),
+                prompt_no=_('Keep reminding me'),
+                on_close=self.on_alert_overlapped_close,
+            )
+            # Disable any input recognize (let PPT's dialog handle everything).
+            self.carousel.action_manager.wire_keys_modal()
+
+        _finalize_jump_check_overlapped()
+
+    def on_alert_overlapped_close(self, result):
+        self.alert_showing = False
+        if result:
+            self.silence_alert_overlapped = True
+        # Re-enable keyboard input processing.
+        self.carousel.action_manager.wire_keys_normal()
 
     def finalize_jump(self, curr_fact, noop_msg, jump_msg=''):
         if curr_fact is None:
