@@ -27,8 +27,10 @@ from prompt_toolkit.layout.dimension import D
 from prompt_toolkit.widgets import Button, Dialog, Label
 
 __all__ = [
+    'alert_and_question',
     'show_message',
     # Private:
+    #   'AlertResponseDialog',
     #   'MessageDialog',
     #   'show_dialog_as_float',
 ]
@@ -83,4 +85,62 @@ def show_dialog_as_float(root_container, dialog):
         root_container.floats.remove(float_)
 
     raise Return(result)
+
+
+# ***
+
+class AlertResponseDialog(object):
+    def __init__(self, title='', label_text='', prompt_ok='', prompt_no=''):
+        # MAGIC_NUMBER: 4: Pad button label so appears padded ``< LIKE SO >``
+        BUTTON_PADDING = 4
+
+        self.future = Future()
+
+        def accept_text(buffer):
+            get_app().layout.focus(button_ok)
+            self.text_area.buffer.complete_state = None
+
+        def on_button_ok():
+            self.future.set_result(True)
+
+        def on_button_no():
+            self.future.set_result(False)
+
+        button_ok = Button(
+            text=prompt_ok,
+            handler=on_button_ok,
+            width=(len(prompt_ok) + BUTTON_PADDING),
+        )
+        button_no = Button(
+            text=prompt_no,
+            handler=on_button_no,
+            width=(len(prompt_no) + BUTTON_PADDING),
+        )
+
+        self.dialog = Dialog(
+            title=title,
+            body=HSplit([
+                Label(text=label_text),
+            ]),
+            buttons=[button_ok, button_no],
+            width=D(preferred=80),
+            modal=True,
+        )
+
+    def __pt_container__(self):
+        return self.dialog
+
+
+def alert_and_question(root_container, title, label_text, prompt_ok, prompt_no, on_close):
+    def coroutine():
+        ar_dialog = AlertResponseDialog(
+            title=title,
+            label_text=label_text,
+            prompt_ok=prompt_ok,
+            prompt_no=prompt_no,
+        )
+        result = yield From(show_dialog_as_float(root_container, ar_dialog))
+        on_close(result)
+
+    ensure_future(coroutine())
 
