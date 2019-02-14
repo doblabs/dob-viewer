@@ -28,9 +28,8 @@ __all__ = [
     'key_bonds_edit_time',
     'key_bonds_normal',
     'key_bonds_save_and_quit',
-    'key_bonds_shared',
-    'key_bonds_update',
     'key_bonds_undo_redo',
+    'key_bonds_update',
     'key_bonds_widget_focus',
     'make_bindings',
 ]
@@ -48,6 +47,7 @@ def make_bindings(key_bonds):
             key_bindings.add(keyb.keycode)(keyb.action)
 
     return key_bindings
+
 
 # ***
 
@@ -211,6 +211,7 @@ def key_bonds_update(handler):
         KeyBond('m-e', action=handler.fact_erase),
     ]
     return key_bonds_update
+
 
 def key_bonds_clipboard(handler):
     key_bonds_clipboard = [
