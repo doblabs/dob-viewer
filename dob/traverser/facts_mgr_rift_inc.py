@@ -39,8 +39,7 @@ class FactsManager_RiftInc(object):
 
         def ceil_groups():
             if (
-                (self.contains_new_prev_facts)
-                and (self.curr_group is self.groups[0])
+                (self.curr_group is self.groups[0])
                 and (self.curr_index < (len(self.groups[0]) - 1))
             ):
                 # Looking at new, prev Facts, and not the final new
@@ -51,8 +50,7 @@ class FactsManager_RiftInc(object):
                 # If new, next Facts, scroll to latest Fact, then to final
                 # new, next Fact.
                 if (
-                    (self.contains_new_next_facts)
-                    and (len(self.groups) > 1)
+                    (len(self.groups) > 1)
                     and (
                         (self.curr_group is not self.groups[-1])
                         and (

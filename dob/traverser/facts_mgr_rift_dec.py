@@ -39,8 +39,7 @@ class FactsManager_RiftDec(object):
 
         def floor_groups():
             if (
-                (self.contains_new_next_facts)
-                and (self.curr_group is self.groups[-1])
+                (self.curr_group is self.groups[-1])
                 and (self.curr_index > 0)
             ):
                 # Looking at new, next Facts, and not the first new
@@ -52,13 +51,10 @@ class FactsManager_RiftDec(object):
                 # new, prev Fact. (Note: If there are new, prev Facts, the
                 # oldest Fact is already established at self.groups[1][0].)
                 if (
-                    (self.contains_new_prev_facts)
+                    (self.curr_group is not self.groups[0])
                     and (
-                        (self.curr_group is not self.groups[0])
-                        and (
-                            (self.curr_group is not self.groups[1])
-                            or (self.curr_index > 0)
-                        )
+                        (self.curr_group is not self.groups[1])
+                        or (self.curr_index > 0)
                     )
                 ):
                     first_group = self.groups[1]

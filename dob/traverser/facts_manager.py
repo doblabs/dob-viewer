@@ -334,18 +334,6 @@ class FactsManager(
 
     # ***
 
-    @property
-    def contains_new_next_facts(self):
-        return self.groups[-1][0].unstored
-
-    @property
-    def contains_new_prev_facts(self):
-        if len(self.groups) < 2:
-            return False
-        return self.groups[0][0].unstored
-
-    # ***
-
     def is_final_fact(self, edit_fact):
         group, index = self.locate_fact(edit_fact)
         if not group.until_time_stops:
