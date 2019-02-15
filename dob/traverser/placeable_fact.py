@@ -22,6 +22,8 @@ from collections import namedtuple
 
 from nark.items import Fact
 
+from ..helpers.facts_diff import FactsDiff
+
 __all__ = [
     'PlaceableFact',
 ]
@@ -75,6 +77,10 @@ class PlaceableFact(Fact):
         new_fact.orig_fact = self.orig_fact or self
         # SKIP: next_fact, prev_fact.
         return new_fact
+
+    def friendly_diff(self, other, formatted=False, **kwargs):
+        facts_diff = FactsDiff(self, other, formatted=formatted)
+        return facts_diff.friendly_diff(**kwargs)
 
     def squash(self, other, squash_sep=''):
         def _squash():

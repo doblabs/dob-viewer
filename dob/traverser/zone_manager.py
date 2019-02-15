@@ -31,10 +31,10 @@ from prompt_toolkit.layout import Layout
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
-from nark.helpers.facts_diff import FactsDiff
 
 from . import various_styles
 from .dialog_overlay import alert_and_question
+from ..helpers.facts_diff import FactsDiff
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
 from .zone_epithet import ZoneEpithet
