@@ -325,6 +325,13 @@ class Carousel(object):
 
     def runloop_run(self):
         profile_elapsed('To dob runloop')
+
+        # CPR_ISSUE: (lb): 2019-01-27: This might be the Ultimate Fix, by which
+        # I mean I added this code last, and it might all that's needed to get
+        # around the CPR issue (in which case, the `enduring_edit is None`
+        # kludge below may be unnecessary).
+        self.standup_always()
+
         if self.async_enable:
             rerun = self.runloop_async()
             return rerun
@@ -354,12 +361,6 @@ class Carousel(object):
         # interacted with it). (Though this introduces additional pitfalls,
         # like falling into an infinite feedback loop. Just be careful!)
         rerun = False
-
-        # CPR_ISSUE: (lb): 2019-01-27: This might be the Ultimate Fix, by which
-        # I mean I added this code last, and it might all that's needed to get
-        # around the CPR issue (in which case, the `enduring_edit is None`
-        # kludge below may be unnecessary).
-        self.standup_always()
 
         # This call draws the app, but it doesn't run its event loop.
         # (So you'll see some of the Carousel code run.)
