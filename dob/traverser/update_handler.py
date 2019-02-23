@@ -67,7 +67,7 @@ class UpdateHandler(object):
         """"""
         redone = self.edits_manager.redo_last_undo()
         if not redone:
-                hot_notif = _("Already at newest change")  # Same says Vim.
+            hot_notif = _("Already at newest change")  # Same says Vim.
         else:
             self.zone_manager.rebuild_viewable()
             # FIXME: Do not exceed terminal width.
