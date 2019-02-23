@@ -120,9 +120,9 @@ class FactsManager(
     # ***
 
     def __getitem__(self, key):
-        if key is 0:
+        if key == 0:
             return self.groups[0][0]
-        elif key is -1:
+        elif key == -1:
             return self.groups[-1][-1]
         raise TypeError(
             "'{0}' object is not really subscriptable".format(type(self))
