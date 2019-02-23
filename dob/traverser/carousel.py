@@ -395,7 +395,12 @@ class Carousel(object):
 
         self.controller.affirm(app_fut.done())
         tck_fut.cancel()
-        asyncio.wait([tck_fut, ])
+        # Need the run_until_complete() outer, else:
+        #   path/to/dob/traverser/carousel.py:398:
+        #       RuntimeWarning: coroutine 'wait' was never    awaited
+        #     asyncio.wait([tck_fut, ])
+        #   RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+        self.event_loop.run_until_complete(asyncio.wait([tck_fut, ]))
 
         return rerun
 
