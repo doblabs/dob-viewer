@@ -133,6 +133,9 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     def cancel_softly(self, event):
+        was_helping = self.zone_content.on_reset_hide_help()
+        if was_helping:
+            return
         self.carousel.cancel_softly(event)
 
     # ***

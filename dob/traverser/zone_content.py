@@ -50,6 +50,11 @@ class ZoneContent(object):
 
     # ***
 
+    def on_reset_hide_help(self):
+        was_showing = self.showing_help
+        self.showing_help = 0
+        return was_showing != 0
+
     class Decorators(object):
         @classmethod
         def reset_showing_help(cls, func):
@@ -57,7 +62,7 @@ class ZoneContent(object):
                 # This won't redraw because we don't call rebuild_viewable.
                 # So, if, e.g., user is on first Fact and clicks Left, the
                 # Help will not go away, because decrement() won't refresh.
-                obj.carousel.zone_manager.zone_content.showing_help = 0
+                obj.carousel.zone_manager.zone_content.on_reset_hide_help()
                 obj.carousel.zone_manager.zone_lowdown.update_status(hot_notif='')
                 func(obj, event, *args, **kwargs)
 
