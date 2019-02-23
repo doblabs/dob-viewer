@@ -20,17 +20,19 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
+from nark import __resolve_vers__ as resolve_vers_nark
+
+from .. import __resolve_vers__ as resolve_vers_dob
+
 __all__ = (
-    'CAROUSEL_HELP',
+    'render_carousel_help',
+    'NUM_HELP_PAGES',
 )
 
 
-# FIXME: Make a crude help. Maybe later make it splashier (different colors, etc.).
-#        NOTE: Current multi-line widget does not take inline styling;
-#                show what's the proper way to style things?
-#              OR: Should we build the Help with widgets for each binding?
-CAROUSEL_HELP = _(
-    """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━━┳━━━━ EDITING ━━━━┳━━━━━━━ INTERVAL ━━━━━━━━┓
+def render_carousel_help():
+    carousel_help = _(
+        """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━━┳━━━━ EDITING ━━━━┳━━━━━━━ INTERVAL ━━━━━━━━┓
  ┃ → / ←    Next/Previous Fact  ┃  [e] Edit Fact  ┃   Add/Subtract 1 min.   ┃
  ┃ j / k      Same as → / ←     ┠─────────────────╂─────────────────────────┨
  ┃ ↑ / ↓    Move Cursor Up/Down ┃    Or edit:     ┃  To Start: Shift → / ←  ┃
@@ -43,16 +45,20 @@ CAROUSEL_HELP = _(
  ┣━━━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━┳━━━━━┻━━━━━━━━━━━┳━━━━━━━━━┻━━━━━━━━━━━━━━━┫
  ┃ [g-g]    Jump to First Fact  ┃ H A M S T E R   ┃    H A M S T E R        ┃
  ┃  [G]     Jump to Final Fact  ┃  H A M S T E R  ┃     H A M S T E R       ┃
- ┠──────────────────────────────╂─────────────────╂─────────────────────────┨
- ┃ [Home]   First line Descript ┃  H A M S T E R  ┃      H A M S T E R      ┃
- ┃ [End]    Bottom of Descript. ┃   H A M S T E R ┃       H A M S T E R     ┃
- ┣━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━┻━━━━━┯━━━━━━━━━┯━┻━━━━━━━┳━━━━━━━━━━━━━━━━━┫
+ ┠──────────────────────────────╂─────────────────┸─────────────────────────┨
+ ┃ [Home]   First line Descript ┃  dob v.{dob_vers: <34} ┃
+ ┃ [End]    Bottom of Descript. ┃ nark v.{nark_vers: <34} ┃
+ ┣━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━┻━━━━━┯━━━━━━━━━┯━━━━━━━━━┳━━━━━━━━━━━━━━━━━┫
  ┃  [?] Close  ┃  [q] Easy  ┃  [c-c]  │  [c-x]  │  [c-v]  ┃   [c-z]  Undo   ┃
  ┃  this Help  ┃    Exit    ┃   Copy  │   Cut   │  Paste  ┃   [c-y]  Redo   ┃
  ┗━━━━━━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┻━━━━━━━━━━━━━━━━━┛
 
-    """.rstrip()
-)
+        """.format(
+            dob_vers=resolve_vers_dob()[:34],
+            nark_vers=resolve_vers_nark()[:34],
+        ).rstrip()
+    )
+    return carousel_help
 
 
 NUM_HELP_PAGES = 2

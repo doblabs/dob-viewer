@@ -24,7 +24,7 @@ from prompt_toolkit.filters import Always, Never
 from prompt_toolkit.widgets import Frame, TextArea
 
 from ..helpers.exceptions import catch_action_exception
-from .zone_helpful import CAROUSEL_HELP, NUM_HELP_PAGES
+from .zone_helpful import render_carousel_help, NUM_HELP_PAGES
 
 __all__ = (
     'ZoneContent',
@@ -235,7 +235,7 @@ class ZoneContent(object):
         #   (I tried passing HTML(CAROUSEL_HELP) but, uh, nope.)
         #   (This is not too important; I thought it might be nice
         #   (polishing feature) to beautify the help (even more).)
-        return CAROUSEL_HELP
+        return render_carousel_help()
 
     def apply_scrollable_style_fact(self):
         self.scrollable_frame.container.style = 'class:content-area'
