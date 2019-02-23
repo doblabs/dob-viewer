@@ -232,7 +232,7 @@ class EditsManager(object):
             # we'll reference this new copy (and this new copy will keep the orig_fact
             # object alive).)
             if not edit_fact.orig_fact:
-                self.controller.affirm(edit_fact.orig_fact is 0)
+                self.controller.affirm(edit_fact.orig_fact == 0)
                 edit_fact = edit_fact.copy()
             elif edit_fact is self.curr_fact:
                 # (lb): The FactsManager fact-groups are wired with the latest
@@ -383,7 +383,7 @@ class EditsManager(object):
         # (managing 'interval-gap') because that's encoded in redo-undo Facts.
 
         for edit_fact in pristine:
-            self.controller.affirm(edit_fact.orig_fact is not 0)
+            self.controller.affirm(edit_fact.orig_fact != 0)
             self.update_edited_fact(edit_fact, edit_fact.orig_fact)
 
         self.conjoined.apply_edits(edit_facts=pristine, last_edits=altered)
