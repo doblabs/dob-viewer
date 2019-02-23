@@ -19,27 +19,28 @@
 from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
-
-import click  # merely for get_terminal_size.
-
 # Profiling: load prompt_toolkit: ~ 0.040 secs.
 from prompt_toolkit.application import Application
-from prompt_toolkit.layout.containers import (
-    FloatContainer, HSplit, HorizontalAlign, VSplit
-)
 from prompt_toolkit.layout import Layout
+from prompt_toolkit.layout.containers import (
+    FloatContainer,
+    HorizontalAlign,
+    HSplit,
+    VSplit
+)
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
+import click  # merely for get_terminal_size.
 
 from . import various_styles
-from .dialog_overlay import alert_and_question
+from ..helpers.exceptions import catch_action_exception
 from ..helpers.facts_diff import FactsDiff
+from .dialog_overlay import alert_and_question
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
 from .zone_epithet import ZoneEpithet
 from .zone_lowdown import ZoneLowdown
-from ..helpers.exceptions import catch_action_exception
 
 __all__ = [
     'ZoneManager',

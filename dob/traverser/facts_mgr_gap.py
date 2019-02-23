@@ -18,9 +18,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from .placeable_fact import PlaceableFact
-
 from nark.items.activity import Activity
+
+from .placeable_fact import PlaceableFact
 
 __all__ = [
     'FactsManager_Gap',

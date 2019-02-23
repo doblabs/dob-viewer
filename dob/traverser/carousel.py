@@ -18,28 +18,27 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from gettext import gettext as _
-
 import asyncio
+import time
+
+from gettext import gettext as _
+from prompt_toolkit.eventloop import use_asyncio_event_loop
+
 # (lb): We're using Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
 import click
-import time
-
-from inflector import Inflector, English
-from prompt_toolkit.eventloop import use_asyncio_event_loop
-
+from inflector import English, Inflector
 from nark.helpers.dev.profiling import profile_elapsed
 
+from ..helpers.exceptions import catch_action_exception
+from ..helpers.re_confirm import confirm
+from ..interrogate import ask_user_for_edits
 from .action_manager import ActionManager
 from .dialog_overlay import show_message
 from .edits_manager import EditsManager
 from .update_handler import UpdateHandler
 from .zone_content import ZoneContent
 from .zone_manager import ZoneManager
-from ..interrogate import ask_user_for_edits
-from ..helpers.exceptions import catch_action_exception
-from ..helpers.re_confirm import confirm
 
 __all__ = [
     'Carousel',

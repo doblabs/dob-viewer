@@ -19,6 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from contextlib import contextmanager
+
 from sortedcontainers import SortedKeyList
 
 from .facts_mgr_fact_dec import FactsManager_FactDec
@@ -27,8 +28,8 @@ from .facts_mgr_gap import FactsManager_Gap
 from .facts_mgr_jump import FactsManager_Jump
 from .facts_mgr_jump_time import FactsManager_JumpTime
 from .facts_mgr_rift import FactsManager_Rift
-from .facts_mgr_rift_inc import FactsManager_RiftInc
 from .facts_mgr_rift_dec import FactsManager_RiftDec
+from .facts_mgr_rift_inc import FactsManager_RiftInc
 from .group_chained import GroupChained
 
 __all__ = [

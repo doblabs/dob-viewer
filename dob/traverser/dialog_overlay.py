@@ -19,9 +19,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
-
 from prompt_toolkit.application.current import get_app
-from prompt_toolkit.eventloop import ensure_future, From, Future, Return
+from prompt_toolkit.eventloop import From, Future, Return, ensure_future
 from prompt_toolkit.layout.containers import Float, HSplit
 from prompt_toolkit.layout.dimension import D
 from prompt_toolkit.widgets import Button, Dialog, Label

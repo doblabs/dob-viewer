@@ -18,13 +18,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from gettext import gettext as _
-
 import time
 from datetime import timedelta
 
-from .zone_content import ZoneContent
+from gettext import gettext as _
+
 from ..helpers.exceptions import catch_action_exception
+from .zone_content import ZoneContent
 
 __all__ = [
     'UpdateHandler',

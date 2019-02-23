@@ -20,9 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-from sortedcontainers import SortedKeyList
-
 from nark.items.fact import SinceTimeBegan, UntilTimeStops
+from sortedcontainers import SortedKeyList
 
 from ..helpers import integer_range_groupify
 
