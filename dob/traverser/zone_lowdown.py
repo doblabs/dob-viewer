@@ -25,9 +25,9 @@ from gettext import gettext as _
 from prompt_toolkit.layout.containers import to_container
 from prompt_toolkit.widgets import Label
 
-__all__ = [
+__all__ = (
     'ZoneLowdown',
-]
+)
 
 
 class ZoneLowdown(object):

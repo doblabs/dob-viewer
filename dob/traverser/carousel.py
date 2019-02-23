@@ -40,9 +40,9 @@ from .update_handler import UpdateHandler
 from .zone_content import ZoneContent
 from .zone_manager import ZoneManager
 
-__all__ = [
+__all__ = (
     'Carousel',
-]
+)
 
 
 class Carousel(object):

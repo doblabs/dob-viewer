@@ -33,9 +33,9 @@ from .dialog_overlay import show_message
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart
 
-__all__ = [
+__all__ = (
     'ZoneDetails',
-]
+)
 
 
 class ZoneDetails(

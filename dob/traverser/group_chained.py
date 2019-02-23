@@ -25,10 +25,10 @@ from sortedcontainers import SortedKeyList
 
 from ..helpers import integer_range_groupify
 
-__all__ = [
+__all__ = (
     'GroupChained',
     'sorted_facts_list',
-]
+)
 
 
 def sorted_facts_list(facts=None):

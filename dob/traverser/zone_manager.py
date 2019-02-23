@@ -42,9 +42,9 @@ from .zone_details import ZoneDetails
 from .zone_epithet import ZoneEpithet
 from .zone_lowdown import ZoneLowdown
 
-__all__ = [
+__all__ = (
     'ZoneManager',
-]
+)
 
 
 class ZoneManager(object):

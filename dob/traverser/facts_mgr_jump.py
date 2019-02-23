@@ -22,9 +22,9 @@ from datetime import timedelta
 
 from nark.items.fact import UntilTimeStops
 
-__all__ = [
+__all__ = (
     'FactsManager_Jump',
-]
+)
 
 
 class FactsManager_Jump(object):

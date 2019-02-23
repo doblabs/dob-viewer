@@ -26,14 +26,14 @@ from prompt_toolkit.layout.containers import Float, HSplit
 from prompt_toolkit.layout.dimension import D
 from prompt_toolkit.widgets import Button, Dialog, Label
 
-__all__ = [
+__all__ = (
     'alert_and_question',
     'show_message',
     # Private:
     #   'AlertResponseDialog',
     #   'MessageDialog',
     #   'show_dialog_as_float',
-]
+)
 
 
 def show_message(root_container, title, text):

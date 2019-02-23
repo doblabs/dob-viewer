@@ -21,9 +21,9 @@ from __future__ import absolute_import, unicode_literals
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 
-__all__ = [
+__all__ = (
     'ZoneEpithet',
-]
+)
 
 
 class ZoneEpithet(object):

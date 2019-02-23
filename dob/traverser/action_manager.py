@@ -30,9 +30,9 @@ from .interface_keys import (
 )
 from .key_action_map import KeyActionMap
 
-__all__ = [
+__all__ = (
     'ActionManager',
-]
+)
 
 
 class ActionManager(object):

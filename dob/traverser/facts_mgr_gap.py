@@ -22,9 +22,9 @@ from nark.items.activity import Activity
 
 from .placeable_fact import PlaceableFact
 
-__all__ = [
+__all__ = (
     'FactsManager_Gap',
-]
+)
 
 
 class FactsManager_Gap(object):

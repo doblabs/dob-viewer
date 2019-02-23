@@ -18,9 +18,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
-__all__ = [
+__all__ = (
     'FactsManager_Rift',
-]
+)
 
 
 class FactsManager_Rift(object):

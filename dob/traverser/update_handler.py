@@ -26,9 +26,9 @@ from gettext import gettext as _
 from ..helpers.exceptions import catch_action_exception
 from .zone_content import ZoneContent
 
-__all__ = [
+__all__ = (
     'UpdateHandler',
-]
+)
 
 
 class UpdateHandler(object):

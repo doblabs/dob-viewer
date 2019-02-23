@@ -20,9 +20,9 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-__all__ = [
+__all__ = (
     'CAROUSEL_HELP',
-]
+)
 
 
 # FIXME: Make a crude help. Maybe later make it splashier (different colors, etc.).

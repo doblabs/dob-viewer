@@ -20,9 +20,9 @@ from __future__ import absolute_import, unicode_literals
 
 from ..cmds_list.fact import find_oldest_fact
 
-__all__ = [
+__all__ = (
     'FactsManager_RiftDec',
-]
+)
 
 
 class FactsManager_RiftDec(object):

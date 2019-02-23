@@ -20,9 +20,9 @@ from __future__ import absolute_import, unicode_literals
 
 from nark.items.fact import UntilTimeStops
 
-__all__ = [
+__all__ = (
     'FactsManager_FactInc',
-]
+)
 
 
 # SYNC_ME: Keep FactsManager_FactDec and FactsManager_FactInc synced.

@@ -20,9 +20,9 @@ from __future__ import absolute_import, unicode_literals
 
 from datetime import timedelta
 
-__all__ = [
+__all__ = (
     'FactsManager_JumpTime',
-]
+)
 
 
 class FactsManager_JumpTime(object):

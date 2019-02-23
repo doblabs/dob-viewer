@@ -24,9 +24,9 @@ from .group_chained import sorted_facts_list
 from .redo_undo_edit import RedoUndoEdit
 from .start_end_edit import StartEndEdit
 
-__all__ = [
+__all__ = (
     'EditsManager',
-]
+)
 
 
 class EditsManager(object):

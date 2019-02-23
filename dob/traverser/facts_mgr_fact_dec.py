@@ -22,9 +22,9 @@ import datetime
 
 from nark.items.fact import SinceTimeBegan
 
-__all__ = [
+__all__ = (
     'FactsManager_FactDec',
-]
+)
 
 
 JULIAN_YEAR = datetime.timedelta(days=365, hours=6)  # 365.25 days, 31557600 secs.

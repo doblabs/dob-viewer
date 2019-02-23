@@ -23,7 +23,7 @@ from prompt_toolkit.keys import Keys
 
 from ..prompters.interface_bonds import KeyBond
 
-__all__ = [
+__all__ = (
     'key_bonds_clipboard',
     'key_bonds_edit_time',
     'key_bonds_normal',
@@ -32,7 +32,7 @@ __all__ = [
     'key_bonds_update',
     'key_bonds_widget_focus',
     'make_bindings',
-]
+)
 
 
 # ***

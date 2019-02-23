@@ -32,9 +32,9 @@ from .facts_mgr_rift_dec import FactsManager_RiftDec
 from .facts_mgr_rift_inc import FactsManager_RiftInc
 from .group_chained import GroupChained
 
-__all__ = [
+__all__ = (
     'FactsManager',
-]
+)
 
 
 class FactsManager(

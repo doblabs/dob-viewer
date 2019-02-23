@@ -24,9 +24,9 @@ from nark.items import Fact
 
 from ..helpers.facts_diff import FactsDiff
 
-__all__ = [
+__all__ = (
     'PlaceableFact',
-]
+)
 
 
 FactoidSource = namedtuple(

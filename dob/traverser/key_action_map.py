@@ -22,9 +22,9 @@ from functools import update_wrapper
 
 from .zone_content import ZoneContent
 
-__all__ = [
+__all__ = (
     'KeyActionMap',
-]
+)
 
 
 class KeyActionMap(object):

@@ -18,11 +18,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-__all__ = [
+__all__ = (
     'color',
     'light',
     'night',
-]
+)
 
 
 # FIXME/BACKLOG/2019-01-21: Try JSON.

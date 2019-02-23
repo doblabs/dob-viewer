@@ -22,9 +22,9 @@ from datetime import timedelta
 
 from ..helpers.exceptions import catch_action_exception
 
-__all__ = [
+__all__ = (
     'ZoneDetails_TimeStart',
-]
+)
 
 
 class ZoneDetails_TimeStart(object):

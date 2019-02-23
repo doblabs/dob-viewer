@@ -20,9 +20,9 @@ from __future__ import absolute_import, unicode_literals
 
 from .redo_undo_edit import UndoRedoTuple
 
-__all__ = [
+__all__ = (
     'StartEndEdit',
-]
+)
 
 
 class StartEndEdit(object):
