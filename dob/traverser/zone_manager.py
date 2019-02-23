@@ -19,6 +19,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
+
+import click  # merely for get_terminal_size.
 # Profiling: load prompt_toolkit: ~ 0.040 secs.
 from prompt_toolkit.application import Application
 from prompt_toolkit.layout import Layout
@@ -30,8 +32,6 @@ from prompt_toolkit.layout.containers import (
 )
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
-
-import click  # merely for get_terminal_size.
 
 from . import various_styles
 from ..helpers.exceptions import catch_action_exception

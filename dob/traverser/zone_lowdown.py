@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals
 import time
 
 from gettext import gettext as _
+
 from prompt_toolkit.layout.containers import to_container
 from prompt_toolkit.widgets import Label
 

@@ -19,6 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
+
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.eventloop import From, Future, Return, ensure_future
 from prompt_toolkit.layout.containers import Float, HSplit

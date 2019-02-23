@@ -22,13 +22,13 @@ import asyncio
 import time
 
 from gettext import gettext as _
-from prompt_toolkit.eventloop import use_asyncio_event_loop
 
 # (lb): We're using Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
 import click
 from inflector import English, Inflector
 from nark.helpers.dev.profiling import profile_elapsed
+from prompt_toolkit.eventloop import use_asyncio_event_loop
 
 from ..helpers.exceptions import catch_action_exception
 from ..helpers.re_confirm import confirm

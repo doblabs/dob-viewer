@@ -21,11 +21,11 @@ from __future__ import absolute_import, unicode_literals
 from datetime import datetime
 
 from gettext import gettext as _
-from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
-from prompt_toolkit.widgets import Label, TextArea
 
 from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
+from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
+from prompt_toolkit.widgets import Label, TextArea
 
 from ..helpers.exceptions import catch_action_exception
 from ..helpers.fix_times import must_complete_times
