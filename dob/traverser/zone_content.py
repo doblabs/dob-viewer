@@ -24,7 +24,7 @@ from prompt_toolkit.filters import Always, Never
 from prompt_toolkit.widgets import Frame, TextArea
 
 from ..helpers.exceptions import catch_action_exception
-from .zone_helpful import render_carousel_help, NUM_HELP_PAGES
+from .zone_helpful import NUM_HELP_PAGES, render_carousel_help
 
 __all__ = (
     'ZoneContent',
