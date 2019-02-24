@@ -106,6 +106,22 @@ class UpdateHandler(object):
         self.zone_manager.rebuild_viewable()
         pass  # FIXME: Implement
 
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def fact_merge_prev(self, event):
+        """"""
+        self.carousel.controller.affirm(False)  # FIXME: Implement.
+        self.zone_manager.rebuild_viewable()
+        pass  # FIXME: Implement
+
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def fact_merge_next(self, event):
+        """"""
+        self.carousel.controller.affirm(False)  # FIXME: Implement.
+        self.zone_manager.rebuild_viewable()
+        pass  # FIXME: Implement
+
     # ***
 
     @catch_action_exception

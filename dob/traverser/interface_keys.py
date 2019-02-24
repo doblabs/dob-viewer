@@ -210,6 +210,8 @@ def key_bonds_update(handler):
         #
         KeyBond('m-p', action=handler.fact_split),
         KeyBond('m-e', action=handler.fact_erase),
+        KeyBond(('m-m', Keys.Left), action=handler.fact_merge_prev),
+        KeyBond(('m-m', Keys.Right), action=handler.fact_merge_next),
     ]
     return key_bonds_update
 
