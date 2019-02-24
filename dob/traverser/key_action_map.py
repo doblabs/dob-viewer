@@ -173,6 +173,10 @@ class KeyActionMap(object):
     def edit_time_end(self, event):
         self.zone_manager.toggle_focus_time_end(event)
 
+    @Decorators.debug_log_trace_enter_leave
+    def focus_description(self, event):
+        self.zone_manager.toggle_focus_description(event)
+
     # #### Key bindings wired by key_bonds_widget_focus().
 
     @Decorators.debug_log_trace_enter_leave

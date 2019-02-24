@@ -513,6 +513,11 @@ class ZoneDetails(
     # ***
 
     @catch_action_exception
+    # SKIP: @ZoneContent.Decorators.reset_showing_help
+    def toggle_focus_description(self, event):
+        self.zone_manager.toggle_focus_time(self.zone_manager.content_control)
+
+    @catch_action_exception
     def undo_command(self, event):
         # FIXME/2019-01-21: Is this correct? Use case:
         #   - Press 'e'; edit 'end'; press Enter to apply change.
