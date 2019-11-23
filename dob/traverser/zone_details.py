@@ -59,6 +59,7 @@ class ZoneDetails(
             val_label=None,
             text_area=None,
             orig_val=None,
+            mouse_handler=None,
         ):
             self.index = index
             self.fact_attr = fact_attr
@@ -67,6 +68,7 @@ class ZoneDetails(
             self.val_label = val_label
             self.text_area = text_area
             self.orig_val = orig_val
+            self.mouse_handler = mouse_handler
 
     def standup(self):
         pass
@@ -140,14 +142,34 @@ class ZoneDetails(
 
     # ***
 
-    def add_header_parts(self, show_name, fact_attr=None, editable=False, **kwargs):
+    def add_header_parts(
+        self,
+        show_name,
+        fact_attr=None,
+        editable=False,
+        mouse_handler=None,
+        **kwargs
+    ):
+        text_area = None
+        if editable:
+            # 2019-11-22: (lb): Some PPT controls have focus options, e.g.,
+            #   TextArea(..., focusable=True, focus_on_click=True)
+            # but the Carousel handles changing focus, so we instead
+            # register a mouse handler to change the focus ourselves.
+            # (diff_attrs() wires the handler using the third element
+            # of the ubiquitous (style, text) tuples). Note also that
+            # I tried options, focusable=True and focus_on_click=True,
+            # and nothing.
+            text_area=TextArea(height=1)
+
         keyval_parts = ZoneDetails.HeaderKeyVal(
             index=len(self.children),
             fact_attr=fact_attr,
             diff_kwargs=kwargs,
             key_parts=self.make_header_name_parts(show_name),
             val_label=self.make_header_label(),
-            text_area=TextArea(height=1) if editable else None,
+            text_area=text_area,
+            mouse_handler=mouse_handler,
         )
         self.children.append(
             VSplit(
@@ -202,7 +224,9 @@ class ZoneDetails(
     def refresh_val_widgets(self, keyval_widgets):
         self.affirm(keyval_widgets.fact_attr)
         diff_tuples = self.zone_manager.facts_diff.diff_attrs(
-            keyval_widgets.fact_attr, **keyval_widgets.diff_kwargs
+            keyval_widgets.fact_attr,
+            mouse_handler=keyval_widgets.mouse_handler,
+            **keyval_widgets.diff_kwargs
         )
         keyval_widgets.val_label.text = diff_tuples
 
