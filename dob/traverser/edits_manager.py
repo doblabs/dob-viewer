@@ -383,7 +383,7 @@ class EditsManager(object):
         # (managing 'interval-gap') because that's encoded in redo-undo Facts.
 
         for edit_fact in pristine:
-            self.controller.affirm(edit_fact.orig_fact != 0)
+            self.controller.affirm(edit_fact.orig_fact.pk != 0)
             self.update_edited_fact(edit_fact, edit_fact.orig_fact)
 
         self.conjoined.apply_edits(edit_facts=pristine, last_edits=altered)
