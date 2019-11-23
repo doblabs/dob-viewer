@@ -342,26 +342,25 @@ class UpdateHandler(object):
         self.carousel.enduring_edit = True
         event.app.exit()
 
+    def exit_to_awesome_prompt(self, event, restrict_edit):
+        self.carousel.enduring_edit = True
+        self.carousel.restrict_edit = restrict_edit
+        event.app.exit()
+
     @catch_action_exception
     def edit_actegory(self, event):
         """"""
-        self.carousel.enduring_edit = True
-        self.carousel.restrict_edit = 'actegory'
-        event.app.exit()
+        self.exit_to_awesome_prompt(event, 'actegory')
 
     @catch_action_exception
     def edit_tags(self, event):
         """"""
-        self.carousel.enduring_edit = True
-        self.carousel.restrict_edit = 'tags'
-        event.app.exit()
+        self.exit_to_awesome_prompt(event, 'tags')
 
     @catch_action_exception
     def edit_description(self, event):
         """"""
-        self.carousel.enduring_edit = True
-        self.carousel.restrict_edit = 'description'
-        event.app.exit()
+        self.exit_to_awesome_prompt(event, 'description')
 
     # ***
 
