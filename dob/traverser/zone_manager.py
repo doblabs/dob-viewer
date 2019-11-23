@@ -305,6 +305,24 @@ class ZoneManager(object):
             which_index = self.focus_index(self.content_control)
         self.focus_move(lambda index: which_index)
 
+    def ppt_control_buffer_avoid_selection(self, control, mouse_event):
+        # python-prompt-toolkit/prompt_toolkit/layout/controls.py's
+        # BufferControl.mouse_handler
+        # on MouseEventType.MOUSE_UP
+        # calls buffer.start_selection
+        # if user clicks anywhere except the cursor_position,
+        # so ensure the cursor_position is set on MOUSE_DOWN
+        # to the click, otherwise the MOUSE_UP that is about
+        # to happen will create an awkward selection in the
+        # widget.
+        buffer = control.buffer
+        position = mouse_event.position
+        index = buffer.document.translate_row_col_to_index(
+            mouse_event.position.y, mouse_event.position.x,
+        )
+        buffer.exit_selection()
+        buffer.cursor_position = index
+
     # ***
 
     @catch_action_exception

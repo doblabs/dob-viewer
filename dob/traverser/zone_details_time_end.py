@@ -33,6 +33,14 @@ class ZoneDetails_TimeEnd(object):
     def add_header_end_time(self):
         self.widgets_end = self.add_header_parts(
             'end', 'end_fmt_local_nowwed', editable=True,
+            mouse_handler=self.header_time_end_mouse_handler,
+        )
+
+    def header_time_end_mouse_handler(self, mouse_event):
+        self.zone_manager.toggle_focus_time_end(event=None)
+        self.zone_manager.ppt_control_buffer_avoid_selection(
+            self.widgets_end.text_area.control,
+            mouse_event,
         )
 
     def refresh_time_end(self):

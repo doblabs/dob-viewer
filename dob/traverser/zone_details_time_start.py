@@ -33,6 +33,14 @@ class ZoneDetails_TimeStart(object):
     def add_header_start_time(self):
         self.widgets_start = self.add_header_parts(
             'start', 'start_fmt_local', editable=True,
+            mouse_handler=self.header_time_start_mouse_handler,
+        )
+
+    def header_time_start_mouse_handler(self, mouse_event):
+        self.zone_manager.toggle_focus_time_start(event=None)
+        self.zone_manager.ppt_control_buffer_avoid_selection(
+            self.widgets_start.text_area.control,
+            mouse_event,
         )
 
     def refresh_time_start(self):
