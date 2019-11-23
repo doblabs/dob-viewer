@@ -77,6 +77,9 @@ def key_bonds_save_and_quit(handler):
         #       see if escape sequence follows (which it wouldn't, after
         #       an 'escape', but meta-combinations start with an escape).
         #   tl;dr: 'escape' to exit slow b/c alias resolution.
+        # Note that 'escape' here is the actual ESCape key,
+        # and not to be confused with the meta key character,
+        # e.g., using ('escape', 'm') to capture Alt-m (m-m).
         KeyBond('escape', action=handler.cancel_softly),
     ]
     return key_bonds_save_and_quit
