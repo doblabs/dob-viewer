@@ -24,6 +24,7 @@ from gettext import gettext as _
 
 from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
+from prompt_toolkit.application.current import get_app
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.widgets import Label, TextArea
 
@@ -104,13 +105,23 @@ class ZoneDetails(
         # ***
 
         def add_header_duration():
+            # MEH/2019-11-22: (lb): Duration label mouse handler, but to do what?
+            # - User clicks, modal asks for new duration, adjust end time to match?
             self.label_duration = self.add_header_parts('duration')
 
         def add_header_activity():
-            self.widgets_activity = self.add_header_parts('activity', 'activity_name')
+            self.widgets_activity = self.add_header_parts(
+                'activity',
+                'activity_name',
+                mouse_handler=header_widget_mouse_handler('actegory'),
+            )
 
         def add_header_category():
-            self.widgets_category = self.add_header_parts('category', 'category_name')
+            self.widgets_category = self.add_header_parts(
+                'category',
+                'category_name',
+                mouse_handler=header_widget_mouse_handler('actegory'),
+            )
 
         def add_header_tags():
             # FIXME/BACKLOG/2018-07-19: Long tags can extend width,
@@ -125,6 +136,7 @@ class ZoneDetails(
                 split_lines=True,
                 colorful=True,
                 underlined=True,
+                mouse_handler=header_widget_mouse_handler('tags'),
             )
 
         def add_blank_line():
@@ -135,6 +147,31 @@ class ZoneDetails(
         def build_container():
             details_container = HSplit(children=self.children)
             return details_container
+
+        # ***
+
+        def header_widget_mouse_handler(restrict_edit):
+            def _mouse_handler(mouse_event):
+                # MAYBE/2019-11-22: (lb): Interesting feature, but jarring:
+                # - User could click on Activity name in header, or Category,
+                # or Tags, and app could respond by showing Awesome Prompt.
+                # However, this behavior is rather jarring if you're not
+                # expecting it.
+                # - Also, user might be trying to click and drag to select
+                # the Activity or Category name, but immediately on mouse
+                # down the Awesome Prompt is shown (this callback is called),
+                # and PPT doesn't seem to bother sending us more than a single
+                # mouse down. So unless PPT updated to not trigger callback
+                # if user either selecting text or double clicking, and to
+                # only trigger callback on simple, non-drag press and release,
+                # this feature should only be enabled if user wants it on.
+                # - MAYBE/2019-11-22: (lb): Maybe add config option to enable.
+                #   Until then, disabled by way of hidden branching.
+                if False:
+                    self.carousel.enduring_edit = True
+                    self.carousel.restrict_edit = restrict_edit
+                    get_app().exit()
+            return _mouse_handler
 
         # ***
 
