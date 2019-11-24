@@ -139,11 +139,16 @@ class ZoneManager(object):
         # for a second key press, or a timeout, to resolve the binding.
         # E.g., if you press 'c-x', it takes a sec. until our handler is
         # called (or, it's called if you press another key, but then the
-        # response seems weird, i.e., 2 key presses are handle seemingly
+        # response seems weird, i.e., 2 key presses are handled seemingly
         # simultaneously after the second keypress, rather than being
         # handled individually as the user presses them keys). In any
         # case -- long comment! -- set editing_mode to something other
         # than EditingMode.EMACS or EditingMode.VI (both are just strings).
+        # FIXME/2019-11-23: (lb): That comment is old, because we do not
+        # disable editing_mode, but we leave it set to emacs for some
+        # other features. Question is, is there a delay on Ctrl-x? And
+        # what does Ctrl-X do? Is it meta-cut? Also, what are the emacs-
+        # binding features that you like?
 
         application = Application(
             layout=self.layout,
