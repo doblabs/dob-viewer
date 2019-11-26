@@ -270,6 +270,7 @@ class Carousel(object):
         try:
             used_prompt = self.user_prompt_edit_fact(used_prompt)
         except KeyboardInterrupt:
+            # Ye olde Ctrl-c, and not an Exception.
             self.enduring_edit = False
             self.confirm_exit = True
         else:
