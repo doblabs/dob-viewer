@@ -259,7 +259,21 @@ class ZoneManager(object):
         #       containers, but the edit-time controls are on-demand, so we
         #       do this manually.
         curr_control = self.layout.current_control
-        defocused = self.focus_surround[curr_control](focus=False)
+        try:
+            defocused = self.focus_surround[curr_control](focus=False)
+        except Exception as err:
+            # 2019-11-27: (lb): This method tossed a KeyError earlier this year
+            # -- last winter, before a nine month development hiatus -- so then
+            # I added this catch. And I never reproduced the issue. Though I am
+            # not convinced it's resolved. And this code is useful to keep: why
+            # not gracefully recover from an error rather than dying. For post-
+            # erity, the key without an entry was reported as:
+            #  <BufferControl buffer=<Buffer(name='', text='2019-01-23 1...')...
+            self.carousel.controller.client_logger.error(
+                _('focus_move failed: {}').format(str(err))
+            )
+            self.carousel.controller.affirm(False)  # REPL if dev.catch_errors.
+            return
         if not defocused:
             return
         curr_index = self.focus_chain.index(curr_control)
