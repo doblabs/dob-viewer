@@ -114,7 +114,7 @@ class EditsManager(object):
         # Dirty facts, on stand up, will only include import facts, or fact
         # entered on command line; but will ignore fact read from store, e.g.,
         # `dob edit -1` will start up with an empty self.edit_facts (and the
-        # one fact loaded from the store will be help in the conjoined.groups).
+        # one fact loaded from the store will be held in the conjoined.groups).
         self.edit_facts = {fact.pk: fact for fact in edit_facts if fact.dirty}
 
     # ***
