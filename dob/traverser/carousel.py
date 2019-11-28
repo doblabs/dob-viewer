@@ -543,9 +543,9 @@ class Carousel(object):
     # ***
 
     def dev_breakpoint(self, event):
-        if not self.controller.client_config['devmode']:
+        if not self.controller.config['dev.catch_errors']:
             self.controller.client_logger.warning(
-                _('Please enable ‘devmode’ to use live debugging.')
+                _('Please enable ‘dev.catch_errors’ to use live debugging.')
             )
             return
         self.pdb_set_trace(event)

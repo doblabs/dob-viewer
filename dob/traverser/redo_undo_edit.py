@@ -47,7 +47,7 @@ class RedoUndoEdit(object):
         which.append(urt_changes)
         # 2019-01-28: (lb): Added this method, and whence, to make
         # debugging easier for issues related to prev/next links.
-        if self.controller.client_config['devmode']:
+        if self.controller.config['dev.catch_errors']:
             facts_shorts = ''
             if urt_changes.altered:
                 for idx, fact in enumerate(urt_changes.altered):
@@ -64,7 +64,7 @@ class RedoUndoEdit(object):
 
     def clear_changes(self, which, whence=''):
         which.clear()
-        if self.controller.client_config['devmode']:
+        if self.controller.config['dev.catch_errors']:
             self.controller.client_logger.debug(
                 '{}: cleared changes from: {}'
                 .format(
