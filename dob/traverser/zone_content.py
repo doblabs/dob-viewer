@@ -35,7 +35,7 @@ class ZoneContent(object):
     """"""
     def __init__(self, carousel):
         self.carousel = carousel
-        self.chosen_lexer = None
+        self.chosen_lexer = self.carousel.chosen_lexer
         self.showing_help = 0
 
     # ***
