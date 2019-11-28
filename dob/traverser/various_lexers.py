@@ -22,6 +22,8 @@ from prompt_toolkit.lexers import Lexer
 
 __all__ = (
     'rainbow',
+    'truncater',
+    'wordwrapper',
 )
 
 
@@ -37,6 +39,24 @@ class BaseLexer(Lexer):
     @content_width.setter
     def content_width(self, content_width):
         self._content_width = content_width
+
+
+def wordwrapper():
+    class WordWrappingLexer(BaseLexer):
+        """A very basic, primitive, "dumb", split-on-space line splitter."""
+        def lex_document(self, document):
+            splitdoc = []
+            for line in document.lines:
+                for chunk in line.split(' '):
+                    splitdoc.append(chunk)
+
+            def get_line(lineno):
+                line = splitdoc[lineno]
+                return [("#00ff55", line)]
+
+            return get_line
+
+    return WordWrappingLexer
 
 
 def truncater():
