@@ -341,11 +341,18 @@ class EditsManager(object):
 
     def stand_up(self):
         def _standup():
+            ensure_backed_up()
             assert len(self.conjoined.groups) > 0
             assert len(self.conjoined.groups[0]) > 0
             ensure_view_facts()
             self.conjoined.place_time_rifts()
             self.curr_fact = self.conjoined.find_first_dirty()
+
+        def ensure_backed_up():
+            # Create a just-in-case backup file to capture unsaved edits. We'll
+            # call periodically during editor session, and can start session by
+            # calling it, too (stand_up is called at start of carousel.gallop).
+            self.dirty_callback()
 
         def ensure_view_facts():
             """
