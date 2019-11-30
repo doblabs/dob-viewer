@@ -54,17 +54,9 @@ class Carousel(object):
         orig_facts,
         dirty_callback,
         dry,
+        no_completion=None,
     ):
         self.controller = controller
-
-        self.dry = dry
-
-        self._avail_width = None
-
-        self.chosen_style = None
-
-        self.setup_async()
-
         self.edits_manager = EditsManager(
             controller,
             edit_facts=edit_facts,
@@ -72,19 +64,21 @@ class Carousel(object):
             dirty_callback=dirty_callback,
             error_callback=self.error_callback,
         )
-
+        self.dry = dry
+        self.chosen_style = None
+        self.no_completion = no_completion  # act/cat/tag list to not complete/suggest.
         self.action_manager = ActionManager(self)
         self.update_handler = UpdateHandler(self)
         # We'll set up the ZoneManager each time we use the event_loop.
         self.zone_manager = None
-        self.chosen_lexer = None
+        self._avail_width = None
+        self.setup_async()
 
     # ***
 
-    # Magic for reset_showing_help.
-
     @property
     def carousel(self):
+        """Magic for reset_showing_help."""
         return self
 
     # ***
@@ -292,6 +286,7 @@ class Carousel(object):
             always_ask=True,
             prompt_agent=used_prompt,
             restrict_edit=self.restrict_edit,
+            no_completion=self.no_completion,
         )
         return used_prompt
 
