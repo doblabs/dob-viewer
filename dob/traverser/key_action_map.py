@@ -85,7 +85,12 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     def jump_fact_inc(self, event):
-        self.zone_manager.jump_fact_inc(event)
+        try:
+            self.zone_manager.jump_fact_inc(event)
+        except Exception as err:
+            # 2019-12-03 01:18: Raised on add-tag then save. Don't remember jumping.
+            self.carousel.controller.affirm(False)
+            pass
 
     # Next/Prev: Day
 
