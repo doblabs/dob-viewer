@@ -22,20 +22,17 @@ from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 
 __all__ = (
-    'ZoneEpithet',
+    'ZoneStreamer',
 )
 
 
-class ZoneEpithet(object):
+class ZoneStreamer(object):
     """"""
     def __init__(self, carousel):
         self.carousel = carousel
 
     def standup(self):
-        # FIXME/2019-01-21: Old comment: "Rename style key".
-        #   Probably compile list of style names first
-        #   and make sure they each fit a common theme.
-        self.header_help_style = self.carousel.chosen_style['header-help_text']
+        self.header_help_style = self.carousel.classes_style['header-help']
 
     # ***
 
@@ -44,9 +41,9 @@ class ZoneEpithet(object):
         def _rebuild_viewable():
             self.zone_manager = self.carousel.zone_manager
             assemble_children()
-            self.epithet_container = build_container()
+            self.streamer_container = build_container()
             self.refresh_all_children()
-            return self.epithet_container
+            return self.streamer_container
 
         def assemble_children():
             self.children = []
@@ -64,8 +61,8 @@ class ZoneEpithet(object):
         # ***
 
         def build_container():
-            epithet_container = HSplit(children=self.children)
-            return epithet_container
+            streamer_container = HSplit(children=self.children)
+            return streamer_container
 
         # ***
 
@@ -87,14 +84,33 @@ class ZoneEpithet(object):
         tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
         self.interval_banner.text = self.bannerize(interval_text)
+        self.add_stylable_classes()
+
+    def add_stylable_classes(self):
+        # Register header-streamer[-line]
+        friendly_name = 'header-streamer'
+        for suffix in ('', '-line'):
+            # The label itself, 'header-streamer', includes the '╭─...' border,
+            # so 3 rows of output are styled. If you specify the whole container,
+            # 'header-streamer-line', the style will include the blank lines, one
+            # each, above and below those 3 rows.
+            self.carousel.add_stylable_classes(
+                self.interval_banner,
+                friendly_name + suffix,
+            )
 
     # ***
 
     # Interval as currently formatted has max 53 chars, e.g.,
-    MAX_INTERVAL_WIDTH = len('Mon 01 Jan 2120 ◐ 12:00 AM — 11:59 PM 31 Dec 2120')
+    MAX_INTERVAL_WIDTH = len('Fri 13 Jul 2018 ◐ 11:40 PM — 12:29 AM Sat 14 Jul 2018')
 
     def bannerize(self, text):
         def _bannerize():
+            # You can style the complete banner, including the ANSI border, and
+            # the before and after newlines, using the 'header-streamer-line'
+            # stylit conditional. Or, to style just the banner, use the other
+            # conditional, 'header-streamer'. If no conditional applies, the
+            # static 'header-help' class from the current style is used.
             bannerful = colorful_banner_town(text)
             parts = []
             parts += [('', '\n')]
@@ -103,8 +119,7 @@ class ZoneEpithet(object):
             return parts
 
         def colorful_banner_town(text):
-            # 53 ch max, e.g., Fri 13 Jul 2018 ◐ 11:40 PM — 12:29 AM Sat 14 Jul 2018
-            padded_text = '{0:<{1}}'.format(text, 53)
+            padded_text = '{0:<{1}}'.format(text, ZoneStreamer.MAX_INTERVAL_WIDTH)
             centered_text = '{0:^{1}}'.format(
                 padded_text, self.carousel.avail_width - 1,
             )

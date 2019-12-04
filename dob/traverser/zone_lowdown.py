@@ -95,10 +95,15 @@ class ZoneLowdown(object):
                 - len(showing_text)
                 - len(helpful_text)
             )
-            padding = " " * pad_len
+            padding = ' ' * pad_len
+
+            hot_notif_or_fact_id_style = self.carousel.add_stylable_classes(
+                ppt_widget=None, friendly_name='fact-id',
+            )
+            # MEH/2019-12-02: (lb): I don't feel like styling the whole bottom line...
 
             formatted = [
-                ('', showing_text),
+                (hot_notif_or_fact_id_style, showing_text),
                 ('', padding),
                 ('', helpful_text),
             ]

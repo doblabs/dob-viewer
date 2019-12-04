@@ -33,14 +33,13 @@ from prompt_toolkit.layout.containers import (
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
-from . import various_styles
 from ..helpers.exceptions import catch_action_exception
 from ..helpers.facts_diff import FactsDiff
 from .dialog_overlay import alert_and_question
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
-from .zone_epithet import ZoneEpithet
 from .zone_lowdown import ZoneLowdown
+from .zone_streamer import ZoneStreamer
 
 __all__ = (
     'ZoneManager',
@@ -53,7 +52,7 @@ class ZoneManager(object):
         self.carousel = carousel
         self.facts_diff = None
 
-        self.zone_epithet = ZoneEpithet(self.carousel)
+        self.zone_streamer = ZoneStreamer(self.carousel)
         self.zone_details = ZoneDetails(self.carousel)
         self.zone_content = ZoneContent(self.carousel)
         self.zone_lowdown = ZoneLowdown(self.carousel)
@@ -64,7 +63,7 @@ class ZoneManager(object):
     # ***
 
     def standup(self):
-        self.zone_epithet.standup()
+        self.zone_streamer.standup()
         self.zone_details.standup()
         self.zone_content.standup()
         self.zone_lowdown.standup()
@@ -74,21 +73,21 @@ class ZoneManager(object):
     def build_and_show(self):
         self.root = self.build_root_container()
         self.layout = self.build_application_layout()
-        self.setup_style()
+        self.setup_styling()
         self.application = self.build_application_object()
         self.rebuild_viewable()
 
     # ***
 
     def build_root_container(self):
-        self.epithet_posit = 0
+        self.streamer_posit = 0
         self.details_posit = 1
         self.content_posit = 2
         self.lowdown_posit = 3
         self.hsplit = HSplit(
             # Use placeholders; we'll populate in rebuild_containers().
             children=[
-                Label(text=''),  # zone_epithet
+                Label(text=''),  # zone_streamer
                 Label(text=''),  # zone_details
                 Label(text=''),  # zone_content
                 Label(text=''),  # zone_lowdown
@@ -99,7 +98,7 @@ class ZoneManager(object):
             #  padding_style='',
         )
 
-        if self.carousel.chosen_style['root-app_align'] == 'JUSTIFY':
+        if self.carousel.classes_style['editor-align'] == 'JUSTIFY':
             app_align = HorizontalAlign.JUSTIFY
             app_width = None
         else:
@@ -127,10 +126,9 @@ class ZoneManager(object):
         )
         return layout
 
-    def setup_style(self):
-        if self.carousel.chosen_style is None:
-            self.carousel.chosen_style = various_styles.color()
-        self.style = Style(self.carousel.chosen_style['container-syles'])
+    def setup_styling(self):
+        class_styles = self.carousel.classes_style['collect_tups']
+        self.style = Style(class_styles)
 
     def build_application_object(self):
         # (lb): By default, the app uses editing_mode=EditingMode.EMACS,
@@ -201,8 +199,8 @@ class ZoneManager(object):
         )
 
     def rebuild_containers(self):
-        epithet_container = self.zone_epithet.rebuild_viewable()
-        self.hsplit.get_children()[self.epithet_posit] = epithet_container
+        streamer_container = self.zone_streamer.rebuild_viewable()
+        self.hsplit.get_children()[self.streamer_posit] = streamer_container
 
         details_container = self.zone_details.rebuild_viewable()
         self.hsplit.get_children()[self.details_posit] = details_container
@@ -216,7 +214,7 @@ class ZoneManager(object):
     # ***
 
     def selectively_refresh(self):
-        self.zone_epithet.selectively_refresh()
+        self.zone_streamer.selectively_refresh()
         self.zone_details.selectively_refresh()
         self.zone_content.selectively_refresh()
         self.zone_lowdown.selectively_refresh()

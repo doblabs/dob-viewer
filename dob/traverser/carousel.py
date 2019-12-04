@@ -36,7 +36,9 @@ from ..interrogate import ask_user_for_edits
 from .action_manager import ActionManager
 from .dialog_overlay import show_message
 from .edits_manager import EditsManager
+from .styling_config import StylingConfig
 from .update_handler import UpdateHandler
+from .various_styles import color as styling_color
 from .zone_content import ZoneContent
 from .zone_manager import ZoneManager
 
@@ -54,7 +56,10 @@ class Carousel(object):
         orig_facts,
         dirty_callback,
         dry,
-        no_completion=None,
+        content_lexer=None,  # Lexer() instance, used by ZoneContent.
+        classes_style=None,  # Style dict, used by all the zone_*.py.
+        matches_style=None,  # Matching logic and container-class map.
+        no_completion=None,  # act/cat/tag list to not complete/suggest.
     ):
         self.controller = controller
         self.edits_manager = EditsManager(
@@ -65,8 +70,9 @@ class Carousel(object):
             error_callback=self.error_callback,
         )
         self.dry = dry
-        self.chosen_style = None
-        self.no_completion = no_completion  # act/cat/tag list to not complete/suggest.
+        self.content_lexer = content_lexer
+        self.setup_styling(classes_style, matches_style)
+        self.no_completion = no_completion
         self.action_manager = ActionManager(self)
         self.update_handler = UpdateHandler(self)
         # We'll set up the ZoneManager each time we use the event_loop.
@@ -84,16 +90,6 @@ class Carousel(object):
     # ***
 
     @property
-    def chosen_style(self):
-        return self._chosen_style
-
-    @chosen_style.setter
-    def chosen_style(self, chosen_style):
-        self._chosen_style = chosen_style
-
-    # ***
-
-    @property
     def avail_width(self, force=False):
         if force or self._avail_width is None:
             self._avail_width = self.calculate_available_width()
@@ -103,9 +99,9 @@ class Carousel(object):
         # NOTE: Without the - 2, to account for the '|' borders,
         #       app apparently hangs.
         full_width = click.get_terminal_size()[0] - 2
-        if not self.chosen_style['content-width']:
+        if not self.classes_style['content-width']:
             return full_width
-        avail_width = min(self.chosen_style['content-width'], full_width)
+        avail_width = min(self.classes_style['content-width'], full_width)
         return avail_width
 
     # ***
@@ -129,6 +125,39 @@ class Carousel(object):
     @confirm_exit.setter
     def confirm_exit(self, confirm_exit):
         self._confirm_exit = confirm_exit
+
+    # ***
+
+    def setup_styling(self, classes_style, matches_style):
+        """"""
+
+        def _setup_styling():
+            setup_classes_style(classes_style)
+            setup_matches_style(matches_style)
+
+        def setup_classes_style(classes_style):
+            if classes_style is None:
+                # HARDCODED/DEFAULT: classes_style default: 'color'.
+                # (lb): The styling_color() method (an alias of various_style.color())
+                # qualifies as a *hardcoded* value (e.g., we could instead call light()
+                # or night()). But this is merely a fallback in case the user cleared
+                # the setting in their configuration, and then for some reason our
+                # load_classes_style() stopped fetching the default first. In fact,
+                # per that last point, this code is technically unreachable!
+                self.controller.affirm(False)  # Nawgunnhappen.
+                classes_style = styling_color()
+            self.classes_style = classes_style
+
+        def setup_matches_style(matches_style):
+            self.stylability = StylingConfig(matches_style)
+
+        _setup_styling()
+
+    def add_stylable_classes(self, ppt_widget, friendly_name, fact=None):
+        """Apply custom user classes from ~/.config/dob/styling/styles|stylit.conf
+        to, e.g., use custom color backgrounds for Facts with matching Category."""
+        fact = fact or self.carousel.edits_manager.curr_edit
+        return self.stylability.add_stylable_classes(ppt_widget, friendly_name, fact)
 
     # ***
 

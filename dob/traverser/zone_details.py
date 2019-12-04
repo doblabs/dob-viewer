@@ -51,9 +51,11 @@ class ZoneDetails(
         self.affirm = self.carousel.controller.affirm
 
     class HeaderKeyVal(object):
+        """"""
         def __init__(
             self,
             index,
+            what_part=None,
             fact_attr=None,
             diff_kwargs=None,
             key_parts=None,
@@ -63,6 +65,7 @@ class ZoneDetails(
             mouse_handler=None,
         ):
             self.index = index
+            self.what_part = what_part
             self.fact_attr = fact_attr
             self.diff_kwargs = diff_kwargs
             self.key_parts = key_parts
@@ -79,7 +82,9 @@ class ZoneDetails(
     def rebuild_viewable(self):
         """"""
         def _rebuild_viewable():
+            # A couple convenience attrs.
             self.zone_manager = self.carousel.zone_manager
+            self.zone_content = self.carousel.zone_manager.zone_content
             assemble_children()
             self.details_container = build_container()
             self.refresh_all_children()
@@ -107,17 +112,17 @@ class ZoneDetails(
         def add_header_duration():
             # MEH/2019-11-22: (lb): Duration label mouse handler, but to do what?
             # - User clicks, modal asks for new duration, adjust end time to match?
-            self.label_duration = self.add_header_parts('duration')
+            self.label_duration = self.add_header_section('duration')
 
         def add_header_activity():
-            self.widgets_activity = self.add_header_parts(
+            self.widgets_activity = self.add_header_section(
                 'activity',
                 'activity_name',
                 mouse_handler=header_widget_mouse_handler('actegory'),
             )
 
         def add_header_category():
-            self.widgets_category = self.add_header_parts(
+            self.widgets_category = self.add_header_section(
                 'category',
                 'category_name',
                 mouse_handler=header_widget_mouse_handler('actegory'),
@@ -130,7 +135,7 @@ class ZoneDetails(
             # FIXME/2018-07-28: Fix tags display: with 2+ tags, inserting
             #   newlines makes the height dance. But keeping for now, as not
             #   many Facts (o' mine) with two or more tags.
-            self.widgets_tags = self.add_header_parts(
+            self.widgets_tags = self.add_header_section(
                 'tags',
                 'tags_tuples',
                 split_lines=True,
@@ -140,7 +145,7 @@ class ZoneDetails(
             )
 
         def add_blank_line():
-            self.children.append(self.make_header_label(''))
+            self.children.append(self.make_section_component(''))
 
         # ***
 
@@ -179,9 +184,9 @@ class ZoneDetails(
 
     # ***
 
-    def add_header_parts(
+    def add_header_section(
         self,
-        show_name,
+        part_type,
         fact_attr=None,
         editable=False,
         mouse_handler=None,
@@ -201,10 +206,11 @@ class ZoneDetails(
 
         keyval_parts = ZoneDetails.HeaderKeyVal(
             index=len(self.children),
+            what_part=part_type,
             fact_attr=fact_attr,
             diff_kwargs=kwargs,
-            key_parts=self.make_header_name_parts(show_name),
-            val_label=self.make_header_label(),
+            key_parts=self.make_header_label_parts(part_type),
+            val_label=self.make_header_value_part(),
             text_area=text_area,
             mouse_handler=mouse_handler,
         )
@@ -217,6 +223,35 @@ class ZoneDetails(
             )
         )
         return keyval_parts
+
+    def make_header_label_parts(self, part_type=''):
+        name = _(part_type)
+        prefix = '  '
+        padded = '{:.<19}'.format(name)
+        kv_sep = ' : '
+
+        labels = [
+            self.make_section_component(prefix, dont_extend_width=True),
+            self.make_section_component(padded, dont_extend_width=True),
+            self.make_section_component(kv_sep, dont_extend_width=True),
+        ]
+        return labels
+
+    def make_header_value_part(self):
+        return self.make_section_component('')
+
+    # ***
+
+    def make_section_component(self, header_text='', dont_extend_width=False):
+        # The header label is called once when first showing the Fact,
+        # and not called during the rebuild_viewable heartbeat. It's
+        # not even rebuilt when focus changes between components.
+        label = Label(
+            text=header_text,
+            style='class:header',
+            dont_extend_width=dont_extend_width,
+        )
+        return label
 
     # ***
 
@@ -248,6 +283,7 @@ class ZoneDetails(
             orig_val, edit_val,
         )
         self.label_duration.val_label.text = diff_tuples
+        self.add_stylable_classes(self.label_duration)
 
     def refresh_activity(self):
         self.refresh_val_widgets(self.widgets_activity)
@@ -266,6 +302,40 @@ class ZoneDetails(
             **keyval_widgets.diff_kwargs
         )
         keyval_widgets.val_label.text = diff_tuples
+        # (lb): Note also widgets_start and widgets_end come through here.
+        self.add_stylable_classes(keyval_widgets)
+        self.add_stylable_classes_key_parts(keyval_widgets)
+
+    def add_stylable_classes(self, keyval_widgets):
+        # Register value-[duration|start|end|activity|category|tags][-line]
+        friendly_name = 'value-{}'.format(keyval_widgets.what_part)
+        for suffix in ('', '-line'):
+            self.carousel.add_stylable_classes(
+                keyval_widgets.val_label,
+                friendly_name + suffix,
+            )
+
+    def add_stylable_classes_key_parts(self, keyval_widgets):
+        # key_parts is a list of Labels (from make_header_label_parts).
+        # First item is left column padding. '  '.
+        # Second is the meta label and the ...-padding.
+        # Third is the central column, ' : '.
+        # (lb): This is another 'MEH' moment: How much customizability
+        # do we really need? Or, put another way, we can always add
+        # more later. For now, it seems like enough to be able to both
+        # customize the inner meta label (including the .-padding), or
+        # to customize the whole meta line. I don't see a need (or, I
+        # don't have a need) to customize the left or center column bits.
+
+        # Register title-[duration|start|end|activity|category|tags][-line]
+        friendly_name = 'title-{}'.format(keyval_widgets.what_part)
+        dot_padded_title = keyval_widgets.key_parts[1]
+        self.carousel.add_stylable_classes(dot_padded_title, friendly_name)
+
+        # Register the -line bits.
+        friendly_name = 'title-{}-line'.format(keyval_widgets.what_part)
+        for label in keyval_widgets.key_parts:
+            self.carousel.add_stylable_classes(label, friendly_name)
 
     # ***
 
@@ -599,25 +669,4 @@ class ZoneDetails(
         # We could restore the edited time that the user undid.
         # But there's not much utility in that.
         pass
-
-    # ***
-
-    def make_header_label(self, header_text='', dont_extend_width=False):
-        return Label(
-            text=header_text,
-            style='class:header',
-            dont_extend_width=dont_extend_width,
-        )
-
-    def make_header_name_parts(self, name=''):
-        prefix = '  '
-        padded = '{:.<19}'.format(name)
-        kv_sep = ' : '
-
-        labels = [
-            self.make_header_label(prefix, dont_extend_width=True),
-            self.make_header_label(padded, dont_extend_width=True),
-            self.make_header_label(kv_sep, dont_extend_width=True),
-        ]
-        return labels
 

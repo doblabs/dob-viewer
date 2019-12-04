@@ -23,6 +23,7 @@ from functools import update_wrapper
 from prompt_toolkit.filters import Always, Never
 from prompt_toolkit.widgets import Frame, TextArea
 
+from ..helpers import dob_in_user_warning
 from ..helpers.exceptions import catch_action_exception
 from .zone_helpful import NUM_HELP_PAGES, render_carousel_help
 
@@ -35,18 +36,10 @@ class ZoneContent(object):
     """"""
     def __init__(self, carousel):
         self.carousel = carousel
-        self.chosen_lexer = self.carousel.chosen_lexer
         self.showing_help = 0
-
-    # ***
-
-    @property
-    def chosen_lexer(self):
-        return self._chosen_lexer
-
-    @chosen_lexer.setter
-    def chosen_lexer(self, chosen_lexer):
-        self._chosen_lexer = chosen_lexer
+        # For your convenience, attributes to eliminate one object hop.
+        self.content_lexer = self.carousel.content_lexer
+        self.classes_style = self.carousel.classes_style
 
     # ***
 
@@ -71,9 +64,9 @@ class ZoneContent(object):
     # ***
 
     def standup(self):
-        self.scrollable_height = self.carousel.chosen_style['content-height']
-        self.scrollable_width = self.carousel.chosen_style['content-width']
-        self.enable_wrapping = self.carousel.chosen_style['content-wrap']
+        self.scrollable_height = self.classes_style['content-height']
+        self.scrollable_width = self.classes_style['content-width']
+        self.enable_wrapping = self.classes_style['content-wrap']
         self.setup_scrollable()
 
     # ***
@@ -88,8 +81,9 @@ class ZoneContent(object):
                 # title="Fact Description",
                 style='class:content-area',
             )
-            if self.chosen_lexer is not None:
-                self.chosen_lexer.content_width = self.content_width
+
+            if self.content_lexer is not None:
+                self.content_lexer.content_width = self.content_width
 
         def calculate_width():
             avail_width = self.carousel.avail_width
@@ -134,7 +128,7 @@ class ZoneContent(object):
                 # scroll right in the TextArea. There's probably a way,
                 # I'm guessing. But not a feature I care much about.
                 #  wrap_lines=False,
-                lexer=self.chosen_lexer,
+                lexer=self.content_lexer,
             )
             return text_area
 
@@ -252,10 +246,19 @@ class ZoneContent(object):
         if 'unsaved-fact' in curr_edit.dirty_reasons:
             self.scrollable_frame.container.style += ' class:unsaved-fact'
 
-        # FIXME/2018-07-02: (lb): Style based on matches/filters.
-        #   Here's a taste.
-        if curr_edit.category_name == 'Sleep':
-            self.scrollable_frame.container.style += ' class:category-sleep'
+        # (lb): So, what do we call the stylable thing we let the user style?
+        # The static style is currently 'content-area'. The text in the content
+        # area being styled is the fact description, as well as the box lines
+        # around it that PPT draws. The word "description" is a lot to type,
+        # e.g., "fact-description", and most users probably know what "content"
+        # is, so we could call it "fact-content"... or "body" is pretty familiar,
+        # though the word "body" feels like a harbinger of HTML, or at least Clue.
+        # (I also considered just "content" but I like the common "fact-" prefix.)
+        self.carousel.add_stylable_classes(
+            self.scrollable_frame.container,
+            'fact-content',
+            fact=curr_edit,
+        )
 
         content_text = curr_edit.description or ''
 

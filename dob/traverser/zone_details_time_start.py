@@ -31,7 +31,7 @@ class ZoneDetails_TimeStart(object):
     """"""
 
     def add_header_start_time(self):
-        self.widgets_start = self.add_header_parts(
+        self.widgets_start = self.add_header_section(
             'start', 'start_fmt_local', editable=True,
             mouse_handler=self.header_time_start_mouse_handler,
         )

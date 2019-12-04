@@ -31,7 +31,7 @@ class ZoneDetails_TimeEnd(object):
     """"""
 
     def add_header_end_time(self):
-        self.widgets_end = self.add_header_parts(
+        self.widgets_end = self.add_header_section(
             'end', 'end_fmt_local_nowwed', editable=True,
             mouse_handler=self.header_time_end_mouse_handler,
         )
