@@ -276,7 +276,10 @@ class EditsManager(object):
         # Note that edit_time_adjust has 3 facts (curr, prev, next) and 1 of the
         #   latter times may be None. Extract that None entry here.
         edit_facts = list(filter(None, edit_facts))
-        self.update_redo_undo_and_conjoined(edit_facts)
+        applied_edits = self.update_redo_undo_and_conjoined(edit_facts)
+        if not applied_edits:
+            self.controller.affirm(edit_facts[0] == self.curr_fact)
+            return
         self.dirty_callback()
         # Show the first edited Fact (and ensure Carousel showing a wired
         # Fact, in case what was curr_fact was removed during the edit).
@@ -286,9 +289,9 @@ class EditsManager(object):
         self.redo_undo.add_undoable(was_facts, what)
 
     def update_redo_undo_and_conjoined(self, edit_facts):
-        pristine = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
-        if not pristine:
-            return
+        last_edits = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
+        if last_edits is None:
+            return False
 
         for idx, edit_fact in enumerate(edit_facts):
             # 2018-08-04 12:29: EXPLAIN: idx == 0 ?? Why?
@@ -299,10 +302,12 @@ class EditsManager(object):
             self.manage_edited_dirty_deleted(edit_fact, undelete=(idx == 0))
             self.manage_edited_edit_facts(edit_fact)
 
-        self.conjoined.apply_edits(edit_facts, pristine)
+        self.conjoined.apply_edits(edit_facts, last_edits)
 
         # Update undo with edited Facts.
         self.redo_undo.update_undo_altered(edit_facts)
+
+        return True
 
     def manage_edited_dirty_deleted(self, edit_fact, undelete=False):
         edit_fact.dirty_reasons.add('unsaved-fact')
