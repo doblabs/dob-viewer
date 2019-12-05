@@ -77,10 +77,24 @@ def load_classes_style(controller):
     def instantiate_or_try_internal_style(named_style, classes_dict):
         if classes_dict is not None:
             controller.affirm(isinstance(classes_dict, dict))
-            defaults = various_styles.default()
+            defaults = prepare_base_style(classes_dict)
             update_base_style(named_style, classes_dict, defaults)
             return defaults
         return load_internal_style(named_style)
+
+    def prepare_base_style(classes_dict):
+        # Load base-style (e.g., various_styles.default) to ensure
+        # all keys present (and defaulted), and then update that.
+        base_style = 'default'
+        if 'base-style' in classes_dict:
+            base_style = classes_dict['base-style'] or 'default'
+        try:
+            defaults = getattr(various_styles, base_style)()
+        except AttributeError as err:
+            # Unexpected, because of choices= on base-style @setting def.
+            controller.affirm(False)
+            defaults = various_styles.default()
+        return defaults
 
     def update_base_style(named_style, classes_dict, defaults):
         try:
