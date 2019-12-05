@@ -124,6 +124,8 @@ def load_matches_style(controller):
 
     def load_dict_from_user_stylit(stylit_path):
         matches_style = create_configobj(stylit_path, nickname='stylit')
+        if matches_style is None:
+            return None
         compile_eval_rules(matches_style)
         return matches_style
 
@@ -167,5 +169,5 @@ def create_configobj(conf_path, nickname=''):
             nickname, conf_path, str(err),
         )
         dob_in_user_warning(msg)
-        return {}
+        return None
 
