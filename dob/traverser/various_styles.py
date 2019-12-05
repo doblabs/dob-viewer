@@ -20,22 +20,24 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
+# MAYBE/2019-12-05: (lb): Decouple from click and get terminal height another way.
+import click
+
 from nark.config.inify import section
 from nark.config.subscriptable import Subscriptable
 
 __all__ = (
-    'default',
-
     'color',
+    'default',
     'light',
     'night',
-
-    'StylesRoot',
-    'CustomStyling',
+    # PRIVATE:
+    # '_create_style_object',
+    # '_stylize_all_one',
 )
 
 
-def create_style_object():
+def _create_style_object():
     """Define and return a ConfigDecorator for ~/.config/dob/styling/styles.conf."""
 
     # (lb): We want to wrap the @setting decorator (aka decorate the decorator),
@@ -72,43 +74,45 @@ def create_style_object():
 
     # Now that the @section re-decorator is defined, we declare a class that
     # uses it to build a settings config. Note that we use a little @section
-    # decorator magic on this second class -- by using a falsey section name,
-    # in @StylesRoot.section(None), it causes CustomStyling to just be an
-    # alias to StylesRoot! Which is the root config, so the settings defined
-    # in CustomStyling will be added to the root config, and not to a
-    # sub-section. Somewhat wonky, but wonky is our jam.
+    # decorator magic on this second class -- by using a None section name,
+    # in @StylesRoot.section(None), it causes the class being decorated (in
+    # this case, CustomScreen) to be an alias to the root config (StylesRoot)!
+    # So the settings defined in CustomScreen will be added to the root config,
+    # and not to a sub-section. Somewhat wonky, but wonky is our jam.
 
-    # (lb): 2 hacks here, because of the eccentric magic of the @section
-    # and ConfigDecorator:
+    # (lb): 2 hacks, because eccentric magic of @section and ConfigDecorator:
+    #
     # 1.) We wrap @ConfigDecorator.setting so we can identify which of our
     #     key-value settings are "class:..." assignments, and which of our
     #     key-value settings are the rules to decide if the class assignments
     #     should be applied.
     #     - The reason we mix the two types of settings in the same config
-    #     section, rather than using two separate section, is to keep the
+    #     section, rather than using two separate sections, is to keep the
     #     config flat and simple. It helps minimize the types of errors the
     #     user can make while editing their stylit.conf file.
     #     - The hack is reaching into StylesRoot (which is also a hack: it's
     #     not a class, but an object instance! because of the eccentric magic
     #     of @section) and finding our @setting_wrap through the special
     #     _innerobj attribute.
+    #
     # 2.) Hack number two here is specifying a `None` @section when defining
-    #     the CustomStyling class, so that the @setting decorator applies each
-    #     setting to the root config, and not to a sub-section.
+    #     the CustomScreen class, telling the @setting decorator to attach
+    #     each setting to the root config, and not to a sub-section.
     #     - I.e., each setting herein will be applied to the StylesRoot object.
-    #     In fact, CustomStyling disappears, in a sense, because the decorator
+    #     In fact, CustomScreen disappears, in a sense, because the decorator
     #     returns the section to which the class settings apply, so you'll find:
-    #       assert(CustomStyling is StylesRoot)  # Totally crazy, I know!
-    # 3.) I suppose there's actually a third hack, or maybe it's a trick, or just
-    #     The Way To Do It: we use the encompassing create_style_object() method
-    #     to localize the defined classes/objects (StylesRoot and CustomStyling)
+    #       assert(CustomScreen is StylesRoot)  # Totally crazy, I know!
+    #
+    # 3?) I suppose there's actually a third hack, or maybe it's a trick, or just
+    #     The Way To Do It: we use the encompassing _create_style_object() method
+    #     to localize the defined classes/objects (StylesRoot and CustomScreen)
     #     so that we don't end up creating singletons, but rather create unique
     #     config objects each time.
 
     setting = StylesRoot._innerobj.setting_wrap
 
     @StylesRoot.section(None)
-    class CustomStyling(Subscriptable):
+    class CustomScreen(Subscriptable):
         """"""
 
         def __init__(self):
@@ -129,34 +133,120 @@ def create_style_object():
 
         @property
         @setting(
-            _("If True, center interactive editor in terminal; otherwise justify left."),
+            _("Name of the style to use for default values."),
+            choices=['', 'default', 'night', 'light', 'color'],
+            name='base-style',
+            not_a_style=True,
+        )
+        def base_style(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("JUSTIFY/CENTER UX in terminal, or position LEFT or RIGHT. See also: content-width."),
+            choices=['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'],
             name='editor-align',
             not_a_style=True,
         )
         def editor_align(self):
-            return 'LEFT'
+            # (lb): AFAICT, 'CENTER' is equivalent to 'JUSTIFY'.
+            return 'CENTER'
 
         # ***
 
+        def evaluate_content_height(value):
+            if isinstance(value, int):
+                return value
+            _term_width, term_height = click.get_terminal_size()
+            evalable = value.replace('term_height', str(term_height))
+            compiled = compile(evalable, filename='<string>', mode='eval')
+            executed = eval(compiled)
+            return int(executed)
+
         @property
         @setting(
-            _("Maximum height, in terminal rows, of the Fact description control."),
+            # NOTE: If content-height is set to None, the content height changes
+            #       every time the user switches between Facts in the editor.
+            _("Content area height, may ref. terminal's, e.g., “term_height - 15”."),
             name='content-height',
             not_a_style=True,
+            value_type=evaluate_content_height,
+            allow_none=True,
         )
         def content_height(self):
-            return 10
+            #
+            # PPT will gripe "Window too small..." if we make the content
+            # too large, and because we add a border box around the content,
+            # the minimum height is:
+            #
+            #     minimum_height = term_height - 2
+            #
+            # except that accommodates *only* the content area, and
+            # it pushes out (clips) the streamer, header, and footer.
+            #
+            # (lb): I'm hardcoding the height adjustment value (the 15, below),
+            # in lieu of poking around our zone_details and other structures to
+            # compute the height of each component. We'll just hardcode this now
+            # and determine later if we should encode less UX knowledge here.
+            #
+            # Subtract from the terminal height the height of other components.
+            # (I.e., grow the content area vertically to fill in the UX.)
+            #
+            # - The maths:
+            #   - +1: There's 1 blank line above the streamer.
+            #   - +3: The streamer is 3 lines, e.g.,
+            #           ┌───────────────────────────────────────────────────────╮
+            #           │ Wed 23 Jan 2019 ◐ 11:00 AM — 02:21 PM Thu 05 Dec 2019 │
+            #           ╰───────────────────────────────────────────────────────╯
+            #   - +1: There's 1 blank line between streamer and headers.
+            #   - +6: +1 l. each: duration|start|end|activity|category|tags.
+            #   - +1: There's 1 blank line between headers and content.
+            #   - +2: The content area itself is bordered.
+            #   - +1: The footer is a single line.
+            #     --
+            #     15
+
+            # NOTE: There's no need to cache the calculated default value.
+            # - (lb): This method is called only once per runtime, AFAICT.
+
+            # We could `return click.get_terminal_size()[1] - 15` directly here,
+            # but let's use a string and show off how to use the magic value. If
+            # the user dumps the styling config, they'll see this string and have
+            # a better idea how best to customize this value.
+
+            return 'term_height - 15'
 
         # ***
 
+        def evaluate_content_width(value):
+            if isinstance(value, int):
+                return value
+            term_width, _term_height = click.get_terminal_size()
+            evalable = value.replace('term_width', str(term_width))
+            compiled = compile(evalable, filename='<string>', mode='eval')
+            executed = eval(compiled)
+            return int(executed)
+
         @property
         @setting(
-            _("Maximum width, in terminal columns, of the Fact description control."),
+            # NOTE: To get 1 column of whitespace on both (the left and right)
+            #       sides of the UX, subtract 3 (not 2) from the terminal width.
+            #       E.g., in ~/.config/dob/styling/styles.conf:
+            #         [my-style-1]
+            #         content-width = term_width - 3
+            _("UX width, may reference terminal's, e.g., “term_width - 3”."),
             name='content-width',
             not_a_style=True,
+            value_type=evaluate_content_width,
+            allow_none=True,
         )
         def content_width(self):
-            return 90
+            # We could return None and PPT would default to terminal width.
+            # But let's use the magic string value, so when the user dumps
+            # the styling config, they get a better idea what the default is.
+            return 'term_width'
 
         # ***
 
@@ -171,26 +261,196 @@ def create_style_object():
 
         # ***
 
+    # ***
+
+    # The following class adds its members to the same root config object as the
+    # previous class, but none of the settings below identify as a not_a_style.
+
+    @StylesRoot.section(None)
+    class CustomStyles(Subscriptable):
+        """"""
+
+        # DRY alert: StylitClassify and CustomStyles have similarly-named methods,
+        # but they're used differently.
+        # - In StylitClassify, the methods are the (style) class names, and the
+        #   values are the style definitions (e.g., bg and fg colors) that are
+        #   used to make the PPT Style object. (The Style() object is used to
+        #   lookup a class name and get the style definition).
+        #   - Currently, the runtime makes the Style() object once, and never
+        #     modifies it.
+        # - In CustomStyles, the methods are also the (style) class names, but
+        #   the values are class names and color styles (as a string) to add to
+        #   the widget styles when a conditional rule applies.
+        #   - I.e., the values in this class, when used by a conditional, are
+        #     appended to the style of the widget that is identified by that
+        #     class name. That is, the style string is not used to change the
+        #     class name it references, but instead the class name refers to the
+        #     widgets that identify with that class name. Got it?
+        #     - E.g., if a conditional triggers and its styles are added to the
+        #       activity value component, that component would have `style`:
+        #         'class:value-normal class:value-activity class:{custom-value}'
+        #       where {custom-value} is the value of the value-activity setting
+        #       from this class (which gets the value from the user's stylit.conf).
+        #       - Note that 'class:value-activity' (a string) is always added to
+        #         the component, regardless of any conditionals, and its definition
+        #         comes from the user's styles.conf.
+        #       - By specifying 'value-activity' in stylit.conf, what ends up
+        #         happening is that the conditional style is appended to the
+        #         component style, following 'class:value-activity', thereby
+        #         shadowing the basic style. What you have, in a sense, is
+        #         'class:value-activity' serving as a default value, and stylit's
+        #         'value-activity' being applied after that default.
+        # (lb): I hope this isn't too confusing. But I think it'd be more confusing
+        #   if the names were not the same in both configs. In any case, the methods
+        #   listed here should be ordered like in the other class, to make it easier
+        #   to keep the two config modules maintained and synced.
+        # - Note that it's not necessary to define any of the attributes here,
+        #   because the styles.conf parser treats any unknown setting from the
+        #   user's conf as a class definition -- which has the same effect as
+        #   declaring each @setting here. But by declaring them here, we can use
+        #   the object for producing help, or to built a template file to make
+        #   user onboarding easier.
+
+        def __init__(self):
+            pass
+
+        # ***
+
         @property
         @setting(
             _("Default style of the streamer UX banner (topmost UX)."),
-            name='header-help',
-            # NOTE: (lb): Not a style in that code sets directly on widget,
-            #       using (style, text) tuple, bypassing "class:" styling.
-            not_a_style=True,
         )
-        def header_help(self):
-            return 'bg:#000000 #FFFFFF bold'
+        def streamer(self):
+            return ''
+
+        @property
+        @setting(
+            _("Default style of the streamer UX banner (topmost UX) including blanks borders."),
+            name='streamer-line',
+        )
+        def streamer_line(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Default style of header titles."),
+            name='title-normal',
+        )
+        def title_normal(self):
+            return ''
+
+        @property
+        @setting(
+            _("Default style of header titles, including left and right whitespace compentry."),
+            name='title-normal-line',
+        )
+        def title_normal_line(self):
+            return ''
+
+        @property
+        @setting(
+            _("Style of header title when value has focus and is editable."),
+            name='title-focus',
+        )
+        def title_focus(self):
+            return ''
+
+        @property
+        @setting(
+            _("Style of header title, including adjacent whitspace, when value focused."),
+            name='title-focus-line',
+        )
+        def title_focus_line(self):
+            return ''
+
+        # ***
+
+        # See below for other title-* settings: title-duration → title-tags-line.
+
+        # ***
+
+        @property
+        @setting(
+            _("Default style of header value text."),
+            name='value-normal',
+        )
+        def value_normal(self):
+            return ''
+
+        @property
+        @setting(
+            _("Default style of header value line."),
+            name='value-normal-line',
+        )
+        def value_normal_line(self):
+            return ''
+
+        @property
+        @setting(
+            _("Style of header value value when value has focus and is editable."),
+            name='value-focus',
+        )
+        def value_focus(self):
+            return ''
+
+        @property
+        @setting(
+            _("Style of header value line when value has focus and is editable."),
+            name='value-focus-line',
+        )
+        def value_focus_line(self):
+            return ''
+
+        # ***
+
+        # The remaining title-* settings: title-duration through title-tags-line.
+        # And remaining value-* settings: value-duration through value-tags-line.
+
+        for prefix in ('title', 'value'):
+            for part in (
+                'duration',
+                'start',
+                'start-focus',
+                'end',
+                'end-focus',
+                'activity',
+                'category',
+                'tags',
+            ):
+                for suffix in ('', '-line'):
+                    class_name = '{}-{}{}'.format(prefix, part, suffix)
+
+                    is_line = suffix is '-line'
+                    is_focus = part.endswith('-focus')
+                    help_l = is_line and _(', including adjacent whitspace') or ''
+                    help_f = is_focus and _(', when value focused') or ''
+                    doc = _("{} {} style{}{}.").format(part, prefix, help_l, help_f)
+
+                    @setting(doc, name=class_name)
+                    def _title_setting(self):
+                        return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Default style of the blank line (between the tags widget and the content area)."),
+            name='blank-line',
+        )
+        def blank_line(self):
+            return ''
 
         # ***
 
         @property
         @setting(
             _("Default style when showing Fact description in content area."),
-            name='content-area',
+            name='content-fact',
         )
-        def content_area(self):
-            return 'bg:#000000 #FFFFFF'
+        def content_fact(self):
+            return ''
 
         # ***
 
@@ -200,7 +460,7 @@ def create_style_object():
             name='content-help',
         )
         def content_help(self):
-            return 'bg:#000000 #FFFFFF'
+            return ''
 
         # ***
 
@@ -210,7 +470,7 @@ def create_style_object():
             name='interval-gap',
         )
         def interval_gap(self):
-            return 'bg:#000000 #FFFFFF'
+            return ''
 
         # ***
 
@@ -220,18 +480,27 @@ def create_style_object():
             name='unsaved-fact',
         )
         def unsaved_fact(self):
-            return 'bg:#000000 #FFFFFF'
+            return ''
 
         # ***
 
         @property
         @setting(
-            _("Style of time widget when focused and editable."),
-            name='header-focus',
+            _("Style of footer section of UX (bottommost line)."),
+            name='footer',
         )
-        def header_focus(self):
-            # EXPLAIN/2019-12-04: (lb): I'm not sure I've seen this style WAD.
-            return 'bg:#00FFFF #0000FF'
+        def footer_normal(self):
+            return ''
+
+        @property
+        @setting(
+            _("Style of Fact ID or Hot Notif. text in footer."),
+            name='footer-fact-id',
+        )
+        def footer_fact_id(self):
+            return ''
+
+        # ***
 
     return StylesRoot
 
@@ -241,67 +510,98 @@ def create_style_object():
 def default():
     """Default defines all options so tweaked stylings may omit any."""
 
-    # (lb): Because of the magic of @section and how CustomStyling is not
+    # (lb): Because of the magic of @section and how StylesRoot is not
     # really a class, but rather a ConfigDecorator object, we use a wrapper
     # function to both define the config (every time it's called) and to
     # return the newly instantiated ConfigDecorator object (which can only
     # be accessed using the name of the @section-decorated class!).
 
-    styling = create_style_object()
+    styling = _create_style_object()
 
     return styling
 
 
-def color():
+# ***
+
+def _stylize_all_one(styling, style):
+    """"""
+
+    styling['streamer'] = style
+    # (lb): I cannot decide if I like the streamer bold or not.
+    styling['streamer'] += ' bold'
+
+    styling['streamer-line'] = style
+
+    # Set all the title-* and value-* values,
+    #   title-normal through value-tags-line.
+    for prefix in ('title', 'value'):
+        for part in (
+            'normal',
+            'focus',
+            'duration',
+            'start',
+            'start-focus',
+            'end',
+            'end-focus',
+            'activity',
+            'category',
+            'tags',
+        ):
+            for suffix in ('', '-line'):
+                class_name = '{}-{}{}'.format(prefix, part, suffix)
+                styling[class_name] = style
+
+    styling['blank-line'] = style
+
+    styling['content-fact'] = style
+    styling['content-help'] = style
+    styling['interval-gap'] = style
+    styling['unsaved-fact'] = style
+
+    styling['footer'] = style
+    styling['footer-fact-id'] = style
+
+
+# ***
+
+def light():
     styling = default()
+    _stylize_all_one(styling, 'bg:#FFFFFF #000000')
+    return styling
 
-    styling['editor-align'] = 'JUSTIFY'
 
-    styling['header-help'] = 'fg:#5F5FFF bold'
+# ***
 
-    # Loosely based on such and such color palette:
-    #
-    #   http://paletton.com/#uid=3000u0kg0qB6pHIb0vBljljq+fD
+def night():
+    styling = default()
+    _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
+    return styling
+
+
+# ***
+
+def color():
+    styling = night()
+
+    styling['streamer'] = 'fg:#5F5FFF bold'
+    # styling['streamer-line'] = ...
+
+    # styling['title-normal'] = ...
+    #  through
+    # styling['value-focus-line'] = ...
+
+    # styling['blank-line'] = ...
 
     # Default Fact.description frame background.
-    styling['content-area'] = 'bg:#9BC2C2 #000000'
-
+    styling['content-fact'] = 'bg:#9BC2C2 #000000'
     # Fact.description background when showing help.
     styling['content-help'] = 'bg:#66AAAA #000000'
-
     # Other contextual Fact.description background colors.
     styling['interval-gap'] = 'bg:#AA6C39 #000000'
     styling['unsaved-fact'] = 'bg:#D0EB9A #000000'
 
-    styling['header-focus'] = 'bg:#00FFFF #0000FF'
-
-    return styling
-
-
-def light():
-    styling = default()
-
-    styling['editor-align'] = 'LEFT'
-
-    styling['header-help'] = 'bg:#FFFFFF #000000 bold'
-    styling['content-area'] = 'bg:#FFFFFF #000000'
-    styling['content-help'] = 'bg:#FFFFFF #000000'
-    styling['interval-gap'] = 'bg:#FFFFFF #000000'
-    styling['unsaved-fact'] = 'bg:#FFFFFF #000000'
-
-    return styling
-
-
-def night():
-    styling = default()
-
-    styling['editor-align'] = 'LEFT'
-
-    styling['header-help'] = 'bg:#000000 #FFFFFF bold'
-    styling['content-area'] = 'bg:#000000 #FFFFFF'
-    styling['content-help'] = 'bg:#000000 #FFFFFF'
-    styling['interval-gap'] = 'bg:#000000 #FFFFFF'
-    styling['unsaved-fact'] = 'bg:#000000 #FFFFFF'
+    # styling['footer'] = ...
+    # styling['footer-fact-id'] = ...
 
     return styling
 
