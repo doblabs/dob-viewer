@@ -146,7 +146,14 @@ class ZoneDetails(
             )
 
         def add_blank_line():
-            self.children.append(self.make_section_component(''))
+            self.blank_line = self.make_section_component('', style='class:blank-line')
+            # Note: Somewhere else we set widget.formatted_text_control.style,
+            # but here it's widget.window.style we want.
+            # Note: Also that blank_line.window.style has one PPT default
+            # style and also a style from our code, i.e.,
+            #   blank_line.window.style: 'class:label class:title-normal'
+            self.blank_line.window.style = 'class:blank-line '
+            self.children.append(self.blank_line)
 
         # ***
 
@@ -221,7 +228,7 @@ class ZoneDetails(
             fact_attr=fact_attr,
             diff_kwargs=kwargs,
             key_parts=self.make_header_label_parts(part_type),
-            val_label=self.make_header_value_part(),
+            val_label=self.make_header_value_part(part_type),
             text_area=text_area,
             mouse_handler=mouse_handler,
         )
@@ -241,25 +248,39 @@ class ZoneDetails(
         padded = '{:.<19}'.format(name)
         kv_sep = ' : '
 
+        tline_style = 'class:title-normal-line'
+        title_style = 'class:title-normal-line class:title-normal'
+
         labels = [
-            self.make_section_component(prefix, dont_extend_width=True),
-            self.make_section_component(padded, dont_extend_width=True),
-            self.make_section_component(kv_sep, dont_extend_width=True),
+            self.make_section_component(
+                prefix, style=tline_style, dont_extend_width=True,
+            ),
+            self.make_section_component(
+                padded, style=title_style, dont_extend_width=True,
+            ),
+            self.make_section_component(
+                kv_sep, style=tline_style, dont_extend_width=True,
+            ),
         ]
         return labels
 
-    def make_header_value_part(self):
-        return self.make_section_component('')
+    def make_header_value_part(self, part_type=''):
+        style = 'class:value-normal-line '
+        if part_type:
+            style += 'class:value-{}-line '.format(part_type)
+        return self.make_section_component('', style=style)
 
     # ***
 
-    def make_section_component(self, header_text='', dont_extend_width=False):
+    def make_section_component(
+        self, header_text='', style='', dont_extend_width=False,
+    ):
         # The header label is called once when first showing the Fact,
         # and not called during the rebuild_viewable heartbeat. It's
         # not even rebuilt when focus changes between components.
         label = Label(
             text=header_text,
-            style='class:header',
+            style=style,
             dont_extend_width=dont_extend_width,
         )
         return label
@@ -273,6 +294,7 @@ class ZoneDetails(
         self.refresh_activity()
         self.refresh_category()
         self.refresh_tags()
+        self.refresh_blank_line()
 
     # ***
 
@@ -287,11 +309,13 @@ class ZoneDetails(
     # ***
 
     def refresh_duration(self):
+        # The style_class is 'class:value-normal class:value-duration '.
+        style_class = self.assemble_style_class_for_part(self.label_duration)
         orig_val, edit_val = self.zone_manager.facts_diff.diff_time_elapsed(
-            show_now=True,
+            show_now=True, style_class=style_class,
         )
         diff_tuples = self.zone_manager.facts_diff.diff_line_tuples_style(
-            orig_val, edit_val,
+            orig_val, edit_val, style_class=style_class,
         )
         self.label_duration.val_label.text = diff_tuples
         self.add_stylable_classes(self.label_duration)
@@ -305,66 +329,175 @@ class ZoneDetails(
     def refresh_tags(self):
         self.refresh_val_widgets(self.widgets_tags)
 
+    def refresh_blank_line(self):
+        # Lets the user override the blank line style for matching rules.
+        custom_classes = self.carousel.add_stylable_classes(
+            ppt_widget=None, friendly_name='blank-line',
+        )
+        # (lb): I'm wondering if we should just clobber style, not append
+        # (and do so other places we fiddle with style).
+        # Probably not necessary:
+        #   self.blank_line.window.style = 'class:blank-line ' + custom_classes
+        self.blank_line.window.style = custom_classes or 'class:blank-line '
+
     def refresh_val_widgets(self, keyval_widgets):
         self.affirm(keyval_widgets.fact_attr)
+        # The style_class is 'class:value-normal class:value-{activity|category|etc} '.
+        style_class = self.assemble_style_class_for_part(keyval_widgets)
         diff_tuples = self.zone_manager.facts_diff.diff_attrs(
             keyval_widgets.fact_attr,
+            style_class=style_class,
             mouse_handler=keyval_widgets.mouse_handler,
             **keyval_widgets.diff_kwargs
         )
         keyval_widgets.val_label.text = diff_tuples
+        # We've already set the default value (on top of PPT's Label default class):
+        #   keyval_widgets.val_label.window.style:
+        #     'class:label class:value-normal-line'
+        # and now we'll set value-{normal|activity|category|etc}[-line], if rules apply.
         # (lb): Note also widgets_start and widgets_end come through here.
         self.add_stylable_classes(keyval_widgets)
-        self.add_stylable_classes_key_parts(keyval_widgets)
 
-    def add_stylable_classes(self, keyval_widgets):
-        # Register value-[duration|start|end|activity|category|tags][-line]
-        friendly_name = 'value-{}'.format(keyval_widgets.what_part)
-        for suffix in ('', '-line'):
-            self.carousel.add_stylable_classes(
-                keyval_widgets.val_label,
-                friendly_name + suffix,
-            )
+    def assemble_style_class_for_part(self, keyval_widgets):
+        style_class = 'class:value-normal '
+        style_class += 'class:value-{} '.format(keyval_widgets.what_part)
+        return style_class
 
-    def add_stylable_classes_key_parts(self, keyval_widgets):
+    def add_stylable_classes(self, keyval_parts, set_focus=None):
+        self.add_stylable_classes_header_titles(keyval_parts, set_focus)
+        self.add_stylable_classes_header_values_normal(keyval_parts)
+        self.add_stylable_classes_header_values_focus(keyval_parts, set_focus)
+
+    def add_stylable_classes_header_titles(self, keyval_parts, set_focus=None):
         # key_parts is a list of Labels (from make_header_label_parts).
-        # First item is left column padding. '  '.
-        # Second is the meta label and the ...-padding.
-        # Third is the central column, ' : '.
+        # - The first item is the left column padding. E.g.: '  '.
+        # - The second item is the meta label and the ...-padding.
+        # - The third item is the middle column, ' : ', before the value.
         # (lb): This is another 'MEH' moment: How much customizability
-        # do we really need? Or, put another way, we can always add
-        # more later. For now, it seems like enough to be able to both
-        # customize the inner meta label (including the .-padding), or
-        # to customize the whole meta line. I don't see a need (or, I
-        # don't have a need) to customize the left or center column bits.
+        #   do we really need? Or, put another way, we can always add
+        #   more later. For now, it seems like enough to be able to both
+        #   customize the inner meta label (including the .-padding), or
+        #   to customize the whole meta line. I don't see a need (or, I
+        #   don't have a need) to customize the left or center column bits.
+        #   (Also, you can customize specially when focused, so there are
+        #   already four ways to customize each header title.)
+        if set_focus is None and self.active_widgets is keyval_parts:
+            set_focus = True
+        dot_padded_title = keyval_parts.key_parts[1]
+        title_part = 'title-{}'.format(keyval_parts.what_part)
+        if not set_focus:
+            friendlies = ['title-normal', title_part]
+        else:
+            # This keyval_parts should be editable.
+            self.affirm(keyval_parts.text_area is not None)
+            friendlies = ['title-focus', title_part + '-focus']
 
-        # Register title-[duration|start|end|activity|category|tags][-line]
-        friendly_name = 'title-{}'.format(keyval_widgets.what_part)
-        dot_padded_title = keyval_widgets.key_parts[1]
-        self.carousel.add_stylable_classes(dot_padded_title, friendly_name)
+        for friendly_name in friendlies:
+            # Register the -line style, which means assigns same style to all parts.
+            for label in keyval_parts.key_parts:
+                self.carousel.add_stylable_classes(label, friendly_name + '-line')
+            # Register title-[normal|duration|start|end|activity|category|tags][-focus]
+            # on just the title label part of the header.
+            self.carousel.add_stylable_classes(dot_padded_title, friendly_name)
 
-        # Register the -line bits.
-        friendly_name = 'title-{}-line'.format(keyval_widgets.what_part)
-        for label in keyval_widgets.key_parts:
-            self.carousel.add_stylable_classes(label, friendly_name)
+    def add_stylable_classes_header_values_normal(self, keyval_parts):
+        # For matching rules, apply any stylits for: value-normal, value-normal-line,
+        # and value-[duration|start|end|activity|category|tags][-line]
+        value_part = 'value-{}'.format(keyval_parts.what_part)
+        for friendly_name in ('value-normal', value_part):
+            for suffix in ('-line', ''):
+                self.carousel.add_stylable_classes(
+                    keyval_parts.val_label,
+                    friendly_name + suffix,
+                )
+
+    def add_stylable_classes_header_values_focus(self, keyval_parts, set_focus=False):
+        if not set_focus:
+            return
+
+        # For matching rules, apply any stylits for:
+        # value-focus, value-focus-line, and value-[start|end]-focus[-line].
+        value_part = 'value-{}-focus'.format(keyval_parts.what_part)
+        for friendly_name in ('value-focus', value_part):
+            for suffix in ('-line', ''):
+                self.carousel.add_stylable_classes(
+                    keyval_parts.text_area,
+                    friendly_name + suffix,
+                )
 
     # ***
 
-    def replace_val_container(self, val_container, keyval_widgets, label_class):
-        keyval_container = self.details_container.get_children()[keyval_widgets.index]
-        key_label = keyval_container.get_children()[1]
-        key_label.style = label_class
+    def replace_val_container(
+        self,
+        val_container,
+        keyval_widgets,
+        set_focus=False,
+    ):
         keyval_vsplit = self.details_container.get_children()[keyval_widgets.index]
-        keyval_vsplit.get_children()[3] = to_container(val_container)
+
+        focus_state = set_focus and 'focus' or 'normal'
+
+        # ***
+
+        # Set classes on each part, title-normal-line, or title-focus-line.
+        # Set also on inner text, title-normal or title-focus.
+        # This clobbers default style that PPT uses on Label, 'class:label '.
+        title_base_class = 'class:title-{}'.format(focus_state)
+        title_line_class = '{}-line'.format(title_base_class)
+        # Set classes more specific to the part type, e.g.,
+        # title-[duration|start|end|activity|category|tags][-focus][-line].
+        tpart_base_class = 'class:title-{}'.format(keyval_widgets.what_part)
+        if set_focus:
+            tpart_base_class += '-{}'.format(focus_state)  # += '-focus'
+        tpart_line_class = '{}-line'.format(tpart_base_class)
+
+        line_classes = '{} {} '.format(title_line_class, tpart_line_class)
+        text_classes = '{} {} {} {} '.format(
+            title_line_class, title_base_class, tpart_line_class, tpart_base_class,
+        )
+
+        keyval_vsplit.get_children()[0].style = line_classes
+        title_widget = keyval_vsplit.get_children()[1]
+        title_widget.style = text_classes
+        keyval_vsplit.get_children()[2].style = line_classes
+
+        # ***
+
+        # On Label, to_container gets val_container.formatted_text_control.
+        # On TextArea, to_container get val_container.window.
+        value_widget = to_container(val_container)
+        # Set class on value component, value-normal-line, or value-focus-line.
+        value_line_class = 'class:value-{}-line '.format(focus_state)
+        # Set class on value component, value-{part}[-focus]-line,
+        # e.g., value-end-focus-line, or value-start-line.
+        value_part_class = 'class:value-{}'.format(keyval_widgets.what_part)
+        if set_focus:
+            value_part_class += '-focus'
+        value_part_class += '-line'
+        # This clobbers default style that PPT use on TextArea, 'class:text-area '.
+        value_widget.style = value_line_class + value_part_class
+        keyval_vsplit.get_children()[3] = value_widget
+
+        # ***
+
+        self.add_stylable_classes(keyval_widgets, set_focus=set_focus)
 
     def replace_val_container_label(self, keyval_widgets):
         self.replace_val_container(
-            keyval_widgets.val_label, keyval_widgets, 'class:header',
+            keyval_widgets.val_label,
+            keyval_widgets,
         )
+        # keyval_widgets.val_label.window.style: 'class:value-normal-line'
+        #   and formatted_text_control.style: ''
+        #   and keyval_widgets.val_label.text
+        #     is style tuples, [('class:value-normal', '...')...]
+        keyval_widgets.val_label
 
     def replace_val_container_text_area(self, keyval_widgets):
         self.replace_val_container(
-            keyval_widgets.text_area, keyval_widgets, 'class:header-focus',
+            keyval_widgets.text_area,
+            keyval_widgets,
+            set_focus=True,
         )
 
     # ***
