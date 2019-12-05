@@ -307,15 +307,25 @@ class StylingConfig(object):
             # - Because to be complicated, we let the user customize either
             # just the text, or the text and line padding.
             #   - We use the magical suffix, "-line", to decide which it is, e.g.,
-            #         header-label-activity = class:my-style-text-only
-            #         header-label-activity-line = class:my-style-whole-line
+            #         value-activity = class:my-style-text-only
+            #         value-activity-line = class:my-style-whole-line
             if not friendly_name.endswith('-line'):
-                # Here's the tuple way, which is more tedious than using its control:
-                #       new_text = []
-                #       for tup in label.text:
-                #           new_text.append((tup[0] + custom_classes, *tup[1:]))
-                #       label.text = new_text
-                label.formatted_text_control.style += custom_classes
+                # If label.text is tuples, their style beats formatted_text_control,
+                # so rebuild the tuples list if present.
+                if (
+                    (isinstance(label.text, list))
+                    and (len(label.text) > 0)
+                    and (isinstance(label.text[0], tuple))
+                    and (len(label.text[0]) > 1)
+                ):
+                    # Discard tup[0] (style component) and replace.
+                    label.text = [
+                        (custom_classes, tup[1], *tup[2:]) for tup in label.text
+                    ]
+                else:
+                    # Otherwise, label.text is a simple 'string' (not a tuple),
+                    # so we can use the formatted_text_control style.
+                    label.formatted_text_control.style += custom_classes
             else:
                 label.window.style += custom_classes
 
