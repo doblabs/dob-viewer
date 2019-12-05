@@ -94,6 +94,8 @@ def load_classes_style(controller):
             warn_tell_not_found=not load_failed['styles'],
         )
         # If None, Carousel will eventually set to a default of its choosing.
+        # - (lb): Except that we specified default_name, so never None:
+        controller.affirm(classes_style_fn is not None)
         return classes_style_fn and classes_style_fn() or None
 
     # ***
