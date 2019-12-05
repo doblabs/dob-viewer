@@ -26,6 +26,7 @@ from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
+from prompt_toolkit.lexers import SimpleLexer
 from prompt_toolkit.widgets import Label, TextArea
 
 from ..helpers.exceptions import catch_action_exception
@@ -202,7 +203,17 @@ class ZoneDetails(
             # of the ubiquitous (style, text) tuples). Note also that
             # I tried options, focusable=True and focus_on_click=True,
             # and nothing.
-            text_area=TextArea(height=1)
+            # (lb): I tried making a custom lexer, e.g., class MyLexer(Lexer),
+            # but for whatever reason, the `assert isinstance(lexer, Lexer)`
+            # in PPT's DynamicLexer fails, because the custom lexer object
+            # somehow reports lexer.__class__: abc.ABCMeta. Fortunately,
+            # rather than trying to explain how the lexer object gets
+            # converted into some meta wrapper thing, we can use a builtin
+            # lexer that simple style the input text.
+            text_area=TextArea(
+                height=1,
+                lexer=SimpleLexer(style='class:value-focus'),
+            )
 
         keyval_parts = ZoneDetails.HeaderKeyVal(
             index=len(self.children),
