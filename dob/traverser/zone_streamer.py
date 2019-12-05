@@ -32,7 +32,7 @@ class ZoneStreamer(object):
         self.carousel = carousel
 
     def standup(self):
-        self.header_help_style = self.carousel.classes_style['header-help']
+        self.streamer_style = self.carousel.classes_style['streamer']
 
     # ***
 
@@ -84,15 +84,19 @@ class ZoneStreamer(object):
         tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
         self.interval_banner.text = self.bannerize(interval_text)
+        # (lb): Not sure why, but unlike add_stylable_classes, which sets
+        # widget.formatted_text_control.style, here we set widget.window's
+        # style instead.
+        self.interval_banner.window.style += ' class:streamer-line'
         self.add_stylable_classes()
 
     def add_stylable_classes(self):
-        # Register header-streamer[-line]
-        friendly_name = 'header-streamer'
+        # Register class:streamer[-line] styles.
+        friendly_name = 'streamer'
         for suffix in ('', '-line'):
-            # The label itself, 'header-streamer', includes the '╭─...' border,
+            # The label itself, 'streamer', includes the '╭─...' border,
             # so 3 rows of output are styled. If you specify the whole container,
-            # 'header-streamer-line', the style will include the blank lines, one
+            # 'streamer-line', the style will include the blank lines, one
             # each, above and below those 3 rows.
             self.carousel.add_stylable_classes(
                 self.interval_banner,
@@ -106,15 +110,19 @@ class ZoneStreamer(object):
 
     def bannerize(self, text):
         def _bannerize():
-            # You can style the complete banner, including the ANSI border, and
-            # the before and after newlines, using the 'header-streamer-line'
-            # stylit conditional. Or, to style just the banner, use the other
-            # conditional, 'header-streamer'. If no conditional applies, the
-            # static 'header-help' class from the current style is used.
+            # There are a few ways to style the banner, including the ANSI border,
+            # and optionally including the before and after newlines. By default,
+            # the 'streamer' class from the current style is used to style the
+            # banner and ANSI border; and the 'streamer-line' class is used to
+            # style the same, and also the blank lines before and after. You can
+            # also stylize the banner conditionally using the same two options,
+            # 'streamer' and 'streamer-line', from a stylit.conf rule set.
             bannerful = colorful_banner_town(text)
             parts = []
+            # Inline style only applies to parts with text, so
+            # using 'blank-line' style here would be fruitless.
             parts += [('', '\n')]
-            parts += [(self.header_help_style, bannerful)]
+            parts += [(self.streamer_style, bannerful)]
             parts += [('', '\n')]
             return parts
 
@@ -123,6 +131,8 @@ class ZoneStreamer(object):
             centered_text = '{0:^{1}}'.format(
                 padded_text, self.carousel.avail_width - 1,
             )
+            # MAYBE: (lb): We could go to the trouble of styling the ANSI border
+            # separately than the text... but that seems a wee bit tedious to code.
             banner = '''
 ╭─────────────────────────────────────────────────────────────────────────────────────────╮
 │{0}│
