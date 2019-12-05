@@ -40,10 +40,16 @@ __all__ = (
 def load_classes_style(controller):
     config = controller.config
 
+    # (lb): It's times like these -- adding a dict to get around scoping
+    # when sharing a variable -- that I think a method (load_classes_style)
+    # should be a class. But this works for now.
+    load_failed = {'styles': False}
+
     def _load_classes_style():
         named_style = resolve_named_style()
-        classes_style = try_load_dict_from_user_styling(named_style)
-        return instantiate_or_try_internal_style(named_style, classes_style)
+        classes_dict = try_load_dict_from_user_styling(named_style)
+        classes_style = instantiate_or_try_internal_style(named_style, classes_dict)
+        return classes_style
 
     def resolve_named_style():
         cfg_key_style = 'editor.styling'
@@ -61,19 +67,20 @@ def load_classes_style(controller):
 
     def load_dict_from_user_styling(styles_path, named_style):
         config_obj = create_configobj(styles_path, nickname='styles')
-        if named_style in config_obj:
-            classes_style = config_obj[named_style]
-            return classes_style
+        if config_obj is None:
+            load_failed['styles'] = True
+        elif named_style in config_obj:
+            classes_dict = config_obj[named_style]
+            return classes_dict
         return None
 
-
-    def instantiate_or_try_internal_style(named_style, classes_style):
-        if classes_style is not None:
-            controller.affirm(isinstance(classes_style, dict))
+    def instantiate_or_try_internal_style(named_style, classes_dict):
+        if classes_dict is not None:
+            controller.affirm(isinstance(classes_dict, dict))
             # Load various_styles.default to ensure all keys present,
             # then update that.
             defaults = various_styles.default()
-            defaults._update_gross(classes_style)
+            defaults._update_gross(classes_dict)
             return defaults
         return load_internal_style(named_style)
 
@@ -84,7 +91,7 @@ def load_classes_style(controller):
             internal=various_styles,
             # HARDCODED/DEFAULT: classes_style default: 'color'.
             default_name='color',
-            warn_tell_not_found=True,
+            warn_tell_not_found=not load_failed['styles'],
         )
         # If None, Carousel will eventually set to a default of its choosing.
         return classes_style_fn and classes_style_fn() or None
