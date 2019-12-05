@@ -30,6 +30,7 @@ __all__ = (
 class BaseLexer(Lexer):
     """"""
     def __init__(self):
+        super(BaseLexer, self).__init__()
         self._content_width = None
 
     @property
