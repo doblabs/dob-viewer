@@ -151,10 +151,10 @@ def create_configobj(conf_path, nickname=''):
     try:
         return ConfigObj(conf_path, write_empty_values=False)
     except ConfigObjError as err:
-        # Catches DuplicateError, etc.
-        # E.g., Parsing failed with several errors.
+        # Catches DuplicateError, and other errors, e.g.,
+        #       Parsing failed with several errors.
         #       First error at line 55.
-        msg = _("failed to understand {0} config at “{1}”: {2}").format(
+        msg = _("Failed to load {0} config at “{1}”: {2}").format(
             nickname, conf_path, str(err),
         )
         dob_in_user_warning(msg)
