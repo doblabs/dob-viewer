@@ -92,12 +92,15 @@ def load_classes_style(controller):
             dob_in_user_warning(msg)
 
     def load_internal_style(named_style):
+        # HARDCODED/DEFAULT: classes_style default: 'default' (Ha!).
+        # - This style uses no colors, so the UX will default to however
+        #   the terminal already looks.
+        default_style = 'default'
         classes_style_fn = load_obj_from_internal(
             controller,
             obj_name=named_style,
             internal=various_styles,
-            # HARDCODED/DEFAULT: classes_style default: 'color'.
-            default_name='color',
+            default_name=default_style,
             warn_tell_not_found=not load_failed['styles'],
         )
         # If None, Carousel will eventually set to a default of its choosing.
