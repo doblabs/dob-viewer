@@ -77,12 +77,19 @@ def load_classes_style(controller):
     def instantiate_or_try_internal_style(named_style, classes_dict):
         if classes_dict is not None:
             controller.affirm(isinstance(classes_dict, dict))
-            # Load various_styles.default to ensure all keys present,
-            # then update that.
             defaults = various_styles.default()
-            defaults._update_gross(classes_dict)
+            update_base_style(named_style, classes_dict, defaults)
             return defaults
         return load_internal_style(named_style)
+
+    def update_base_style(named_style, classes_dict, defaults):
+        try:
+            defaults._update_gross(classes_dict)
+        except Exception as err:
+            msg = _("Failed to load style named “{0}”: {1}").format(
+                named_style, str(err),
+            )
+            dob_in_user_warning(msg)
 
     def load_internal_style(named_style):
         classes_style_fn = load_obj_from_internal(
