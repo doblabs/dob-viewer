@@ -127,17 +127,16 @@ class ZoneStreamer(object):
             return parts
 
         def colorful_banner_town(text):
-            padded_text = '{0:<{1}}'.format(text, ZoneStreamer.MAX_INTERVAL_WIDTH)
-            centered_text = '{0:^{1}}'.format(
-                padded_text, self.carousel.avail_width - 1,
-            )
             # MAYBE: (lb): We could go to the trouble of styling the ANSI border
             # separately than the text... but that seems a wee bit tedious to code.
-            banner = '''
-╭─────────────────────────────────────────────────────────────────────────────────────────╮
-│{0}│
-╰─────────────────────────────────────────────────────────────────────────────────────────╯
-            '''.format(centered_text).lstrip("\n").rstrip()
+            reps = self.carousel.avail_width - 1
+            padded_text = '{0:<{1}}'.format(text, ZoneStreamer.MAX_INTERVAL_WIDTH)
+            centered_text = '{0:^{1}}'.format(padded_text, reps)
+            padded_hrule_top = '╭' + '─' * reps + '╮'
+            padded_hrule_bot = '╰' + '─' * reps + '╯'
+            banner = '{0}\n│{1}│\n{2}'.format(
+                padded_hrule_top, centered_text, padded_hrule_bot,
+            )
             return banner
 
         return _bannerize()
