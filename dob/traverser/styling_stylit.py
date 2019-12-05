@@ -31,7 +31,7 @@ __all__ = (
 def create_stylit_object():
 
     COMPONENTRY_CLASSIFIER_HELP = _(
-        "String to append to component, e.g., 'class:my-class1 class:my-class2'."
+        "For component.style or (style, text) tuple, e.g., 'class:my-class1 fg:#000000'."
     )
 
     @section(None)
@@ -178,11 +178,11 @@ def create_stylit_object():
 
         # ***
 
-        # FEATURE-REQUEST/2019-12-02: (lb): Additional conditionals for time attrs,
-        # start/end/duration, except this could get more complicated than the above,
-        # e.g., imagine `fact-duration-le = 10` for any fact with duration < 10 minutes.
-        # - Currently, you can still condition from the fact start/end/duration
-        #   using the 'eval' setting, Where anything goes!
+        # (lb): See Backlog for Feature Request to add additional conditionals,
+        #   e.g., for start/end/duration.
+        # Until then (if ever), use the 'eval' conditional to work with time
+        #   or any of the other Fact attributes that are not magically wired
+        #   to a Stylit setting.
 
     # ***
 
@@ -196,27 +196,30 @@ def create_stylit_object():
         # ***
         # ***
 
-        # (lb): I feel like I should DRY this up.
-        # But also this makes it pretty clear what's happening.
+        # (lb): I feel like I should DRY up all the very similar method
+        # definitions below (and, e.g., make a generator to create them).
+        #
+        # - On the other hand, having the long-winded method definitions
+        #   below makes it pretty clear what's happening, and clearly
+        #   shows what are the acceptable config keys and values.
 
         # ***
-        # *** APPLICATION STREAMER
+        # *** APPLICATION STREAMER AND ADJACENT EMPTY LINES
         # ***
 
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
-            name='header-streamer',
         )
-        def header_streamer(self):
+        def streamer(self):
             return ''
 
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
-            name='header-streamer-line',
+            name='streamer-line',
         )
-        def header_streamer_line(self):
+        def streamer_line(self):
             return ''
 
         # ***
@@ -226,9 +229,43 @@ def create_stylit_object():
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
+            name='title-normal',
+        )
+        def title_normal(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-normal-line',
+        )
+        def title_normal_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-focus',
+        )
+        def title_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-focus-line',
+        )
+        def title_focus_line(self):
+            return ''
+
+        # ***
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
             name='title-duration',
         )
-        def header_title_duration(self):
+        def title_duration(self):
             return ''
 
         @property
@@ -236,7 +273,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-duration-line',
         )
-        def header_title_duration_line(self):
+        def title_duration_line(self):
             return ''
 
         # ***
@@ -246,7 +283,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start',
         )
-        def header_title_start(self):
+        def title_start(self):
             return ''
 
         @property
@@ -254,7 +291,23 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start-line',
         )
-        def header_title_start_line(self):
+        def title_start_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-start-focus',
+        )
+        def title_start_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-start-focus-line',
+        )
+        def title_start_focus_line(self):
             return ''
 
         # ***
@@ -264,7 +317,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end',
         )
-        def header_title_end(self):
+        def title_end(self):
             return ''
 
         @property
@@ -272,7 +325,23 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end-line',
         )
-        def header_title_end_line(self):
+        def title_end_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-end-focus',
+        )
+        def title_end_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='title-end-focus-line',
+        )
+        def title_end_focus_line(self):
             return ''
 
         # ***
@@ -282,7 +351,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-activity',
         )
-        def header_title_activity(self):
+        def title_activity(self):
             return ''
 
         @property
@@ -290,7 +359,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-activity-line',
         )
-        def header_title_activity_line(self):
+        def title_activity_line(self):
             return ''
 
         # ***
@@ -300,7 +369,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-category',
         )
-        def header_title_category(self):
+        def title_category(self):
             return ''
 
         @property
@@ -308,7 +377,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-category-line',
         )
-        def header_title_category_line(self):
+        def title_category_line(self):
             return ''
 
         # ***
@@ -318,7 +387,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-tags',
         )
-        def header_title_tags(self):
+        def title_tags(self):
             return ''
 
         @property
@@ -326,7 +395,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-tags-line',
         )
-        def header_title_tags_line(self):
+        def title_tags_line(self):
             return ''
 
         # ***
@@ -336,9 +405,43 @@ def create_stylit_object():
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
+            name='value-normal',
+        )
+        def value_normal(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-normal-line',
+        )
+        def value_normal_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-focus',
+        )
+        def value_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-focus-line',
+        )
+        def value_focus_line(self):
+            return ''
+
+        # ***
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
             name='value-duration',
         )
-        def header_fact_duration(self):
+        def value_duration(self):
             return ''
 
         @property
@@ -346,7 +449,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-duration-line',
         )
-        def header_fact_duration_line(self):
+        def value_duration_line(self):
             return ''
 
         # ***
@@ -356,7 +459,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start',
         )
-        def header_fact_start(self):
+        def value_start(self):
             return ''
 
         @property
@@ -364,7 +467,23 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start-line',
         )
-        def header_fact_start_line(self):
+        def value_start_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-start-focus',
+        )
+        def value_start_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-start-focus-line',
+        )
+        def value_start_focus_line(self):
             return ''
 
         # ***
@@ -374,7 +493,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end',
         )
-        def header_fact_end(self):
+        def value_end(self):
             return ''
 
         @property
@@ -382,7 +501,23 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end-line',
         )
-        def header_fact_end_line(self):
+        def value_end_line(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-end-focus',
+        )
+        def value_end_focus(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='value-end-focus-line',
+        )
+        def value_end_focus_line(self):
             return ''
 
         # ***
@@ -392,7 +527,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-activity',
         )
-        def header_fact_activity(self):
+        def value_activity(self):
             return ''
 
         @property
@@ -400,7 +535,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-activity-line',
         )
-        def header_fact_activity_line(self):
+        def value_activity_line(self):
             return ''
 
         # ***
@@ -410,7 +545,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-category',
         )
-        def header_fact_category(self):
+        def value_category(self):
             return ''
 
         @property
@@ -418,7 +553,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-category-line',
         )
-        def header_fact_category_line(self):
+        def value_category_line(self):
             return ''
 
         # ***
@@ -428,7 +563,7 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-tags',
         )
-        def header_fact_tags(self):
+        def value_tags(self):
             return ''
 
         @property
@@ -436,7 +571,17 @@ def create_stylit_object():
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-tags-line',
         )
-        def header_fact_tags_line(self):
+        def value_tags_line(self):
+            return ''
+
+        # ***
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='blank-line',
+        )
+        def blank_line(self):
             return ''
 
         # ***
@@ -446,9 +591,33 @@ def create_stylit_object():
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
-            name='fact-content',
+            name='content-fact',
         )
         def scrollable_frame(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='content-help',
+        )
+        def content_help(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='interval-gap',
+        )
+        def interval_gap(self):
+            return ''
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='unsaved-fact',
+        )
+        def unsaved_fact(self):
             return ''
 
         # ***
@@ -458,9 +627,18 @@ def create_stylit_object():
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
-            name='fact-id',
+            name='footer',
         )
-        def fact_id(self):
+        def footer_normal(self):
+            return ''
+
+
+        @property
+        @StylitRoot.setting(
+            COMPONENTRY_CLASSIFIER_HELP,
+            name='footer-fact-id',
+        )
+        def footer_fact_id(self):
             return ''
 
         # ***
