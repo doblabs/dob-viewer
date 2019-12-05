@@ -54,6 +54,10 @@ class ZoneDetails_TimeStart(object):
             edit_fact = self.zone_manager.facts_diff.edit_fact
             start_fmt_local = edit_fact.start_fmt_local
             self.widgets_start.orig_val = start_fmt_local
+            # Styling/Stylit note: PPT does not let you set format tuples
+            # on TextArea text, i.e., text_area.text = [('class:foo', 'bar')]
+            # would fail terribly. See elsewhere in the code where we are able
+            # to use a SimpleLexer to stylize the input control.
             self.widgets_start.text_area.text = start_fmt_local
             self.edit_time_focus(self.widgets_start)
             return True
