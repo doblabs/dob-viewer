@@ -22,6 +22,7 @@ from gettext import gettext as _
 
 from prompt_toolkit.layout.containers import Container
 from prompt_toolkit.widgets.base import Label
+from prompt_toolkit.widgets.base import TextArea
 
 # MAYBE/2019-12-02: (lb) Can we decouple traverser from other parts of dob?
 # - More specifically, is using normal stdout to print errors okay, or should
@@ -284,6 +285,8 @@ class StylingConfig(object):
                 apply_stylable_to_label(ppt_widget, custom_classes)
             elif isinstance(ppt_widget, Container):
                 apply_stylable_to_container(ppt_widget, custom_classes)
+            elif isinstance(ppt_widget, TextArea):
+                apply_stylable_to_text_area(ppt_widget, custom_classes)
             else:
                 # Unexpected path. Unhandled PPT type.
                 # (lb): This is a wee bit coupled to the whole application
@@ -331,6 +334,9 @@ class StylingConfig(object):
 
         def apply_stylable_to_container(container, custom_classes):
             container.style += custom_classes
+
+        def apply_stylable_to_text_area(container, custom_classes):
+            container.window.style += custom_classes
 
         # ***
 
