@@ -61,6 +61,11 @@ class StylingConfig(object):
     def consume_stylit_conf(self, matches_style):
 
         def _consume_stylit_conf():
+            if matches_style is None:
+                return {}
+            return _create_rulesets(matches_style)
+
+        def _create_rulesets(matches_style):
             rulesets = {}
             for section, rules in matches_style.items():
                 ruleset = create_ruleset_from_rules(rulesets, rules)
