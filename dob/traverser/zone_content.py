@@ -79,7 +79,7 @@ class ZoneContent(object):
             self.scrollable_frame = Frame(
                 self.content,
                 # title="Fact Description",
-                style='class:content-area',
+                style='class:content-fact',
             )
 
             if self.content_lexer is not None:
@@ -232,7 +232,7 @@ class ZoneContent(object):
         return render_carousel_help()
 
     def apply_scrollable_style_fact(self):
-        self.scrollable_frame.container.style = 'class:content-area'
+        self.scrollable_frame.container.style = 'class:content-fact'
 
         curr_edit = self.carousel.edits_manager.curr_edit
 
@@ -247,16 +247,16 @@ class ZoneContent(object):
             self.scrollable_frame.container.style += ' class:unsaved-fact'
 
         # (lb): So, what do we call the stylable thing we let the user style?
-        # The static style is currently 'content-area'. The text in the content
+        # The static style is currently 'content-fact'. The text in the content
         # area being styled is the fact description, as well as the box lines
         # around it that PPT draws. The word "description" is a lot to type,
         # e.g., "fact-description", and most users probably know what "content"
-        # is, so we could call it "fact-content"... or "body" is pretty familiar,
+        # is, so we could call it "content-fact"... or "body" is pretty familiar,
         # though the word "body" feels like a harbinger of HTML, or at least Clue.
         # (I also considered just "content" but I like the common "fact-" prefix.)
         self.carousel.add_stylable_classes(
             self.scrollable_frame.container,
-            'fact-content',
+            'content-fact',
             fact=curr_edit,
         )
 
