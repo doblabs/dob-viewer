@@ -98,7 +98,7 @@ class ZoneLowdown(object):
             padding = ' ' * pad_len
 
             hot_notif_or_fact_id_style = self.carousel.add_stylable_classes(
-                ppt_widget=None, friendly_name='fact-id',
+                ppt_widget=None, friendly_name='footer-fact-id',
             )
             # MEH/2019-12-02: (lb): I don't feel like styling the whole bottom line...
 
