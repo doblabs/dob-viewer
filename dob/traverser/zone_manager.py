@@ -98,12 +98,19 @@ class ZoneManager(object):
             #  padding_style='',
         )
 
-        if self.carousel.classes_style['editor-align'] == 'JUSTIFY':
-            app_align = HorizontalAlign.JUSTIFY
-            app_width = None
-        else:
+        if self.carousel.classes_style['editor-align'] == 'LEFT':
             app_align = HorizontalAlign.LEFT
             app_width = click.get_terminal_size()[0]
+        elif self.carousel.classes_style['editor-align'] == 'CENTER':
+            app_align = HorizontalAlign.CENTER
+            app_width = None
+        elif self.carousel.classes_style['editor-align'] == 'RIGHT':
+            app_align = HorizontalAlign.RIGHT
+            app_width = click.get_terminal_size()[0]
+        else:
+            # self.carousel.classes_style['editor-align'] == 'JUSTIFY'
+            app_align = HorizontalAlign.JUSTIFY
+            app_width = None
 
         self.vsplit = VSplit(
             [self.hsplit],
