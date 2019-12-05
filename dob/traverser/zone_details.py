@@ -577,31 +577,6 @@ class ZoneDetails(
             )
             return conflicts
 
-        def ask_user_confirm_conflicts(conflicts):
-            if not conflicts:
-                return True
-            # (lb): User should never encounter conflicts from within the
-            # Carousel, at least that's my current thinking. The user could
-            # encounter conflicts on import, or inserting or editing using
-            # the command line. But we can prevent conflicts from within the
-            # interface -- by disallowing start and end edits that would be
-            # destructive -- and the user can delete or otherwise move facts
-            # around in other ways to avoid ever needing this behaviour.
-            # FIXME/2019-01-21 22:29: TEST: Edit raw fact and make start/end
-            #   overlap existing Facts from store and/or Carousel.
-            assert False
-
-        def edited_fact_update_label_text():
-            if self.active_widgets is self.widgets_start:
-                diff_tuples = self.zone_manager.facts_diff.diff_attrs(
-                    'start_fmt_local'
-                )
-            else:
-                self.affirm(self.active_widgets is self.widgets_end)
-                diff_tuples = self.zone_manager.facts_diff.diff_attrs(
-                    'end_fmt_local_nowwed'
-                )
-            self.active_widgets.val_label.text = diff_tuples
 
         # ***
 
