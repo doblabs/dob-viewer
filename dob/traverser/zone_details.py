@@ -217,7 +217,7 @@ class ZoneDetails(
             # rather than trying to explain how the lexer object gets
             # converted into some meta wrapper thing, we can use a builtin
             # lexer that simple style the input text.
-            text_area=TextArea(
+            text_area = TextArea(
                 height=1,
                 lexer=SimpleLexer(style='class:value-focus'),
             )
