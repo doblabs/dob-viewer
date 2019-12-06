@@ -152,7 +152,9 @@ class FactsManager(
             if fact.unstored:
                 self.last_fact_pk = min(self.last_fact_pk, fact.pk)
 
-        group = GroupChained(grouped_facts)
+        # FIXME/2019-12-06: (lb): Just testing. Remove affirm arg. later.
+        # group = GroupChained(grouped_facts)
+        group = GroupChained(grouped_facts, affirm=self.controller.affirm)
         self.groups.add(group)
 
         self.logger_debug_groups('add_facts', group=group)

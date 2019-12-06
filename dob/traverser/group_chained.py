@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with 'dob'.  If not, see <http://www.gnu.org/licenses/>.
-"""Facts Carousel"""
+"""GroupChained, an ordered Facts list."""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -44,15 +44,18 @@ def sorted_facts_list(facts=None):
 
 class GroupChained(object):
     """
-    A GroupChained represents an order list of Facts.
+    A GroupChained represents an ordered list of Facts.
     In the context of the Carousel, the ordered list
     is also guaranteed to be contiguous, and may contain
     a mix of stored Facts, new Facts, and gap Facts.
     Or even no Facts, if group is simply claiming time.
     """
-    def __init__(self, facts=None):
+    # FIXME/2019-12-06: (lb): Just testing. Remove affirm arg. later.
+    # def __init__(self, facts=None):
+    def __init__(self, facts=None, affirm=None):
         self.facts = sorted_facts_list(facts)
         self.reset_time_window()
+        self.affirm = affirm or (lambda _x: None)
 
     # ***
 
@@ -123,7 +126,15 @@ class GroupChained(object):
                 return '{} to {}'.format(lhs, rhs)
 
         def assemble_pk_ranges():
-            pks = [str(fact.pk) for fact in self.facts]
+            # 2019-12-03: (lb): Cull Fact(s) with pk == None.
+            # - I fixed a bug: I added a tag, and saved. But self.facts here
+            # had a fact with pk == None, to wit: str(None) returned 'None',
+            # and integer_range_groupify blew up on ValueError.
+            # - I'd like to confidently note why facts.pk is None, so affirming.
+            facts = list(filter(None, self.facts))
+            # FIXME/2019-12-06: (lb): Just testing. Remove affirm later.
+            self.affirm(len(facts) == len(self.facts))
+            pks = [str(fact.pk) for fact in facts]
             grouped = integer_range_groupify(pks)
             pk_ranges = ', '.join([range_str(grp) for grp in grouped])
             return len(pks), pk_ranges
