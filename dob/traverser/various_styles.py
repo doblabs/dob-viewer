@@ -425,7 +425,7 @@ def _create_style_object():
                 for suffix in ('', '-line'):
                     class_name = '{}-{}{}'.format(prefix, part, suffix)
 
-                    is_line = suffix is '-line'
+                    is_line = suffix == '-line'
                     is_focus = part.endswith('-focus')
                     help_l = is_line and _(', including adjacent whitspace') or ''
                     help_f = is_focus and _(', when value focused') or ''
