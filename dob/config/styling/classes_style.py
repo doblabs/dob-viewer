@@ -150,10 +150,10 @@ def load_matches_style(controller):
         matches_style = create_configobj(stylit_path, nickname='stylit')
         if matches_style is None:
             return None
-        compile_eval_rules(matches_style)
+        compile_eval_rules(matches_style, stylit_path)
         return matches_style
 
-    def compile_eval_rules(matches_style):
+    def compile_eval_rules(matches_style, stylit_path):
         # Each section may optionally contain one code/eval component. Compile
         # it now to check for errors, with the bonus that it's cached for later
         # ((lb): not that you'd likely notice any change in performance with or
@@ -170,8 +170,8 @@ def load_matches_style(controller):
                     mode='eval',
                 )
             except Exception as err:
-                msg = _("compile() failed on 'eval' from “{0}” in “{1}”").format(
-                    section, stylit_path,
+                msg = _("compile() failed on 'eval' from “{0}” in “{1}”: {2}").format(
+                    section, stylit_path, str(err),
                 )
                 dob_in_user_warning(msg)
 
