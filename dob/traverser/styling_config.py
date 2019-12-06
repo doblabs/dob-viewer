@@ -40,7 +40,6 @@ class StylingConfig(object):
     """Encapsulate Carousel-specific user configurable styling, PPT class names,
     and Pygments style syntax."""
 
-
     def __init__(self, matches_style):
         # The caller passes a dict-like object of rules read from
         # the user's stylit.conf file. We convert that to a StylitRoot

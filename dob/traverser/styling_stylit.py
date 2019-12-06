@@ -632,7 +632,6 @@ def create_stylit_object():
         def footer_normal(self):
             return ''
 
-
         @property
         @StylitRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,

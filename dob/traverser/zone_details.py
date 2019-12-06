@@ -710,7 +710,6 @@ class ZoneDetails(
             )
             return conflicts
 
-
         # ***
 
         def show_message_cannot_clear_start():
