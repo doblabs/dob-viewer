@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 'dob'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Methods to manage User file containing matches to remove from completions/suggestions."""
+"""Manages User file containing regex for filtering completions/suggestions."""
 
 from __future__ import absolute_import, unicode_literals
 
