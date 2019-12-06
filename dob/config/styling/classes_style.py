@@ -90,7 +90,7 @@ def load_classes_style(controller):
             base_style = classes_dict['base-style'] or 'default'
         try:
             defaults = getattr(various_styles, base_style)()
-        except AttributeError as err:
+        except AttributeError as err:  # noqa: F841
             # Unexpected, because of choices= on base-style @setting def.
             controller.affirm(False)
             defaults = various_styles.default()
