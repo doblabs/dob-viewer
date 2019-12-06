@@ -111,6 +111,16 @@ def _create_style_object():
 
     setting = StylesRoot._innerobj.setting_wrap
 
+    def evaluate_content_dimension(value, dim):
+        if isinstance(value, int):
+            return value
+        term_width, term_height = click.get_terminal_size()
+        # E.g., = value.replace('term_width', str(term_width))
+        evalable = value.replace(dim, str(locals()[dim]))
+        compiled = compile(evalable, filename='<string>', mode='eval')
+        executed = eval(compiled)
+        return int(executed)
+
     @StylesRoot.section(None)
     class CustomScreen(Subscriptable):
         """"""
@@ -157,13 +167,7 @@ def _create_style_object():
         # ***
 
         def evaluate_content_height(value):
-            if isinstance(value, int):
-                return value
-            _term_width, term_height = click.get_terminal_size()
-            evalable = value.replace('term_height', str(term_height))
-            compiled = compile(evalable, filename='<string>', mode='eval')
-            executed = eval(compiled)
-            return int(executed)
+            return evaluate_content_dimension(value, 'term_height')
 
         @property
         @setting(
@@ -221,13 +225,7 @@ def _create_style_object():
         # ***
 
         def evaluate_content_width(value):
-            if isinstance(value, int):
-                return value
-            term_width, _term_height = click.get_terminal_size()
-            evalable = value.replace('term_width', str(term_width))
-            compiled = compile(evalable, filename='<string>', mode='eval')
-            executed = eval(compiled)
-            return int(executed)
+            return evaluate_content_dimension(value, 'term_width')
 
         @property
         @setting(
@@ -236,6 +234,10 @@ def _create_style_object():
             #       E.g., in ~/.config/dob/styling/styles.conf:
             #         [my-style-1]
             #         content-width = term_width - 3
+            # (lb): Here's nice dims that works well in many terminal sizings::
+            #         [adaptive-style]
+            #         content-width = 'min(term_width * 0.62432, term_height * 3.35988)'
+            #         content-height = 'max(term_height - 22, 10)'
             _("UX width, may reference terminal's, e.g., “term_width - 3”."),
             name='content-width',
             not_a_style=True,
