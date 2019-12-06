@@ -340,7 +340,6 @@ class ZoneManager(object):
         # to happen will create an awkward selection in the
         # widget.
         buffer = control.buffer
-        position = mouse_event.position
         index = buffer.document.translate_row_col_to_index(
             mouse_event.position.y, mouse_event.position.x,
         )
