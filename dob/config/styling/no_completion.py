@@ -184,8 +184,7 @@ def load_no_completion(controller):
             # FIXME/2019-11-30: (lb): Better error message.
             dob_in_user_warning(_(
                 'Cannot discern no-completion rule seen before first section: ‘{}’'
-                ).format(rule)
-            )
+            ).format(rule))
 
     def process_consumed_rules():
         re_act = compile_rules(_activities)
