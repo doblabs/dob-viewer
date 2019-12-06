@@ -155,7 +155,8 @@ def _create_style_object():
 
         @property
         @setting(
-            _("JUSTIFY/CENTER UX in terminal, or position LEFT or RIGHT. See also: content-width."),
+            _("JUSTIFY/CENTER UX in terminal, or position LEFT or RIGHT."
+              " See also: content-width."),
             choices=['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY'],
             name='editor-align',
             not_a_style=True,
@@ -173,7 +174,7 @@ def _create_style_object():
         @setting(
             # NOTE: If content-height is set to None, the content height changes
             #       every time the user switches between Facts in the editor.
-            _("Content area height, may ref. terminal's, e.g., “term_height - 15”."),
+            _("Sizes content area height; may ref. term, e.g., “term_height - 15”."),
             name='content-height',
             not_a_style=True,
             value_type=evaluate_content_height,
@@ -238,7 +239,7 @@ def _create_style_object():
             #         [adaptive-style]
             #         content-width = 'min(term_width * 0.62432, term_height * 3.35988)'
             #         content-height = 'max(term_height - 22, 10)'
-            _("UX width, may reference terminal's, e.g., “term_width - 3”."),
+            _("Specifies UX width; may ref. curr. dims., e.g., “term_width - 3”."),
             name='content-width',
             not_a_style=True,
             value_type=evaluate_content_width,
@@ -254,7 +255,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("If True, wrap the Fact description text; otherwise, scroll horizontally."),
+            _("If True, wraps the content area text; otherwise, scrolls horizontally."),
             name='content-wrap',
             not_a_style=True,
         )
@@ -320,14 +321,14 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of the streamer UX banner (topmost UX)."),
+            _("Styles the streamer UX banner (topmost UX)."),
         )
         def streamer(self):
             return ''
 
         @property
         @setting(
-            _("Default style of the streamer UX banner (topmost UX) including blanks borders."),
+            _("Styles the streamer UX banner (topmost UX) including empty lines."),
             name='streamer-line',
         )
         def streamer_line(self):
@@ -337,7 +338,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of header titles."),
+            _("Styles the header titles."),
             name='title-normal',
         )
         def title_normal(self):
@@ -345,7 +346,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of header titles, including left and right whitespace compentry."),
+            _("Styles the header titles, including adjacent whitespacing."),
             name='title-normal-line',
         )
         def title_normal_line(self):
@@ -353,7 +354,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of header title when value has focus and is editable."),
+            _("Styles the header title whose value has focus and is editable."),
             name='title-focus',
         )
         def title_focus(self):
@@ -361,7 +362,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of header title, including adjacent whitspace, when value focused."),
+            _("Styles the header title and its whitespacing, when its value focused."),
             name='title-focus-line',
         )
         def title_focus_line(self):
@@ -375,7 +376,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of header value text."),
+            _("Styles the header value text."),
             name='value-normal',
         )
         def value_normal(self):
@@ -383,7 +384,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of header value line."),
+            _("Styles the header value line (text and the whitespace right of it)."),
             name='value-normal-line',
         )
         def value_normal_line(self):
@@ -391,7 +392,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of header value value when value has focus and is editable."),
+            _("Styles the header value text when it has focus and is editable."),
             name='value-focus',
         )
         def value_focus(self):
@@ -399,7 +400,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of header value line when value has focus and is editable."),
+            _("Styles the header value line of the editable value with focus."),
             name='value-focus-line',
         )
         def value_focus_line(self):
@@ -438,7 +439,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style of the blank line (between the tags widget and the content area)."),
+            _("Styles the empty line between the tags and the content area."),
             name='blank-line',
         )
         def blank_line(self):
@@ -448,7 +449,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style when showing Fact description in content area."),
+            _("Style the content area when showing the Fact description."),
             name='content-fact',
         )
         def content_fact(self):
@@ -458,7 +459,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Default style when showing help in the content area."),
+            _("Styles the content area when showing the one-page help."),
             name='content-help',
         )
         def content_help(self):
@@ -468,7 +469,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of content area when showing a generated, unsaved gap Fact."),
+            _("Styles the content area when showing a generated, unsaved gap Fact."),
             name='interval-gap',
         )
         def interval_gap(self):
@@ -478,7 +479,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of content area when showing an edited, unsaved Fact."),
+            _("Styles the content area when showing an edited, unsaved Fact."),
             name='unsaved-fact',
         )
         def unsaved_fact(self):
@@ -488,7 +489,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of footer section of UX (bottommost line)."),
+            _("Styles of footer section of the UX (bottommost line)."),
             name='footer',
         )
         def footer_normal(self):
@@ -496,7 +497,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style of Fact ID or Hot Notif. text in footer."),
+            _("Styles the Fact ID or Hot Notif text in the UX footer."),
             name='footer-fact-id',
         )
         def footer_fact_id(self):
