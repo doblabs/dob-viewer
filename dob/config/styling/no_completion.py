@@ -24,11 +24,8 @@ import re
 
 from gettext import gettext as _
 
-from prompt_toolkit.application.current import get_app
-
 from ...helpers import dob_in_user_warning
 from ...helpers.re_actegory import RegExpActegory
-from ..app_dirs import AppDirs
 
 __all__ = (
     'load_no_completion',
