@@ -20,8 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-from nark.config.inify import section
-from nark.config.subscriptable import Subscriptable
+from config_decorator import section
+from config_decorator.subscriptable import Subscriptable
 
 __all__ = (
     'create_stylit_object',

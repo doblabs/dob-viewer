@@ -23,8 +23,9 @@ from gettext import gettext as _
 # MAYBE/2019-12-05: (lb): Decouple from click and get terminal height another way.
 import click
 
-from nark.config.inify import section
-from nark.config.subscriptable import Subscriptable
+from config_decorator import section
+from config_decorator.subscriptable import Subscriptable
+from nark.helpers.format_fact import namilize
 
 __all__ = (
     'color',
