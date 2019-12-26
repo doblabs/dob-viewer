@@ -98,7 +98,7 @@ def load_classes_style(controller):
 
     def update_base_style(named_style, classes_dict, defaults):
         try:
-            defaults._update_gross(classes_dict)
+            defaults.update_gross(classes_dict)
         except Exception as err:
             msg = _("Failed to load style named “{0}”: {1}").format(
                 named_style, str(err),

@@ -74,7 +74,7 @@ class StylingConfig(object):
 
         def create_ruleset_from_rules(rulesets, rules):
             ruleset = create_stylit_object()
-            unconsumed = ruleset._update_known(rules)
+            unconsumed = ruleset.update_known(rules)
             warn_user_any_unconsumed(unconsumed)
             return ruleset
 
