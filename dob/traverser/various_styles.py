@@ -24,7 +24,6 @@ from gettext import gettext as _
 import click
 
 from config_decorator import section
-from config_decorator.subscriptable import Subscriptable
 from nark.helpers.format_fact import namilize
 
 __all__ = (
@@ -123,7 +122,7 @@ def _create_style_object():
         return int(executed)
 
     @StylesRoot.section(None)
-    class CustomScreen(Subscriptable):
+    class CustomScreen(object):
         """"""
 
         def __init__(self):
@@ -271,7 +270,7 @@ def _create_style_object():
     # previous class, but none of the settings below identify as a not_a_style.
 
     @StylesRoot.section(None)
-    class CustomStyles(Subscriptable):
+    class CustomStyles(object):
         """"""
 
         # DRY alert: StylitClassify and CustomStyles have similarly-named methods,

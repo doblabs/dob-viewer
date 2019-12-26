@@ -21,7 +21,6 @@ from __future__ import absolute_import, unicode_literals
 from gettext import gettext as _
 
 from config_decorator import section
-from config_decorator.subscriptable import Subscriptable
 
 __all__ = (
     'create_stylit_object',
@@ -43,7 +42,7 @@ def create_stylit_object():
     # ***
 
     @StylitRoot.section(None)
-    class StylitRuleset(Subscriptable):
+    class StylitRuleset(object):
         """"""
 
         def __init__(self):
@@ -187,7 +186,7 @@ def create_stylit_object():
     # ***
 
     @StylitRoot.section(None)
-    class StylitClassify(Subscriptable):
+    class StylitClassify(object):
         """"""
 
         def __init__(self):
