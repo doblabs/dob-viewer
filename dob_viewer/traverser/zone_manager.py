@@ -20,6 +20,8 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
+import os
+
 import click  # merely for get_terminal_size.
 # Profiling: load prompt_toolkit: ~ 0.040 secs.
 from prompt_toolkit.application import Application
@@ -30,6 +32,7 @@ from prompt_toolkit.layout.containers import (
     HSplit,
     VSplit
 )
+from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
@@ -137,6 +140,31 @@ class ZoneManager(object):
         class_styles = self.carousel.classes_style['collect_tups']
         self.style = Style(class_styles)
 
+    def _detect_color_depth(self):
+        # MAYBE/2020-01-06: Make color_depth configurable. Or detect better.
+        # (lb): This is a little frustrating. Colors are true in mate-terminal, but
+        #   in tmux, they're being "rounded", e.g., my custom class:category-sleep,
+        #   which is #CA85AC pink, is being rounded to straight up 0xFF0000 red.
+        #   - I have TERM=xterm in both cases (albeit not advisable in tmux, it's
+        #     the only TERM I can get italics to work in). And when I trace code
+        #     here, it seems like TERM defaults to DEPTH_8_BIT in either case --
+        #     but for some reason, under tmux, there's color rounding.
+        #   - One solution/work-around is to use ColorDepth.DEPTH_24_BIT when...
+        #     unfortunately, I'm not sure the best way to detect if the terminal
+        #     supports truecolor. Obvi., for me, I'll always have a truecolor
+        #     terminal at my fingers, or will fix it if I don't but for other
+        #     users, I want to ensure they have a decent experience always.
+        #     - We can check COLORTERM, which I think is set by mate-terminal,
+        #       except when I searched the source, I did not see it therein.
+        #       But works for me! (I mean, we could just always set 24-bit color,
+        #       but this at least falls back to not doing anything if COLORTERM is
+        #       not set as expected, which seems like the safest course of action.)
+        # Default, which works in raw mate-terminal, but not under tmux:
+        #   color_depth=ColorDepth.DEPTH_8_BIT,
+        if os.environ.get('COLORTERM', None) != 'truecolor':
+            return None
+        return ColorDepth.DEPTH_24_BIT
+
     def build_application_object(self):
         # (lb): By default, the app uses editing_mode=EditingMode.EMACS,
         # which adds a few key bindings. One binding in particular is a
@@ -159,6 +187,7 @@ class ZoneManager(object):
             layout=self.layout,
             key_bindings=self.carousel.action_manager.key_bindings_normal,
             full_screen=False,
+            color_depth=self._detect_color_depth(),
             erase_when_done=True,
             # Enables mouse wheel scrolling.
             # CAVEAT: Steals from terminal app!
