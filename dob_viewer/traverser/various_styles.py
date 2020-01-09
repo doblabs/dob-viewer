@@ -177,7 +177,10 @@ def _create_style_object():
             _("Sizes content area height; may ref. term, e.g., “term_height - 15”."),
             name='content-height',
             not_a_style=True,
-            value_type=evaluate_content_height,
+            # Use conform to change value used internally, but to keep the user's
+            # input, e.g., when writing config to file, be sure to return, say,
+            # "term_height - 15", and not the calculated internal value.
+            conform=evaluate_content_height,
             allow_none=True,
         )
         def content_height(self):
@@ -242,7 +245,10 @@ def _create_style_object():
             _("Specifies UX width; may ref. curr. dims., e.g., “term_width - 3”."),
             name='content-width',
             not_a_style=True,
-            value_type=evaluate_content_width,
+            # Use conform to change value used internally, but to keep the user's
+            # input, e.g., when writing config to file, be sure to return, say,
+            # "term_width - 3", and not the calculated internal value.
+            conform=evaluate_content_width,
             allow_none=True,
         )
         def content_width(self):
