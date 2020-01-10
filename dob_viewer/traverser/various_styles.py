@@ -67,7 +67,7 @@ def _create_style_object():
         @classmethod
         def collect_tups(cls):
             style_classes = [
-                (key, val.value) for key, val in StylesRoot._key_vals.items()
+                (namilize(key), val.value) for key, val in StylesRoot._key_vals.items()
                 if key not in cls.NOT_STYLE_CLASSES
             ]
             return style_classes
