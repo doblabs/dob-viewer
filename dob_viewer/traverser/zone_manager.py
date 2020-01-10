@@ -138,7 +138,22 @@ class ZoneManager(object):
 
     def setup_styling(self):
         class_styles = self.carousel.classes_style['collect_tups']
-        self.style = Style(class_styles)
+        try:
+            self.style = Style(class_styles)
+        except Exception as err:
+            # FIXME: Show error in Carousel, or raise and show before first draw.
+            #        - You could show error on startup, pause for input,
+            #        then continue (could even decide not to show warning again?).
+            # FIXME: Find all controller usage from clyde and refactor so has to
+            #        be passed in (wire what you need from dob upfront).
+            from dob.helpers import dob_in_user_warning
+            msg = _('The user style “{0}” failed to load: {1}').format(
+                self.carousel.controller.config['editor.styling'], str(err),
+            )
+            self.carousel.controller.client_logger.warning(msg)
+            dob_in_user_warning(str(class_styles))
+            dob_in_user_warning(msg)
+            self.style = Style([])
 
     def _detect_color_depth(self):
         # MAYBE/2020-01-06: Make color_depth configurable. Or detect better.
