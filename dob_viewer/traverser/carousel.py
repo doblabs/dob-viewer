@@ -30,9 +30,10 @@ from inflector import English, Inflector
 from nark.helpers.dev.profiling import profile_elapsed
 from prompt_toolkit.eventloop import use_asyncio_event_loop
 
-from ..helpers.exceptions import catch_action_exception
-from ..helpers.re_confirm import confirm
-from ..interrogate import ask_user_for_edits
+from dob.helpers.exceptions import catch_action_exception
+from dob.helpers.re_confirm import confirm
+from dob.interrogate import ask_user_for_edits
+
 from .action_manager import ActionManager
 from .dialog_overlay import show_message
 from .edits_manager import EditsManager

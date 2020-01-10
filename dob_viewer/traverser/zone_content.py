@@ -23,7 +23,7 @@ from functools import update_wrapper
 from prompt_toolkit.filters import Always, Never
 from prompt_toolkit.widgets import Frame, TextArea
 
-from ..helpers.exceptions import catch_action_exception
+from dob.helpers.exceptions import catch_action_exception
 from .zone_helpful import NUM_HELP_PAGES, render_carousel_help
 
 __all__ = (

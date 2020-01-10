@@ -27,7 +27,7 @@ from prompt_toolkit.widgets.base import TextArea
 # MAYBE/2019-12-02: (lb) Can we decouple traverser from other parts of dob?
 # - More specifically, is using normal stdout to print errors okay, or should
 #   we use the Carousel/PPT?
-from ..helpers import dob_in_user_warning
+from dob.helpers import dob_in_user_warning
 
 from .styling_stylit import create_stylit_object
 

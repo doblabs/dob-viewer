@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 
-from ..prompters.interface_bonds import KeyBond
+from dob_prompt.prompters.interface_bonds import KeyBond
 
 __all__ = (
     'key_bonds_clipboard',

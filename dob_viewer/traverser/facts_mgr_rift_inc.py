@@ -18,7 +18,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from ..cmds_list.fact import find_latest_fact
+from dob.cmds_list.fact import find_latest_fact
 
 __all__ = (
     'FactsManager_RiftInc',

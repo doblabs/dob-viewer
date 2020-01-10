@@ -22,7 +22,7 @@ from collections import namedtuple
 
 from nark.items import Fact
 
-from ..helpers.facts_diff import FactsDiff
+from dob.helpers.facts_diff import FactsDiff
 
 __all__ = (
     'PlaceableFact',

@@ -26,7 +26,7 @@ import inspect
 import pygments.lexers
 from prompt_toolkit.lexers import Lexer, PygmentsLexer
 
-from ...helpers import dob_in_user_warning
+from dob.helpers import dob_in_user_warning
 from ...traverser import various_lexers
 from . import load_obj_from_internal
 

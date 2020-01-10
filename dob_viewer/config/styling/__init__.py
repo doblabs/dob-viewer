@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-from ...helpers import dob_in_user_warning
+from dob.helpers import dob_in_user_warning
 
 __all__ = (
     'load_obj_from_internal',

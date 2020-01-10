@@ -29,8 +29,8 @@ from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.lexers import SimpleLexer
 from prompt_toolkit.widgets import Label, TextArea
 
-from ..helpers.exceptions import catch_action_exception
-from ..helpers.fix_times import must_complete_times
+from dob.helpers.exceptions import catch_action_exception
+from dob.helpers.fix_times import must_complete_times
 from .dialog_overlay import show_message
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart

@@ -23,7 +23,7 @@ from datetime import timedelta
 
 from gettext import gettext as _
 
-from ..helpers.exceptions import catch_action_exception
+from dob.helpers.exceptions import catch_action_exception
 from .zone_content import ZoneContent
 
 __all__ = (

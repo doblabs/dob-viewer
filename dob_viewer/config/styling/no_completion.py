@@ -24,8 +24,8 @@ import re
 
 from gettext import gettext as _
 
-from ...helpers import dob_in_user_warning
-from ...helpers.re_actegory import RegExpActegory
+from dob.helpers import dob_in_user_warning
+from dob.helpers.re_actegory import RegExpActegory
 
 __all__ = (
     'load_no_completion',

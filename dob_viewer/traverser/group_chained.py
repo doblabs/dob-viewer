@@ -23,7 +23,7 @@ from gettext import gettext as _
 from nark.items.fact import SinceTimeBegan, UntilTimeStops
 from sortedcontainers import SortedKeyList
 
-from ..helpers import integer_range_groupify
+from dob.helpers import integer_range_groupify
 
 __all__ = (
     'GroupChained',
