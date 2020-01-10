@@ -51,6 +51,7 @@ class PlaceableFact(Fact):
         # For identifying errors in the input.
         self.parsed_source = FactoidSource(line_num, line_raw)
         self.orig_fact = None
+        # For Carousel (dob-viewer) navigation.
         self.next_fact = None
         self.prev_fact = None
 
