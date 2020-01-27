@@ -116,28 +116,24 @@ test:
 	@echo "Use the PYTEST_ADDOPTS environment variable to add extra command line options."
 	py.test $(TEST_ARGS) tests/
 
+test-all:
+	tox
+.PHONY: test-all
+
 test-debug: test-local quickfix
 
 test-local:
-	# (lb) The pipe to tee, `| tee`, masks the return code from py.test. I.e., on its own,
-	# `py.test | tee` will always return true (0), regardless of py.test's exit code. As
-	# such, don't run this task from Travis CI. Or, if you do, change shells and set pipefail.
-	# E.g., at the top of the file, include:
-	#     SHELL = /bin/bash -o pipefail
-	# And then if any command along the pipeline fails, the whole command fails.
-	# Note: Using `set -o` or testing PIPESTATUS did not succeed for me, e.g.,
-	#     SHELL = /bin/bash
-	#     test-local:
-	#       # Tried this; didn't work:
-	#       set -o pipefail
-	#       py.test | tee
-	#       # Tried this; didn't work:
-	#       py.test | tee; test ${PIPESTATUS[0]} = 0
-	#       # nor $${PIPESTATUS[0]}, $(...), or $$(...).
+	# (lb): I tried using pipefail to catch failure, but it didn't trip. E.g.,:
+	#           SHELL = /bin/bash
+	#           ...
+	#           test-local:
+	#             set -o pipefail
+	#             py.test ... | tee ...
+	#       Alternatively, we can access the special PIPESTATUS environ instead.
 	py.test $(TEST_ARGS) tests/ | tee .make.out
-
-test-all:
-	tox
+	# Express the exit code of py.test, not the tee.
+	exit ${PIPESTATUS[0]}
+.PHONY: test-local
 
 test-one:
 	# You can also obviously: TEST_ARGS=-x make test
