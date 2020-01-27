@@ -39,6 +39,7 @@ exclude .ignore.example
 exclude .isort.cfg
 exclude .readthedocs.yml
 exclude .travis.yml
+exclude Makefile.local.example
 exclude MANIFEST.in
 exclude codecov.yml
 exclude tox.ini
