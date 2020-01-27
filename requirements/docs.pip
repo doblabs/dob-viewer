@@ -1,4 +1,4 @@
-# This file specifies all packages required to build the documentation.
+# Specifies packages required to build the documentation.
 
 # - "Style checker for Sphinx (or other) RST documentation"
 #
