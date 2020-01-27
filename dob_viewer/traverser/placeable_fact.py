@@ -19,8 +19,6 @@
 
 """Fact Editing State Machine"""
 
-from __future__ import absolute_import, unicode_literals
-
 from collections import namedtuple
 
 from nark.items import Fact

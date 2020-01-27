@@ -19,8 +19,6 @@
 
 """FactsManager_FactInc"""
 
-from __future__ import absolute_import, unicode_literals
-
 from nark.items.fact import UntilTimeStops
 
 __all__ = (

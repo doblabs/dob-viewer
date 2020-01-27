@@ -34,10 +34,6 @@ requirements = [
     'dob',
     # The dob CLI prompter.
     'dob-prompt',
-# FIXME/2020-01-05 17:31: Scrub the `future` library, but now it is!
-    # Compatibility layer between Python 2 and Python 3.
-    #  https://python-future.org/
-    'future',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
     'Inflector',

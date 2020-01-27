@@ -19,8 +19,6 @@
 
 """Fact Editing State Machine"""
 
-from __future__ import absolute_import, unicode_literals
-
 from .clipboard_edit import ClipboardEdit
 from .facts_manager import FactsManager
 from .group_chained import sorted_facts_list

@@ -19,8 +19,6 @@
 
 """"""
 
-from __future__ import absolute_import, unicode_literals
-
 from prompt_toolkit.lexers import Lexer
 
 __all__ = (

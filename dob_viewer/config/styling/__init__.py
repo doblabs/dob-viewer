@@ -19,8 +19,6 @@
 
 """User configurable interactive editor styling settings loaders."""
 
-from __future__ import absolute_import, unicode_literals
-
 from gettext import gettext as _
 
 from dob.helpers import dob_in_user_warning

@@ -19,8 +19,6 @@
 
 """Zone Details End Time Code (for easier diff-meld against Start Time Code)"""
 
-from __future__ import absolute_import, unicode_literals
-
 from datetime import timedelta
 
 from dob.helpers.exceptions import catch_action_exception

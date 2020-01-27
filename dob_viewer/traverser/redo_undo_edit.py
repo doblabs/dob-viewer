@@ -19,8 +19,6 @@
 
 """Fact-editing Redo/Undo Manager"""
 
-from __future__ import absolute_import, unicode_literals
-
 import time
 from collections import namedtuple
 

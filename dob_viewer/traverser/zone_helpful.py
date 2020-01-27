@@ -19,8 +19,6 @@
 
 """Facts Carousel"""
 
-from __future__ import absolute_import, unicode_literals
-
 from gettext import gettext as _
 
 from nark import __resolve_vers__ as resolve_vers_nark

@@ -19,8 +19,6 @@
 
 """FactsManager_FactDec"""
 
-from __future__ import absolute_import, unicode_literals
-
 import datetime
 
 from nark.items.fact import SinceTimeBegan

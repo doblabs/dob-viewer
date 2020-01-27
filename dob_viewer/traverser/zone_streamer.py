@@ -19,8 +19,6 @@
 
 """Facts Carousel Header (Fact meta and diff)"""
 
-from __future__ import absolute_import, unicode_literals
-
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 

@@ -19,8 +19,6 @@
 
 """Facts Carousel Header (Fact meta and diff)"""
 
-from __future__ import absolute_import, unicode_literals
-
 from datetime import datetime
 
 from gettext import gettext as _

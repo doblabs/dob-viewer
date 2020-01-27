@@ -19,8 +19,6 @@
 
 """FactsManager_RiftInc"""
 
-from __future__ import absolute_import, unicode_literals
-
 from dob.cmds_list.fact import find_latest_fact
 
 __all__ = (

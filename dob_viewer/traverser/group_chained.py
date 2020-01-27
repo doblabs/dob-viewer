@@ -19,8 +19,6 @@
 
 """GroupChained, an ordered Facts list."""
 
-from __future__ import absolute_import, unicode_literals
-
 from gettext import gettext as _
 
 from nark.items.fact import SinceTimeBegan, UntilTimeStops

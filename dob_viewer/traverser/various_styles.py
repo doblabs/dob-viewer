@@ -19,8 +19,6 @@
 
 """Facts Carousel Custom User (Pygment-defined) Styles."""
 
-from __future__ import absolute_import, unicode_literals
-
 from gettext import gettext as _
 
 # MAYBE/2019-12-05: (lb): Decouple from click and get terminal height another way.

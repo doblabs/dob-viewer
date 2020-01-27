@@ -19,8 +19,6 @@
 
 """Top-level package module for traverser modules."""
 
-from __future__ import absolute_import, unicode_literals
-
 __all__ = (
     'TraverserCommon',
 )

@@ -19,8 +19,6 @@
 
 """Fact Editing Start and End Time Adjuster"""
 
-from __future__ import absolute_import, unicode_literals
-
 from .redo_undo_edit import UndoRedoTuple
 
 __all__ = (

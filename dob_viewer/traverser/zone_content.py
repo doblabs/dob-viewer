@@ -19,8 +19,6 @@
 
 """Facts Carousel "Matter" (Fact Description) / Content area"""
 
-from __future__ import absolute_import, unicode_literals
-
 from functools import update_wrapper
 
 from prompt_toolkit.filters import Always, Never

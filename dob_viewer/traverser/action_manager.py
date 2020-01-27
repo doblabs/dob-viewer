@@ -19,8 +19,6 @@
 
 """Key Binding Action Manager"""
 
-from __future__ import absolute_import, unicode_literals
-
 from .interface_keys import (
     key_bonds_clipboard,
     key_bonds_edit_time,

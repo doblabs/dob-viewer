@@ -19,8 +19,6 @@
 
 """Key Binding Wiring Manager"""
 
-from __future__ import absolute_import, unicode_literals
-
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 

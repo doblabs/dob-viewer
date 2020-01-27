@@ -19,8 +19,6 @@
 
 """~/.config/dob/styling/stylit.conf definition and encapsulating class."""
 
-from __future__ import absolute_import, unicode_literals
-
 from gettext import gettext as _
 
 from prompt_toolkit.layout.containers import Container

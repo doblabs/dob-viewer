@@ -19,8 +19,6 @@
 
 """Facts Carousel"""
 
-from __future__ import absolute_import, unicode_literals
-
 from contextlib import contextmanager
 
 from sortedcontainers import SortedKeyList
