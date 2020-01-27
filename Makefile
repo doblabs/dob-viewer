@@ -94,6 +94,9 @@ clean-pyc:
 
 clean-docs:
 	$(MAKE) -C docs clean BUILDDIR=$(BUILDDIR)
+	/bin/rm -f docs/$(PROJNAME).*rst
+	/bin/rm -f docs/modules.rst
+.PHONY: clean-docs
 
 clean-test:
 	/bin/rm -fr .tox/
