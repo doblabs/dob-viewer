@@ -2,8 +2,8 @@
 Installation
 ############
 
-.. |dob| replace:: ``dob``
-.. _dob: https://github.com/hotoffthehamster/dob
+.. |dob-viewer| replace:: ``dob-viewer``
+.. _dob-viewer: https://github.com/hotoffthehamster/dob-viewer
 
 .. |virtualenv| replace:: ``virtualenv``
 .. _virtualenv: https://virtualenv.pypa.io/en/latest/
@@ -11,48 +11,41 @@ Installation
 .. |workon| replace:: ``workon``
 .. _workon: https://virtualenvwrapper.readthedocs.io/en/latest/command_ref.html?highlight=workon#workon
 
-.. NOTE:: Please be aware that |dob|_ is currently *alpha* software.
-
-          The application works well, but it has a few minor issues
-          that must be fixed before it can be truly released. And it
-          wouldn't hurt to write a few more tests and expand coverage.
-
-          In lieu of committing to a date that this software will be
-          out of alpha, let's just say, it'll happen this year, 2019!
-
-To install system-wide, run as superuser
+To install system-wide, run as superuser:
 
 .. code-block:: sh
 
-   $ pip3 install dob
+   $ pip3 install dob-viewer
 
 To install user-local, simply run:
 
 .. code-block:: sh
 
-    $ pip3 install -U dob
+    $ pip3 install -U dob-viewer
 
 To install within a |virtualenv|_, try:
 
 .. code-block:: sh
 
-    $ mkvirtualenv dob
-    $ pip3 install dob
+    $ mkvirtualenv dob-viewer
+    (dob-viewer) $ pip3 install dob-viewer
 
 To develop on the project, link to the source files instead:
 
 .. code-block:: sh
 
-    $ deactivate
-    $ rmvirtualenv dob
-    $ git clone git@github.com:hotoffthehamster/dob.git
-    $ cd dob
-    $ mkvirtualenv -a $(pwd) --python=/usr/bin/python3.6 dob
-    $ make develop
+    (dob-viewer) $ deactivate
+    $ rmvirtualenv dob-viewer
+    $ git clone git@github.com:hotoffthehamster/dob-viewer.git
+    $ cd dob-viewer
+    $ mkvirtualenv -a $(pwd) --python=/usr/bin/python3.6 dob-viewer
+    (dob-viewer) $ make develop
 
-To start developing from a fresh terminal, run |workon|_:
+After creating the virtual environment,
+to start developing from a fresh terminal, run |workon|_:
 
 .. code-block:: sh
 
-    $ workon dob
+    $ workon dob-viewer
+    (dob-viewer) $ ...
 
