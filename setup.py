@@ -19,28 +19,27 @@ from setuptools import find_packages, setup
 # *** Package requirements.
 
 requirements = [
-# FIXME/2019-12-06: Find other click libs and verify all included.
     # (lb): Click may be the best optparser of any language I've used.
     #  https://github.com/pallets/click
-# FIXME/2020-01-05 17:54: Using version is failing for me on `make develop`.
-#    'click--hotoffthehamster >= 7.1.0',
+    #    'click',
+    #  - Still, had to make one adjustment, and too impatient to ask for a pull...
+    #  https://github.com/hotoffthehamster/click
     'click--hotoffthehamster',
     # INI/config parser, even better (preserves comments and ordering).
     #  https://github.com/DiffSK/configobj
     #  https://configobj.readthedocs.io/en/latest/
     'configobj >= 5.0.6',
-# FIXME/2020-01-05 17:57: Require dob, or the other way around?
-    # The dob CLI core.
-    'dob',
-    # The dob CLI prompter.
-    'dob-prompt',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
     'Inflector',
     # The heart of Hamster. (Ye olde `hamster-lib`).
+    #  https://github.com/hotoffthehamster/nark
     'nark',
     # Amazeballs prompt library.
-    # FIXME/2019-02-21: Submit PR. Until then, whose fork?
+    #   https://github.com/prompt-toolkit/python-prompt-toolkit
+    #     'prompt-toolkit',
+    # - FIXME/2019-02-21: (lb): Need to submit PR, then return to mainline.
+    #   https://github.com/hotoffthehamster/python-prompt-toolkit
     'prompt-toolkit-dob >= 2.0.9',  # Imports as prompt_toolkit.
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
