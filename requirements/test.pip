@@ -17,19 +17,15 @@ pytest-mock == 1.10.1
 
 # *** Coverage
 
-# EXPLAIN/2020-01-26: (lb): Do we need both coverage and pytest-cov?
-
 # - "Code coverage measurement for Python"
 #   2020-01-26: Itself with 94.00% coverage.
 #
 #   https://coverage.readthedocs.io/en/latest/
-#coverage >= 4.5.2
 coverage >= 5.0.3
 
 # - "Pytest plugin for measuring coverage"
 #
 #   https://github.com/pytest-dev/pytest-cov
-#pytest-cov == 2.6.1
 pytest-cov >= 2.6.1
 
 # - Upload to codecov.io.
@@ -41,7 +37,6 @@ codecov >= 2.0.15
 
 # - "travel through time by mocking the datetime module"
 #   https://github.com/spulec/freezegun
-#freezegun >= 0.3.11
 freezegun >= 0.3.14
 
 # *** Fakers and Factories.
