@@ -36,15 +36,12 @@ exclude .coveragerc
 exclude .editorconfig
 exclude .gitignore
 exclude .ignore.example
-exclude .isort.cfg
 exclude .readthedocs.yml
 exclude .travis.yml
 exclude Makefile.local.example
 exclude MANIFEST.in
 exclude codecov.yml
 exclude tox.ini
-
-recursive-include man *
 
 ## Custom Carousel skinning.
 #recursive-include dob_viewer/styling *.json
