@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # This file is part of 'dob_viewer'.
 #
 # 'dob_viewer' is free software: you can redistribute it and/or modify
