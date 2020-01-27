@@ -1,3 +1,7 @@
+# This file exists within 'dob-viewer':
+#
+#   https://github.com/hotoffthehamster/dob-viewer
+
 version: 2
 
 python:

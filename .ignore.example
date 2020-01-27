@@ -1,3 +1,7 @@
+# This file exists within 'dob-viewer':
+#
+#   https://github.com/hotoffthehamster/dob-viewer
+
 # USAGE: `/bin/cp .ignore.example .ignore` and personalize.
 
 .git/

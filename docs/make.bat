@@ -1,5 +1,9 @@
 @ECHO OFF
 
+REM This file exists within 'dob-viewer':
+REM
+REM   https://github.com/hotoffthehamster/dob-viewer
+
 REM Command file for Sphinx documentation
 
 if "%SPHINXBUILD%" == "" (

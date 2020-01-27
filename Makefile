@@ -1,3 +1,9 @@
+# vim:tw=0:ts=2:sw=2:noet:ft=make:
+
+# This file exists within 'dob-viewer':
+#
+#   https://github.com/hotoffthehamster/dob-viewer
+
 BUILDDIR = _build
 
 .PHONY: clean-pyc clean-build docs clean
