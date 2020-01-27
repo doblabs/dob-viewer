@@ -35,14 +35,11 @@ dob-viewer
 .. |dob-viewer| replace:: ``dob-viewer``
 .. _dob-viewer: https://github.com/hotoffthehamster/dob-viewer
 
-|dob|_ is an interactive, terminal-based time tracking application.
+|dob-viewer|_ is a component of |dob|_,  an interactive, terminal-based,
+time tracking, journaling, note-taking, and life-hacking application.
 
-You'll find Vim-like navigation,
-robust filtering and searching capabilities,
-and a colorful, customizable interface.
-
-|dob-viewer|_ is one part of |dob|_ -- it provides the interactive
-Facts "Carousel" viewing and editing interface.
+|dob-viewer|_ provides the interactive viewing and editing interface,
+aka Facts "Carousel".
 
 Please see the |dob-docs|_ for lots more help and instruction.
 
