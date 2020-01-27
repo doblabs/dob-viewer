@@ -2,44 +2,39 @@
 #
 #   https://github.com/hotoffthehamster/dob-viewer
 
+# Packaging — `make dist`.
 build/
 dist/
 *.egg-info/
 .eggs/
 
-# Byte-compiled/Optimized Python and Library/DLL files.
+# Python byte code.
 *.py[cod]
-__pycache__
+__pycache__/
 
-# Testing and CI tasks.
+# Testing/CI tasks.
 .pytest_cache/
 .tox
 
-# `make coverage-html` output
+# Coverage — `make coverage`.
 .coverage
+# Coverage — `make coverage-html`.
 htmlcov/
-
-# pytest-cov / coverage / https://codecov.io
+# Coverage — `codecov` https://codecov.io.
 coverage.xml
 
-# Created by Sphinx on `make docs`:
-docs/_build
-docs/modules.rst
-# `make docs` Sphinx autodocs-generated.
-docs/dob_viewer.rst
-docs/dob_viewer.styling.rst
-docs/dob_viewer.traverser.rst
-
-# In lieu of a personalizable, secondary Grep/Silver Searcher/RipGrep ignore,
-# like .gitignore's .git/info/exclude, the repo contains an .ignore.example.
+# User's personal .ignore (e.g., .ignore.example).
 .ignore
 
-# ‘quickfix’ make task for Vim development.
+# Optional private DEV Makefile.
+Makefile.local
+
+# Sphinx Docs — `make docs`
+docs/_build/
+
+# Test output for Vim quickfix — `make test-local`.
 .make.out
 
-# Translations
+# Translations files.
 *.mo
-
-# (lb): 2019-02-23: I wish I knew what was creating this file, ha!
-pip-wheel-metadata/
 
