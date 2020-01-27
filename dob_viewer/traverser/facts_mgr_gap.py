@@ -19,7 +19,7 @@
 
 from nark.items.activity import Activity
 
-from .placeable_fact import PlaceableFact
+from dob.helpers.fact_dressed import FactDressed
 
 __all__ = (
     'FactsManager_Gap',
@@ -33,7 +33,7 @@ class FactsManager_Gap(object):
         self.controller.affirm((not until_time) or (since_time < until_time))
         self.last_fact_pk -= 1
         activity = Activity(name='')  # (lb): Meh. Seems like Fact should do.
-        gap_fact = PlaceableFact(
+        gap_fact = FactDressed(
             pk=self.last_fact_pk,
             activity=activity,
             start=since_time,
