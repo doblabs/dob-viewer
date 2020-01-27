@@ -86,7 +86,7 @@ class KeyActionMap(object):
     def jump_fact_inc(self, event):
         try:
             self.zone_manager.jump_fact_inc(event)
-        except Exception as err:
+        except Exception:
             # 2019-12-03 01:18: Raised on add-tag then save. Don't remember jumping.
             self.carousel.controller.affirm(False)
             pass
