@@ -45,10 +45,6 @@ requirements = [
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
     'pygments',
-# FIXME/2020-01-05 17:50: Remove 'six', 'future', etc.
-    # Virtuous Six Python 2 and 3 compatibility library.
-    #  https://six.readthedocs.io/
-    'six',
     # https://github.com/grantjenks/python-sortedcontainers/
     'sortedcontainers',
 ]
