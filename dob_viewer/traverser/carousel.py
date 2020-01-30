@@ -27,7 +27,6 @@ import time
 import click
 from inflector import English, Inflector
 from nark.helpers.dev.profiling import profile_elapsed
-from prompt_toolkit.eventloop import use_asyncio_event_loop
 
 from dob.helpers.exceptions import catch_action_exception
 from dob.helpers.re_confirm import confirm
@@ -111,6 +110,8 @@ class Carousel(object):
         # tick_tock_now, which keeps the ongoing fact's end clock time updated.
         # However, working with asyncio can be somewhat tricky. So, should you
         # need to disable it, here's a switch.
+        # 2020-01-28: PTK3 is always-async, FYI.
+        # - But we still need to be able to disable asyncio for tests.
         self._async_enable = True
         self._confirm_exit = False
 
@@ -164,8 +165,6 @@ class Carousel(object):
     def gallop(self, **kwargs):
         self.standup_once()
         if self.async_enable:
-            # Tell prompt_toolkit to use asyncio.
-            use_asyncio_event_loop()
             # Get the OS thread's event loop.
             self.event_loop = asyncio.get_event_loop()
         confirmed_facts = self.run_edit_loop(**kwargs)
@@ -391,15 +390,15 @@ class Carousel(object):
         # (So you'll see some of the Carousel code run.)
         run_async = self.zone_manager.application.run_async()
 
-        # Get a handle on the application's Future.
-        app_fut = run_async.to_asyncio_future()
-
         # Create the tick-tock task.
-        tck_asyn = self.tick_tock_now(app_fut)
-        tck_fut = asyncio.ensure_future(tck_asyn)
-        # Leave tck_fut out of tasks and manage separately.
-        tasks = [app_fut, ]
+        # MAYBE/2020-01-30: See (new?) in PTK3: create_background_task.
+        # - Maybe have PTK3 manage tick-tock, not us. (This works fine, though).
+        tck_task = self.event_loop.create_task(self.tick_tock_now())
 
+        # Leave tck_task out of tasks and manage separately.
+        tasks = [run_async, ]
+
+        # Run the Carousel!
         self.event_loop.run_until_complete(asyncio.wait(tasks))
 
         # Check if the Carousel exited deliberately or not.
@@ -419,20 +418,17 @@ class Carousel(object):
             self.controller.client_logger.warning('KLUDGE! Re-running Carousel.')
             rerun = True
 
-        self.controller.affirm(app_fut.done())
-        tck_fut.cancel()
-        # Need the run_until_complete() outer, else:
-        #   path/to/dob/traverser/carousel.py:398:
-        #       RuntimeWarning: coroutine 'wait' was never    awaited
-        #     asyncio.wait([tck_fut, ])
-        #   RuntimeWarning: Enable tracemalloc to get the object allocation traceback
-        self.event_loop.run_until_complete(asyncio.wait([tck_fut, ]))
+        tck_task.cancel()
+        # Similar to `await tck_task`, but this method not async function, so
+        # go through the event loop. -In past, (lb)'s seen warning if skipped:
+        #   RuntimeWarning: coroutine 'wait' was never    awaited
+        self.event_loop.run_until_complete(asyncio.wait([tck_task, ]))
 
         return rerun
 
     # ***
 
-    async def tick_tock_now(self, asyncio_future1):
+    async def tick_tock_now(self):
         """"""
         async def _tick_tock_now():
             tocking = True
@@ -440,8 +436,6 @@ class Carousel(object):
                 tocking = await tick_tock_loop()
 
         async def tick_tock_loop():
-            if asyncio_future1.done():
-                return False
             if not await sleep_to_refresh():
                 return False
             refresh_viewable()

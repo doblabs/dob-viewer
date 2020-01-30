@@ -19,8 +19,9 @@
 
 from gettext import gettext as _
 
+from asyncio import ensure_future, Future
+
 from prompt_toolkit.application.current import get_app
-from prompt_toolkit.eventloop import From, Future, Return, ensure_future
 from prompt_toolkit.layout.containers import Float, HSplit
 from prompt_toolkit.layout.dimension import D
 from prompt_toolkit.widgets import Button, Dialog, Label
@@ -36,9 +37,9 @@ __all__ = (
 
 
 def show_message(root_container, title, text):
-    def coroutine():
+    async def coroutine():
         dialog = MessageDialog(title, text)
-        yield From(show_dialog_as_float(root_container, dialog))
+        yield ensure_future(show_dialog_as_float(root_container, dialog))
 
     ensure_future(coroutine())
 
@@ -68,7 +69,7 @@ class MessageDialog(object):
         return self.dialog
 
 
-def show_dialog_as_float(root_container, dialog):
+async def show_dialog_as_float(root_container, dialog):
     " Coroutine. "
     float_ = Float(content=dialog)
     root_container.floats.insert(0, float_)
@@ -83,7 +84,7 @@ def show_dialog_as_float(root_container, dialog):
     if float_ in root_container.floats:
         root_container.floats.remove(float_)
 
-    raise Return(result)
+    raise result
 
 
 # ***
@@ -145,7 +146,7 @@ def alert_and_question(
             prompt_ok=prompt_ok,
             prompt_no=prompt_no,
         )
-        result = yield From(show_dialog_as_float(root_container, ar_dialog))
+        result = yield from show_dialog_as_float(root_container, ar_dialog)
         on_close(result)
 
     ensure_future(coroutine())
