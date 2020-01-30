@@ -329,11 +329,11 @@ class EditsManager(object):
 
     def update_edited_fact(self, edit_fact, orig_fact):
         self.controller.affirm(edit_fact is not orig_fact)
-        self.controller.affirm(edit_fact.pk == orig_fact.pk)
+        self.controller.affirm((orig_fact == 0) or (edit_fact.pk == orig_fact.pk))
         if edit_fact.dirty:
             # Update or add reference to latest edit.
             self.edit_facts[edit_fact.pk] = edit_fact
-        else:
+        elif orig_fact != 0:
             self.controller.affirm(not orig_fact.dirty)
             try:
                 # Forget edited fact that's no longer different than orig.
