@@ -72,11 +72,11 @@ class ZoneManager(object):
 
     # ***
 
-    def build_and_show(self):
+    def build_and_show(self, **kwargs):
         self.root = self.build_root_container()
         self.layout = self.build_application_layout()
         self.setup_styling()
-        self.application = self.build_application_object()
+        self.application = self.build_application_object(**kwargs)
         self.rebuild_viewable()
 
     # ***
@@ -179,7 +179,7 @@ class ZoneManager(object):
             return None
         return ColorDepth.DEPTH_24_BIT
 
-    def build_application_object(self):
+    def build_application_object(self, **kwargs):
         # (lb): By default, the app uses editing_mode=EditingMode.EMACS,
         # which adds a few key bindings. One binding in particular is a
         # little annoying -- ('c-x', 'c-x') -- because PPT has to wait
@@ -196,7 +196,6 @@ class ZoneManager(object):
         # other features. Question is, is there a delay on Ctrl-x? And
         # what does Ctrl-X do? Is it meta-cut? Also, what are the emacs-
         # binding features that you like?
-
         application = Application(
             layout=self.layout,
             key_bindings=self.carousel.action_manager.key_bindings_normal,
@@ -217,6 +216,7 @@ class ZoneManager(object):
             # editing bindings, i.e.,
             #   editing_mode='',
             # but we want those bindings for the command inputizer.
+            **kwargs,
         )
         return application
 

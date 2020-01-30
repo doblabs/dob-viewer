@@ -17,10 +17,10 @@
 
 """Facts Carousel"""
 
+from gettext import gettext as _
+
 import asyncio
 import time
-
-from gettext import gettext as _
 
 # (lb): We're using Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
@@ -161,14 +161,14 @@ class Carousel(object):
 
     # ***
 
-    def gallop(self):
+    def gallop(self, **kwargs):
         self.standup_once()
         if self.async_enable:
             # Tell prompt_toolkit to use asyncio.
             use_asyncio_event_loop()
             # Get the OS thread's event loop.
             self.event_loop = asyncio.get_event_loop()
-        confirmed_facts = self.run_edit_loop()
+        confirmed_facts = self.run_edit_loop(**kwargs)
 
         # (lb): We did not start the event loop, so we should not stop it, e.g.,:
         #     self.async_enable and self.event_loop and self.event_loop.stop()
@@ -244,12 +244,12 @@ class Carousel(object):
 
     # ***
 
-    def run_edit_loop(self):
+    def run_edit_loop(self, **kwargs):
         confirmed_facts = False
         used_prompt = None
         self.enduring_edit = True
         while self.enduring_edit:
-            self.runloop()
+            self.runloop(**kwargs)
             if not self.confirm_exit:
                 if self.enduring_edit:
                     used_prompt = self.prompt_fact_edits(used_prompt)
@@ -324,16 +324,16 @@ class Carousel(object):
     def standup_once(self):
         self.edits_manager.stand_up()
 
-    def standup_always(self):
+    def standup_always(self, **kwargs):
         self.zone_manager = ZoneManager(self)
         self.zone_manager.standup()
         self.update_handler.standup()
         self.action_manager.standup()
-        self.zone_manager.build_and_show()
+        self.zone_manager.build_and_show(**kwargs)
 
     # ***
 
-    def runloop(self):
+    def runloop(self, **kwargs):
         self.confirm_exit = False
         # Use enduring_edit as a trinary to know if the Carousel's run-loop
         # completes unexpectedly (it'll be None), or if the user interacted
@@ -345,17 +345,17 @@ class Carousel(object):
         keep_running = True
         # MAGIC_NUMBER: CPR_ISSUE: Do not rerun > once, lest stuck in feedback loop.
         while keep_running and rerun_cnt < 2:
-            keep_running = self.runloop_run()
+            keep_running = self.runloop_run(**kwargs)
             rerun_cnt += 1
 
-    def runloop_run(self):
+    def runloop_run(self, **kwargs):
         profile_elapsed('To dob runloop')
 
         # CPR_ISSUE: (lb): 2019-01-27: This might be the Ultimate Fix, by which
         # I mean I added this code last, and it might all that's needed to get
         # around the CPR issue (in which case, the `enduring_edit is None`
         # kludge below may be unnecessary).
-        self.standup_always()
+        self.standup_always(**kwargs)
 
         if self.async_enable:
             rerun = self.runloop_async()
