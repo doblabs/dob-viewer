@@ -223,6 +223,8 @@ def _create_style_object():
             # the user dumps the styling config, they'll see this string and have
             # a better idea how best to customize this value.
 
+            # FIXME/2019-12-05: (lb): I bet this clips for Facts w/ 2+ lines of #tags.
+
             return 'term_height - 15'
 
         # ***
