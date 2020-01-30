@@ -23,7 +23,8 @@ from gettext import gettext as _
 import click
 
 from config_decorator import section
-from nark.helpers.format_fact import namilize
+
+from dob.helpers.ppt_markup import namilize
 
 __all__ = (
     'color',
