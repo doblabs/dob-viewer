@@ -207,8 +207,8 @@ def key_bonds_update(handler):
         # In Terminator: Shift+Ctrl+Left/+Right: Resize the terminal left/right.
         #  (lb): I've disabled the 2 bindings in Terminator,
         #   so this works for me... so fixing it is a low priority!
-        KeyBond('c-s-left', action=handler.edit_time_decrement_both),
-        KeyBond('c-s-right', action=handler.edit_time_increment_both),
+        KeyBond('s-c-left', action=handler.edit_time_decrement_both),
+        KeyBond('s-c-right', action=handler.edit_time_increment_both),
         #
         KeyBond('m-p', action=handler.fact_split),
         KeyBond('m-e', action=handler.fact_erase),
