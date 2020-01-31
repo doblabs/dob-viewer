@@ -15,84 +15,54 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import os
-import pty
-import sys
+import pytest
 from unittest.mock import Mock
 
+# Import the Application object, though unreferenced, for monkeypatch to work.
+from prompt_toolkit.application.application import Application  # noqa: F401
+from prompt_toolkit.input.defaults import create_pipe_input
+from prompt_toolkit.output import DummyOutput
+
+from dob.helpers import re_confirm
 from dob.transcode import import_facts
 
-import prompt_toolkit
-import pytest
-# Load PosixStdinReader, though we don't use it, otherwise:
-#   AttributeError: module 'prompt_toolkit.input' has no attribute 'posix_utils'
-# F401 'prompt_toolkit.input.posix_utils.PosixStdinReader' imported but unused
-from prompt_toolkit.input.posix_utils import PosixStdinReader  # noqa: F401
 
 IMPORT_PATH = './tests/fixtures/test-import-fixture.rst'
 """Path to the import file fixture, which is full of Factoids."""
 
 
-@pytest.fixture
-def spoof_terminal(monkeypatch):
-    """
-    spoof_terminal redirects stdin to fool PPT.
-
-    PPT needs to think it's talking to a terminal, so that we can write
-    faux-interactive tests (that are almost integration tests, except we
-    skip CliRunner, so they're not *quite* full integration, but still
-    pretty close to it).
-
-    Here we mock the read function, which PPT uses to poll stdin, with a
-    sequence of keystrokes to send. (We do this tricky dance because we
-    cannot otherwise monkeypatch stdin, e.g., this will not work::
-
-        monkeypatch.setattr('sys.stdin', io.StringIO('\x11\x11\x11'))
-    """
-
-    # MAYBE/2019-02-20 11:55: Should async_enable be settable,
-    #                         so we don't have to hack-mock?
-    monkeypatch.setattr('dob_viewer.traverser.carousel.Carousel.async_enable', False)
-
-    sys_stdin = sys.stdin
-    # os.pipe() might also work, but pty was built to be a terminal spoof.
-    primary_fd, _secondary_fd = pty.openpty()
-    primary = os.fdopen(primary_fd, 'w')
-    sys.stdin = primary
-    yield
-    sys.stdin = sys_stdin
-
-
-__copy_paste_testing__ = '''
-    py.test --pdb -vv -k TestBasicCarousel tests/
-'''
-
-
 class TestBasicCarousel(object):
-    """Interactive Carousel tests."""
+    """Non-interactive Interactive Carousel tests."""
 
-    def _test_basic_import(self, controller_with_logging, spoof_terminal, key_sequence):
-        # In concert with spoof_terminal, fake a sequence of keystrokes on stdin.
-        interaction = Mock()
-        interaction.side_effect = key_sequence
-        prompt_toolkit.input.posix_utils.PosixStdinReader.read = interaction
+    # ***
 
-        # [lb]: Not sure what's up (I didn't trace code) but if you
-        # try the CliRunner from here, e.g.,
-        #       result = runner(['import', IMPORT_PATH])
-        # you'll trigger PPT's "Stdin is not a terminal." error
-        # (which is what spoof_terminal is trying to work around).
-        # So I guess this isn't *quite* an integration test,
-        # but it's pretty close -- c'mon! We're still testing the
-        # UX with keystrokes! We're just not entering through Click.
+    def _feed_cli_with_input(
+        self, controller_with_logging, key_sequence, mocker, monkeypatch,
+    ):
+        # (lb): In the original tests, back when PTK2, we monkeypatched sys,stdin
+        # to a pipe opened from a pty.openpty pseudo terminal, which smelled very
+        # fragile, and came with the caveat that Python's pty library probably
+        # doesn't run well on non-Linux. Thankfully, PTK3 has a formal mechanism
+        # for overriding I/O. See decent examples under prompt_toolkit/tests/.
 
+        re_confirm.confirm = mocker.MagicMock(return_value=True)
+
+        inp = create_pipe_input()
         input_stream = open(IMPORT_PATH, 'r')
-        import_facts(
-            controller_with_logging,
-            file_in=input_stream,
-            file_out=None,
-            use_carousel=True,
-        )
+        try:
+            inp.send_text(key_sequence)
+            import_facts(
+                controller_with_logging,
+                file_in=input_stream,
+                file_out=None,
+                use_carousel=True,
+                force_use_carousel=True,
+
+                input=inp,
+                output=DummyOutput(),
+            )
+        finally:
+            inp.close()
 
     # ***
 
@@ -111,14 +81,15 @@ class TestBasicCarousel(object):
                 '\x11',     # Ctrl-Q.
                 '\x11',     # Ctrl-Q.
                 '\x11',     # Ctrl-Q.
-                '',         # End of stream.
             ],
         ],
     )
     def test_basic_import4_left_arrow_three_time(
-        self, controller_with_logging, spoof_terminal, key_sequence
+        self, controller_with_logging, key_sequence, mocker, monkeypatch,
     ):
-        self._test_basic_import(controller_with_logging, spoof_terminal, key_sequence)
+        self._feed_cli_with_input(
+            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
+        )
 
     # ***
 
@@ -139,14 +110,15 @@ class TestBasicCarousel(object):
                 #                   Oddly, in log, I still only see 2 cancel_command's!
                 #                   But apparently we need 4 strokes to exit.
                 '\x11',
-                '',
             ],
         ],
     )
     def test_basic_import4_right_arrow_left_arrow(
-        self, controller_with_logging, spoof_terminal, key_sequence
+        self, controller_with_logging, key_sequence, mocker, monkeypatch
     ):
-        self._test_basic_import(controller_with_logging, spoof_terminal, key_sequence)
+        self._feed_cli_with_input(
+            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
+        )
 
     # ***
 
@@ -159,12 +131,13 @@ class TestBasicCarousel(object):
                 '\x11',
                 '\x11',
                 '\x11',
-                '',
             ],
         ],
     )
     def test_basic_import4_G_go_last(
-        self, controller_with_logging, spoof_terminal, key_sequence
+        self, controller_with_logging, key_sequence, mocker, monkeypatch,
     ):
-        self._test_basic_import(controller_with_logging, spoof_terminal, key_sequence)
+        self._feed_cli_with_input(
+            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
+        )
 
