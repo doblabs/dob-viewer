@@ -16,10 +16,8 @@
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
 import pytest
-from unittest.mock import Mock
+#from unittest.mock import Mock
 
-# Import the Application object, though unreferenced, for monkeypatch to work.
-from prompt_toolkit.application.application import Application  # noqa: F401
 from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.output import DummyOutput
 
