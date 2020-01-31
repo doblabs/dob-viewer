@@ -35,9 +35,9 @@ from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
-from dob.helpers.exceptions import catch_action_exception
 from dob.helpers.facts_diff import FactsDiff
 from .dialog_overlay import alert_and_question
+from .exceptions import catch_action_exception
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
 from .zone_lowdown import ZoneLowdown

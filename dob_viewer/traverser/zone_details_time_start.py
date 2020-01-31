@@ -19,7 +19,7 @@
 
 from datetime import timedelta
 
-from dob.helpers.exceptions import catch_action_exception
+from .exceptions import catch_action_exception
 
 __all__ = (
     'ZoneDetails_TimeStart',
