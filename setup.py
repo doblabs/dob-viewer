@@ -29,6 +29,9 @@ requirements = [
     #  https://github.com/DiffSK/configobj
     #  https://configobj.readthedocs.io/en/latest/
     'configobj >= 5.0.6',
+    # The act@gory and tag prompt interface.
+    #  https://github.com/hotoffthehamster/dob-prompt
+    'dob-prompt',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
     'Inflector',
