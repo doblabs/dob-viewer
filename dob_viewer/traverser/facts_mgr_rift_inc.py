@@ -17,8 +17,6 @@
 
 """FactsManager_RiftInc"""
 
-from dob.cmds_list.fact import find_latest_fact
-
 __all__ = (
     'FactsManager_RiftInc',
 )
@@ -69,7 +67,7 @@ class FactsManager_RiftInc(object):
                 # Look no further! (To test: press `G` a bunch.)
                 return final_group, final_fact
             self.controller.affirm(final_fact.next_fact is None)
-            latest_fact = find_latest_fact(self.controller)
+            latest_fact = self.controller.find_latest_fact()
             if not latest_fact:
                 self.controller.affirm(final_fact.unstored)
             else:

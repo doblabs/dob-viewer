@@ -17,8 +17,6 @@
 
 """FactsManager_RiftDec"""
 
-from dob.cmds_list.fact import find_oldest_fact
-
 __all__ = (
     'FactsManager_RiftDec',
 )
@@ -67,7 +65,7 @@ class FactsManager_RiftDec(object):
                 # Look no further! (To test: press `gg` a bunch.)
                 return first_group, first_fact
             self.controller.affirm(first_fact.prev_fact is None)
-            oldest_fact = find_oldest_fact(self.controller)
+            oldest_fact = self.controller.find_oldest_fact()
             if not oldest_fact:
                 self.controller.affirm(first_fact.unstored)
             else:
