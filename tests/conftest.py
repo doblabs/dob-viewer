@@ -38,8 +38,6 @@ from pytest_factoryboy import register
 
 from nark.config import decorate_config
 
-# import dob_viewer.dob_viewer as dob_viewer
-
 import dob.dob as dob
 from dob.config.fileboss import default_config_path
 from dob.controller import Controller
@@ -49,6 +47,12 @@ from nark.tests import factories
 register(factories.CategoryFactory)
 register(factories.ActivityFactory)
 register(factories.FactFactory)
+
+test_lib_log_level = 'WARNING'
+test_cli_log_level = 'WARNING'
+# DEV: Uncomment to see more log trace while testing:
+test_lib_log_level = 'DEBUG'
+test_cli_log_level = 'DEBUG'
 
 
 @pytest.fixture
@@ -129,17 +133,17 @@ def config_root(nark_config, dob_config):
     """Provide a generic baseline configuration."""
     config_root = decorate_config(nark_config)
     config_root.update(dob_config)
-    config = config_root.as_dict()
+    # Beware config_decorator settings' _conform_f(), which mutates source values.
+    # To layer config collections, be sure to use the original, pre-mutation values.
+    config = config_root.as_dict(unmutated=True)
     return config
+
 
 # This method essentially same as: nark:tests/conftest.py::base_config.
 @pytest.fixture
 def nark_config(tmpdir):
     """
-    Provide a backend config fixture. This can be passed to a controller directly.
-
-    That means this fixture represents the the result of all typechecks and
-    type conversions.
+    Provide a static backend config fixture.
     """
     # FETREQ/2020-01-09: (lb): Support dot-notation in dict keys on `update`.
     # - For now, create deep dictionary; not flat with dotted key names.
@@ -156,7 +160,7 @@ def nark_config(tmpdir):
             #   'password': '',
         },
         'dev': {
-            'lib_log_level': 'WARNING',
+            'lib_log_level': test_lib_log_level,
             'sql_log_level': 'WARNING',
         },
         'time': {
@@ -186,15 +190,9 @@ def nark_config(tmpdir):
 @pytest.fixture
 def dob_config(tmpdir):
     """
-    Provide a client config fixture. This can be passed to a controller directly.
-
-    That means this fixture represents the the result of all typechecks and
-    type conversions.
+    Provide a static client config fixture.
     """
     return {
-        # FIXME/2019-02-20: (lb): Test with missing config values; I know, bugs!
-
-        # FIXME/2019-02-20: (lb): Clarify: Use bool, or string? True, or 'True'?
         # 'editor.centered': '',
         'editor.centered': 'True',
 
@@ -221,9 +219,7 @@ def dob_config(tmpdir):
         # See also:
         #  'logfile_path': '',  # Generated value.
 
-        # 'dev.cli_log_level': 'WARNING',  # Default.
-        # 2019-02-20 11:15: I need to see where py.test of Carousel is hanging!
-        'dev.cli_log_level': 'DEBUG',
+        'dev.cli_log_level': test_cli_log_level,
 
         'fact.separators': '',  # [,:\n]
 
@@ -272,7 +268,7 @@ def config_instance(tmpdir, faker):
         cfg_dev = {}
         cfg_dict['dev'] = cfg_dev
 
-        lib_log_level = kwargs.get('lib_log_level', 'WARNING')
+        lib_log_level = kwargs.get('lib_log_level', test_lib_log_level)
         cfg_dev.setdefault('lib_log_level', lib_log_level)
         sql_log_level = kwargs.get('sql_log_level', 'WARNING')
         cfg_dev.setdefault('sql_log_level', sql_log_level)
@@ -320,7 +316,7 @@ def config_instance(tmpdir, faker):
 
         assert('dev' in cfg_dict)
 
-        cli_log_level = kwargs.get('cli_log_level', 'warning')
+        cli_log_level = kwargs.get('cli_log_level', test_cli_log_level)
         cfg_dev.setdefault('cli_log_level', cli_log_level)
         cfg_dev.setdefault('catch_errors', 'False')
 
