@@ -17,13 +17,3 @@
 
 """Top-level package module for traverser modules."""
 
-__all__ = (
-    'TraverserCommon',
-)
-
-
-class TraverserCommon(object):
-    """
-    """
-    pass
-
