@@ -1,28 +1,19 @@
-# This file is part of 'dob_viewer'.
+# This file exists within 'dob-viewer':
 #
-# 'dob_viewer' is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
+#   https://github.com/hotoffthehamster/dob-viewer
 #
-# 'dob_viewer' is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# Copyright © 2019-2020 Landon Bouma. All rights reserved.
 #
-# You should have received a copy of the GNU General Public License
-# along with 'dob_viewer'.  If not, see <http://www.gnu.org/licenses/>.
+# This program is free software:  you can redistribute it  and/or  modify it under the
+# terms of the GNU General Public License as published by the Free Software Foundation,
+# either version 3  of the License,  or  (at your option)  any later version  (GPLv3+).
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY;  without even the implied warranty of MERCHANTABILITY or  FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU  General  Public  License  for  more  details.
+#
+# If you lost the GNU General Public License that ships with this software
+# repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-"""Testsuite for ``dob_viewer``."""
-
-import datetime
-
-__all__ = (
-    'truncate_to_whole_seconds',
-)
-
-
-def truncate_to_whole_seconds(time):
-    time_fmt = '%Y-%m-%d %H:%M'
-    return datetime.datetime.strptime(time.strftime(time_fmt), time_fmt)
+"""Testsuite for ``dob-viewer`` aka ``dob_viewer``."""
 
