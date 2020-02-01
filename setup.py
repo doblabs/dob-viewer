@@ -19,10 +19,10 @@ from setuptools import find_packages, setup
 # *** Package requirements.
 
 requirements = [
-    # (lb): Click may be the best optparser of any language I've used.
+    # The best optparser of any language, tops.
     #  https://github.com/pallets/click
     #    'click',
-    #  - Still, had to make one adjustment, and too impatient to ask for a pull...
+    # Because too busy developing our own code, our fork!
     #  https://github.com/hotoffthehamster/click
     'click--hotoffthehamster',
     # INI/config parser, even better (preserves comments and ordering).
