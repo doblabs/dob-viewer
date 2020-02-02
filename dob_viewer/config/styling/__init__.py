@@ -19,7 +19,7 @@
 
 from gettext import gettext as _
 
-from dob.helpers import dob_in_user_warning
+from dob_bright.termio import dob_in_user_warning
 
 __all__ = (
     'load_obj_from_internal',

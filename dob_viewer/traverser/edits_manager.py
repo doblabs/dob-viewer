@@ -87,6 +87,12 @@ class EditsManager(object):
             except KeyError:
                 edit_fact.orig_fact = 0
             if edit_fact.orig_fact:
+                # FIXME/2019-01-20: TEST NEW PATH
+                self.controller.affirm(False)  # (lb): Not been here yet.
+                # FIXME/2019-01-22: If you make empty group, should make time-gap,
+                # so group has at least 1 Fact! Should also manage gap-time entry as
+                # time-space changes (for any group? or will the inc/dec code figure
+                # that out otherwise?? too many edge cases!).
                 assign_orig_fact(edit_fact, orig_lkup)
                 # Note that claim_time_span changes the group key, but
                 # the group has not been added to the conjoined.groups

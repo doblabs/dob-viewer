@@ -18,7 +18,6 @@
 """``hamster``, ``hamster``, ``hamster``!!! a cuddly, furry time tracker."""
 
 import os
-import sys
 
 __all__ = (
     '__package_name__',

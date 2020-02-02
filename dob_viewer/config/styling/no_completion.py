@@ -22,7 +22,8 @@ import re
 
 from gettext import gettext as _
 
-from dob.helpers import dob_in_user_warning
+from dob_bright.termio import dob_in_user_warning
+
 from dob_prompt.prompters.enc_actegory_re import RegExpActegory
 
 __all__ = (

@@ -2,7 +2,7 @@
 #
 #   https://github.com/hotoffthehamster/dob-viewer
 #
-# Copyright © 2019-2020 Landon Bouma. All rights reserved.
+# Copyright © 2020 Landon Bouma. All rights reserved.
 #
 # This program is free software:  you can redistribute it  and/or  modify it under the
 # terms of the GNU General Public License as published by the Free Software Foundation,
@@ -14,18 +14,4 @@
 #
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
-
-
-class TestBasicRun(object):
-    def test_basic_run(self, runner):
-        """Make sure that invoking the command passes without exception."""
-        result = runner()
-        assert result.exit_code == 0
-
-
-class TestSearchWithoutTermEmptyDatabase(object):
-    def test_search_all(self, runner):
-        """Make sure that invoking the command passes without exception."""
-        result = runner(['search'])
-        assert result.exit_code == 1
 

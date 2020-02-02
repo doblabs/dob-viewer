@@ -29,9 +29,10 @@ from prompt_toolkit.widgets import Label, TextArea
 from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
 
-from dob.helpers.fix_times import must_complete_times
+from ..crud.fix_times import must_complete_times
 
-from .dialog_overlay import show_message
+from ..ptkui.dialog_overlay import show_message
+
 from .exceptions import catch_action_exception
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart

@@ -19,7 +19,7 @@
 
 from nark.items.activity import Activity
 
-from ..helpers.fact_dressed import FactDressed
+from ..crud.fact_dressed import FactDressed
 
 __all__ = (
     'FactsManager_Gap',

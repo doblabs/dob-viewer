@@ -20,7 +20,7 @@ import click
 from nark.helpers.format_text import format_value_truncate
 from nark.helpers.objects import resolve_attr_or_method
 
-from .emphasis import attr, fg
+from dob_bright.termio import attr, fg
 
 __all__ = (
     'FactsDiff',

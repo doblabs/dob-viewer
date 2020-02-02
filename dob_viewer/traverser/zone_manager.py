@@ -35,8 +35,8 @@ from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
-from ..helpers.facts_diff import FactsDiff
-from .dialog_overlay import alert_and_question
+from ..crud.facts_diff import FactsDiff
+from ..ptkui.dialog_overlay import alert_and_question
 from .exceptions import catch_action_exception
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails
@@ -145,7 +145,7 @@ class ZoneManager(object):
             #        then continue (could even decide not to show warning again?).
             # FIXME: Find all controller usage from clyde and refactor so has to
             #        be passed in (wire what you need from dob upfront).
-            from dob.helpers import dob_in_user_warning
+            from dob_bright.termio import dob_in_user_warning
             msg = _('The user style “{0}” failed to load: {1}').format(
                 self.carousel.controller.config['editor.styling'], str(err),
             )

@@ -21,10 +21,11 @@ from collections import namedtuple
 
 from nark.items.fact import Fact
 
-from .emphasis import colorize, set_coloring
+from dob_bright.termio.style import colorize, set_coloring
+
+from ..ptkui.ppt_markup import namilize
 
 from .facts_diff import FactsDiff
-from .ppt_markup import namilize
 
 __all__ = (
     'FactDressed',

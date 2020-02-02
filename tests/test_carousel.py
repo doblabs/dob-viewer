@@ -16,13 +16,24 @@
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
 import pytest
-#from unittest.mock import Mock
 
 from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.output import DummyOutput
 
-from dob.helpers import re_confirm
-from dob.transcode import import_facts
+from dob_viewer.crud.parse_input import parse_input
+from dob_viewer.crud.save_confirmer import prompt_and_save
+from dob_viewer.ptkui import re_confirm
+
+
+@pytest.fixture
+def new_facts(controller_with_logging):
+    input_stream = open(IMPORT_PATH, 'r')
+    new_facts = parse_input(
+        controller_with_logging,
+        file_in=input_stream,
+        progress=None,
+    )
+    return new_facts
 
 
 IMPORT_PATH = './tests/fixtures/test-import-fixture.rst'
@@ -35,27 +46,28 @@ class TestBasicCarousel(object):
     # ***
 
     def _feed_cli_with_input(
-        self, controller_with_logging, key_sequence, mocker, monkeypatch,
+        self,
+        controller_with_logging,
+        new_facts,
+        key_sequence,
+        mocker,
     ):
-        # (lb): In the original tests, back when PTK2, we monkeypatched sys,stdin
+        # (lb): In the original tests, back when PTK2, we monkeypatch'ed sys,stdin
         # to a pipe opened from a pty.openpty pseudo terminal, which smelled very
         # fragile, and came with the caveat that Python's pty library probably
         # doesn't run well on non-Linux. Thankfully, PTK3 has a formal mechanism
         # for overriding I/O. See decent examples under prompt_toolkit/tests/.
 
+        # The Carousel will prompt for confirmation on quit without having saved.
         re_confirm.confirm = mocker.MagicMock(return_value=True)
 
         inp = create_pipe_input()
-        input_stream = open(IMPORT_PATH, 'r')
         try:
             inp.send_text(key_sequence)
-            import_facts(
+            __saved_facts = prompt_and_save(
                 controller_with_logging,
-                file_in=input_stream,
-                file_out=None,
-                use_carousel=True,
-                force_use_carousel=True,
-
+                edit_facts=new_facts,
+                # Test apparatus.
                 input=inp,
                 output=DummyOutput(),
             )
@@ -67,6 +79,8 @@ class TestBasicCarousel(object):
     @pytest.mark.parametrize(
         ('key_sequence'),
         [
+            # *** test_basic_import4_left_arrow_three_time
+            #
             # Test left-arrowing and first (early Life) gap fact.
             # Left arrow three times.
             # - First time creates and jumps to gap fact.
@@ -80,20 +94,9 @@ class TestBasicCarousel(object):
                 '\x11',     # Ctrl-Q.
                 '\x11',     # Ctrl-Q.
             ],
-        ],
-    )
-    def test_basic_import4_left_arrow_three_time(
-        self, controller_with_logging, key_sequence, mocker, monkeypatch,
-    ):
-        self._feed_cli_with_input(
-            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
-        )
 
-    # ***
-
-    @pytest.mark.parametrize(
-        ('key_sequence'),
-        [
+            # *** test_basic_import4_right_arrow_left_arrow
+            #
             [
                 # Arrow right, arrow left.
                 '\x1bOD',
@@ -109,20 +112,8 @@ class TestBasicCarousel(object):
                 #                   But apparently we need 4 strokes to exit.
                 '\x11',
             ],
-        ],
-    )
-    def test_basic_import4_right_arrow_left_arrow(
-        self, controller_with_logging, key_sequence, mocker, monkeypatch
-    ):
-        self._feed_cli_with_input(
-            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
-        )
 
-    # ***
-
-    @pytest.mark.parametrize(
-        ('key_sequence'),
-        [
+            # *** test_basic_import4_G_go_last
             [
                 # Jump to final fact.
                 'G',
@@ -132,10 +123,17 @@ class TestBasicCarousel(object):
             ],
         ],
     )
-    def test_basic_import4_G_go_last(
-        self, controller_with_logging, key_sequence, mocker, monkeypatch,
+    def test_basic_import4_left_arrow_three_time(
+        self,
+        controller_with_logging,
+        new_facts,
+        key_sequence,
+        mocker,
     ):
         self._feed_cli_with_input(
-            controller_with_logging, ''.join(key_sequence), mocker, monkeypatch,
+            controller_with_logging,
+            new_facts,
+            ''.join(key_sequence),
+            mocker,
         )
 

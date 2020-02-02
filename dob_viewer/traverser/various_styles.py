@@ -24,7 +24,7 @@ import click
 
 from config_decorator import section
 
-from ..helpers.ppt_markup import namilize
+from ..ptkui.ppt_markup import namilize
 
 __all__ = (
     'color',
