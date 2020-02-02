@@ -29,15 +29,9 @@ requirements = [
     #  https://github.com/DiffSK/configobj
     #  https://configobj.readthedocs.io/en/latest/
     'configobj >= 5.0.6',
-    # The act@gory and tag prompt interface.
-    #  https://github.com/hotoffthehamster/dob-prompt
-    'dob-prompt',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
     'Inflector',
-    # The heart of Hamster. (Ye olde `hamster-lib`).
-    #  https://github.com/hotoffthehamster/nark
-    'nark',
     # Amazeballs prompt library.
     #   https://github.com/prompt-toolkit/python-prompt-toolkit
     #     'prompt-toolkit',
@@ -47,8 +41,23 @@ requirements = [
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
     'pygments',
+    # Just Another EDITOR package.
+    #  https://github.com/fmoo/python-editor
+    'python-editor',  # Imports as editor.
     # https://github.com/grantjenks/python-sortedcontainers/
     'sortedcontainers',
+
+    # *** Hamster packages.
+
+    # The heart of Hamster. (Ye olde `hamster-lib`).
+    #  https://github.com/hotoffthehamster/nark
+    'nark',
+    # The controller, config, and common output and error tossing code.
+    #  https://github.com/hotoffthehamster/dob-bright
+    'dob-bright',
+    # The act@gory and tag prompt interface.
+    #  https://github.com/hotoffthehamster/dob-prompt
+    'dob-prompt',
 ]
 
 # *** Minimal setup() function -- Prefer using config where possible.
