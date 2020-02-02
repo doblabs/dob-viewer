@@ -37,7 +37,7 @@ requirements = [
     #     'prompt-toolkit',
     # - FIXME/2019-02-21: (lb): Need to submit PR, then return to mainline.
     #   https://github.com/hotoffthehamster/python-prompt-toolkit
-    'prompt-toolkit-dob >= 2.0.9',  # Imports as prompt_toolkit.
+    'prompt_toolkit-dob >= 3.0.3',  # Imports as prompt_toolkit.
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
     'pygments',
