@@ -21,7 +21,9 @@ from gettext import gettext as _
 
 import os
 
+# MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
 import click  # merely for get_terminal_size.
+
 # Profiling: load prompt_toolkit: ~ 0.040 secs.
 from prompt_toolkit.application import Application
 from prompt_toolkit.layout import Layout

@@ -15,7 +15,8 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import click
+# MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
+import click  # merely for get_terminal_size.
 
 from nark.helpers.format_text import format_value_truncate
 from nark.helpers.objects import resolve_attr_or_method

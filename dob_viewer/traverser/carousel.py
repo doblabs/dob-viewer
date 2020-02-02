@@ -24,8 +24,11 @@ import time
 
 # (lb): We're using Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
-import click
+# MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
+import click  # merely for get_terminal_size.
+
 from inflector import English, Inflector
+
 from nark.helpers.dev.profiling import profile_elapsed
 
 from dob_viewer.ptkui.re_confirm import confirm

@@ -19,8 +19,8 @@
 
 from gettext import gettext as _
 
-# MAYBE/2019-12-05: (lb): Decouple from click and get terminal height another way.
-import click
+# MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
+import click  # merely for get_terminal_size.
 
 from config_decorator import section
 

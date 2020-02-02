@@ -290,6 +290,14 @@ class StylingConfig(object):
                 # framework: Get the Context from Click, and from that, get
                 # our Controller object, which has an affirm method (which
                 # is wired to the dob config's catch_errors).
+                # MAYBE/2019-12-05: (lb): Decouple dob-viewer from click,
+                #   used only for term. size.
+                #   - Except here, where it's used to call our affirm, but
+                #     also honors user's dev.catch_errors config setting.
+                #     - Ideally, dob would set this up when it calls Carousel;
+                #       or, dob, could configure dob-bright, and maybe dob-bright
+                #       could offer an affirm() singleton or module method
+                #       that is enabled after the config is read.
                 import click
                 click.get_current_context().obj.affirm(False)
                 pass
