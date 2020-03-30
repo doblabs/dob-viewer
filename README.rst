@@ -23,7 +23,7 @@ dob-viewer
   :alt: PyPI Release Status
 
 .. image:: https://img.shields.io/github/license/hotoffthehamster/dob-viewer.svg?style=flat
-  :target: https://github.com/hotoffthehamster/dob-viewer/blob/develop/LICENSE
+  :target: https://github.com/hotoffthehamster/dob-viewer/blob/master/LICENSE
   :alt: License Status
 
 .. |dob| replace:: ``dob``
