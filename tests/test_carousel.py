@@ -21,7 +21,7 @@ from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.output import DummyOutput
 
 from dob_viewer.crud.parse_input import parse_input
-from dob_viewer.crud.save_confirmer import prompt_and_save
+from dob_viewer.crud.save_confirmer import prompt_and_save_confirmer
 from dob_viewer.ptkui import re_confirm
 
 
@@ -64,7 +64,8 @@ class TestBasicCarousel(object):
         inp = create_pipe_input()
         try:
             inp.send_text(key_sequence)
-            __saved_facts = prompt_and_save(
+            # Ignoring return value: saved_facts.
+            prompt_and_save_confirmer(
                 controller_with_logging,
                 edit_facts=new_facts,
                 # Test apparatus.
