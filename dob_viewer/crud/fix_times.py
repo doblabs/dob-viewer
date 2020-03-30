@@ -32,7 +32,7 @@ from gettext import gettext as _
 from datetime import datetime, timedelta
 
 # MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
-import click  # merely for get_terminal_size.
+import click_hotoffthehamster as click  # merely for get_terminal_size.
 
 from nark.helpers import fact_time
 from nark.helpers.fact_time import datetime_from_clock_after, datetime_from_clock_prior

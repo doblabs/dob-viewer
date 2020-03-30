@@ -298,7 +298,7 @@ class StylingConfig(object):
                 #       or, dob, could configure dob-bright, and maybe dob-bright
                 #       could offer an affirm() singleton or module method
                 #       that is enabled after the config is read.
-                import click
+                import click_hotoffthehamster as click
                 click.get_current_context().obj.affirm(False)
                 pass
             return custom_classes

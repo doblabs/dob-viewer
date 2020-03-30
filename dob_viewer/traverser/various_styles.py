@@ -20,7 +20,7 @@
 from gettext import gettext as _
 
 # MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
-import click  # merely for get_terminal_size.
+import click_hotoffthehamster as click  # merely for get_terminal_size.
 
 from config_decorator import section
 
