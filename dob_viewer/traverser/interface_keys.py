@@ -122,7 +122,9 @@ def key_bonds_normal(handler):
     key_bonds_normal = [
         KeyBond('?', action=handler.rotate_help),
         #
-        KeyBond('m-=', action=handler.dev_breakpoint),
+        # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
+        #   KeyBond('m-=', action=handler.dev_breakpoint),
+        KeyBond((Keys.Escape, '='), action=handler.dev_breakpoint),
         #
         KeyBond('j', action=handler.jump_fact_dec),
         KeyBond('k', action=handler.jump_fact_inc),
@@ -210,10 +212,15 @@ def key_bonds_update(handler):
         KeyBond('s-c-left', action=handler.edit_time_decrement_both),
         KeyBond('s-c-right', action=handler.edit_time_increment_both),
         #
-        KeyBond('m-p', action=handler.fact_split),
-        KeyBond('m-e', action=handler.fact_erase),
-        KeyBond(('m-m', Keys.Left), action=handler.fact_merge_prev),
-        KeyBond(('m-m', Keys.Right), action=handler.fact_merge_next),
+        # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
+        #   KeyBond('m-p', action=handler.fact_split),
+        #   KeyBond('m-e', action=handler.fact_erase),
+        #   KeyBond(('m-m', Keys.Left), action=handler.fact_merge_prev),
+        #   KeyBond(('m-m', Keys.Right), action=handler.fact_merge_next),
+        KeyBond((Keys.Escape, 'p'), action=handler.fact_split),
+        KeyBond((Keys.Escape, 'e'), action=handler.fact_erase),
+        KeyBond((Keys.Escape, 'm', Keys.Left), action=handler.fact_merge_prev),
+        KeyBond((Keys.Escape, 'm', Keys.Right), action=handler.fact_merge_next),
     ]
     return key_bonds_update
 
