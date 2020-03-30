@@ -24,40 +24,39 @@ requirements = [
     #    'click',
     # Because too busy developing our own code, our fork!
     #  https://github.com/hotoffthehamster/click
-    'click--hotoffthehamster',
+    'click-hotoffthehamster >= 7.1.1, < 8',
     # INI/config parser, even better (preserves comments and ordering).
     #  https://github.com/DiffSK/configobj
     #  https://configobj.readthedocs.io/en/latest/
     'configobj >= 5.0.6',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
-    'Inflector',
-    # Amazeballs prompt library.
-    #   https://github.com/prompt-toolkit/python-prompt-toolkit
-    #     'prompt-toolkit',
-    # - FIXME/2019-02-21: (lb): Need to submit PR, then return to mainline.
-    #   https://github.com/hotoffthehamster/python-prompt-toolkit
-    'prompt_toolkit-dob >= 3.0.3',  # Imports as prompt_toolkit.
+    'Inflector >= 3.0.1, < 4',
+    # Amazing prompt library.
+    # - Imports as prompt_toolkit.
+    # https://github.com/prompt-toolkit/python-prompt-toolkit
+    'prompt-toolkit >= 3.0.5, < 4',
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
-    'pygments',
+    'pygments >= 2.6.1, < 3',
     # Just Another EDITOR package.
     #  https://github.com/fmoo/python-editor
-    'python-editor',  # Imports as editor.
+    # - Imports as `editor`.
+    'python-editor >= 1.0.4, < 2',
     # https://github.com/grantjenks/python-sortedcontainers/
-    'sortedcontainers',
+    'sortedcontainers >= 2.1.0, < 3',
 
     # *** Hamster packages.
 
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/hotoffthehamster/nark
-    'nark',
+    'nark >= 3.0.1, < 4',
     # The controller, config, and common output and error tossing code.
     #  https://github.com/hotoffthehamster/dob-bright
-    'dob-bright',
+    'dob-bright >= 1.0.0, < 2',
     # The act@gory and tag prompt interface.
     #  https://github.com/hotoffthehamster/dob-prompt
-    'dob-prompt',
+    'dob-prompt >= 1.0.0, < 2',
 ]
 
 # *** Minimal setup() function -- Prefer using config where possible.
