@@ -91,7 +91,7 @@ def key_bonds_edit_time(handler):
         KeyBond('enter', action=handler.editable_text_enter),
         KeyBond('d', action=handler.toggle_focus_description),
         # By default, PPT will add any key we don't capture to active widget's
-        # buffer, but we'll override so we can ignore alphabetics [letters].
+        # buffer, but we'll override so we can ignore alpha characters.
         KeyBond(Keys.Any, action=handler.editable_text_any_key),
     ]
     return key_bonds_edit_time
