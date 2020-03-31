@@ -391,8 +391,10 @@ class Carousel(object):
         # like falling into an infinite feedback loop. Just be careful!)
         rerun = False
 
-        # This call draws the app, but it doesn't run its event loop.
-        # (So you'll see some of the Carousel code run.)
+        # 2020-03-31: (lb): In earlier PTK, calling run_async() would draw the
+        # app, but not run its event loop (so some Carousel code would run).
+        # But now, this is truly async and nothing is invoked, just a coroutine
+        # is returned.
         run_async = self.zone_manager.application.run_async()
 
         # Create the tick-tock task.
