@@ -28,18 +28,18 @@ dob\_viewer.traverser.clipboard\_edit module
    :undoc-members:
    :show-inheritance:
 
-dob\_viewer.traverser.dialog\_overlay module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.dialog_overlay
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 dob\_viewer.traverser.edits\_manager module
 -------------------------------------------
 
 .. automodule:: dob_viewer.traverser.edits_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+dob\_viewer.traverser.exceptions module
+---------------------------------------
+
+.. automodule:: dob_viewer.traverser.exceptions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -140,14 +140,6 @@ dob\_viewer.traverser.key\_action\_map module
    :undoc-members:
    :show-inheritance:
 
-dob\_viewer.traverser.placeable\_fact module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.placeable_fact
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 dob\_viewer.traverser.redo\_undo\_edit module
 ---------------------------------------------
 
@@ -184,14 +176,6 @@ dob\_viewer.traverser.update\_handler module
 --------------------------------------------
 
 .. automodule:: dob_viewer.traverser.update_handler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dob\_viewer.traverser.various\_lexers module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.various_lexers
    :members:
    :undoc-members:
    :show-inheritance:
