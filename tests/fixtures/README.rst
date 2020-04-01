@@ -1,6 +1,6 @@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-``dob-viewer`` — ``/tests/fixtures/*
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+``dob-viewer`` — ``/tests/fixtures/*``
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 NOTE: This directory, ``tests/fixtures/``, and the files thereunder,
 e.g., ``test-import-fixture.rst``, are shared between the two ``dob*``
