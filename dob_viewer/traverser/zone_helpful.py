@@ -19,7 +19,7 @@
 
 from gettext import gettext as _
 
-from nark import __resolve_vers__ as resolve_vers_nark
+from nark import get_version as get_version_nark
 
 from .. import __resolve_vers__ as resolve_vers_dob
 
@@ -54,7 +54,7 @@ def render_carousel_help():
 
         """.format(
             dob_vers=resolve_vers_dob()[:34],
-            nark_vers=resolve_vers_nark()[:34],
+            nark_vers=get_version_nark()[:34],
         ).rstrip()
     )
     return carousel_help
