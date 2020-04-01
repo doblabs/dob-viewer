@@ -20,8 +20,6 @@
 import os
 import sys
 
-from nark import get_version as _get_version
-
 __all__ = (
     'get_version',
     '__arg0name__',
@@ -35,5 +33,12 @@ __package_name__ = 'dob-viewer'
 
 
 def get_version(include_head=False):
+    # HEH?/2020-04-01: (lb): I had to move this import in here, otherwise
+    # `tox -e docs` says cannot find 'nark'. Does not affect other projects,
+    # even though if you diff against, e.g., dob-prompt, there's no difference
+    # between the tox.ini setup, nor setup.py. But on dob-prompt, I see all
+    # projects from setup.py installed, but not for dob-viewer. IDGI!
+    from nark import get_version as _get_version
+
     return _get_version(ref_file=__file__, include_head=include_head)
 
