@@ -13,6 +13,13 @@ History
 
 .. :changelog:
 
+1.0.2 (2020-04-01)
+==================
+
+* Remove unnecessary version details from carousel help.
+
+* DRY: Use new library get_version.
+
 1.0.1 (2020-03-31)
 ==================
 
