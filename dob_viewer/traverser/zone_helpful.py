@@ -19,10 +19,6 @@
 
 from gettext import gettext as _
 
-from nark import get_version as get_version_nark
-
-from .. import __resolve_vers__ as resolve_vers_dob
-
 __all__ = (
     'render_carousel_help',
     'NUM_HELP_PAGES',
@@ -30,6 +26,12 @@ __all__ = (
 
 
 def render_carousel_help():
+    # (lb): Is this sacrilegious, importing from that which installed *us*?
+    # - I'll at least move the import inside the method. Then if this library
+    #   is used outside dob (h. unlikely), the blowup will be localised.
+    from dob import get_version as get_version_dob
+
+    # FIXME/2020-04-01: Revisit this. Some commands changed; some were never implemented!
     carousel_help = _(
         """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━━┳━━━━ EDITING ━━━━┳━━━━━━━ INTERVAL ━━━━━━━━┓
  ┃ → / ←    Next/Previous Fact  ┃  [e] Edit Fact  ┃   Add/Subtract 1 min.   ┃
@@ -45,16 +47,15 @@ def render_carousel_help():
  ┃ [g-g]    Jump to First Fact  ┃ H A M S T E R   ┃    H A M S T E R        ┃
  ┃  [G]     Jump to Final Fact  ┃  H A M S T E R  ┃     H A M S T E R       ┃
  ┠──────────────────────────────╂─────────────────┸─────────────────────────┨
- ┃ [Home]   First line Descript ┃  dob v.{dob_vers: <34} ┃
- ┃ [End]    Bottom of Descript. ┃ nark v.{nark_vers: <34} ┃
+ ┃ [Home]   First line Descript ┃                                           ┃
+ ┃ [End]    Bottom of Descript. ┃  dob v.{dob_vers: <34} ┃
  ┣━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━┻━━━━━┯━━━━━━━━━┯━━━━━━━━━┳━━━━━━━━━━━━━━━━━┫
  ┃  [?] Close  ┃  [q] Easy  ┃  [c-c]  │  [c-x]  │  [c-v]  ┃   [c-z]  Undo   ┃
  ┃  this Help  ┃    Exit    ┃   Copy  │   Cut   │  Paste  ┃   [c-y]  Redo   ┃
  ┗━━━━━━━━━━━━━┻━━━━━━━━━━━━┻━━━━━━━━━┷━━━━━━━━━┷━━━━━━━━━┻━━━━━━━━━━━━━━━━━┛
 
         """.format(
-            dob_vers=resolve_vers_dob()[:34],
-            nark_vers=get_version_nark()[:34],
+            dob_vers=get_version_dob()[:34],
         ).rstrip()
     )
     return carousel_help
