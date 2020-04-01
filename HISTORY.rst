@@ -13,6 +13,11 @@ History
 
 .. :changelog:
 
+1.0.1 (2020-03-31)
+==================
+
+* Repair demo command (fix class-name formation from tags containing spaces).
+
 1.0.0 (2020-03-30)
 ==================
 
