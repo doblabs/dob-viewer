@@ -305,7 +305,7 @@ class ZoneManager(object):
         self.focus_move(lambda index: (index or len(self.focus_chain)) - 1)
 
     def focus_move(self, index_f):
-        # NOTE: PPT has focus_next(event), which can cycle through focusable
+        # NOTE: PTK has focus_next(event), which can cycle through focusable
         #       containers, but the edit-time controls are on-demand, so we
         #       do this manually.
         curr_control = self.layout.current_control

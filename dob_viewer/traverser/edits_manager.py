@@ -112,7 +112,7 @@ class EditsManager(object):
                 # Rather than be self-referential and set, say, fact.orig_fact = fact,
                 # we use a magic placeholder, 0, that happens to be non-truthy, and
                 # indicates that this fact is the original, unedited copy of itself.
-                fact.orig_fact = 0
+                fact.orig_fact = 0  # As opposed to None, means original, unedited copy.
         self.conjoined.add_facts(more_facts)
 
     def setup_edit_facts(self, edit_facts):
