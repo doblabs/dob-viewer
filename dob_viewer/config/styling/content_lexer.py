@@ -34,12 +34,15 @@ __all__ = (
 )
 
 
-# If you want to test the lexers, set your config, e.g.,
-#   `dob config set editor.lexer rainbow`
-# or uncomment one of these:
-#  default_name = 'rainbow'
-#  default_name = 'truncater'
-#  default_name = 'wordwrapper'
+# If you want to test the lexers (ptkui/various_lexers.py),
+# you can set your config, e.g.,
+#   dob config set editor.lexer rainbow
+#   dob config set editor.lexer truncater
+#   dob config set editor.lexer wordwrapper
+# or you can try it as a one-off with inline config 'tax:
+#   dob -c editor.lexer=rainbow edit
+#   dob -c editor.lexer=truncater edit
+#   dob -c editor.lexer=wordwrapper edit
 
 def load_content_lexer(controller):
     config = controller.config
@@ -61,11 +64,19 @@ def load_content_lexer(controller):
 
     def instantiate_or_try_pygments_lexer(named_lexer, lexer_class):
         if lexer_class is not None:
-            controller.affirm(inspect.isclass(lexer_class))
-            content_lexer = lexer_class()
-            controller.affirm(isinstance(content_lexer, Lexer))
-            return content_lexer
+            return instantiate_class_maybe_from_method(lexer_class)
         return load_pygments_lexer(named_lexer)
+
+    def instantiate_class_maybe_from_method(lexer_class):
+        if inspect.isroutine(lexer_class):
+            # (lb): This happens on say, `dob -c editor.lexer=wordwrapper edit`.
+            # Also remember: ismethod for Class methods; isfunction for functions;
+            # so use isroutine to check either.
+            lexer_class = lexer_class()
+        controller.affirm(inspect.isclass(lexer_class))
+        content_lexer = lexer_class()
+        controller.affirm(isinstance(content_lexer, Lexer))
+        return content_lexer
 
     def load_pygments_lexer(named_lexer):
         # (lb): I'm a reSTie, personally, so we default to that.
