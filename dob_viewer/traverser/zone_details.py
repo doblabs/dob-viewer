@@ -766,7 +766,7 @@ class ZoneDetails(
     @catch_action_exception
     # SKIP: @ZoneContent.Decorators.reset_showing_help
     def toggle_focus_description(self, event):
-        self.zone_manager.toggle_focus_time(self.zone_manager.content_control)
+        self.zone_manager.toggle_focus_time_widget(self.zone_manager.content_control)
 
     @catch_action_exception
     def undo_command(self, event):

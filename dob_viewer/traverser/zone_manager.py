@@ -356,14 +356,14 @@ class ZoneManager(object):
     @catch_action_exception
     # SKIP: @ZoneContent.Decorators.reset_showing_help
     def toggle_focus_time_end(self, event):
-        self.toggle_focus_time(self.widget_control_time_end)
+        self.toggle_focus_time_widget(self.widget_control_time_end)
 
     @catch_action_exception
     # SKIP: @ZoneContent.Decorators.reset_showing_help
     def toggle_focus_time_start(self, event):
-        self.toggle_focus_time(self.widget_control_time_start)
+        self.toggle_focus_time_widget(self.widget_control_time_start)
 
-    def toggle_focus_time(self, time_control):
+    def toggle_focus_time_widget(self, time_control):
         focus = self.layout.current_control is not time_control
         if focus:
             which_index = self.focus_index(time_control)
