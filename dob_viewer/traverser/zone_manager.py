@@ -71,6 +71,7 @@ class ZoneManager(object):
         self.zone_details.standup()
         self.zone_content.standup()
         self.zone_lowdown.standup()
+        self.assemble_focus_jumps()
 
     # ***
 
@@ -236,7 +237,6 @@ class ZoneManager(object):
         """
         self.reset_diff_fact()
         self.rebuild_containers()
-        self.assemble_focus_jumps()
         self.selectively_refresh()
         self.carousel.controller.client_logger.debug(_('rebuilt and refreshed'))
 

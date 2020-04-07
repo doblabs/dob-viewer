@@ -37,7 +37,8 @@ class ZoneLowdown(object):
         self.notif_expiry = None
 
     def standup(self):
-        pass
+        self.status_label = Label(text='', style='class:footer')
+        self.label_container = to_container(self.status_label)
 
     def update_status(self, hot_notif, clear_after_secs=None):
         self.hot_notif = hot_notif
@@ -67,16 +68,8 @@ class ZoneLowdown(object):
 
     def rebuild_viewable(self):
         """"""
-        formatted_text = self.format_lowdown_text()
-        lowdown_container = to_container(self.assemble_lowdown(formatted_text))
-        return lowdown_container
-
-    def assemble_lowdown(self, footer_text=''):
-        self.status_label = Label(
-            text=footer_text,
-            style='class:footer',
-        )
-        return self.status_label
+        self.status_label.text = self.format_lowdown_text()
+        return self.label_container
 
     def format_lowdown_text(self):
         """"""

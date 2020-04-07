@@ -78,21 +78,16 @@ class ZoneDetails(
             self.orig_val = orig_val
             self.mouse_handler = mouse_handler
 
-    def standup(self):
-        pass
-
     # ***
 
-    def rebuild_viewable(self):
+    def standup(self):
         """"""
-        def _rebuild_viewable():
+        def _standup():
             # A couple convenience attrs.
             self.zone_manager = self.carousel.zone_manager
             self.zone_content = self.carousel.zone_manager.zone_content
             assemble_children()
             self.details_container = build_container()
-            self.refresh_all_children()
-            return self.details_container
 
         def assemble_children():
             self.children = []
@@ -191,7 +186,14 @@ class ZoneDetails(
 
         # ***
 
-        return _rebuild_viewable()
+        _standup()
+
+    # ***
+
+    def rebuild_viewable(self):
+        """"""
+        self.refresh_all_children()
+        return self.details_container
 
     # ***
 
