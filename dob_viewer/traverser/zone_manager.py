@@ -311,26 +311,8 @@ class ZoneManager(object):
         curr_control = self.layout.current_control
         try:
             defocused = self.focus_surround[curr_control](focus=False)
-        except Exception as err:
-            # 2019-11-27: (lb): This method tossed a KeyError earlier this year
-            # -- last winter, before a nine month development hiatus -- so then
-            # I added this catch. And I never reproduced the issue. Though I am
-            # not convinced it's resolved. And this code is useful to keep: why
-            # not gracefully recover from an error rather than dying. For ref.,
-            # the key without an entry was reported as:
-            #  <BufferControl buffer=<Buffer(name='', text='2019-01-23 1...')...
-            # 2020-04-05: Hi, I'm back! I edited a gap fact, giving it a start
-            # time and a description, saved, then edited the end: pressed 'e'
-            # to switch to end time, then hit Enter, thinking that you save it.
-            # And then I think I ended here. Or maybe I hit Ctrl-S first. Or
-            # maybe I hit 'd' to return to description, which, by the way, is
-            # the same key for editing the description, which could be annoying.
-            # 2020-04-05: See 2 new affirm()s in assemble_focus_jumps.
-            # 2020-04-05: How to reproduce: Navigate to ongoing Fact, then press
-            # 'e' to edit end time, enter, ctrl-s, wait a sec, 'd' -- crashes!
-            self.carousel.controller.client_logger.error(
-                _('focus_move failed: {}').format(str(err))
-            )
+        except Exception as err:  # noqa: F841 local variable ... never used
+            # 2020-04-07: See d4d12cc3. This should be fixed!
             self.carousel.controller.affirm(False)  # REPL if dev.catch_errors.
             return
         if not defocused:
