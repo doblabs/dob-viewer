@@ -554,20 +554,23 @@ class EditsManager(object):
             for edit_fact in edited_facts:
                 new_fact = save_edited_fact(edit_fact, ignore_pks)
                 if new_fact is None:
-                    # Something went wrong, and we displayed an error.
-                    # Return now, and leave the store in a Bad State.
-                    # Users are encouraged to keep their data stores
-                    # under revision control so that they can recover
-                    # from blunders such as these. And we should make
-                    # sure our code is tough and resilient and stable.
-                    # I.e., we don't need to bother handling this error
-                    # better; just don't cause an error.
-                    return None, None  # Short-circuit return!
+                    return save_edited_fact_failed()
                 saved_facts.append(new_fact)
                 if edit_fact is self.curr_fact:
                     keep_fact = new_fact
                 affirm_saved_edited_fact(edit_fact, new_fact)
             return keep_fact, saved_facts
+
+        def save_edited_fact_failed():
+            # Something went wrong, and we displayed an error.
+            # Return now, and leave the store in a Bad State.
+            # Users are encouraged to keep their data stores
+            # under revision control so that they can recover
+            # from blunders such as these. And we should make
+            # sure our code is tough and resilient and stable.
+            # I.e., we don't need to bother handling this error
+            # better; just don't cause an error.
+            return None, None  # Short-circuit return!
 
         def save_edited_fact(edit_fact, ignore_pks):
             # (lb): SIMILAR: edits_manager.save_edited_fact, create.save_fact.
