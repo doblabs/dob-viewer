@@ -74,7 +74,7 @@ __all__ = (
 def show_message(root_container, title, text):
     async def coroutine():
         dialog = MessageDialog(title, text)
-        yield ensure_future(show_dialog_as_float(root_container, dialog))
+        await ensure_future(show_dialog_as_float(root_container, dialog))
 
     ensure_future(coroutine())
 
@@ -113,13 +113,13 @@ async def show_dialog_as_float(root_container, dialog):
 
     focused_before = app.layout.current_window
     app.layout.focus(dialog)
-    result = yield dialog.future
+    result = await dialog.future
     app.layout.focus(focused_before)
 
     if float_ in root_container.floats:
         root_container.floats.remove(float_)
 
-    raise result
+    return result
 
 
 # ***
@@ -174,14 +174,14 @@ def alert_and_question(
     prompt_no=_('Cancel'),
     on_close=lambda x: None,
 ):
-    def coroutine():
+    async def coroutine():
         ar_dialog = AlertResponseDialog(
             title=title,
             label_text=label_text,
             prompt_ok=prompt_ok,
             prompt_no=prompt_no,
         )
-        result = yield from show_dialog_as_float(root_container, ar_dialog)
+        result = await show_dialog_as_float(root_container, ar_dialog)
         on_close(result)
 
     ensure_future(coroutine())
