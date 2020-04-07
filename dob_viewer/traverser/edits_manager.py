@@ -383,7 +383,7 @@ class EditsManager(object):
             # FIXME: When latest_fact is None => what's empty carousel state?
             self.add_facts([latest_fact])
 
-        return _standup()
+        _standup()
 
     # ***
 
