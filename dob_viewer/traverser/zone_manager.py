@@ -335,7 +335,6 @@ class ZoneManager(object):
             return
         if not defocused:
             return
-        curr_index = self.focus_chain.index(curr_control)
         curr_index = self.focus_index(curr_control)
         next_index = index_f(curr_index)
         next_control = self.focus_chain[next_index]
