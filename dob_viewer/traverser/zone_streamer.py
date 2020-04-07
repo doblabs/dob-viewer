@@ -17,6 +17,8 @@
 
 """Facts Carousel Header (Fact meta and diff)"""
 
+import re
+
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 
@@ -79,6 +81,10 @@ class ZoneStreamer(object):
 
     # ***
 
+    STREAMER_LINE_CLASS = 'class:streamer-line'
+
+    RE_STYLE_HAS_CLASS = re.compile(r'\b{}\b'.format(STREAMER_LINE_CLASS))
+
     def refresh_interval(self):
         tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
@@ -86,7 +92,13 @@ class ZoneStreamer(object):
         # (lb): Not sure why, but unlike add_stylable_classes, which sets
         # widget.formatted_text_control.style, here we set widget.window's
         # style instead.
-        self.interval_banner.window.style += ' class:streamer-line'
+        # (lb): Note that we set the style on refresh, and not standup, so
+        # that classes are properly ordered. (The first element added is
+        # 'class:label', which we want more specific classes to override.)
+        # (lb): Reminder that match() starts at string beginning, so use search().
+        match = ZoneStreamer.RE_STYLE_HAS_CLASS.search(self.interval_banner.window.style)
+        if match is None:
+            self.interval_banner.window.style += ' ' + ZoneStreamer.STREAMER_LINE_CLASS
         self.add_stylable_classes()
 
     def add_stylable_classes(self):
