@@ -29,6 +29,9 @@ __all__ = (
 class ZoneDetails_TimeStart(object):
     """"""
 
+    def __init__(self):
+        super(ZoneDetails_TimeStart, self).__init__()
+
     def add_header_start_time(self):
         self.widgets_start = self.add_header_section(
             'start', 'start_fmt_local', editable=True,

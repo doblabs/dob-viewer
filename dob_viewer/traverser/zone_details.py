@@ -48,6 +48,7 @@ class ZoneDetails(
 ):
     """"""
     def __init__(self, carousel):
+        super(ZoneDetails, self).__init__()
         self.carousel = carousel
         self.active_widgets = None
         # Convenience attrs.

@@ -29,6 +29,9 @@ __all__ = (
 class ZoneDetails_TimeEnd(object):
     """"""
 
+    def __init__(self):
+        super(ZoneDetails_TimeEnd, self).__init__()
+
     def add_header_end_time(self):
         self.widgets_end = self.add_header_section(
             'end', 'end_fmt_local_nowwed', editable=True,
