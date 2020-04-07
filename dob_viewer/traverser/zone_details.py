@@ -219,7 +219,7 @@ class ZoneDetails(
             # somehow reports lexer.__class__: abc.ABCMeta. Fortunately,
             # rather than trying to explain how the lexer object gets
             # converted into some meta wrapper thing, we can use a builtin
-            # lexer that simple style the input text.
+            # lexer that simply styles the input text.
             text_area = TextArea(
                 height=1,
                 lexer=SimpleLexer(style='class:value-focus'),
@@ -372,7 +372,7 @@ class ZoneDetails(
         self.add_stylable_classes_header_values_focus(keyval_parts, set_focus)
 
     def add_stylable_classes_header_titles(self, keyval_parts, set_focus=None):
-        # key_parts is a list of Labels (from make_header_label_parts).
+        # keyval_parts.key_parts is a list of Labels (from make_header_label_parts).
         # - The first item is the left column padding. E.g.: '  '.
         # - The second item is the meta label and the ...-padding.
         # - The third item is the middle column, ' : ', before the value.
@@ -593,7 +593,7 @@ class ZoneDetails(
     #   - Probably use footer to show message; but could instead use popup modal.
 
     # FIXME/BACKLOG/2019-01-21: Need way to cancel after editing time:
-    #   Possible key binding: ctrl-q, escape, q, etc.
+    #   Possible key binding: Ctrl-q, ESC, q, etc.
 
     @catch_action_exception
     def editable_text_enter(self, event=None, passive=False):
