@@ -110,7 +110,7 @@ class Carousel(object):
 
     def setup_async(self):
         # 2019-01-25: (lb): We run asynchronously to support such features as
-        # tick_tock_now, which keeps the ongoing fact's end clock time updated.
+        # tick_tock_now, which keeps the active fact's end clock time updated.
         # However, working with asyncio can be somewhat tricky. So, should you
         # need to disable it, here's a switch.
         # 2020-01-28: PTK3 is always-async, FYI.

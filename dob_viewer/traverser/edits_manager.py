@@ -604,7 +604,7 @@ class EditsManager(object):
             #   will be rebuilt from scratch.)
             if edit_fact.pk:
                 # PK is different for saved fact, and old fact is marked deleted;
-                #   except for ongoing Fact, which retains its ID.
+                #   except for active (an ongoing) Fact, which retains its ID.
                 if edit_fact.pk != new_fact.pk:
                     self.controller.affirm(new_fact.pk >= edit_fact.pk)
                     self.controller.affirm(edit_fact.deleted)

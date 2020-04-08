@@ -84,17 +84,17 @@ class FactsManager_Jump(object):
         def find_nearest_group_fact(ref_time):
             # Find the group index nearest ref_time. We use UntilTimeStops
             # so the index is 1 greater than group index for most matches
-            # (all except the final ongoing fact group).
+            # (all except the final ongoing (active) fact group).
             sorty_times = (ref_time, UntilTimeStops)
             inserts_at = self.groups.bisect_key_left(sorty_times)
 
-            # Check for ongoing fact group.
+            # Check for ongoing (active) fact group.
             if inserts_at == (len(self.groups) - 1):
                 if sorty_times == self.groups[-1].sorty_times:
                     return self.groups[-1], self.groups[-1][0], True
 
             # If inserts_at is 0, ref_time is before any group's since_time,
-            # or there's only one group and it's ongoing.
+            # or there's only one group and it's ongoing (active).
             if inserts_at == 0:
                 first_group = self.groups[0]
                 if ref_time == first_group.time_since:

@@ -151,7 +151,7 @@ class StartEndEdit(object):
 
         curr_time = getattr(edit_fact, start_or_end)
         if curr_time is None:
-            # The ongoing, un-ended Fact.
+            # The ongoing, un-ended, active Fact.
             self.controller.affirm(start_or_end == 'end')
             # NOTE: Not using controller.now.
             curr_time = self.controller.store.now_tz_aware()

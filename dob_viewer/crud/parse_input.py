@@ -577,23 +577,22 @@ def parse_input(controller, file_in=None, progress=None):
 
         progress and progress.click_echo_current_task('')
 
-        # Handling anything other than the ongoing fact seems beyond the
-        # scope of the import function. dob is not a conflict resolution
-        # application!
+        # Handling anything other than the ongoing (active) fact seems
+        # beyond the scope of the import function. dob is not a conflict
+        # resolution application!
         barf_on_overlapping_facts_old(all_conflicts)
 
     def fix_range_conflicts_easy(new_facts):
         """
         Check time range of facts being imported against store.
-        Returns True if time range overlaps with any existing facts;
-        the ongoing fact only overlaps if it starts during the time
-        range.
+        Returns True if time range overlaps with any existing facts.
+        The active fact overlaps if it starts during the time range.
         """
         def _fix_range_conflicts_easy():
             first_time = new_facts[0].start or new_facts[0].end
             final_time = new_facts[-1].end or new_facts[-1].start
             # There's a compelling function, controller.facts.strictly_during,
-            # but it ignores overlapping shoulder facts (and the ongoing fact).
+            # but it ignores overlapping shoulder facts (and the active fact).
             # Check instead manually against the fact before the last time,
             # and also the fact after the first time.
             ante_fact = controller.facts.antecedent(ref_time=final_time)
@@ -620,7 +619,7 @@ def parse_input(controller, file_in=None, progress=None):
                 # The ongoing final import fact starts at same time as final store fact.
                 if not seqt_fact.end:
                     # To test this path: have ongoing fact in import with same start as
-                    # ongoing fact in the store.
+                    # ongoing (active) fact in the store.
                     # (lb): We could end the existing fact, making it momentaneous,
                     # but that seems extreme; feels more natural to combine the 2
                     # facts. -- Alternatively, we could toss an error. But I could
@@ -659,14 +658,14 @@ def parse_input(controller, file_in=None, progress=None):
                 # else, first fact found before final_time
                 #        ends before first_time.
                 return check_all
-            # If here, it's the ongoing fact.
+            # If here, it's the ongoing (active) fact.
             ongoing = controller.facts.endless()
             controller.affirm(ante_fact == ongoing[0])
             if new_facts[0].start:
                 ante_fact.end = new_facts[0].start
                 new_facts.insert(0, ante_fact)
             else:
-                # Squash store's ongoing and import's first.
+                # Squash store's ongoing (active) and import's first.
                 ante_fact.squash(new_facts[0], DEFAULT_SQUASH_SEP)
                 new_facts[0] = ante_fact
 
