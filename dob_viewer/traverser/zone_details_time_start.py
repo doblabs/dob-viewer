@@ -100,9 +100,11 @@ class ZoneDetails_TimeStart(object):
         edit_prev = edits_manager.editable_fact_prev(edit_fact)
         best_time = edit_time
         if edit_prev and edit_prev.start and (best_time < edit_prev.start):
-            # MAGIC_NUMBER: Adjust adjacent fact's time to be no less that 1 minute.
-            #   MAYBE: Resurrect fact_min_delta and use in this context?
-            best_time = edit_prev.start + timedelta(minutes=1)
+            # Adjust adjacent fact's time width to be no less that fact_min_delta.
+            min_delta = int(self.carousel.controller.config['time.fact_min_delta'])
+            # We do not want to make momentaneous facts, so use at least 1 minute.
+            min_delta = max(1, min_delta)
+            best_time = edit_prev.start + timedelta(minutes=min_delta)
             if edit_prev and edit_prev.end and (best_time > edit_prev.end):
                 best_time = edit_prev.end
         edit_fact.start = best_time
