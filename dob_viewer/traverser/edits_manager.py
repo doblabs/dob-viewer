@@ -301,12 +301,12 @@ class EditsManager(object):
             return False
 
         for idx, edit_fact in enumerate(edit_facts):
-            # 2018-08-04 12:29: EXPLAIN: idx == 0 ?? Why?
-            #  Oh, only unmark interval-gap if it's first fact in edit_facts,
-            #  which indicates user deliberately edited gap-fact; as opposed
-            #  to if gap-fact is later in edit_facts, and then it was edited
-            #  by time adjust of another fact. Feels like could be better way.
-            self.manage_edited_dirty_deleted(edit_fact, undelete=(idx == 0))
+            # Only unmark interval-gap if this is the first fact in edit_facts,
+            # which indicates user deliberately edited gap-fact; as opposed
+            # to if gap-fact is later in edit_facts, and then it was edited
+            # by time adjust of another fact. Feels like could be better way.
+            is_oldest_fact = idx == 0
+            self.manage_edited_dirty_deleted(edit_fact, undelete=is_oldest_fact)
             self.manage_edited_edit_facts(edit_fact)
 
         self.conjoined.apply_edits(edit_facts, last_edits)
