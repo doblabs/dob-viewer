@@ -206,7 +206,19 @@ class FactsManager(
             for last_edit in last_edits:
                 last_index = group.index(last_edit)
                 group_fact = group.pop(last_index)
-                self.controller.affirm(group_fact == last_edit)
+                # 2020-04-09: (lb): I had this affirm here:
+                #   self.controller.affirm(group_fact == last_edit)
+                # which meant to say that the Fact in the Fact Manager
+                # group matches the most recent Fact edit, i.e., the
+                # group fact has not been updated yet.
+                # However, on time edit, the apply_edit_time_start/end
+                # methods update the editable fact, but the editable
+                # facts are also part of the Facts Manager groups. So
+                # while group_fact.pk == last_edit.pk, other attrs might
+                # now differ.
+                self.controller.affirm(
+                    (group_fact == last_edit) or (group_fact in edit_facts)
+                )
 
                 if group_fact.has_prev_fact:
                     group_fact.prev_fact.next_fact = None
