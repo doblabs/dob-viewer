@@ -683,18 +683,36 @@ class ZoneDetails(
             #   to come before the start.
             conflicts = edited_fact_conflicts(edit_fact)
             if conflicts:
-                self.affirm(len(conflicts) == 1)
-                conflict_msg = conflicts[0][2]
-                show_message_conflicts_found(conflict_msg)
-                # Reset the Fact, otherwise the edit will stick!
-                # Ha! Note that we already did the deed, so go through undo-redo!
-                #   # Won't work! Screws up prev/next links, and leaves undo!:
-                #   edit_fact.end = was_fact.end
-                #   edit_fact.start = was_fact.start
-                undone = self.carousel.edits_manager.undo_last_edit()
-                self.affirm(undone)
-                # Update the control text.
-                self.active_widgets.text_area.text = was_time
+                edited_fact_alert_conflicts(conflicts)
+                edited_fact_cleanup_rejected(edit_fact, was_fact, was_time)
+
+        def edited_fact_alert_conflicts(conflicts):
+            self.affirm(len(conflicts) == 1)
+            conflict_msg = conflicts[0][2]
+            show_message_conflicts_found(conflict_msg)
+
+        def edited_fact_cleanup_rejected(edit_fact, was_fact, was_time):
+            # Toss the rejected edit from the undo stack.
+            undone = self.carousel.edits_manager.toss_last_edit()
+            self.affirm(undone)
+            # Reset the Fact, otherwise the edit will stick!
+            #   # Won't work! Screws up prev/next links, and leaves undo!:
+            #   edit_fact.start = was_fact.start
+            #   edit_fact.end = was_fact.end
+            # MAYBE/2020-04-09: (lb): Pretty sure we're missing code to
+            # reset the fact. (This code path used to be taken when a fact
+            # end time < its start time. But that case is now handled earlier,
+            # and the flow won't make it here. And if you set a fact's start
+            # time earlier than the previous fact start time, it'll be auto-
+            # corrected. So I'm not quite sure what use case triggers this
+            # branch anymore!)
+            self.affirm(edit_fact.start == was_fact.start)
+            self.affirm(edit_fact.end == was_fact.end)
+            # FIXME/2020-04-09: (lb): Seriously, what gets you here?
+            # - Document what use case gets you here if/when this fires.
+            self.affirm(False)
+            # Update the control text.
+            self.active_widgets.text_area.text = was_time
 
         def edited_fact_conflicts(edit_fact):
             # Skip all unstored, edited Facts.

@@ -389,6 +389,10 @@ class EditsManager(object):
 
     # ***
 
+    def toss_last_edit(self):
+        undone = self.redo_undo.undo_last_edit(restore_facts=None)
+        return undone
+
     def undo_last_edit(self):
         undone = self.redo_undo.undo_last_edit(self.restore_facts)
         return undone

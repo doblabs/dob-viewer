@@ -164,8 +164,9 @@ class RedoUndoEdit(object):
             undone = False
         else:
             undone = True
-            changes_copies = self.restore_facts(undo_changes, restore_facts)
-            self.append_changes(self.redo, changes_copies, whence='undo_last_edit')
+            if restore_facts is not None:
+                changes_copies = self.restore_facts(undo_changes, restore_facts)
+                self.append_changes(self.redo, changes_copies, whence='undo_last_edit')
         return undone
 
     def redo_last_undo(self, restore_facts):
