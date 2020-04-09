@@ -86,7 +86,7 @@ class ZoneDetails_TimeStart(object):
 
     # ***
 
-    def apply_edit_time_start(self, edit_fact, edit_time):
+    def apply_edit_time_start(self, edit_fact, edit_time, verify_fact_times):
         if edit_fact.start == edit_time:
             # Nothing changed.
             return False
@@ -107,7 +107,12 @@ class ZoneDetails_TimeStart(object):
             best_time = edit_prev.start + timedelta(minutes=min_delta)
             if edit_prev and edit_prev.end and (best_time > edit_prev.end):
                 best_time = edit_prev.end
+        was_time = edit_fact.start
         edit_fact.start = best_time
+        # Verify edit_fact.start < edit_fact.end.
+        if not verify_fact_times(edit_fact):
+            edit_fact.start = was_time
+            return False
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_prev:

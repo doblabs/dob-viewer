@@ -80,7 +80,7 @@ class ZoneDetails_TimeEnd(object):
 
     # ***
 
-    def apply_edit_time_end(self, edit_fact, edit_time):
+    def apply_edit_time_end(self, edit_fact, edit_time, verify_fact_times):
         if edit_fact.end == edit_time:
             # Nothing changed.
             return False
@@ -101,8 +101,13 @@ class ZoneDetails_TimeEnd(object):
             best_time = edit_next.end - timedelta(minutes=min_delta)
             if edit_next and edit_next.start and (best_time < edit_next.start):
                 best_time = edit_next.start
+        was_time = edit_fact.end
         edit_fact.end = best_time
         self.carousel.controller.affirm(edit_time is not None)
+        # Verify edit_fact.start < edit_fact.end.
+        if not verify_fact_times(edit_fact):
+            edit_fact.end = was_time
+            return False
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_next:

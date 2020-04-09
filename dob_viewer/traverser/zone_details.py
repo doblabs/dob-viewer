@@ -662,12 +662,35 @@ class ZoneDetails(
             was_fact = edit_fact.copy()
             if self.active_widgets is self.widgets_start:
                 was_time = edit_fact.start_fmt_local
-                applied = self.apply_edit_time_start(edit_fact, edit_time)
+                applied = self.apply_edit_time_start(
+                    edit_fact, edit_time, verify_fact_times,
+                )
             else:
                 self.affirm(self.active_widgets is self.widgets_end)
                 was_time = edit_fact.end_fmt_local_or_now
-                applied = self.apply_edit_time_end(edit_fact, edit_time)
+                applied = self.apply_edit_time_end(
+                    edit_fact, edit_time, verify_fact_times,
+                )
             check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied)
+
+        def verify_fact_times(edit_fact):
+            # Check that edit_fact.start < edit_fact.end now, rather than
+            # via apply_edit_time_start/apply_edit_time_end's call to
+            # edits_manager.apply_edits. By doing it now, we will not have
+            # to cleanup the undo stack, nor fix the current fact, nor any
+            # neighbor fact.
+            conflicts = must_complete_times(
+                self.carousel.controller,
+                new_facts=[edit_fact],
+                progress=None,
+                leave_blanks=True,
+                other_edits={},
+                suppress_barf=True,
+            )
+            if conflicts:
+                edited_fact_alert_conflicts(conflicts)
+                return False
+            return True
 
         def check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied):
             if not applied:
