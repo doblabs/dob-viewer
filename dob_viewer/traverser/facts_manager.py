@@ -262,7 +262,7 @@ class FactsManager(
                 #  sorty_times value). This is because groups.index uses
                 #  _maxes and compares key values, ignoring object identity.
                 #   and group.sorty_times changes based on its facts, and
-                #   when we extend the time window. (lb): Log comment....
+                #   when we extend the time window. (lb): Long comment....
                 self.controller.affirm(False)  # Unexpected path, but may work:
                 for idx, grp in enumerate(self.groups):
                     if grp is group:
