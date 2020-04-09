@@ -277,9 +277,10 @@ class EditsManager(object):
         return edit_fact
 
     def apply_edits(self, *edit_facts):
-        # Called on paste, edit-time, and after carousel prompts user for edits.
-        # Note that edit_time_adjust has 3 facts (curr, prev, next) and 1 of the
-        #   latter times may be None. Extract that None entry here.
+        # Called on edit-time, and after carousel prompts user for edits.
+        # edit_facts is a list of 1 or 2 Facts: the edited Fact, and then
+        # maybe a prev or next Fact, if one exists and was affected by a
+        # change to the edited Fact's start or end time.
         edit_facts = list(filter(None, edit_facts))
         applied_edits = self.update_redo_undo_and_conjoined(edit_facts)
         if not applied_edits:
@@ -294,6 +295,7 @@ class EditsManager(object):
         self.redo_undo.add_undoable(was_facts, what)
 
     def update_redo_undo_and_conjoined(self, edit_facts):
+        # edit_facts is 1 or 2 items: current fact, maybe followed by neighbor.
         last_edits = self.redo_undo.remove_undo_if_nothing_changed(edit_facts)
         if last_edits is None:
             return False
