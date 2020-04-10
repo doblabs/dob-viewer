@@ -2,6 +2,12 @@
 
 [comment]: # DEV: release-ghub-pypi scrapes Markdown from the first section below for the GitHub release.
 
+## 1.0.5 (2020-04-09)
+
+- Bugfix: If you edit end to be before start, dob crashes after alert dialog.
+
+- Improve: On neighbor time adjust, prefer fact_min_delta for min. time width.
+
 ## 1.0.4 (2020-04-08)
 
 - Bugfix: Changing focus breaks on Ctrl-S from time widget.
