@@ -356,3 +356,13 @@ class FactsManager(
             return False
         return True
 
+    # ***
+
+    def pop_final_gap_fact(self):
+        final_fact = self[-1]
+        if 'interval-gap' not in final_fact.dirty_reasons:
+            return None
+        group_fact = self.groups[-1].pop(-1)
+        self.controller.affirm(group_fact is final_fact)
+        return group_fact
+

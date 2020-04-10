@@ -68,15 +68,29 @@ class ZoneDetails_TimeEnd(object):
 
     def apply_edit_time_removed_end(self, edit_fact):
         if edit_fact.end is None:
-            # Already cleared; nothing changed.
+            # Already cleared; nothing changed. Return True to not show
+            # dialog message; apply_edit_time_end is called but returns
+            # immediately.
             return True
-        if not self.carousel.edits_manager.conjoined.is_final_fact(edit_fact):
-            self.widgets_end.text_area.text = edit_fact.end_fmt_local_or_now
-            return False
-        else:
-            edit_fact.end = None
+        if self.carousel.edits_manager.conjoined.is_final_fact(edit_fact):
+            # First if-branch should've handled, not us!
             self.carousel.controller.affirm(False)
             return True
+
+        edits_manager = self.carousel.edits_manager
+        edit_next = edits_manager.editable_fact_next(edit_fact)
+        if (
+            'interval-gap' in edit_next.dirty_reasons
+            and self.carousel.edits_manager.conjoined.is_final_fact(edit_next)
+        ):
+            # Use case: User sets end time of active Fact, then tabs away
+            # and tabs back, presses Ctrl-U to clear the time entry, then
+            # tabs away. Remove Gap Fact and make Fact active again.
+            # - Return True so apply_edit_time_end is called.
+            return True
+        else:
+            self.widgets_end.text_area.text = edit_fact.end_fmt_local_or_now
+            return False
 
     # ***
 
@@ -89,6 +103,10 @@ class ZoneDetails_TimeEnd(object):
         # Make undoable.
         was_fact = edit_fact.copy()
         undoable_facts = [was_fact]
+        # After apply_edit_time_removed_end, for editable_fact_next to not die.
+        was_time = edit_fact.end
+        if edit_time is None:
+            edit_fact.end = None
         # Prohibit completely shadowing other facts' time windows, but allow
         # changing one fact's times to shorten the times of prev or next fact.
         edit_next = edits_manager.editable_fact_next(edit_fact)
@@ -101,9 +119,7 @@ class ZoneDetails_TimeEnd(object):
             best_time = edit_next.end - timedelta(minutes=min_delta)
             if edit_next and edit_next.start and (best_time < edit_next.start):
                 best_time = edit_next.start
-        was_time = edit_fact.end
         edit_fact.end = best_time
-        self.carousel.controller.affirm(edit_time is not None)
         # Verify edit_fact.start < edit_fact.end.
         if not verify_fact_times(edit_fact):
             edit_fact.end = was_time
@@ -111,12 +127,14 @@ class ZoneDetails_TimeEnd(object):
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_next:
-            if (
-                (edit_next.start and (edit_fact.end > edit_next.start))
-                or ('interval-gap' in edit_next.dirty_reasons)
+            if ((
+                edit_next.start
+                and edit_fact.end
+                and (edit_fact.end > edit_next.start)
+            ) or ('interval-gap' in edit_next.dirty_reasons)
             ):
                 undoable_facts.append(edit_next.copy())
-                edit_next.start = edit_fact.end
+                edit_next.start = was_time
                 edited_facts.append(edit_next)
             if edit_fact.end == edit_next.start:
                 edit_fact.next_fact = edit_next
@@ -128,5 +146,8 @@ class ZoneDetails_TimeEnd(object):
             edit_fact.next_fact = None
         edits_manager.add_undoable(undoable_facts, what='header-edit')
         edits_manager.apply_edits(*edited_facts)
+        if edit_time is None:
+            # (lb): This feels a little kludgy, or like this belongs elsewhere...
+            self.carousel.edits_manager.conjoined.pop_final_gap_fact()
         return True
 
