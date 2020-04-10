@@ -183,7 +183,11 @@ def load_matches_style(controller):
 
 def create_configobj(conf_path, nickname=''):
     try:
-        return ConfigObj(conf_path, write_empty_values=False)
+        return ConfigObj(
+            conf_path,
+            interpolation=False,
+            write_empty_values=False,
+        )
     except ConfigObjError as err:
         # Catches DuplicateError, and other errors, e.g.,
         #       Parsing failed with several errors.
