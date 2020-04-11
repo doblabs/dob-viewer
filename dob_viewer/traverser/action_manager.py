@@ -63,6 +63,7 @@ class ActionManager(object):
         self.setup_key_bindings_normal()
         self.setup_key_bindings_edit_time()
         self.setup_key_bindings_modal()
+        self.key_bonder.print_warnings()
 
     def setup_key_bindings_shared(self):
         bindings = []

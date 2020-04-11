@@ -18,9 +18,14 @@
 """Key Binding Wiring Manager"""
 
 import json
+import time
+
+from gettext import gettext as _
 
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
+
+from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
@@ -36,10 +41,10 @@ def make_bindings(key_bonds):
     key_bindings = KeyBindings()
 
     for keyb in key_bonds:
-        if isinstance(keyb.keycode, tuple):
-            key_bindings.add(*keyb.keycode)(keyb.action)
-        else:
+        if isinstance(keyb.keycode, str):
             key_bindings.add(keyb.keycode)(keyb.action)
+        else:
+            key_bindings.add(*keyb.keycode)(keyb.action)
 
     return key_bindings
 
@@ -50,29 +55,60 @@ class KeyBonder(object):
 
     def __init__(self, config):
         self.config = config
+        self.errors = []
 
     # ***
 
     def _key_bonds(self, action_map, action_name, config_name=None):
-        if config_name is None:
-            config_name = action_name
-        action = getattr(action_map, action_name)
-        cfgval = self.config['editor-keys'][config_name]
-        keybonds = []
-        if not cfgval:
+        """"""
+        def __key_bonds():
+            action, cfgval = resolve_action_cfgval()
+            keybonds = build_bonds(action, cfgval)
+            return keybonds
+
+        def resolve_action_cfgval():
+            cfgname = config_name or action_name
+            action = getattr(action_map, action_name)
+            cfgval = self.config['editor-keys'][cfgname]
+            return action, cfgval
+
+        def build_bonds(action, cfgval):
+            keybonds = []
+            # (lb): We could skip the startswith check and just use except,
+            #       but it feels more readable this way.
+            if cfgval.startswith('['):
+                try:
+                    # List of lists. Top-level is keybindings, each a single key or many.
+                    keycodes = json.loads(cfgval)
+                    assert isinstance(keycodes, list)  # Would it be anything else?
+                    if not sanity_check(keycodes):
+                        return add_error_not_list_within_list(cfgval)
+                    keybonds = [KeyBond(keycode, action=action) for keycode in keycodes]
+                except json.decoder.JSONDecodeError:
+                    pass
+            if cfgval and not keybonds:
+                keybonds = [KeyBond(cfgval, action=action)]
+            return keybonds
+
+        def sanity_check(keycodes):
+            return all(isinstance(keycode, list) for keycode in keycodes)
+
+        def add_error_not_list_within_list(cfgval):
+            self.errors.append(_(
+                'ERROR: Key binding for ‘{}’ should be single key'
+                ' or list of lists, not: {}'.format(action_name, cfgval)
+            ))
             return []
-        # (lb): We could skip the startswith check and just use except,
-        #       but it feels more readable this way.
-        if cfgval.startswith('['):
-            try:
-                keycodes = json.loads(cfgval)
-                assert isinstance(keycodes, list)  # Would it be anything else?
-                keybonds = [KeyBond(keycode, action=action) for keycode in keycodes]
-            except json.decoder.JSONDecodeError:
-                pass
-        if cfgval and not keybonds:
-            keybonds = [KeyBond(cfgval, action=action)]
-        return keybonds
+
+        return __key_bonds()
+
+    # ***
+
+    def print_warnings(self):
+        if not self.errors:
+            return
+        dob_in_user_warning('\n'.join(self.errors))
+        time.sleep(2.666)
 
     # ***
 
@@ -104,164 +140,103 @@ class KeyBonder(object):
 
     def edit_time(self, zone_details):
         handler = zone_details
-        key_bonds_edit_time = [
-            KeyBond('enter', action=handler.editable_text_enter),
-            KeyBond('d', action=handler.toggle_focus_description),
-            # By default, PPT will add any key we don't capture to active widget's
-            # buffer, but we'll override so we can ignore alpha characters.
-            KeyBond(Keys.Any, action=handler.editable_text_any_key),
-        ]
-        return key_bonds_edit_time
+        key_bonds = []
+        key_bonds += self._key_bonds(handler, 'editable_text_enter')
+        key_bonds += self._key_bonds(handler, 'toggle_focus_description')
+        # By default, PPT will add any key we don't capture to active widget's
+        # buffer, but we'll override so we can ignore alpha characters.
+        key_bonds += [KeyBond(Keys.Any, action=handler.editable_text_any_key)]
+        return key_bonds
 
     # ***
 
     def undo_redo(self, action_map_or_zone_details):
         handler = action_map_or_zone_details
-        key_bonds_undo_redo = [
-            # Vim maps Ctrl-z and Ctrl-y for undo and redo;
-            # and u/U to undo count/all and Ctrl-R to redo (count).
-            KeyBond('c-z', action=handler.undo_command),
-            KeyBond('c-y', action=handler.redo_command),
-            # (lb): Too many options!
-            # MAYBE: Really mimic all of Vi's undo/redo mappings,
-            #        or just pick one each and call it good?
-            KeyBond('u', action=handler.undo_command),
-            KeyBond('c-r', action=handler.redo_command),
-            # (lb): Oh so many duplicate redundant options!
-            KeyBond('r', action=handler.redo_command),
-        ]
-        return key_bonds_undo_redo
+        key_bonds = []
+        key_bonds += self._key_bonds(handler, 'undo_command')
+        key_bonds += self._key_bonds(handler, 'redo_command')
+        return key_bonds
 
     # ***
 
     def normal(self, action_map):
-        key_bonds_normal = [
-            KeyBond('?', action=action_map.rotate_help),
-            #
-            # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
-            #   KeyBond('m-=', action=action_map.dev_breakpoint),
-            KeyBond((Keys.Escape, '='), action=action_map.dev_breakpoint),
-            #
-            KeyBond('j', action=action_map.jump_fact_dec),
-            KeyBond('k', action=action_map.jump_fact_inc),
-            KeyBond(Keys.Left, action=action_map.jump_fact_dec),
-            KeyBond(Keys.Right, action=action_map.jump_fact_inc),
-            #
-            KeyBond('J', action=action_map.jump_day_dec),
-            KeyBond('K', action=action_map.jump_day_inc),
-            # These are only wired to Escape then Arrow, not Meta-Arrow...
-            KeyBond((Keys.Escape, Keys.Left), action=action_map.jump_day_dec),
-            KeyBond((Keys.Escape, Keys.Right), action=action_map.jump_day_inc),
-            #
-            KeyBond(('g', 'g'), action=action_map.jump_rift_dec),
-            KeyBond('G', action=action_map.jump_rift_inc),
-            # (lb): Not every Vim key needs to be mapped, e.g.,
-            #  KeyBond('M', action=action_map.jump_fact_midpoint),
-            # seems capricious, i.e., why implement if not just because we can?
-            #
-            KeyBond('h', action=action_map.cursor_up_one),
-            KeyBond('l', action=action_map.cursor_down_one),
-            #
-            # FIXME: Oh, maybe make complicated handlers rather than hacking PPT lib?
-            # NOTE: If you want to see how key presses map to KeyPresses, try:
-            #         $ cd path/to/python-prompt-toolkit/tools
-            #         $ python3 debug_vt100_input.py
-            #         # PRESS ANY KEY
-            # Catch Alt-Up explicitly -- though we don't do anything with it -- so
-            # that the 'escape'-looking prefix does not trigger bare 'escape' handler.
-            # ((lb): There might be a different way to do this... not sure.)
-            KeyBond(  # Alt-UP
-                ('escape', '[', '1', ';', '4', 'A'),
-                action=action_map.ignore_key_press_noop,
-            ),
-            KeyBond(  # Alt-DOWN
-                ('escape', '[', '1', ';', '4', 'B'),
-                action=action_map.ignore_key_press_noop,
-            ),
-            KeyBond(  # Alt-RIGHT [bunch of snowflakes]
-                ('escape', '[', '1', ';', '4', 'C'),
-                action=action_map.ignore_key_press_noop,
-            ),
-            KeyBond(  # Alt-LEFT
-                ('escape', '[', '1', ';', '4', 'D'),
-                action=action_map.ignore_key_press_noop,
-            ),
-            #
-            KeyBond('pageup', action=action_map.scroll_up),
-            KeyBond('pagedown', action=action_map.scroll_down),
-            KeyBond('home', action=action_map.scroll_top),
-            KeyBond('end', action=action_map.scroll_bottom),
-            #
-            # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
-            #   KeyBond('/', action=zone_lowdown.start_search),
-            # FIXME/BACKLOG: Filter feature.
-            #   (By tag; matching text; dates; days of the week; etc.)
-        ]
-        return key_bonds_normal
+        key_bonds = []
+
+        key_bonds += self._key_bonds(action_map, 'rotate_help')
+        key_bonds += self._key_bonds(action_map, 'dev_breakpoint')
+
+        key_bonds += self._key_bonds(action_map, 'jump_fact_dec')
+        key_bonds += self._key_bonds(action_map, 'jump_fact_inc')
+
+        key_bonds += self._key_bonds(action_map, 'jump_day_dec')
+        key_bonds += self._key_bonds(action_map, 'jump_day_inc')
+
+        key_bonds += self._key_bonds(action_map, 'jump_rift_dec')
+        key_bonds += self._key_bonds(action_map, 'jump_rift_inc')
+
+        key_bonds += self._key_bonds(action_map, 'cursor_up_one')
+        key_bonds += self._key_bonds(action_map, 'cursor_down_one')
+
+        key_bonds += self._key_bonds(action_map, 'scroll_up')
+        key_bonds += self._key_bonds(action_map, 'scroll_down')
+        key_bonds += self._key_bonds(action_map, 'scroll_top')
+        key_bonds += self._key_bonds(action_map, 'scroll_bottom')
+
+        key_bonds += self._key_bonds(action_map, 'ignore_key_press_noop')
+
+        # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
+        #   KeyBond('/', action=zone_lowdown.start_search),
+        # FIXME/BACKLOG: Filter feature.
+        #   (By tag; matching text; dates; days of the week; etc.)
+
+        # (lb): Not every Vim key needs to be mapped, e.g.,
+        #  KeyBond('M', action=action_map.jump_fact_midpoint),
+        # seems capricious, i.e., why implement if not just because we can?
+
+        return key_bonds
 
     # ***
 
     def edit_fact(self, action_map):
-        key_bonds_edit_fact = [
-            # Raw Fact Editing. With a Capital E.
-            KeyBond('E', action=action_map.edit_fact),
-            # Edit act@gory, description, and tags using prompt__awesome.
-            # (lb): This is pretty cool. prompt_awesome was built first,
-            # and then I got comfortable with PPT and built the Carousel,
-            # and then I was able to stick one inside the other, and it's
-            # just awesome awesome now.
-            KeyBond('a', action=action_map.edit_actegory),
-            KeyBond('d', action=action_map.edit_description),
-            KeyBond('t', action=action_map.edit_tags),
-        ]
-        return key_bonds_edit_fact
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'edit_fact')
+        key_bonds += self._key_bonds(action_map, 'edit_actegory')
+        key_bonds += self._key_bonds(action_map, 'edit_description')
+        key_bonds += self._key_bonds(action_map, 'edit_tags')
+        return key_bonds
 
     # ***
 
     def nudge_time_with_arrows(self, action_map):
-        key_bonds_nudge_time_with_arrows = [
-            KeyBond('s-left', action=action_map.edit_time_decrement_start),
-            KeyBond('s-right', action=action_map.edit_time_increment_start),
-            KeyBond('c-left', action=action_map.edit_time_decrement_end),
-            KeyBond('c-right', action=action_map.edit_time_increment_end),
-            # FIXME/2019-01-21: Can you check if running in Terminator
-            #  and warn-tell user. And/Or: Customize Key Binding feature.
-            # In Terminator: Shift+Ctrl+Left/+Right: Resize the terminal left/right.
-            #  (lb): I've disabled the 2 bindings in Terminator,
-            #   so this works for me... so fixing it is a low priority!
-            KeyBond('s-c-left', action=action_map.edit_time_decrement_both),
-            KeyBond('s-c-right', action=action_map.edit_time_increment_both),
-        ]
-        return key_bonds_nudge_time_with_arrows
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_start')
+        key_bonds += self._key_bonds(action_map, 'edit_time_increment_start')
+        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_end')
+        key_bonds += self._key_bonds(action_map, 'edit_time_increment_end')
+        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_both')
+        key_bonds += self._key_bonds(action_map, 'edit_time_increment_both')
+        return key_bonds
 
     # ***
 
     def create_delete_fact(self, action_map):
-        key_bonds_create_delete_fact = [
-            # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
-            #   KeyBond('m-p', action=action_map.fact_split),
-            #   KeyBond('m-e', action=action_map.fact_erase),
-            #   KeyBond(('m-m', Keys.Left), action=action_map.fact_merge_prev),
-            #   KeyBond(('m-m', Keys.Right), action=action_map.fact_merge_next),
-            KeyBond((Keys.Escape, 'p'), action=action_map.fact_split),
-            KeyBond((Keys.Escape, 'e'), action=action_map.fact_erase),
-            KeyBond((Keys.Escape, 'm', Keys.Left), action=action_map.fact_merge_prev),
-            KeyBond((Keys.Escape, 'm', Keys.Right), action=action_map.fact_merge_next),
-        ]
-        return key_bonds_create_delete_fact
+        return []  # FIXME/2020-04-11: Implement or get of the pot!
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'fact_split')
+        key_bonds += self._key_bonds(action_map, 'fact_erase')
+        key_bonds += self._key_bonds(action_map, 'fact_merge_prev')
+        key_bonds += self._key_bonds(action_map, 'fact_merge_next')
+        return key_bonds
 
     # ***
 
     def clipboard(self, action_map):
-        key_bonds_clipboard = [
-            #
-            KeyBond('c-c', action=action_map.fact_copy_fact),
-            KeyBond('c-x', action=action_map.fact_cut),
-            KeyBond('c-v', action=action_map.fact_paste),
-            #
-            KeyBond(('A', 'c-c'), action=action_map.fact_copy_activity),
-            KeyBond(('T', 'c-c'), action=action_map.fact_copy_tags),
-            KeyBond(('D', 'c-c'), action=action_map.fact_copy_description),
-        ]
-        return key_bonds_clipboard
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'fact_copy_fact')
+        key_bonds += self._key_bonds(action_map, 'fact_cut')
+        key_bonds += self._key_bonds(action_map, 'fact_paste')
+        key_bonds += self._key_bonds(action_map, 'fact_copy_activity')
+        key_bonds += self._key_bonds(action_map, 'fact_copy_tags')
+        key_bonds += self._key_bonds(action_map, 'fact_copy_description')
+        return key_bonds
 
