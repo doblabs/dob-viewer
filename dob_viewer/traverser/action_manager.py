@@ -37,7 +37,9 @@ class ActionManager(object):
 
     def standup(self):
         self.key_action_map = KeyActionMap(self.carousel)
-        self.key_bonder = KeyBonder()
+        self.key_bonder = KeyBonder(
+            config=self.carousel.controller.config,
+        )
         self.setup_key_bindings()
 
     # ***

@@ -17,3 +17,30 @@
 
 """dob_viewer.config sub.package provides Carousel UX user configuration settings."""
 
+from gettext import gettext as _
+
+from nark.config import ConfigRoot
+
+__all__ = (
+    'DobConfigurableEditorKeys',
+)
+
+
+# ***
+
+@ConfigRoot.section('editor-keys')
+class DobViewerConfigurableDev(object):
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Switch to Next Widget (description → start time → end time)"),
+    )
+    def focus_next(self):
+        return 'tab'
+

@@ -46,12 +46,25 @@ def make_bindings(key_bonds):
 
 class KeyBonder(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, config):
+        self.config = config
+
+    # ***
+
+    def _key_bond(self, action_map, action_name, config_name=None):
+        if config_name is None:
+            config_name = action_name
+        action = getattr(action_map, action_name)
+        keycode = self.config['editor-keys'][config_name]
+        return KeyBond(keycode, action=action)
+
+    # ***
 
     def widget_focus(self, action_map):
         key_bonds_widget_focus = [
-            KeyBond('tab', action=action_map.focus_next),
+            # Use the 'focus_next' config value as the key to wire
+            # to the action_map.focus_next handler.
+            self._key_bond(action_map, 'focus_next'),
             KeyBond('s-tab', action=action_map.focus_previous),
             # Bindings to edit time are always available (and toggle focus when repeated).
             KeyBond('s', action=action_map.edit_time_start),
