@@ -90,15 +90,28 @@ class KeyBonder(object):
     # ***
 
     def make_bindings(self, key_bonds):
-        key_bindings = KeyBindings()
+        """"""
+        def _make_bindings():
+            key_bindings = KeyBindings()
+            [add_binding(key_bindings, keyb) for keyb in key_bonds]
+            return key_bindings
 
-        for keyb in key_bonds:
+        def add_binding(key_bindings, keyb):
+            try:
+                add_binding_str_or_list(key_bindings, keyb)
+            except Exception as err:
+                self.errors.append(_(
+                    'ERROR: Failed to add a key binding for ‘{}’: “{}”'
+                    .format(keyb.action.__name__, str(err))
+                ))
+
+        def add_binding_str_or_list(key_bindings, keyb):
             if isinstance(keyb.keycode, str):
                 key_bindings.add(keyb.keycode)(keyb.action)
             else:
                 key_bindings.add(*keyb.keycode)(keyb.action)
 
-        return key_bindings
+        return _make_bindings()
 
     # ***
 
