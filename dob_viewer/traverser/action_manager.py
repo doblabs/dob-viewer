@@ -18,15 +18,7 @@
 """Key Binding Action Manager"""
 
 from .interface_keys import (
-    key_bonds_clipboard,
-    key_bonds_create_delete_fact,
-    key_bonds_edit_fact,
-    key_bonds_edit_time,
-    key_bonds_normal,
-    key_bonds_nudge_time_with_arrows,
-    key_bonds_save_and_quit,
-    key_bonds_undo_redo,
-    key_bonds_widget_focus,
+    KeyBonder,
     make_bindings
 )
 from .key_action_map import KeyActionMap
@@ -45,6 +37,7 @@ class ActionManager(object):
 
     def standup(self):
         self.key_action_map = KeyActionMap(self.carousel)
+        self.key_bonder = KeyBonder()
         self.setup_key_bindings()
 
     # ***
@@ -71,27 +64,27 @@ class ActionManager(object):
 
     def setup_key_bindings_shared(self):
         bindings = []
-        bindings += key_bonds_save_and_quit(self.key_action_map)
-        bindings += key_bonds_widget_focus(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_save_and_quit(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_widget_focus(self.key_action_map)
 
         self.key_bindings_shared = bindings
 
     def setup_key_bindings_normal(self):
         bindings = []
-        bindings += key_bonds_normal(self.key_action_map)
-        bindings += key_bonds_edit_fact(self.key_action_map)
-        bindings += key_bonds_nudge_time_with_arrows(self.key_action_map)
-        bindings += key_bonds_create_delete_fact(self.key_action_map)
-        bindings += key_bonds_clipboard(self.key_action_map)
-        bindings += key_bonds_undo_redo(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_normal(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_edit_fact(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_nudge_time_with_arrows(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_create_delete_fact(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_clipboard(self.key_action_map)
+        bindings += self.key_bonder.key_bonds_undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 
         self.key_bindings_normal = make_bindings(bindings)
 
     def setup_key_bindings_edit_time(self):
         bindings = []
-        bindings += key_bonds_edit_time(self.carousel.zone_manager.zone_details)
-        bindings += key_bonds_undo_redo(self.carousel.zone_manager.zone_details)
+        bindings += self.key_bonder.key_bonds_edit_time(self.carousel.zone_manager.zone_details)
+        bindings += self.key_bonder.key_bonds_undo_redo(self.carousel.zone_manager.zone_details)
         bindings += self.key_bindings_shared
 
         self.key_bindings_edit_time = make_bindings(bindings)
