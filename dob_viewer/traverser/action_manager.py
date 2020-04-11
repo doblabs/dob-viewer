@@ -64,27 +64,27 @@ class ActionManager(object):
 
     def setup_key_bindings_shared(self):
         bindings = []
-        bindings += self.key_bonder.key_bonds_save_and_quit(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_widget_focus(self.key_action_map)
+        bindings += self.key_bonder.save_and_quit(self.key_action_map)
+        bindings += self.key_bonder.widget_focus(self.key_action_map)
 
         self.key_bindings_shared = bindings
 
     def setup_key_bindings_normal(self):
         bindings = []
-        bindings += self.key_bonder.key_bonds_normal(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_edit_fact(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_nudge_time_with_arrows(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_create_delete_fact(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_clipboard(self.key_action_map)
-        bindings += self.key_bonder.key_bonds_undo_redo(self.key_action_map)
+        bindings += self.key_bonder.normal(self.key_action_map)
+        bindings += self.key_bonder.edit_fact(self.key_action_map)
+        bindings += self.key_bonder.nudge_time_with_arrows(self.key_action_map)
+        bindings += self.key_bonder.create_delete_fact(self.key_action_map)
+        bindings += self.key_bonder.clipboard(self.key_action_map)
+        bindings += self.key_bonder.undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 
         self.key_bindings_normal = make_bindings(bindings)
 
     def setup_key_bindings_edit_time(self):
         bindings = []
-        bindings += self.key_bonder.key_bonds_edit_time(self.carousel.zone_manager.zone_details)
-        bindings += self.key_bonder.key_bonds_undo_redo(self.carousel.zone_manager.zone_details)
+        bindings += self.key_bonder.edit_time(self.carousel.zone_manager.zone_details)
+        bindings += self.key_bonder.undo_redo(self.carousel.zone_manager.zone_details)
         bindings += self.key_bindings_shared
 
         self.key_bindings_edit_time = make_bindings(bindings)

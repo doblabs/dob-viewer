@@ -60,7 +60,7 @@ class KeyActionMap(object):
 
             return update_wrapper(trace_enter_leave_wrapper, func)
 
-    # #### Key bindings wired by key_bonds_normal().
+    # #### Key bindings wired by KeyBonder.normal().
 
     # ***
 
@@ -121,7 +121,7 @@ class KeyActionMap(object):
     def cursor_down_one(self, event):
         self.zone_content.cursor_down_one(event)
 
-    # #### Key bindings wired by key_bonds_save_and_quit().
+    # #### Key bindings wired by KeyBonder.save_and_quit().
 
     @Decorators.debug_log_trace_enter_leave
     def save_edited_and_live(self, event):
@@ -149,7 +149,7 @@ class KeyActionMap(object):
     def ignore_key_press_noop(self, event):
         pass
 
-    # #### Key bindings wired by key_bonds_normal().
+    # #### Key bindings wired by KeyBonder.normal().
 
     @Decorators.debug_log_trace_enter_leave
     def scroll_up(self, event):
@@ -177,7 +177,7 @@ class KeyActionMap(object):
     def edit_time_end(self, event):
         self.zone_manager.toggle_focus_time_end(event)
 
-    # #### Key bindings wired by key_bonds_widget_focus().
+    # #### Key bindings wired by KeyBonder.widget_focus().
 
     @Decorators.debug_log_trace_enter_leave
     def focus_next(self, event):
@@ -187,7 +187,7 @@ class KeyActionMap(object):
     def focus_previous(self, event):
         self.zone_manager.focus_previous(event)
 
-    # #### Key bindings wired by key_bonds_edit_fact().
+    # #### Key bindings wired by KeyBonder.edit_fact().
 
     @Decorators.debug_log_trace_enter_leave
     def edit_fact(self, event):
@@ -205,7 +205,7 @@ class KeyActionMap(object):
     def edit_tags(self, event):
         self.update_handler.edit_tags(event)
 
-    # #### Key bindings wired by key_bonds_nudge_time_with_arrows().
+    # #### Key bindings wired by KeyBonder.nudge_time_with_arrows().
 
     @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_start(self, event):
@@ -231,7 +231,7 @@ class KeyActionMap(object):
     def edit_time_increment_both(self, event):
         self.update_handler.edit_time_increment_both(event)
 
-    # #### Key bindings wired by key_bonds_create_delete_fact().
+    # #### Key bindings wired by KeyBonder.create_delete_fact().
 
     @Decorators.debug_log_trace_enter_leave
     def fact_split(self, event):
@@ -249,7 +249,7 @@ class KeyActionMap(object):
     def fact_merge_next(self, event):
         self.update_handler.fact_merge_next(event)
 
-    # #### Key bindings wired by key_bonds_clipboard().
+    # #### Key bindings wired by KeyBonder.clipboard().
 
     @Decorators.debug_log_trace_enter_leave
     def fact_copy_fact(self, event):
@@ -275,7 +275,7 @@ class KeyActionMap(object):
     def fact_copy_description(self, event):
         self.update_handler.fact_copy_description(event)
 
-    # #### Key bindings wired by key_bonds_undo_redo().
+    # #### Key bindings wired by KeyBonder.undo_redo().
 
     @Decorators.debug_log_trace_enter_leave
     def undo_command(self, event):

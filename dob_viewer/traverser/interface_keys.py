@@ -49,7 +49,7 @@ class KeyBonder(object):
     def __init__(self):
         pass
 
-    def key_bonds_widget_focus(self, action_map):
+    def widget_focus(self, action_map):
         key_bonds_widget_focus = [
             KeyBond('tab', action=action_map.focus_next),
             KeyBond('s-tab', action=action_map.focus_previous),
@@ -61,7 +61,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_save_and_quit(self, action_map):
+    def save_and_quit(self, action_map):
         key_bonds_save_and_quit = [
             # Save Facts command is where you'd expect it.
             KeyBond('c-s', action=action_map.save_edited_and_live),
@@ -83,7 +83,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_edit_time(self, zone_details):
+    def edit_time(self, zone_details):
         handler = zone_details
         key_bonds_edit_time = [
             KeyBond('enter', action=handler.editable_text_enter),
@@ -96,7 +96,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_undo_redo(self, action_map_or_zone_details):
+    def undo_redo(self, action_map_or_zone_details):
         handler = action_map_or_zone_details
         key_bonds_undo_redo = [
             # Vim maps Ctrl-z and Ctrl-y for undo and redo;
@@ -115,7 +115,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_normal(self, action_map):
+    def normal(self, action_map):
         key_bonds_normal = [
             KeyBond('?', action=action_map.rotate_help),
             #
@@ -182,7 +182,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_edit_fact(self, action_map):
+    def edit_fact(self, action_map):
         key_bonds_edit_fact = [
             # Raw Fact Editing. With a Capital E.
             KeyBond('E', action=action_map.edit_fact),
@@ -199,7 +199,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_nudge_time_with_arrows(self, action_map):
+    def nudge_time_with_arrows(self, action_map):
         key_bonds_nudge_time_with_arrows = [
             KeyBond('s-left', action=action_map.edit_time_decrement_start),
             KeyBond('s-right', action=action_map.edit_time_increment_start),
@@ -217,7 +217,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_create_delete_fact(self, action_map):
+    def create_delete_fact(self, action_map):
         key_bonds_create_delete_fact = [
             # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
             #   KeyBond('m-p', action=action_map.fact_split),
@@ -233,7 +233,7 @@ class KeyBonder(object):
 
     # ***
 
-    def key_bonds_clipboard(self, action_map):
+    def clipboard(self, action_map):
         key_bonds_clipboard = [
             #
             KeyBond('c-c', action=action_map.fact_copy_fact),
