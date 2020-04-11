@@ -39,8 +39,71 @@ class DobViewerConfigurableDev(object):
 
     @property
     @ConfigRoot.setting(
-        _("Switch to Next Widget (description → start time → end time)"),
+        _("Switch to Next Widget (description → start time → end time → [repeats])"),
     )
     def focus_next(self):
         return 'tab'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Switch to Previous Widget (description → end time → start time → [repeats])"),
+    )
+    def focus_previous(self):
+        return 's-tab'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Toggle To/From Start Time Widget"),
+    )
+    def edit_time_start(self):
+        return 's'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Toggle To/From End Time Widget"),
+    )
+    def edit_time_end(self):
+        return 'e'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Save Changes"),
+    )
+    def save_edited_and_live(self):
+        return 'c-s'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Save Changes and Exit"),
+    )
+    def save_edited_and_exit(self):
+        return 'c-w'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Exit Quietly if No Changes"),
+    )
+    def cancel_softly(self):
+        return 'q'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("Exit with Prompt if Changes"),
+    )
+    def cancel_command(self):
+        return 'c-q'
 

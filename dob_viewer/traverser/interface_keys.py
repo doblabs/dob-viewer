@@ -65,10 +65,10 @@ class KeyBonder(object):
             # Use the 'focus_next' config value as the key to wire
             # to the action_map.focus_next handler.
             self._key_bond(action_map, 'focus_next'),
-            KeyBond('s-tab', action=action_map.focus_previous),
+            self._key_bond(action_map, 'focus_previous'),
             # Bindings to edit time are always available (and toggle focus when repeated).
-            KeyBond('s', action=action_map.edit_time_start),
-            KeyBond('e', action=action_map.edit_time_end),
+            self._key_bond(action_map, 'edit_time_start'),
+            self._key_bond(action_map, 'edit_time_end'),
         ]
         return key_bonds_widget_focus
 
@@ -77,12 +77,12 @@ class KeyBonder(object):
     def save_and_quit(self, action_map):
         key_bonds_save_and_quit = [
             # Save Facts command is where you'd expect it.
-            KeyBond('c-s', action=action_map.save_edited_and_live),
-            KeyBond('c-w', action=action_map.save_edited_and_exit),
+            self._key_bond(action_map, 'save_edited_and_live'),
+            self._key_bond(action_map, 'save_edited_and_exit'),
             # User can soft-cancel if they have not edited.
-            KeyBond('q', action=action_map.cancel_softly),
+            self._key_bond(action_map, 'cancel_softly'),
             # User can always real-quit, but prompted if edits.
-            KeyBond('c-q', action=action_map.cancel_command),
+            self._key_bond(action_map, 'cancel_command'),
             # NOTE: Using 'escape' to exit is slow because PPT waits to
             #       see if escape sequence follows (which it wouldn't, after
             #       an 'escape', but meta-combinations start with an escape).
