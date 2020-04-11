@@ -76,7 +76,7 @@ class ZoneDetails_TimeStart(object):
         # description) control) but not actually edit anything. Or we could
         # just do nothing. (User can tab-away and then we'll repopulate we
         # unedited time.)
-        self.carousel.controller.affirm(edit_fact.start is not None)
+        self.carousel.controller.affirm(edit_fact.start)
         self.widgets_start.text_area.text = edit_fact.start_fmt_local
         if passive:
             # User is tabbing away. We've reset the start, so let them.

@@ -67,7 +67,7 @@ class ZoneDetails_TimeEnd(object):
     # ***
 
     def apply_edit_time_removed_end(self, edit_fact):
-        if edit_fact.end is None:
+        if not edit_fact.end:
             # Already cleared; nothing changed. Return True to not show
             # dialog message; apply_edit_time_end is called but returns
             # immediately.
