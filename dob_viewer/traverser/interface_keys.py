@@ -24,11 +24,13 @@ from dob_prompt.prompters.interface_bonds import KeyBond
 
 __all__ = (
     'key_bonds_clipboard',
+    'key_bonds_create_delete_fact',
+    'key_bonds_edit_fact',
     'key_bonds_edit_time',
     'key_bonds_normal',
+    'key_bonds_nudge_time_with_arrows',
     'key_bonds_save_and_quit',
     'key_bonds_undo_redo',
-    'key_bonds_update',
     'key_bonds_widget_focus',
     'make_bindings',
 )
@@ -189,8 +191,8 @@ def key_bonds_normal(action_map):
 
 # ***
 
-def key_bonds_update(action_map):
-    key_bonds_update = [
+def key_bonds_edit_fact(action_map):
+    key_bonds_edit_fact = [
         # Raw Fact Editing. With a Capital E.
         KeyBond('E', action=action_map.edit_fact),
         # Edit act@gory, description, and tags using prompt__awesome.
@@ -201,7 +203,14 @@ def key_bonds_update(action_map):
         KeyBond('a', action=action_map.edit_actegory),
         KeyBond('d', action=action_map.edit_description),
         KeyBond('t', action=action_map.edit_tags),
-        #
+    ]
+    return key_bonds_edit_fact
+
+
+# ***
+
+def key_bonds_nudge_time_with_arrows(action_map):
+    key_bonds_nudge_time_with_arrows = [
         KeyBond('s-left', action=action_map.edit_time_decrement_start),
         KeyBond('s-right', action=action_map.edit_time_increment_start),
         KeyBond('c-left', action=action_map.edit_time_decrement_end),
@@ -213,7 +222,14 @@ def key_bonds_update(action_map):
         #   so this works for me... so fixing it is a low priority!
         KeyBond('s-c-left', action=action_map.edit_time_decrement_both),
         KeyBond('s-c-right', action=action_map.edit_time_increment_both),
-        #
+    ]
+    return key_bonds_nudge_time_with_arrows
+
+
+# ***
+
+def key_bonds_create_delete_fact(action_map):
+    key_bonds_create_delete_fact = [
         # 2020-03-30: (lb): Was using PPT-HOTH fork and had m- mappings, e.g.,
         #   KeyBond('m-p', action=action_map.fact_split),
         #   KeyBond('m-e', action=action_map.fact_erase),
@@ -224,7 +240,7 @@ def key_bonds_update(action_map):
         KeyBond((Keys.Escape, 'm', Keys.Left), action=action_map.fact_merge_prev),
         KeyBond((Keys.Escape, 'm', Keys.Right), action=action_map.fact_merge_next),
     ]
-    return key_bonds_update
+    return key_bonds_create_delete_fact
 
 
 def key_bonds_clipboard(action_map):

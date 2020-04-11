@@ -187,7 +187,7 @@ class KeyActionMap(object):
     def focus_previous(self, event):
         self.zone_manager.focus_previous(event)
 
-    # #### Key bindings wired by key_bonds_update().
+    # #### Key bindings wired by key_bonds_edit_fact().
 
     @Decorators.debug_log_trace_enter_leave
     def edit_fact(self, event):
@@ -204,6 +204,8 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def edit_tags(self, event):
         self.update_handler.edit_tags(event)
+
+    # #### Key bindings wired by key_bonds_nudge_time_with_arrows().
 
     @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_start(self, event):
@@ -228,6 +230,8 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def edit_time_increment_both(self, event):
         self.update_handler.edit_time_increment_both(event)
+
+    # #### Key bindings wired by key_bonds_create_delete_fact().
 
     @Decorators.debug_log_trace_enter_leave
     def fact_split(self, event):
