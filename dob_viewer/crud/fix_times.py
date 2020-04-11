@@ -1141,4 +1141,3 @@ def mend_fact_timey_wimey(controller, fact, time_hint, other_edits={}):
 
     return _mend_fact_timey_wimey()
 
-
