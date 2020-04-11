@@ -17,6 +17,8 @@
 
 """Key Binding Wiring Manager"""
 
+import json
+
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 
@@ -51,48 +53,52 @@ class KeyBonder(object):
 
     # ***
 
-    def _key_bond(self, action_map, action_name, config_name=None):
+    def _key_bonds(self, action_map, action_name, config_name=None):
         if config_name is None:
             config_name = action_name
         action = getattr(action_map, action_name)
-        keycode = self.config['editor-keys'][config_name]
-        return KeyBond(keycode, action=action)
+        cfgval = self.config['editor-keys'][config_name]
+        keybonds = []
+        if not cfgval:
+            return []
+        # (lb): We could skip the startswith check and just use except,
+        #       but it feels more readable this way.
+        if cfgval.startswith('['):
+            try:
+                keycodes = json.loads(cfgval)
+                assert isinstance(keycodes, list)  # Would it be anything else?
+                keybonds = [KeyBond(keycode, action=action) for keycode in keycodes]
+            except json.decoder.JSONDecodeError:
+                pass
+        if cfgval and not keybonds:
+            keybonds = [KeyBond(cfgval, action=action)]
+        return keybonds
 
     # ***
 
     def widget_focus(self, action_map):
-        key_bonds_widget_focus = [
-            # Use the 'focus_next' config value as the key to wire
-            # to the action_map.focus_next handler.
-            self._key_bond(action_map, 'focus_next'),
-            self._key_bond(action_map, 'focus_previous'),
-            # Bindings to edit time are always available (and toggle focus when repeated).
-            self._key_bond(action_map, 'edit_time_start'),
-            self._key_bond(action_map, 'edit_time_end'),
-        ]
-        return key_bonds_widget_focus
+        key_bonds = []
+        # Use the 'focus_next' config value as the key to wire
+        # to the action_map.focus_next handler.
+        key_bonds += self._key_bonds(action_map, 'focus_next')
+        key_bonds += self._key_bonds(action_map, 'focus_previous')
+        # Bindings to edit time are always available (and toggle focus when repeated).
+        key_bonds += self._key_bonds(action_map, 'edit_time_start')
+        key_bonds += self._key_bonds(action_map, 'edit_time_end')
+        return key_bonds
 
     # ***
 
     def save_and_quit(self, action_map):
-        key_bonds_save_and_quit = [
-            # Save Facts command is where you'd expect it.
-            self._key_bond(action_map, 'save_edited_and_live'),
-            self._key_bond(action_map, 'save_edited_and_exit'),
-            # User can soft-cancel if they have not edited.
-            self._key_bond(action_map, 'cancel_softly'),
-            # User can always real-quit, but prompted if edits.
-            self._key_bond(action_map, 'cancel_command'),
-            # NOTE: Using 'escape' to exit is slow because PPT waits to
-            #       see if escape sequence follows (which it wouldn't, after
-            #       an 'escape', but meta-combinations start with an escape).
-            #   tl;dr: 'escape' to exit slow b/c alias resolution.
-            # Note that 'escape' here is the actual ESCape key,
-            # and not to be confused with the meta key character,
-            # e.g., using ('escape', 'm') to capture Alt-m (m-m).
-            KeyBond('escape', action=action_map.cancel_softly),
-        ]
-        return key_bonds_save_and_quit
+        key_bonds = []
+        # Save Facts command is where you'd expect it.
+        key_bonds += self._key_bonds(action_map, 'save_edited_and_live')
+        key_bonds += self._key_bonds(action_map, 'save_edited_and_exit')
+        # User can soft-cancel if they have not edited.
+        key_bonds += self._key_bonds(action_map, 'cancel_softly')
+        # User can always real-quit, but prompted if edits.
+        key_bonds += self._key_bonds(action_map, 'cancel_command')
+        return key_bonds
 
     # ***
 

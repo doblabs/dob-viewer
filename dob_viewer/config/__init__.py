@@ -17,6 +17,8 @@
 
 """dob_viewer.config sub.package provides Carousel UX user configuration settings."""
 
+import json
+
 from gettext import gettext as _
 
 from nark.config import ConfigRoot
@@ -105,5 +107,14 @@ class DobViewerConfigurableDev(object):
         _("Exit with Prompt if Changes"),
     )
     def cancel_command(self):
-        return 'c-q'
+        # There are two Quit mapping: Ctrl-Q and ESCAPE.
+        # - NOTE: Using 'escape' to exit is slow because PPT waits to
+        #         see if escape sequence follows (which it wouldn't, after
+        #         an 'escape', but meta-combinations start with an escape).
+        #           tl;dr: 'escape' to exit is slow b/c alias resolution.
+        # - NOTE: BUGBUG: Without the Ctrl-Q binding, if the user presses
+        #         Ctrl-Q in the app., if becomes unresponsive.
+        #         2020-04-11: I have not investigated, just noting it now
+        #         that we're opening up keybindings for user to screw up! =)
+        return json.dumps(['c-q', 'escape'])
 
