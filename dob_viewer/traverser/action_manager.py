@@ -19,7 +19,6 @@
 
 from .interface_keys import (
     KeyBonder,
-    make_bindings
 )
 from .key_action_map import KeyActionMap
 
@@ -82,7 +81,7 @@ class ActionManager(object):
         bindings += self.key_bonder.undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 
-        self.key_bindings_normal = make_bindings(bindings)
+        self.key_bindings_normal = self.key_bonder.make_bindings(bindings)
 
     def setup_key_bindings_edit_time(self):
         bindings = []
@@ -90,10 +89,10 @@ class ActionManager(object):
         bindings += self.key_bonder.undo_redo(self.carousel.zone_manager.zone_details)
         bindings += self.key_bindings_shared
 
-        self.key_bindings_edit_time = make_bindings(bindings)
+        self.key_bindings_edit_time = self.key_bonder.make_bindings(bindings)
 
     def setup_key_bindings_modal(self):
         bindings = []
 
-        self.key_bindings_modal = make_bindings(bindings)
+        self.key_bindings_modal = self.key_bonder.make_bindings(bindings)
 

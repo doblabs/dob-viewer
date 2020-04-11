@@ -31,22 +31,7 @@ from dob_prompt.prompters.interface_bonds import KeyBond
 
 __all__ = (
     'KeyBonder',
-    'make_bindings',
 )
-
-
-# ***
-
-def make_bindings(key_bonds):
-    key_bindings = KeyBindings()
-
-    for keyb in key_bonds:
-        if isinstance(keyb.keycode, str):
-            key_bindings.add(keyb.keycode)(keyb.action)
-        else:
-            key_bindings.add(*keyb.keycode)(keyb.action)
-
-    return key_bindings
 
 
 # ***
@@ -101,6 +86,19 @@ class KeyBonder(object):
             return []
 
         return __key_bonds()
+
+    # ***
+
+    def make_bindings(self, key_bonds):
+        key_bindings = KeyBindings()
+
+        for keyb in key_bonds:
+            if isinstance(keyb.keycode, str):
+                key_bindings.add(keyb.keycode)(keyb.action)
+            else:
+                key_bindings.add(*keyb.keycode)(keyb.action)
+
+        return key_bindings
 
     # ***
 
