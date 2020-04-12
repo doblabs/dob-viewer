@@ -152,11 +152,11 @@ class KeyBonder(object):
     def edit_time(self, zone_details):
         handler = zone_details
         key_bonds = []
-        key_bonds += self._key_bonds(handler, 'editable_text_enter')
+        key_bonds += self._key_bonds(handler, 'edit_time_enter')
         key_bonds += self._key_bonds(handler, 'toggle_focus_description')
         # By default, PPT will add any key we don't capture to active widget's
         # buffer, but we'll override so we can ignore alpha characters.
-        key_bonds += [KeyBond(Keys.Any, action=handler.editable_text_any_key)]
+        key_bonds += [KeyBond(Keys.Any, action=handler.edit_time_any_key)]
         return key_bonds
 
     # ***

@@ -535,7 +535,7 @@ class ZoneDetails(
         def apply_edited_and_refresh():
             leave_okayed = not was_edited()
             if not leave_okayed:
-                leave_okayed = self.editable_text_enter(passive=True)
+                leave_okayed = self.edit_time_enter(passive=True)
             if not leave_okayed:
                 return False
             return refresh_keyval()
@@ -571,7 +571,7 @@ class ZoneDetails(
 
     # ***
 
-    def editable_text_any_key(self, event=None):
+    def edit_time_any_key(self, event=None):
         self.carousel.controller.client_logger.debug('event: {}'.format(event))
         # Ignore all alpha characters except those for [t|T]imezone delimiter.
         if event.data.isalpha() and event.data not in ('t', 'T'):
@@ -598,11 +598,11 @@ class ZoneDetails(
     #   Possible key binding: Ctrl-q, ESC, q, etc.
 
     @catch_action_exception
-    def editable_text_enter(self, event=None, passive=False):
+    def edit_time_enter(self, event=None, passive=False):
         """"""
         leave_okayed = [True, ]
 
-        def _editable_text_enter():
+        def _edit_time_enter():
             edit_text = self.active_widgets.text_area.text
             # Note that carousel.edits_manager.curr_edit returns fact-under-edit
             # only if one already exists, but fact may be unedited, in which case
@@ -614,7 +614,7 @@ class ZoneDetails(
 
         def apply_edited_time(edit_fact, edit_text):
             self.carousel.controller.client_logger.debug(
-                'editable_text_enter: edit_text: {}'.format(edit_text)
+                'edit_time_enter: edit_text: {}'.format(edit_text)
             )
             if not edit_text:
                 apply_edit_time_removed(edit_fact)
@@ -803,7 +803,7 @@ class ZoneDetails(
 
         # ***
 
-        return _editable_text_enter()
+        return _edit_time_enter()
 
     # ***
 

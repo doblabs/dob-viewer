@@ -128,7 +128,7 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("XXX"),
     )
-    def editable_text_enter(self):
+    def edit_time_enter(self):
         return 'enter'
 
     # ***
