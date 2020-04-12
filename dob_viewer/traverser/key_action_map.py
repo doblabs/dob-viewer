@@ -58,66 +58,23 @@ class KeyActionMap(object):
 
             return update_wrapper(trace_enter_leave_wrapper, func)
 
-    # #### Key bindings wired by KeyBonder.normal().
-
-    # ***
+    # #### Key bindings wired by KeyBonder.widget_focus().
 
     @Decorators.debug_log_trace_enter_leave
-    def rotate_help(self, event):
-        self.zone_content.rotate_help(event)
-
-    # ***
+    def focus_next(self, event):
+        self.zone_manager.focus_next(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def dev_breakpoint(self, event):
-        self.carousel.dev_breakpoint(event)
-
-    # ***
-
-    # Next/Prev: Fact
+    def focus_previous(self, event):
+        self.zone_manager.focus_previous(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def jump_fact_dec(self, event):
-        self.zone_manager.jump_fact_dec(event)
+    def edit_time_start(self, event):
+        self.zone_manager.toggle_focus_time_start(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def jump_fact_inc(self, event):
-        try:
-            self.zone_manager.jump_fact_inc(event)
-        except Exception:
-            # 2019-12-03 01:18: Raised on add-tag then save. Don't remember jumping.
-            self.carousel.controller.affirm(False)
-            pass
-
-    # Next/Prev: Day
-
-    @Decorators.debug_log_trace_enter_leave
-    def jump_day_dec(self, event):
-        self.zone_manager.jump_day_dec(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def jump_day_inc(self, event):
-        self.zone_manager.jump_day_inc(event)
-
-    # Next/Prev: Rift
-
-    @Decorators.debug_log_trace_enter_leave
-    def jump_rift_dec(self, event):
-        self.zone_manager.jump_rift_dec(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def jump_rift_inc(self, event):
-        self.zone_manager.jump_rift_inc(event)
-
-    # ***
-
-    @Decorators.debug_log_trace_enter_leave
-    def cursor_up_one(self, event):
-        self.zone_content.cursor_up_one(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def cursor_down_one(self, event):
-        self.zone_content.cursor_down_one(event)
+    def edit_time_end(self, event):
+        self.zone_manager.toggle_focus_time_end(event)
 
     # #### Key bindings wired by KeyBonder.save_and_quit().
 
@@ -140,7 +97,74 @@ class KeyActionMap(object):
             return
         self.carousel.cancel_softly(event)
 
+    # #### Key bindings wired by KeyBonder.edit_time().
+
+    # #### Key bindings wired by KeyBonder.undo_redo().
+
+    @Decorators.debug_log_trace_enter_leave
+    def undo_command(self, event):
+        self.update_handler.undo_command(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def redo_command(self, event):
+        self.update_handler.redo_command(event)
+
     # #### Key bindings wired by KeyBonder.normal().
+
+    @Decorators.debug_log_trace_enter_leave
+    def rotate_help(self, event):
+        self.zone_content.rotate_help(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def dev_breakpoint(self, event):
+        self.carousel.dev_breakpoint(event)
+
+    # *** Next/Prev: Fact
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_fact_dec(self, event):
+        self.zone_manager.jump_fact_dec(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_fact_inc(self, event):
+        try:
+            self.zone_manager.jump_fact_inc(event)
+        except Exception:
+            # 2019-12-03 01:18: Raised on add-tag then save. Don't remember jumping.
+            self.carousel.controller.affirm(False)
+            pass
+
+    # *** Next/Prev: Day
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_day_dec(self, event):
+        self.zone_manager.jump_day_dec(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_day_inc(self, event):
+        self.zone_manager.jump_day_inc(event)
+
+    # *** Next/Prev: Rift
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_rift_dec(self, event):
+        self.zone_manager.jump_rift_dec(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def jump_rift_inc(self, event):
+        self.zone_manager.jump_rift_inc(event)
+
+    # *** Up/Down: Content Cursor Motion
+
+    @Decorators.debug_log_trace_enter_leave
+    def cursor_up_one(self, event):
+        self.zone_content.cursor_up_one(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def cursor_down_one(self, event):
+        self.zone_content.cursor_down_one(event)
+
+    # *** Up/Down/Top/Bottom: Content Scrolling
 
     @Decorators.debug_log_trace_enter_leave
     def scroll_up(self, event):
@@ -157,26 +181,6 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def scroll_bottom(self, event):
         self.zone_content.scroll_bottom(event)
-
-    # ***
-
-    @Decorators.debug_log_trace_enter_leave
-    def edit_time_start(self, event):
-        self.zone_manager.toggle_focus_time_start(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def edit_time_end(self, event):
-        self.zone_manager.toggle_focus_time_end(event)
-
-    # #### Key bindings wired by KeyBonder.widget_focus().
-
-    @Decorators.debug_log_trace_enter_leave
-    def focus_next(self, event):
-        self.zone_manager.focus_next(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def focus_previous(self, event):
-        self.zone_manager.focus_previous(event)
 
     # #### Key bindings wired by KeyBonder.edit_fact().
 
@@ -265,16 +269,6 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def fact_copy_description(self, event):
         self.update_handler.fact_copy_description(event)
-
-    # #### Key bindings wired by KeyBonder.undo_redo().
-
-    @Decorators.debug_log_trace_enter_leave
-    def undo_command(self, event):
-        self.update_handler.undo_command(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    def redo_command(self, event):
-        self.update_handler.redo_command(event)
 
     # #### Key bindings wired by KeyBonder.begin_commando().
 

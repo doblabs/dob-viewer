@@ -141,10 +141,10 @@ class KeyBonder(object):
         # Save Facts command is where you'd expect it.
         key_bonds += self._key_bonds(action_map, 'save_edited_and_live')
         key_bonds += self._key_bonds(action_map, 'save_edited_and_exit')
-        # User can soft-cancel if they have not edited.
-        key_bonds += self._key_bonds(action_map, 'cancel_softly')
         # User can always real-quit, but prompted if edits.
         key_bonds += self._key_bonds(action_map, 'cancel_command')
+        # User can soft-cancel if they have not edited.
+        key_bonds += self._key_bonds(action_map, 'cancel_softly')
         return key_bonds
 
     # ***
