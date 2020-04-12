@@ -549,3 +549,57 @@ class DobViewerConfigurableDev(object):
         # As in, `:wq`.
         return 'wq'
 
+    # *** interface_keys.Key_Bonder.delta_time_width()
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def begin_delta_time_start(self):
+        return '+'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def begin_delta_time_end(self):
+        return '-'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def final_delta_time_apply(self):
+        return 'enter'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def final_delta_time_minutes(self):
+        return 'm'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def final_delta_time_hours(self):
+        return 'h'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def panic_delta_time(self):
+        return 'q'
+

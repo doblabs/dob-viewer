@@ -17,6 +17,7 @@
 
 """Facts Carousel"""
 
+import re
 import time
 from datetime import timedelta
 
@@ -273,6 +274,9 @@ class UpdateHandler(object):
     def edit_time_adjust(self, delta_mins, *attrs):
         delta_time = self.edit_time_multiplier(delta_mins)
         self.edits_manager.edit_time_adjust(delta_time, *attrs)
+        self.edit_time_reset_refresh()
+
+    def edit_time_reset_refresh(self):
         self.zone_manager.reset_diff_fact()
         self.zone_manager.selectively_refresh()
 
@@ -395,8 +399,8 @@ class UpdateHandler(object):
     def final_commando(self, event):
         """"""
         hot_notif = self.colon_commando(event, self.typed_commando)
-        self.began_commando = None
-        self.typed_commando = None
+        del self.began_commando
+        del self.typed_commando
         if hot_notif:
             self.zone_manager.zone_lowdown.update_status(hot_notif)
         else:
@@ -419,4 +423,84 @@ class UpdateHandler(object):
             # (lb): Copying Vim's message for now. Verbatim. Don't judge.
             msg = 'E492: Not an editor command: {}'.format(typed_commando)
             return msg
+
+    # ***
+
+    @catch_action_exception
+    def begin_delta_time_start(self, event):
+        """"""
+        self.carousel.action_manager.wire_keys_delta_time()
+        self.typed_delta_time = ''
+        self.delta_time_target = 'end'
+
+    @catch_action_exception
+    def begin_delta_time_end(self, event):
+        """"""
+        self.carousel.action_manager.wire_keys_delta_time()
+        self.typed_delta_time = ''
+        self.delta_time_target = 'start'
+
+    RE_NUMERIC = re.compile('^[0-9]$')
+
+    @catch_action_exception
+    def parts_delta_time(self, event):
+        """"""
+        # We could allow any character and then parse at error, potentially
+        # showing an error message. Or, if user types non-number now, we
+        # could just go back to old state. -- It's not completely silent,
+        # as the cursor will reappear.
+        if event.data == '.':
+            if '.' in self.typed_delta_time:
+                # So strict!
+                self.reset_delta_time()
+            else:
+                self.typed_delta_time += '.'
+        elif UpdateHandler.RE_NUMERIC.match(event.data):
+            self.typed_delta_time += event.data
+        else:
+            self.reset_delta_time()
+
+    @catch_action_exception
+    def final_delta_time_apply(self, event):
+        """"""
+        self.apply_delta_time(event, scalar=1)
+
+    @catch_action_exception
+    def final_delta_time_minutes(self, event):
+        """"""
+        self.apply_delta_time(event, scalar=1)
+
+    @catch_action_exception
+    def final_delta_time_hours(self, event):
+        """"""
+        self.apply_delta_time(event, scalar=60)
+
+    def apply_delta_time(self, event, scalar):
+        try:
+            delta_time = float(self.typed_delta_time)
+        except ValueError:
+            # No period.
+            delta_time = int(self.typed_delta_time)
+        delta_mins = timedelta(minutes=delta_time * scalar)
+
+        edit_fact = self.edits_manager.editable_fact()
+        if self.delta_time_target == 'end':
+            apply_time = edit_fact.start + delta_mins
+        else:  # == 'start'
+            end_time = edit_fact.end or self.carousel.controller.now
+            apply_time = end_time - delta_mins
+
+        self.edits_manager.edit_time_adjust(apply_time, self.delta_time_target)
+        self.edit_time_reset_refresh()
+        self.reset_delta_time()
+
+    @catch_action_exception
+    def panic_delta_time(self, event):
+        """"""
+        self.reset_delta_time()
+
+    def reset_delta_time(self):
+        del self.typed_delta_time
+        del self.delta_time_target
+        self.carousel.action_manager.unwire_keys_delta_time()
 

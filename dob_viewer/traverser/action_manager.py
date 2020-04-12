@@ -102,6 +102,12 @@ class ActionManager(object):
     def unwire_keys_commando(self):
         self.unwire_keys_command_mode()
 
+    def wire_keys_delta_time(self):
+        self.wire_keys_command_mode(self.key_bindings_delta_time)
+
+    def unwire_keys_delta_time(self):
+        self.unwire_keys_command_mode()
+
     # ***
 
     def setup_key_bindings(self):
@@ -110,6 +116,7 @@ class ActionManager(object):
         self.setup_key_bindings_edit_time()
         self.setup_key_bindings_modal()
         self.setup_key_bindings_commando()
+        self.setup_key_bindings_delta_time()
         self.key_bonder.print_warnings()
 
     def setup_key_bindings_shared(self):
@@ -117,6 +124,7 @@ class ActionManager(object):
         bindings += self.key_bonder.save_and_quit(self.key_action_map)
         bindings += self.key_bonder.widget_focus(self.key_action_map)
         bindings += self.key_bonder.begin_commando(self.key_action_map)
+        bindings += self.key_bonder.begin_delta_time(self.key_action_map)
 
         self.key_bindings_shared = bindings
 
@@ -151,4 +159,10 @@ class ActionManager(object):
         bindings += self.key_bonder.going_commando(self.key_action_map)
         # SKIP: bindings += self.key_bindings_shared
         self.key_bindings_commando = self.key_bonder.make_bindings(bindings)
+
+    def setup_key_bindings_delta_time(self):
+        bindings = []
+        bindings += self.key_bonder.going_delta_time(self.key_action_map)
+        # SKIP: bindings += self.key_bindings_shared
+        self.key_bindings_delta_time = self.key_bonder.make_bindings(bindings)
 

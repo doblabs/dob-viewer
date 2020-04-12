@@ -292,3 +292,36 @@ class KeyActionMap(object):
     def final_commando(self, event):
         self.update_handler.final_commando(event)
 
+    # #### Key bindings wired by KeyBonder.begin_delta_time().
+
+    @Decorators.debug_log_trace_enter_leave
+    def begin_delta_time_start(self, event):
+        self.update_handler.begin_delta_time_start(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def begin_delta_time_end(self, event):
+        self.update_handler.begin_delta_time_end(event)
+
+    # #### Key bindings wired by KeyBonder.going_delta_time().
+
+    @Decorators.debug_log_trace_enter_leave
+    def parts_delta_time(self, event):
+        self.update_handler.parts_delta_time(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def final_delta_time_apply(self, event):
+        self.update_handler.final_delta_time_apply(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def final_delta_time_minutes(self, event):
+        self.update_handler.final_delta_time_minutes(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def final_delta_time_hours(self, event):
+        self.update_handler.final_delta_time_hours(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def panic_delta_time(self, event):
+        self.update_handler.panic_delta_time(event)
+
+

@@ -264,3 +264,20 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'final_commando')
         return key_bonds
 
+    # ***
+
+    def begin_delta_time(self, action_map):
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'begin_delta_time_start')
+        key_bonds += self._key_bonds(action_map, 'begin_delta_time_end')
+        return key_bonds
+
+    def going_delta_time(self, action_map):
+        key_bonds = []
+        key_bonds += [KeyBond(Keys.Any, action=action_map.parts_delta_time)]
+        key_bonds += self._key_bonds(action_map, 'final_delta_time_apply')
+        key_bonds += self._key_bonds(action_map, 'final_delta_time_minutes')
+        key_bonds += self._key_bonds(action_map, 'final_delta_time_hours')
+        key_bonds += self._key_bonds(action_map, 'panic_delta_time')
+        return key_bonds
+

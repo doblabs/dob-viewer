@@ -42,7 +42,7 @@ class StartEndEdit(object):
 
     # ***
 
-    def edit_time_adjust(self, delta_time, *attrs):
+    def edit_time_adjust(self, delta_mins_or_time, *attrs):
         def _edit_time_adjust():
             edit_fact = self.editable_fact()
             edit_prev = self.time_adjust_editable_prev(edit_fact, *attrs)
@@ -50,17 +50,31 @@ class StartEndEdit(object):
 
             debug_log_facts('edit-time-begin', edit_fact, edit_prev, edit_next)
 
-            edit_what = 'adjust-time-{}'.format(
-                delta_time.total_seconds() >= 0 and 'pos' or 'neg',
-            )
+            try:
+                context = delta_mins_or_time.total_seconds() >= 0 and 'pos' or 'neg'
+            except AttributeError:
+                context = attrs[0]
+            edit_what = 'adjust-time-{}'.format(context)
             # Get an UndoRedoTuple from a copy of the Facts we're about to edit.
             # And set UndoRedoTuple.altered to the new copies.
             newest_changes = self.redo_undo.undoable_changes(
                 edit_what, edit_fact, edit_prev, edit_next,
             )
 
-            self.edit_time_adjust_time(edit_fact, edit_prev, delta_time, 'start', *attrs)
-            self.edit_time_adjust_time(edit_fact, edit_next, delta_time, 'end', *attrs)
+            if isinstance(delta_mins_or_time, timedelta):
+                self.edit_time_adjust_time(
+                    edit_fact, edit_prev, delta_mins_or_time, 'start', *attrs,
+                )
+                self.edit_time_adjust_time(
+                    edit_fact, edit_next, delta_mins_or_time, 'end', *attrs,
+                )
+            else:  # datetime
+                # Only one neighbor is not None, so don't try too hard.
+                neighbor = edit_prev or edit_next
+                start_or_end = attrs[0]
+                self.edit_time_apply_time(
+                    edit_fact, delta_mins_or_time, neighbor, start_or_end,
+                )
 
             if edit_prev and edit_prev.end > edit_fact.start:
                 edit_prev.end = edit_fact.start
@@ -165,15 +179,23 @@ class StartEndEdit(object):
         else:
             self.controller.affirm(start_or_end == 'end')
             if new_time < edit_fact.start:
+                # We apply minimum Fact width (fact_min_delta) next.
                 new_time = edit_fact.start
-
-        incrementing = delta_time.total_seconds() > 0
-        new_time = self.edit_time_check_edge(
-            new_time, neighbor, start_or_end, incrementing,
+        self.edit_time_apply_time(
+            edit_fact, new_time, neighbor, start_or_end,
         )
+
+    # ***
+
+    def edit_time_apply_time(
+        self, edit_fact, new_time, neighbor, start_or_end,
+    ):
+        new_time = self.edit_time_check_edge(new_time, neighbor, start_or_end)
         setattr(edit_fact, start_or_end, new_time)
 
-    def edit_time_check_edge(self, new_time, neighbor, start_or_end, incrementing):
+    # ***
+
+    def edit_time_check_edge(self, new_time, neighbor, start_or_end):
         if neighbor is None:
             return new_time
 
@@ -194,7 +216,6 @@ class StartEndEdit(object):
                 end_boundary = neighbor.end
 
             if new_time < end_boundary:
-                self.controller.affirm(not incrementing)
                 new_time = end_boundary
             neighbor.end = new_time
         else:
@@ -204,7 +225,6 @@ class StartEndEdit(object):
                 if start_boundary < neighbor.start:
                     start_boundary = neighbor.start
                 if new_time > start_boundary:
-                    self.controller.affirm(incrementing)
                     new_time = start_boundary
             neighbor.start = new_time
         return new_time
