@@ -473,8 +473,8 @@ class EditsManager(object):
 
     # ***
 
-    def edit_time_adjust(self, delta_time, *attrs):
-        self.time_edit.edit_time_adjust(delta_time, *attrs)
+    def edit_time_adjust(self, *args, **kwargs):
+        self.time_edit.edit_time_adjust(*args, **kwargs)
 
     # ***
 

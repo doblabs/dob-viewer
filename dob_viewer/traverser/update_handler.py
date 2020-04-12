@@ -271,9 +271,9 @@ class UpdateHandler(object):
     def edit_time_increment_both(self, event):
         self.edit_time_adjust(1, 'start', 'end')
 
-    def edit_time_adjust(self, delta_mins, *attrs):
+    def edit_time_adjust(self, delta_mins, start_or_end, end_maybe=None):
         delta_time = self.edit_time_multiplier(delta_mins)
-        self.edits_manager.edit_time_adjust(delta_time, *attrs)
+        self.edits_manager.edit_time_adjust(delta_time, start_or_end, end_maybe)
         self.edit_time_reset_refresh()
 
     def edit_time_reset_refresh(self):
@@ -431,6 +431,7 @@ class UpdateHandler(object):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
         self.typed_delta_time = ''
+        self.delta_time_gap_okay = False
         self.delta_time_target = 'end'
 
     @catch_action_exception
@@ -438,6 +439,7 @@ class UpdateHandler(object):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
         self.typed_delta_time = ''
+        self.delta_time_gap_okay = False
         self.delta_time_target = 'start'
 
     RE_NUMERIC = re.compile('^[0-9]$')
@@ -445,11 +447,16 @@ class UpdateHandler(object):
     @catch_action_exception
     def parts_delta_time(self, event):
         """"""
+        # If user pressed allow-gap key already (e.g., '!'), do not allow
+        # more time to be entered; be strict and reset instead.
+        if self.delta_time_gap_okay:
+            # Because gap_okay only set true on '!', means input error.
+            self.reset_delta_time()
         # We could allow any character and then parse at error, potentially
         # showing an error message. Or, if user types non-number now, we
         # could just go back to old state. -- It's not completely silent,
         # as the cursor will reappear.
-        if event.data == '.':
+        elif event.data == '.':
             if '.' in self.typed_delta_time:
                 # So strict!
                 self.reset_delta_time()
@@ -459,6 +466,11 @@ class UpdateHandler(object):
             self.typed_delta_time += event.data
         else:
             self.reset_delta_time()
+
+    @catch_action_exception
+    def allow_delta_time_gap(self, event):
+        """"""
+        self.delta_time_gap_okay = True
 
     @catch_action_exception
     def final_delta_time_apply(self, event):
@@ -490,7 +502,11 @@ class UpdateHandler(object):
             end_time = edit_fact.end or self.carousel.controller.now
             apply_time = end_time - delta_mins
 
-        self.edits_manager.edit_time_adjust(apply_time, self.delta_time_target)
+        self.edits_manager.edit_time_adjust(
+            apply_time,
+            self.delta_time_target,
+            gap_okay=self.delta_time_gap_okay,
+        )
         self.edit_time_reset_refresh()
         self.reset_delta_time()
 
@@ -501,6 +517,7 @@ class UpdateHandler(object):
 
     def reset_delta_time(self):
         del self.typed_delta_time
+        del self.delta_time_gap_okay
         del self.delta_time_target
         self.carousel.action_manager.unwire_keys_delta_time()
 

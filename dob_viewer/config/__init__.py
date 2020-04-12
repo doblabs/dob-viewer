@@ -573,6 +573,15 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("XXX"),
     )
+    def allow_delta_time_gap(self):
+        return '!'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
     def final_delta_time_apply(self):
         return 'enter'
 

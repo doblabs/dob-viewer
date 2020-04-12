@@ -275,6 +275,7 @@ class KeyBonder(object):
     def going_delta_time(self, action_map):
         key_bonds = []
         key_bonds += [KeyBond(Keys.Any, action=action_map.parts_delta_time)]
+        key_bonds += self._key_bonds(action_map, 'allow_delta_time_gap')
         key_bonds += self._key_bonds(action_map, 'final_delta_time_apply')
         key_bonds += self._key_bonds(action_map, 'final_delta_time_minutes')
         key_bonds += self._key_bonds(action_map, 'final_delta_time_hours')
