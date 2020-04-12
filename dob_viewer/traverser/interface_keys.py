@@ -251,11 +251,11 @@ class KeyBonder(object):
 
     # ***
 
-    def start_commando(self, action_map):
+    def begin_commando(self, action_map):
         # The Colon Commando! Because (by default) type ':' then command + 'ENTER'.
         # I.e., a Vim-like command mode.
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'start_commando')
+        key_bonds += self._key_bonds(action_map, 'begin_commando')
         return key_bonds
 
     def going_commando(self, action_map):

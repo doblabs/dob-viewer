@@ -108,7 +108,7 @@ class ActionManager(object):
         bindings = []
         bindings += self.key_bonder.save_and_quit(self.key_action_map)
         bindings += self.key_bonder.widget_focus(self.key_action_map)
-        bindings += self.key_bonder.start_commando(self.key_action_map)
+        bindings += self.key_bonder.begin_commando(self.key_action_map)
 
         self.key_bindings_shared = bindings
 

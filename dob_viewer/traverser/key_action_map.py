@@ -276,11 +276,13 @@ class KeyActionMap(object):
     def redo_command(self, event):
         self.update_handler.redo_command(event)
 
-    # #### Key bindings wired by KeyBonder.vim_like_commands().
+    # #### Key bindings wired by KeyBonder.begin_commando().
 
     @Decorators.debug_log_trace_enter_leave
-    def start_commando(self, event):
-        self.update_handler.start_commando(event)
+    def begin_commando(self, event):
+        self.update_handler.begin_commando(event)
+
+    # #### Key bindings wired by KeyBonder.going_commando().
 
     @Decorators.debug_log_trace_enter_leave
     def parts_commando(self, event):

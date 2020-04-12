@@ -505,7 +505,7 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("XXX"),
     )
-    def start_commando(self):
+    def begin_commando(self):
         return ':'
 
     # ***

@@ -372,7 +372,7 @@ class UpdateHandler(object):
         return ''.join(seq.key for seq in event.key_sequence)
 
     @catch_action_exception
-    def start_commando(self, event):
+    def begin_commando(self, event):
         """"""
         self.began_commando = self._key_sequence_str(event)
         self.typed_commando = ''
