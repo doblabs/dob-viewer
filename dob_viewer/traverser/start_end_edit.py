@@ -52,6 +52,16 @@ class StartEndEdit(object):
     ):
         def _edit_time_adjust():
             edit_fact = self.editable_fact()
+            edit_prev, edit_next = _edit_neighbors(edit_fact)
+            newest_changes = _undoable_changes(edit_fact, edit_prev, edit_next)
+            adjust_time(edit_fact, edit_prev, edit_next)
+            adjust_time_fix_overlaps(edit_fact, edit_prev, edit_next)
+            debug_log_facts('edit-time-final', edit_fact, edit_prev, edit_next)
+            post_process_edited(newest_changes)
+
+        # ***
+
+        def _edit_neighbors(edit_fact):
             edit_prev = self.time_adjust_editable_prev(
                 edit_fact, start_or_end, end_maybe,
             )
@@ -59,7 +69,11 @@ class StartEndEdit(object):
                 edit_fact, start_or_end, end_maybe,
             )
             debug_log_facts('edit-time-begin', edit_fact, edit_prev, edit_next)
+            return edit_prev, edit_next
 
+        # ***
+
+        def _undoable_changes(edit_fact, edit_prev, edit_next):
             try:
                 context = delta_mins_or_time.total_seconds() >= 0 and 'pos' or 'neg'
             except AttributeError:
@@ -70,40 +84,54 @@ class StartEndEdit(object):
             newest_changes = self.redo_undo.undoable_changes(
                 edit_what, edit_fact, edit_prev, edit_next,
             )
+            return newest_changes
 
+        # ***
+
+        def adjust_time(edit_fact, edit_prev, edit_next):
             if isinstance(delta_mins_or_time, timedelta):
-                self.edit_time_adjust_time(
-                    edit_fact,
-                    edit_prev,
-                    delta_mins_or_time,
-                    'start',
-                    gap_okay,
-                    start_or_end,
-                    end_maybe,
-                )
-                self.edit_time_adjust_time(
-                    edit_fact,
-                    edit_next,
-                    delta_mins_or_time,
-                    'end',
-                    gap_okay,
-                    start_or_end,
-                    end_maybe,
-                )
-            else:  # datetime
-                # Only one neighbor is not None, so don't try too hard.
-                neighbor = edit_prev or edit_next
-                self.edit_time_apply_time(
-                    edit_fact, delta_mins_or_time, neighbor, start_or_end, gap_okay,
-                )
+                adjust_time_by_delta(edit_fact, edit_prev, edit_next)
+            else:
+                adjust_time_set_time(edit_fact, edit_prev, edit_next)
 
+        def adjust_time_by_delta(edit_fact, edit_prev, edit_next):
+            adjust_time_by_delta_apply(edit_fact, edit_prev, 'start')
+            adjust_time_by_delta_apply(edit_fact, edit_next, 'end')
+
+        def adjust_time_by_delta_apply(edit_fact, prev_or_next, apply_start_or_end):
+            # delta_mins_or_time is datetime.timedelta.
+            self.edit_time_adjust_time(
+                edit_fact,
+                prev_or_next,
+                delta_mins_or_time,
+                apply_start_or_end,
+                gap_okay,
+                start_or_end,
+                end_maybe,
+            )
+
+        def adjust_time_set_time(edit_fact, edit_prev, edit_next):
+            # delta_mins_or_time is datetime.datetime.
+            # Only one neighbor is not None, so don't try too hard.
+            neighbor = edit_prev or edit_next
+            self.edit_time_apply_time(
+                edit_fact, delta_mins_or_time, neighbor, start_or_end, gap_okay,
+            )
+
+        def adjust_time_fix_overlaps(edit_fact, edit_prev, edit_next):
+            # 2020-04-12: (lb): I haven't been in this code in a while, but
+            # seems fishy we're setting neighbor's time here and not in
+            # edit_time_apply_time.
             if edit_prev and edit_prev.end > edit_fact.start:
+                self.controller.affirm(False)  # FIXME/2020-04-12: Use case?
                 edit_prev.end = edit_fact.start
             if edit_next and edit_next.start < edit_fact.end:
+                self.controller.affirm(False)  # FIXME/2020-04-12: Use case?
                 edit_next.start = edit_fact.end
 
-            debug_log_facts('edit-time-final', edit_fact, edit_prev, edit_next)
+        # ***
 
+        def post_process_edited(newest_changes):
             # (lb): Ug, more coupling. Because we are managing the redo-undo stack
             # specially here (possibly removing the latest undo, and squishing it
             # with the new edits), we do not want to call edits_manager.apply_edits,
@@ -157,6 +185,8 @@ class StartEndEdit(object):
                 newest_changes.pristine,
             )
 
+        # ***
+
         def debug_log_facts(prefix, edit_fact, edit_prev, edit_next):
             self.controller.client_logger.debug(
                 '{}\n- edit: {}\n- prev: {}\n- next: {}'.format(
@@ -167,7 +197,9 @@ class StartEndEdit(object):
                 ),
             )
 
-        return _edit_time_adjust()
+        # ***
+
+        _edit_time_adjust()
 
     # ***
 
