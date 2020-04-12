@@ -17,6 +17,8 @@
 
 """Fact Editing Start and End Time Adjuster"""
 
+from datetime import timedelta
+
 from .redo_undo_edit import UndoRedoTuple
 
 __all__ = (
@@ -174,18 +176,36 @@ class StartEndEdit(object):
     def edit_time_check_edge(self, new_time, neighbor, start_or_end, incrementing):
         if neighbor is None:
             return new_time
+
+        # FIXME/2020-04-12: (lb): Split fact_min_delta in two? There's the
+        # "this is minimum width to save Fact", which I (personally) want
+        # 0 (or at least < 1 second). But then there's also this version,
+        # "do not automatically squash an out-of-view neighbor Fact to 0!"
+        # Let's at least ensure a 1 second minimum squash neighbor width.
+        fact_min_delta = 0
+        if 'interval-gap' not in neighbor.dirty_reasons:
+            fact_min_delta = int(self.controller.config['time.fact_min_delta'])
+            fact_min_delta = max(fact_min_delta, 1)
+        min_delta = timedelta(minutes=fact_min_delta)
+
         if start_or_end == 'start':
-            if new_time < neighbor.start:
+            end_boundary = neighbor.start + min_delta
+            if neighbor.end and end_boundary > neighbor.end:
+                end_boundary = neighbor.end
+
+            if new_time < end_boundary:
                 self.controller.affirm(not incrementing)
-                new_time = neighbor.start
+                new_time = end_boundary
             neighbor.end = new_time
         else:
             self.controller.affirm(start_or_end == 'end')
-            if neighbor.end and new_time > neighbor.end:
-                self.controller.affirm(incrementing)
-                new_time = neighbor.end
-                self.controller.affirm(neighbor.start == neighbor.end)
-            else:
-                neighbor.start = new_time
+            if neighbor.end:
+                start_boundary = neighbor.end - min_delta
+                if start_boundary < neighbor.start:
+                    start_boundary = neighbor.start
+                if new_time > start_boundary:
+                    self.controller.affirm(incrementing)
+                    new_time = start_boundary
+            neighbor.start = new_time
         return new_time
 
