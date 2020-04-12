@@ -609,7 +609,7 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("XXX"),
     )
-    def allow_delta_time_gap(self):
+    def allow_time_gap(self):
         return '!'
 
     # ***

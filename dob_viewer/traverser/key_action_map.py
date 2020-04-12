@@ -339,8 +339,8 @@ class KeyActionMap(object):
         self.update_handler.parts_delta_time(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def allow_delta_time_gap(self, event):
-        self.update_handler.allow_delta_time_gap(event)
+    def allow_time_gap(self, event):
+        self.update_handler.allow_time_gap(event)
 
     @Decorators.debug_log_trace_enter_leave
     def final_delta_time_apply(self, event):

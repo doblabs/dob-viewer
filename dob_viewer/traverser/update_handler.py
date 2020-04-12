@@ -484,7 +484,7 @@ class UpdateHandler(object):
             self.reset_delta_time()
 
     @catch_action_exception
-    def allow_delta_time_gap(self, event):
+    def allow_time_gap(self, event):
         """"""
         self.delta_time_gap_okay = True
 
