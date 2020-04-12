@@ -29,6 +29,7 @@ __all__ = (
 class StartEndEdit(object):
     """"""
     def __init__(self, edits_manager):
+        self.edits_manager = edits_manager
         self.controller = edits_manager.controller
         # MAYBE/2019-01-31: (lb): This class is tightly coupled.
         #  We might as well concede defeat and make this class a
@@ -123,6 +124,9 @@ class StartEndEdit(object):
                 (newest_changes is last_undo_or_newest_changes)
                 or (newest_changes.pristine == last_undo_or_newest_changes.altered)
             )
+
+            # Mark things dirty (or not).
+            self.edits_manager.manage_edited_dirty_flags(newest_changes.altered)
 
             # Create the freshest undo. It might be squished with an earlier
             # undo created by the user within DISTINCT_CHANGES_THRESHOLD ago,

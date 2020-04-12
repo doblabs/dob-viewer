@@ -300,6 +300,16 @@ class EditsManager(object):
         if last_edits is None:
             return False
 
+        self.manage_edited_dirty_flags(edit_facts)
+
+        self.conjoined.apply_edits(edit_facts, last_edits)
+
+        # Update undo with edited Facts.
+        self.redo_undo.update_undo_altered(edit_facts)
+
+        return True
+
+    def manage_edited_dirty_flags(self, edit_facts):
         for idx, edit_fact in enumerate(edit_facts):
             # Only unmark interval-gap if this is the first fact in edit_facts,
             # which indicates user deliberately edited gap-fact; as opposed
@@ -308,13 +318,6 @@ class EditsManager(object):
             is_oldest_fact = idx == 0
             self.manage_edited_dirty_deleted(edit_fact, undelete=is_oldest_fact)
             self.manage_edited_edit_facts(edit_fact)
-
-        self.conjoined.apply_edits(edit_facts, last_edits)
-
-        # Update undo with edited Facts.
-        self.redo_undo.update_undo_altered(edit_facts)
-
-        return True
 
     def manage_edited_dirty_deleted(self, edit_fact, undelete=False):
         edit_fact.dirty_reasons.add('unsaved-fact')
