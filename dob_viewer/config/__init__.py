@@ -89,7 +89,11 @@ class DobViewerConfigurableDev(object):
         _("Save Changes and Exit"),
     )
     def save_edited_and_exit(self):
-        return 'c-w'
+        # (lb): I had this mapped to Ctrl-W, but that feels like it should
+        # just close the application... which would be a simple exit.
+        # - We can return empty string here and let user set if they want.
+        #  return 'c-w'
+        return ''
 
     # ***
 
