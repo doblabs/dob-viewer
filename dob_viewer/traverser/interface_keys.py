@@ -193,8 +193,6 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'scroll_top')
         key_bonds += self._key_bonds(action_map, 'scroll_bottom')
 
-        key_bonds += self._key_bonds(action_map, 'ignore_key_press_noop')
-
         # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
         #   KeyBond('/', action=zone_lowdown.start_search),
         # FIXME/BACKLOG: Filter feature.

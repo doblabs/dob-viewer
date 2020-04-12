@@ -116,7 +116,7 @@ class DobViewerConfigurableDev(object):
         #         Ctrl-Q in the app., if becomes unresponsive.
         #         2020-04-11: I have not investigated, just noting it now
         #         that we're opening up keybindings for user to screw up! =)
-        return json.dumps([('c-q',), ('escape',)])
+        return 'c-q'
 
     # *** interface_keys.Key_Bonder.edit_time()
 
@@ -260,27 +260,6 @@ class DobViewerConfigurableDev(object):
     )
     def cursor_down_one(self):
         return 'l'
-
-    # ***
-
-    @property
-    @ConfigRoot.setting(
-        _("XXX"),
-    )
-    def ignore_key_press_noop(self):
-        return json.dumps([
-            # NOTE: If you want to see how key presses map to KeyPresses, try:
-            #         $ cd path/to/python-prompt-toolkit/tools
-            #         $ python3 debug_vt100_input.py
-            #         # PRESS ANY KEY
-            # Catch Alt-Up, etc., explicitly -- though we don't do anything with it --
-            # so that the 'escape'-looking prefix does not trigger bare 'escape' handler.
-            # ((lb): There might be a different way to do this... not sure.)
-            ('escape', '[', '1', ';', '4', 'A'),  # Alt-UP
-            ('escape', '[', '1', ';', '4', 'B'),  # Alt-DOWN
-            ('escape', '[', '1', ';', '4', 'C'),  # Alt-RIGHT [bunch of snowflakes]
-            ('escape', '[', '1', ';', '4', 'D'),  # Alt-LEFT
-        ])
 
     # ***
 

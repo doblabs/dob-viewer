@@ -19,8 +19,6 @@
 
 from functools import update_wrapper
 
-from .zone_content import ZoneContent
-
 __all__ = (
     'KeyActionMap',
 )
@@ -141,13 +139,6 @@ class KeyActionMap(object):
         if was_helping:
             return
         self.carousel.cancel_softly(event)
-
-    # ***
-
-    @Decorators.debug_log_trace_enter_leave
-    @ZoneContent.Decorators.reset_showing_help
-    def ignore_key_press_noop(self, event):
-        pass
 
     # #### Key bindings wired by KeyBonder.normal().
 
