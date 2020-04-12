@@ -340,7 +340,7 @@ class DobViewerConfigurableDev(object):
     def edit_tags(self):
         return 't'
 
-    # *** interface_keys.Key_Bonder.nudge_time_with_arrows()
+    # *** interface_keys.Key_Bonder.nudge_time()
 
     @property
     @ConfigRoot.setting(

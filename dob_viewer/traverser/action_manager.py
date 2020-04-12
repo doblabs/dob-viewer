@@ -75,7 +75,7 @@ class ActionManager(object):
         bindings = []
         bindings += self.key_bonder.normal(self.key_action_map)
         bindings += self.key_bonder.edit_fact(self.key_action_map)
-        bindings += self.key_bonder.nudge_time_with_arrows(self.key_action_map)
+        bindings += self.key_bonder.nudge_time(self.key_action_map)
         bindings += self.key_bonder.create_delete_fact(self.key_action_map)
         bindings += self.key_bonder.clipboard(self.key_action_map)
         bindings += self.key_bonder.undo_redo(self.key_action_map)

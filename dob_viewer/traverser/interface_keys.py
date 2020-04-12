@@ -216,7 +216,7 @@ class KeyBonder(object):
 
     # ***
 
-    def nudge_time_with_arrows(self, action_map):
+    def nudge_time(self, action_map):
         key_bonds = []
         key_bonds += self._key_bonds(action_map, 'edit_time_decrement_start')
         key_bonds += self._key_bonds(action_map, 'edit_time_increment_start')

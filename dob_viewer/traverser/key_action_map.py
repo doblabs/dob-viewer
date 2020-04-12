@@ -196,7 +196,7 @@ class KeyActionMap(object):
     def edit_tags(self, event):
         self.update_handler.edit_tags(event)
 
-    # #### Key bindings wired by KeyBonder.nudge_time_with_arrows().
+    # #### Key bindings wired by KeyBonder.nudge_time().
 
     @Decorators.debug_log_trace_enter_leave
     def edit_time_decrement_start(self, event):
