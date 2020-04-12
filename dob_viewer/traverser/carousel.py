@@ -285,7 +285,10 @@ class Carousel(object):
             # No Facts edited.
             return True
         question = _('\nReally exit without saving?')
-        confirmed = confirm(question, erase_when_done=True)
+        try:
+            confirmed = confirm(question, erase_when_done=True)
+        except KeyboardInterrupt:
+            confirmed = True  # Eh?
         return confirmed
 
     def process_save_early(self):
