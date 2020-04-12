@@ -160,11 +160,14 @@ class KeyBonder(object):
 
     # ***
 
-    def undo_redo(self, action_map_or_zone_details):
-        handler = action_map_or_zone_details
+    def undo_redo(self, action_map, context):
         key_bonds = []
-        key_bonds += self._key_bonds(handler, 'undo_command')
-        key_bonds += self._key_bonds(handler, 'redo_command')
+        key_bonds += self._key_bonds(
+            action_map, 'undo_command_{}'.format(context), 'undo_command',
+        )
+        key_bonds += self._key_bonds(
+            action_map, 'redo_command_{}'.format(context), 'redo_command',
+        )
         return key_bonds
 
     # ***

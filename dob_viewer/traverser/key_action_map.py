@@ -114,12 +114,20 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.undo_redo().
 
     @Decorators.debug_log_trace_enter_leave
-    def undo_command(self, event):
+    def undo_command_content(self, event):
         self.update_handler.undo_command(event)
 
     @Decorators.debug_log_trace_enter_leave
-    def redo_command(self, event):
+    def redo_command_content(self, event):
         self.update_handler.redo_command(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def undo_command_edit_time(self, event):
+        self.zone_details.undo_command(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def redo_command_edit_time(self, event):
+        self.zone_details.redo_command(event)
 
     # #### Key bindings wired by KeyBonder.normal().
 
