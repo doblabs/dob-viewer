@@ -58,16 +58,7 @@ class ActionManager(object):
         application.key_processor = KeyProcessor(_CombinedRegistry(application))
         return previous_bindings
 
-    def wire_keys_normal(self):
-        self._wire_keys(self.key_bindings_normal)
-
-    def wire_keys_edit_time(self):
-        self._wire_keys(self.key_bindings_edit_time)
-
-    def wire_keys_modal(self):
-        self._wire_keys(self.key_bindings_modal)
-
-    def wire_keys_commando(self):
+    def wire_keys_command_mode(self, key_bindings):
         # Set focus to something without an input control. Otherwise, if we leave
         # focus on time widget, the _CombinedRegistry will add keybindings for it!
         self.previous_control = self.carousel.zone_manager.layout.current_control
@@ -80,9 +71,9 @@ class ActionManager(object):
         self.previous_hide_cursor = current_window.always_hide_cursor
         current_window.always_hide_cursor = lambda: True
         # Finally, wire the commando key bindings and handlers.
-        self.previous_bindings = self._wire_keys(self.key_bindings_commando)
+        self.previous_bindings = self._wire_keys(key_bindings)
 
-    def unwire_keys_commando(self):
+    def unwire_keys_command_mode(self):
         # Enable content window to show cursor next time it's focused.
         current_window = self.carousel.zone_manager.layout.current_window
         current_window.always_hide_cursor = self.previous_hide_cursor
@@ -93,6 +84,23 @@ class ActionManager(object):
         # Re-wire keys wired before commando mode.
         self._wire_keys(self.previous_bindings)
         self.previous_bindings = None
+
+    # ***
+
+    def wire_keys_normal(self):
+        self._wire_keys(self.key_bindings_normal)
+
+    def wire_keys_edit_time(self):
+        self._wire_keys(self.key_bindings_edit_time)
+
+    def wire_keys_modal(self):
+        self._wire_keys(self.key_bindings_modal)
+
+    def wire_keys_commando(self):
+        self.wire_keys_command_mode(self.key_bindings_commando)
+
+    def unwire_keys_commando(self):
+        self.unwire_keys_command_mode()
 
     # ***
 
