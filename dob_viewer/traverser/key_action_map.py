@@ -99,6 +99,18 @@ class KeyActionMap(object):
 
     # #### Key bindings wired by KeyBonder.edit_time().
 
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_enter(self, event):
+        self.zone_details.edit_time_enter(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def toggle_focus_description(self, event):
+        self.zone_details.toggle_focus_description(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_any_key(self, event):
+        self.zone_details.edit_time_any_key(event)
+
     # #### Key bindings wired by KeyBonder.undo_redo().
 
     @Decorators.debug_log_trace_enter_leave

@@ -142,8 +142,8 @@ class ActionManager(object):
 
     def setup_key_bindings_edit_time(self):
         bindings = []
-        bindings += self.key_bonder.edit_time(self.carousel.zone_manager.zone_details)
-        bindings += self.key_bonder.undo_redo(self.carousel.zone_manager.zone_details)
+        bindings += self.key_bonder.edit_time(self.key_action_map)
+        bindings += self.key_bonder.undo_redo(self.key_action_map)
         bindings += self.key_bindings_shared
 
         self.key_bindings_edit_time = self.key_bonder.make_bindings(bindings)
