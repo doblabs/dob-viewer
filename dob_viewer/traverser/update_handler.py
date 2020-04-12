@@ -76,50 +76,52 @@ class UpdateHandler(object):
 
     # ***
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_split(self, event):
-        """"""
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
+    if False:  # FIXME/2020-04-11: Implement or get off the pot!
 
-        self.zone_manager.rebuild_viewable()
-        pass  # FIXME: Implement
-        # FIXME/2019-01-15 13:51: For undo/redo, you'll need to leave
-        # copy of new split Fact with copies of original Fact's
-        # prev and next fact pointers, so that wires do not get crossed.
+        @catch_action_exception
+        @ZoneContent.Decorators.reset_showing_help
+        def fact_split(self, event):
+            """"""
+            self.carousel.controller.affirm(False)  # FIXME: Implement.
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_erase(self, event):
-        """"""
-        # FIXME: Implement with undo, or provide other way to recover.
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
-        self.zone_manager.rebuild_viewable()
-        pass  # FIXME: Implement
+            self.zone_manager.rebuild_viewable()
+            pass  # FIXME: Implement
+            # FIXME/2019-01-15 13:51: For undo/redo, you'll need to leave
+            # copy of new split Fact with copies of original Fact's
+            # prev and next fact pointers, so that wires do not get crossed.
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_cut(self, event):
-        """"""
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
-        self.zone_manager.rebuild_viewable()
-        pass  # FIXME: Implement
+        @catch_action_exception
+        @ZoneContent.Decorators.reset_showing_help
+        def fact_erase(self, event):
+            """"""
+            # FIXME: Implement with undo, or provide other way to recover.
+            self.carousel.controller.affirm(False)  # FIXME: Implement.
+            self.zone_manager.rebuild_viewable()
+            pass  # FIXME: Implement
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_merge_prev(self, event):
-        """"""
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
-        self.zone_manager.rebuild_viewable()
-        pass  # FIXME: Implement
+        @catch_action_exception
+        @ZoneContent.Decorators.reset_showing_help
+        def fact_cut(self, event):
+            """"""
+            self.carousel.controller.affirm(False)  # FIXME: Implement.
+            self.zone_manager.rebuild_viewable()
+            pass  # FIXME: Implement
 
-    @catch_action_exception
-    @ZoneContent.Decorators.reset_showing_help
-    def fact_merge_next(self, event):
-        """"""
-        self.carousel.controller.affirm(False)  # FIXME: Implement.
-        self.zone_manager.rebuild_viewable()
-        pass  # FIXME: Implement
+        @catch_action_exception
+        @ZoneContent.Decorators.reset_showing_help
+        def fact_merge_prev(self, event):
+            """"""
+            self.carousel.controller.affirm(False)  # FIXME: Implement.
+            self.zone_manager.rebuild_viewable()
+            pass  # FIXME: Implement
+
+        @catch_action_exception
+        @ZoneContent.Decorators.reset_showing_help
+        def fact_merge_next(self, event):
+            """"""
+            self.carousel.controller.affirm(False)  # FIXME: Implement.
+            self.zone_manager.rebuild_viewable()
+            pass  # FIXME: Implement
 
     # ***
 
