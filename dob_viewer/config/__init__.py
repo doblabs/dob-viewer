@@ -499,3 +499,53 @@ class DobViewerConfigurableDev(object):
     def fact_copy_description(self):
         return json.dumps([('D', 'c-c')])
 
+    # *** interface_keys.Key_Bonder.vim_like_command*()
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def start_commando(self):
+        return ':'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def final_commando(self):
+        return 'enter'
+
+    # *** The ':' command strings.
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    # Should this be 'save_commando' for consistency with Ctrl-S command,
+    # or should this be named with 'write' because 'w' and Vim suggest that?
+    def write_commando(self):
+        # As in, `:w`.
+        return 'w'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def quit_commando(self):
+        # As in, `:q`.
+        return 'q'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def save_quit_commando(self):
+        # As in, `:wq`.
+        return 'wq'
+

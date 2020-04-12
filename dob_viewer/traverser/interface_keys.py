@@ -229,7 +229,7 @@ class KeyBonder(object):
     # ***
 
     def create_delete_fact(self, action_map):
-        return []  # FIXME/2020-04-11: Implement or get of the pot!
+        return []  # FIXME/2020-04-11: Implement or get off the pot!
         key_bonds = []
         key_bonds += self._key_bonds(action_map, 'fact_split')
         key_bonds += self._key_bonds(action_map, 'fact_erase')
@@ -247,5 +247,20 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'fact_copy_activity')
         key_bonds += self._key_bonds(action_map, 'fact_copy_tags')
         key_bonds += self._key_bonds(action_map, 'fact_copy_description')
+        return key_bonds
+
+    # ***
+
+    def start_commando(self, action_map):
+        # The Colon Commando! Because (by default) type ':' then command + 'ENTER'.
+        # I.e., a Vim-like command mode.
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'start_commando')
+        return key_bonds
+
+    def going_commando(self, action_map):
+        key_bonds = []
+        key_bonds += [KeyBond(Keys.Any, action=action_map.parts_commando)]
+        key_bonds += self._key_bonds(action_map, 'final_commando')
         return key_bonds
 

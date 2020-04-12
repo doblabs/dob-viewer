@@ -365,3 +365,58 @@ class UpdateHandler(object):
 
     # ***
 
+    def _key_sequence_str(self, event):
+        # For normal characters, we could grab event.data, but for combos,
+        # use key_sequence for readability. E.g., if combo is ('X', 'c-c'),
+        # event.data == '\x03', but joining key_sequences gives 'Xc-c'.
+        return ''.join(seq.key for seq in event.key_sequence)
+
+    @catch_action_exception
+    def start_commando(self, event):
+        """"""
+        self.began_commando = self._key_sequence_str(event)
+        self.typed_commando = ''
+        self.zone_manager.zone_lowdown.update_status(
+            self.began_commando,
+            clear_after_secs=0,
+        )
+        self.carousel.action_manager.wire_keys_commando()
+
+    @catch_action_exception
+    def parts_commando(self, event):
+        """"""
+        self.typed_commando += self._key_sequence_str(event)
+        self.zone_manager.zone_lowdown.update_status(
+            self.began_commando + self.typed_commando,
+            clear_after_secs=0,
+        )
+
+    @catch_action_exception
+    def final_commando(self, event):
+        """"""
+        hot_notif = self.colon_commando(event, self.typed_commando)
+        self.began_commando = None
+        self.typed_commando = None
+        if hot_notif:
+            self.zone_manager.zone_lowdown.update_status(hot_notif)
+        else:
+            self.zone_manager.zone_lowdown.reset_status()
+        self.carousel.action_manager.unwire_keys_commando()
+
+    def colon_commando(self, event, typed_commando):
+        if not typed_commando:
+            return
+        keys_config = self.carousel.controller.config['editor-keys']
+        if typed_commando == keys_config['write_commando']:
+            # E.g., `:w`.
+            self.carousel.save_edited_and_live(event)
+        elif typed_commando == keys_config['quit_commando']:
+            # E.g., `:q`.
+            self.carousel.cancel_command(event)
+        elif typed_commando == keys_config['save_quit_commando']:
+            self.carousel.save_edited_and_exit(event)
+        else:
+            # (lb): Copying Vim's message for now. Verbatim. Don't judge.
+            msg = 'E492: Not an editor command: {}'.format(typed_commando)
+            return msg
+
