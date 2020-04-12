@@ -223,6 +223,10 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'edit_time_increment_end')
         key_bonds += self._key_bonds(action_map, 'edit_time_decrement_both')
         key_bonds += self._key_bonds(action_map, 'edit_time_increment_both')
+        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_start_5min')
+        key_bonds += self._key_bonds(action_map, 'edit_time_increment_start_5min')
+        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_end_5min')
+        key_bonds += self._key_bonds(action_map, 'edit_time_increment_end_5min')
         return key_bonds
 
     # ***

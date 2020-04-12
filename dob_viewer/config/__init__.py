@@ -351,7 +351,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def edit_time_decrement_start(self):
-        return 's-left'
+        return json.dumps([('s-left',), (',',)])
 
     # ***
 
@@ -360,7 +360,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def edit_time_increment_start(self):
-        return 's-right'
+        return json.dumps([('s-right',), ('.',)])
 
     # ***
 
@@ -369,7 +369,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def edit_time_decrement_end(self):
-        return 'c-left'
+        return json.dumps([('c-left',), ('[',)])
 
     # ***
 
@@ -378,7 +378,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def edit_time_increment_end(self):
-        return 'c-right'
+        return json.dumps([('c-right',), (']',)])
 
     # ***
 
@@ -405,6 +405,42 @@ class DobViewerConfigurableDev(object):
         # possibly has a mapping already that shadows this. (They can disable
         # their terminal mappings, though, for it to pass through.)
         return 's-c-right'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def edit_time_decrement_start_5min(self):
+        return '<'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def edit_time_increment_start_5min(self):
+        return '>'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def edit_time_decrement_end_5min(self):
+        return '{'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def edit_time_increment_end_5min(self):
+        return '}'
 
     # *** interface_keys.Key_Bonder.create_delete_fact()
 

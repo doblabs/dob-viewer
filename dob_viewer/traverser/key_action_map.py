@@ -238,6 +238,22 @@ class KeyActionMap(object):
     def edit_time_increment_both(self, event):
         self.update_handler.edit_time_increment_both(event)
 
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_decrement_start_5min(self, event):
+        self.update_handler.edit_time_decrement_start_5min(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_increment_start_5min(self, event):
+        self.update_handler.edit_time_increment_start_5min(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_decrement_end_5min(self, event):
+        self.update_handler.edit_time_decrement_end_5min(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    def edit_time_increment_end_5min(self, event):
+        self.update_handler.edit_time_increment_end_5min(event)
+
     # #### Key bindings wired by KeyBonder.create_delete_fact().
 
     @Decorators.debug_log_trace_enter_leave

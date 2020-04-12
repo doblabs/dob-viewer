@@ -271,6 +271,22 @@ class UpdateHandler(object):
     def edit_time_increment_both(self, event):
         self.edit_time_adjust(1, 'start', 'end')
 
+    @catch_action_exception
+    def edit_time_decrement_start_5min(self, event):
+        self.edit_time_adjust(-5, 'start')
+
+    @catch_action_exception
+    def edit_time_increment_start_5min(self, event):
+        self.edit_time_adjust(5, 'start')
+
+    @catch_action_exception
+    def edit_time_decrement_end_5min(self, event):
+        self.edit_time_adjust(-5, 'end')
+
+    @catch_action_exception
+    def edit_time_increment_end_5min(self, event):
+        self.edit_time_adjust(5, 'end')
+
     def edit_time_adjust(self, delta_mins, start_or_end, end_maybe=None):
         delta_time = self.edit_time_multiplier(delta_mins)
         self.edits_manager.edit_time_adjust(delta_time, start_or_end, end_maybe)
