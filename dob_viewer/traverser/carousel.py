@@ -515,6 +515,7 @@ class Carousel(object):
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def save_edited_and_exit(self, event):
+        self.save_edited_and_live(event)
         # (lb): Exit Carousel, then Save. Traditional Import behavior
         # (before running save/save_edited_and_live was implemented).
         self.enduring_edit = False
