@@ -236,6 +236,8 @@ class KeyBonder(object):
 
     def create_delete_fact(self, action_map):
         return []  # FIXME/2020-04-11: Implement or get off the pot!
+
+        # FIXME/2020-04-11: Not implemented:
         key_bonds = []
         key_bonds += self._key_bonds(action_map, 'fact_split')
         key_bonds += self._key_bonds(action_map, 'fact_erase')

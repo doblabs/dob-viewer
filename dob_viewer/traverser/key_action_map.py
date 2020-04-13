@@ -264,6 +264,8 @@ class KeyActionMap(object):
 
     # #### Key bindings wired by KeyBonder.create_delete_fact().
 
+    # FIXME/2020-04-11: Remove these, or implement!
+
     @Decorators.debug_log_trace_enter_leave
     def fact_split(self, event):
         self.update_handler.fact_split(event)
@@ -357,5 +359,4 @@ class KeyActionMap(object):
     @Decorators.debug_log_trace_enter_leave
     def panic_delta_time(self, event):
         self.update_handler.panic_delta_time(event)
-
 

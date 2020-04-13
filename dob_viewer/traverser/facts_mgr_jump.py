@@ -32,7 +32,7 @@ class FactsManager_Jump(object):
     # ***
 
     def fulfill_jump(self, jump_fact, reason=''):
-        # Caller will have update curr_group and curr_index, if necessary.
+        # Caller will have updated curr_group and curr_index, if necessary.
         # Note that we do not set FactsManager self.curr_fact directly,
         # but call a shim function so EditsManager can react, too.
         #   self.curr_fact = jump_fact

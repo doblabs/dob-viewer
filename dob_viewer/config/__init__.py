@@ -190,7 +190,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def jump_fact_dec(self):
-        # I.e., 'j', and PTK's Keys.Left.
+        # I.e., 'j', or left arrow.
         return json.dumps([('j',), ('left',)])
 
     # ***
@@ -200,7 +200,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def jump_fact_inc(self):
-        # I.e., 'k', and PTK's Keys.Right.
+        # I.e., 'k', or right arrow.
         return json.dumps([('k',), ('right',)])
 
     # ***
@@ -210,11 +210,8 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def jump_day_dec(self):
-        return json.dumps([
-            ('J',),
-            # This only wired to Escape then Arrow, not Meta-Arrow.
-            ('escape', 'left'),
-        ])
+        # I.e., 'J', or Alt-left arrow.
+        return json.dumps([('J',), ('escape', 'left')])
 
     # ***
 
@@ -223,11 +220,8 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def jump_day_inc(self):
-        return json.dumps([
-            ('K',),
-            # This only wired to Escape then Arrow, not Meta-Arrow.
-            ('escape', 'right'),
-        ])
+        # I.e., 'J', or Alt-right arrow.
+        return json.dumps([('K',), ('escape', 'right')])
 
     # ***
 
