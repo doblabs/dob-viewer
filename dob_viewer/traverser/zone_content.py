@@ -154,12 +154,14 @@ class ZoneContent(object):
     @catch_action_exception
     def cursor_up_one(self, event):
         """"""
-        self.content.buffer.cursor_up(1)
+        count = self.carousel.update_handler.apply_count_multiplier()
+        self.content.buffer.cursor_up(count=count)
 
     @catch_action_exception
     def cursor_down_one(self, event):
         """"""
-        self.content.buffer.cursor_down(1)
+        count = self.carousel.update_handler.apply_count_multiplier()
+        self.content.buffer.cursor_down(count=count)
 
     @catch_action_exception
     def scroll_down(self, event):

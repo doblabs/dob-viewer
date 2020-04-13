@@ -501,29 +501,35 @@ class EditsManager(object):
 
     # ***
 
-    def jump_fact_dec(self):
+    def jump_fact_dec(self, count=1):
         """"""
-        prev_fact = self.conjoined.jump_fact_dec()
-        if prev_fact and prev_fact.dirty:
-            self.update_edited_fact(prev_fact, prev_fact.orig_fact)
+        for idx in range(count):
+            prev_fact = self.conjoined.jump_fact_dec()
+            if prev_fact is None:
+                return prev_fact
+            elif prev_fact.dirty:
+                self.update_edited_fact(prev_fact, prev_fact.orig_fact)
         return prev_fact
 
-    def jump_fact_inc(self):
+    def jump_fact_inc(self, count=1):
         """"""
-        next_fact = self.conjoined.jump_fact_inc()
-        if next_fact and next_fact.dirty:
-            self.update_edited_fact(next_fact, next_fact.orig_fact)
+        for idx in range(count):
+            next_fact = self.conjoined.jump_fact_inc()
+            if next_fact is None:
+                return next_fact
+            elif next_fact.dirty:
+                self.update_edited_fact(next_fact, next_fact.orig_fact)
         return next_fact
 
     # ***
 
-    def jump_day_dec(self):
+    def jump_day_dec(self, days=1):
         """"""
-        return self.conjoined.jump_day_dec()
+        return self.conjoined.jump_day_dec(days=days)
 
-    def jump_day_inc(self):
+    def jump_day_inc(self, days=1):
         """"""
-        return self.conjoined.jump_day_inc()
+        return self.conjoined.jump_day_inc(days=days)
 
     # ***
 

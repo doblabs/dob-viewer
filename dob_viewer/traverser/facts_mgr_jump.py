@@ -17,8 +17,6 @@
 
 """"""
 
-from datetime import timedelta
-
 from nark.items.fact import UntilTimeStops
 
 __all__ = (
@@ -195,16 +193,37 @@ class FactsManager_Jump(object):
         # ***
 
         def update_time_reference(ref_time):
-            adj_time = ref_time
-            # FIXME/2019-01-22: Revisit this logic, especially the days=1.
-            if until_time is not None:
-                while self.curr_fact.end and (self.curr_fact.end < adj_time):
-                    adj_time -= timedelta(days=1)
-            else:
-                self.controller.affirm(since_time is not None)
-                while self.curr_fact.start > adj_time:
-                    adj_time += timedelta(days=1)
-            self.jump_time_reference = adj_time
+            # Set the jump time reference.
+            #
+            # This function used to slide the time value further backward or
+            # further forward to avoid the case where there's a Fact or Gap
+            # longer than the jump time. In this case, as the user continues to
+            # jump backward (or forward), they would keep seeing the same Fact.
+            # - (lb): I had logic here that would sit in a while loop and adjust
+            #   ref_time backward or forward by 1 day until the time reference
+            #   was such that it would show a different Fact the next time the
+            #   user jumped. But then I added the *count* feature, which allows
+            #   users to jump by multiple days. And then this logic -- which did
+            #   not feel well writ to begin with -- became untenable, given that
+            #   the jump amount is no longer predictable.
+            # E.g., consider the current Fact is the active Fact, now time is
+            # 2020-04-12 09:30, and the user presses `5J` to go back five days,
+            # ideally to 2020-04-07 09:30. Consider there's a Fact or Gap from
+            # 2020-03-01 to 2020-04-07. Then the next `5J` will try
+            # 2020-04-02 09:30, and the `5J` after that will try
+            # 2020-03-28 09:30, etc. On each jump, the user sees the same Fact.
+            # - (lb): So you can see how I wanted to make a better UX. However,
+            #   in addition to the concerns mentioned above, there's another one.
+            #   If we change the reference time, then operations are not
+            #   transitive, e.g., user cannot `5J` from Fact A to B, and then
+            #   run `5K` to return to Fact A.
+            # - (lb): I think I've been able to solve this stumper by updating
+            #   the bottom area Status message when the user jumps to show how
+            #   many *days* the user jumped, and to also show the current
+            #   reference time. That way, even if the current Fact does not
+            #   change, the Status message will show something unique each
+            #   time.
+            self.jump_time_reference = ref_time
 
         # ***
 

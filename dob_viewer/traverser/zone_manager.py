@@ -20,6 +20,7 @@
 from gettext import gettext as _
 
 import os
+from inflector import English, Inflector
 
 # MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
 import click_hotoffthehamster as click  # merely for get_terminal_size.
@@ -383,19 +384,30 @@ class ZoneManager(object):
 
     # ***
 
+    def jump_msg_with_count(self, count, direction, what):
+        return '{} {} {}'.format(
+            direction,
+            count,
+            Inflector(English).conditional_plural(count, what),
+        )
+
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def jump_fact_dec(self, event):
         """"""
-        prev_fact = self.carousel.edits_manager.jump_fact_dec()
-        self.finalize_jump_dec(prev_fact)
+        count = self.carousel.update_handler.apply_count_multiplier()
+        jump_msg = self.jump_msg_with_count(count, _('Backward'), _('Fact'))
+        prev_fact = self.carousel.edits_manager.jump_fact_dec(count=count)
+        self.finalize_jump_dec(prev_fact, jump_msg)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def jump_fact_inc(self, event):
         """"""
-        next_fact = self.carousel.edits_manager.jump_fact_inc()
-        self.finalize_jump_inc(next_fact)
+        count = self.carousel.update_handler.apply_count_multiplier()
+        jump_msg = self.jump_msg_with_count(count, _('Forward'), _('Fact'))
+        next_fact = self.carousel.edits_manager.jump_fact_inc(count=count)
+        self.finalize_jump_inc(next_fact, jump_msg)
 
     # ***
 
@@ -404,19 +416,29 @@ class ZoneManager(object):
     # (the prev and next day commands) for an extended length of time, the
     # Carousel will start jumping by larger time increments.
 
+    def jump_msg_count_and_time(self, count, direction, what):
+        return '{} ({})'.format(
+            self.jump_msg_with_count(count, direction, what),
+            str(self.carousel.edits_manager.conjoined.jump_time_reference),
+        )
+
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def jump_day_dec(self, event):
         """"""
-        prev_fact = self.carousel.edits_manager.jump_day_dec()
-        self.finalize_jump_dec(prev_fact)
+        count = self.carousel.update_handler.apply_count_multiplier(floats=True)
+        jump_msg = self.jump_msg_count_and_time(count, _('Backward'), _('Day'))
+        prev_fact = self.carousel.edits_manager.jump_day_dec(days=count)
+        self.finalize_jump_dec(prev_fact, jump_msg)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def jump_day_inc(self, event):
         """"""
-        next_fact = self.carousel.edits_manager.jump_day_inc()
-        self.finalize_jump_inc(next_fact)
+        count = self.carousel.update_handler.apply_count_multiplier(floats=True)
+        jump_msg = self.jump_msg_count_and_time(count, _('Forward'), _('Day'))
+        next_fact = self.carousel.edits_manager.jump_day_inc(days=count)
+        self.finalize_jump_inc(next_fact, jump_msg)
 
     # ***
 
@@ -444,21 +466,21 @@ class ZoneManager(object):
 
     # ***
 
-    def finalize_jump_dec(self, prev_fact):
+    def finalize_jump_dec(self, prev_fact, jump_msg):
         """"""
         self.finalize_jump_check_overlapped(
-            prev_fact, noop_msg=_("Viewing earliest Fact"),
+            prev_fact, noop_msg=_("Viewing earliest Fact"), jump_msg=jump_msg,
         )
 
-    def finalize_jump_inc(self, next_fact):
+    def finalize_jump_inc(self, next_fact, jump_msg):
         """"""
         self.finalize_jump_check_overlapped(
-            next_fact, noop_msg=_("Viewing latest Fact"),
+            next_fact, noop_msg=_("Viewing latest Fact"), jump_msg=jump_msg,
         )
 
-    def finalize_jump_check_overlapped(self, curr_fact, noop_msg):
+    def finalize_jump_check_overlapped(self, curr_fact, noop_msg, jump_msg=''):
         def _finalize_jump_check_overlapped():
-            jump_msg = ''
+            _jump_msg = jump_msg
             if curr_fact and 'alert-user' in curr_fact.dirty_reasons:
                 curr_fact.dirty_reasons.discard('alert-user')
                 # 2019-02-13: (lb): Currently, only 'overlapped' causes this.
@@ -466,8 +488,8 @@ class ZoneManager(object):
                     curr_fact.dirty_reasons == set(['overlapped']),
                 )
                 popop_modal_alert_overlapped_fact()
-                jump_msg = _('ALERT! Corrected overlapping Fact times. Save to commit.')
-            self.finalize_jump(curr_fact, noop_msg, jump_msg)
+                _jump_msg = _('ALERT! Corrected overlapping Fact times. Save to commit.')
+            self.finalize_jump(curr_fact, noop_msg, _jump_msg)
 
         def popop_modal_alert_overlapped_fact():
             if self.silence_alert_overlapped:

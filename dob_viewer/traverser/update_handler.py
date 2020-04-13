@@ -36,6 +36,7 @@ class UpdateHandler(object):
     def __init__(self, carousel):
         self.carousel = carousel
         self.long_press_multiplier_init()
+        self.count_modifier_init()
 
     def long_press_multiplier_init(self):
         self.last_time_time_adjust = None
@@ -289,11 +290,20 @@ class UpdateHandler(object):
         self.edit_time_adjust(5, 'end')
 
     def edit_time_adjust(self, delta_mins, start_or_end, end_maybe=None):
+        modifier = self.count_modifier_parse()
+        if modifier is not None:
+            delta_mins *= modifier
         delta_time = self.edit_time_multiplier(delta_mins)
-        self.edits_manager.edit_time_adjust(delta_time, start_or_end, end_maybe)
+        self.edits_manager.edit_time_adjust(
+            delta_time,
+            start_or_end,
+            end_maybe,
+            gap_okay=self.time_gap_allowed,
+        )
         self.edit_time_reset_refresh()
 
     def edit_time_reset_refresh(self):
+        self.count_modifier_reset()
         self.zone_manager.reset_diff_fact()
         self.zone_manager.selectively_refresh()
 
@@ -439,6 +449,8 @@ class UpdateHandler(object):
             self.zone_manager.zone_lowdown.reset_status()
         self.carousel.action_manager.unwire_keys_commando()
 
+    # ***
+
     def colon_commando(self, event, typed_commando):
         if not typed_commando:
             return
@@ -458,20 +470,47 @@ class UpdateHandler(object):
 
     # ***
 
+    def count_modifier_init(self):
+        self.count_modifier = None
+        self.final_modifier = None
+        self.time_gap_allowed = None
+        self.delta_time_target = None
+
+    def count_modifier_setup(self):
+        self.count_modifier = ''
+        self.final_modifier = None
+        self.time_gap_allowed = False
+        # If user presses '+'/'-', then we'll set self.delta_time_target.
+
+    # ***
+
+    @catch_action_exception
+    def count_modifier_any_key(self, event=None):
+        # Note: This only catches keys not mapped elsewhere.
+        # And we only care about digits and decimal points.
+        if self.count_modifier is None:
+            # Do not reset count modifier whilst building it!
+            self.count_modifier_setup()
+        self.count_modifier_feed(event)
+
+    # ***
+
     @catch_action_exception
     def begin_delta_time_start(self, event):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
-        self.typed_delta_time = ''
-        self.delta_time_gap_okay = False
+        if self.count_modifier is None:
+            # This allows user to press '!' before '+'.
+            self.count_modifier_setup()
         self.delta_time_target = 'end'
 
     @catch_action_exception
     def begin_delta_time_end(self, event):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
-        self.typed_delta_time = ''
-        self.delta_time_gap_okay = False
+        if self.count_modifier is None:
+            # This allows user to press '!' before '-'.
+            self.count_modifier_setup()
         self.delta_time_target = 'start'
 
     RE_NUMERIC = re.compile('^[0-9]$')
@@ -479,30 +518,44 @@ class UpdateHandler(object):
     @catch_action_exception
     def parts_delta_time(self, event):
         """"""
+        self.count_modifier_feed(event)
+
+    def count_modifier_feed(self, event):
         # If user pressed allow-gap key already (e.g., '!'), do not allow
-        # more time to be entered; be strict and reset instead.
-        if self.delta_time_gap_okay:
-            # Because gap_okay only set true on '!', means input error.
-            self.reset_delta_time()
+        # more time to be entered; be strict and reset instead. Unless
+        # user has not entered any time yet.
+        if self.final_modifier:
+            self.count_modifier_reset()
         # We could allow any character and then parse at error, potentially
         # showing an error message. Or, if user types non-number now, we
         # could just go back to old state. -- It's not completely silent,
         # as the cursor will reappear.
         elif event.data == '.':
-            if '.' in self.typed_delta_time:
+            if '.' in self.count_modifier:
                 # So strict!
-                self.reset_delta_time()
+                self.count_modifier_reset()
             else:
-                self.typed_delta_time += '.'
+                self.count_modifier += '.'
         elif UpdateHandler.RE_NUMERIC.match(event.data):
-            self.typed_delta_time += event.data
+            self.count_modifier += event.data
         else:
-            self.reset_delta_time()
+            # Not '[0-9]' or '.'. Ignore it and reset state.
+            self.count_modifier_reset()
 
     @catch_action_exception
     def allow_time_gap(self, event):
         """"""
-        self.delta_time_gap_okay = True
+        if self.time_gap_allowed is True:
+            # Be strict. Consider a second '!' to be syntax error, so reset.
+            self.count_modifier_reset()
+        else:
+            if self.count_modifier is None:
+                # Allow '!' to precede '[0-9]' or '+'/'-'.
+                self.count_modifier_setup()
+            elif self.count_modifier:
+                # User entered some numbers or a decimal already. Mark it final
+                self.final_modifier = self.count_modifier
+            self.time_gap_allowed = True
 
     @catch_action_exception
     def final_delta_time_apply(self, event):
@@ -520,13 +573,12 @@ class UpdateHandler(object):
         self.apply_delta_time(event, scalar=60)
 
     def apply_delta_time(self, event, scalar):
-        try:
-            delta_time = float(self.typed_delta_time)
-        except ValueError:
-            # No period.
-            delta_time = int(self.typed_delta_time)
+        delta_time = self.count_modifier_parse()
+        if delta_time is None:
+            # Happens if user types, e.g., `+h`, i.e., without any digits.
+            self.edit_time_reset_refresh()
+            return
         delta_mins = timedelta(minutes=delta_time * scalar)
-
         edit_fact = self.edits_manager.editable_fact()
         if self.delta_time_target == 'end':
             apply_time = edit_fact.start + delta_mins
@@ -537,19 +589,47 @@ class UpdateHandler(object):
         self.edits_manager.edit_time_adjust(
             apply_time,
             self.delta_time_target,
-            gap_okay=self.delta_time_gap_okay,
+            gap_okay=self.time_gap_allowed,
         )
         self.edit_time_reset_refresh()
-        self.reset_delta_time()
+
+    def count_modifier_parse(self):
+        if not self.count_modifier:
+            return None
+        try:
+            delta_time = int(self.count_modifier)
+        except ValueError:
+            delta_time = float(self.count_modifier)
+        return delta_time
+
+    def apply_count_multiplier(self, count=1, floats=False):
+        modifier = self.count_modifier_parse()
+        if modifier is not None:
+            count = count * modifier
+            if not floats:
+                count = int(count)
+        self.reset_time_multipliers()
+        return count
 
     @catch_action_exception
     def panic_delta_time(self, event):
         """"""
-        self.reset_delta_time()
+        self.count_modifier_reset()
 
-    def reset_delta_time(self):
-        del self.typed_delta_time
-        del self.delta_time_gap_okay
-        del self.delta_time_target
-        self.carousel.action_manager.unwire_keys_delta_time()
+    def reset_time_multipliers(self):
+        self.count_modifier_reset()
+        # Also the long-press multipliers.
+        self.last_time_time_adjust = None
+        self.init_time_time_adjust = None
+        self.press_cnt_time_adjust = 0
+
+    def count_modifier_reset(self):
+        if self.count_modifier is None:
+            return
+        self.count_modifier = None
+        self.final_modifier = None
+        self.time_gap_allowed = None
+        if self.delta_time_target is not None:
+            self.carousel.action_manager.unwire_keys_delta_time()
+            self.delta_time_target = None
 

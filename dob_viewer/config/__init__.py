@@ -248,7 +248,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def cursor_up_one(self):
-        return 'h'
+        return json.dumps([('h',), ('up',)])
 
     # ***
 
@@ -257,7 +257,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def cursor_down_one(self):
-        return 'l'
+        return json.dumps([('l',), ('down',)])
 
     # ***
 
