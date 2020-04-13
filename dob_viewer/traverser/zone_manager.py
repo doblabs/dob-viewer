@@ -417,8 +417,9 @@ class ZoneManager(object):
     # Carousel will start jumping by larger time increments.
 
     def jump_msg_count_and_time(self, count, direction, what):
-        return '{} ({})'.format(
+        return '{} ({} {})'.format(
             self.jump_msg_with_count(count, direction, what),
+            _('from'),
             str(self.carousel.edits_manager.conjoined.jump_time_reference),
         )
 
