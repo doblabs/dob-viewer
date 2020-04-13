@@ -543,6 +543,7 @@ class Carousel(object):
                 self.controller,
                 saved_facts,
                 show_plugin_error=self.show_plugin_error,
+                carousel_active=True,
             )
         edit_cnt = len(saved_facts)
         self.zone_manager.finalize_jump(
