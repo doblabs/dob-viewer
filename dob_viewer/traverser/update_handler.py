@@ -35,11 +35,12 @@ class UpdateHandler(object):
     """"""
     def __init__(self, carousel):
         self.carousel = carousel
+        self.long_press_multiplier_init()
 
+    def long_press_multiplier_init(self):
         self.last_time_time_adjust = None
+        self.init_time_time_adjust = None
         self.press_cnt_time_adjust = 0
-
-    # ***
 
     def standup(self):
         self.edits_manager = self.carousel.edits_manager
@@ -306,53 +307,68 @@ class UpdateHandler(object):
     #   is about 60 msecs. between presses (though it's more like
     #   100 msec. normally). So we'll try a threshold of 50 msecs.
     #   (Of course, 0.05 doesn't always work. Trying 100 msecs....)
-    DOUBLE_KEYLICK_THRESHOLD = 0.10
-    MULTIPLY_BY_05_THRESHOLD = 45
-    MULTIPLY_BY_10_THRESHOLD = 90
-    MULTIPLY_BY_30_THRESHOLD = 150
-    MULTIPLY_BY_60_THRESHOLD = 240
-    MULTIPLY_BY_1440_THRESHOLD = 375
-    MULTIPLY_BY_10080_THRESHOLD = 500
-    MULTIPLY_BY_525960_THRESHOLD = 700
+    # 2020-04-12: Possibly because logging, I'm seeing ~0.16 delays on long
+    # press. But I added reset_time_multipliers decorator to key_action_map
+    # handlers, so we probably do not even need this threshold, because now
+    # if last_time_time_adjust is set, it should mean user has not pressed
+    # any other key since (see also count_modifier_any_key).
+    DOUBLE_KEYLICK_THRESHOLD = 0.33
+    MULTIPLY_BY_05_THRESHOLD = 4
+    MULTIPLY_BY_10_THRESHOLD = 7
+    MULTIPLY_BY_30_THRESHOLD = 9.5
+    MULTIPLY_BY_60_THRESHOLD = 12
+    MULTIPLY_BY_1440_THRESHOLD = 15
+    MULTIPLY_BY_10080_THRESHOLD = 20
+    MULTIPLY_BY_525960_THRESHOLD = 30
 
     def edit_time_multiplier(self, delta_mins):
-        # MEH: (lb): Ideally, we'd hook a global PPT key handler so
-        # we could clear the last time_adjust time if a non time_adjust
-        # key is pressed; or clear it after some timeout. Whatever; this
-        # code has same outcome, even if it doesn't feel ideal.
+        # Calculate time since last key press was processed.
+        press_elapsed = 0
+        if self.last_time_time_adjust:
+            press_elapsed = time.time() - self.last_time_time_adjust
+
+        # Calculate time since first key press was detected.
+        total_elapsed = 0
+        if self.init_time_time_adjust:
+            total_elapsed = time.time() - self.init_time_time_adjust
+
         if (
             self.last_time_time_adjust is None
             # Be aware of the OS hardware delay before a long press becomes a
             # repeat event, and ignore elapsed time before 1st and 2nd events.
             or (
                 self.press_cnt_time_adjust > 1
-                and (
-                    (time.time() - self.last_time_time_adjust)
-                    > UpdateHandler.DOUBLE_KEYLICK_THRESHOLD
-                )
+                and press_elapsed > UpdateHandler.DOUBLE_KEYLICK_THRESHOLD
             )
         ):
-            self.last_time_time_adjust = None
+            self.init_time_time_adjust = time.time()
             self.press_cnt_time_adjust = 0
             delta_time = timedelta(minutes=delta_mins * 1)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_05_THRESHOLD:
-            delta_time = timedelta(minutes=delta_mins * 1)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_10_THRESHOLD:
-            delta_time = timedelta(minutes=delta_mins * 5)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_30_THRESHOLD:
-            delta_time = timedelta(minutes=delta_mins * 10)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_60_THRESHOLD:
-            delta_time = timedelta(minutes=delta_mins * 30)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_1440_THRESHOLD:
-            delta_time = timedelta(hours=delta_mins)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_10080_THRESHOLD:
-            delta_time = timedelta(days=delta_mins)
-        elif self.press_cnt_time_adjust < UpdateHandler.MULTIPLY_BY_525960_THRESHOLD:
-            delta_time = timedelta(weeks=delta_mins)
         else:
-            delta_time = timedelta(minutes=delta_mins * 60 * 8760)
+            if total_elapsed < UpdateHandler.MULTIPLY_BY_05_THRESHOLD:
+                delta_time = timedelta(minutes=delta_mins * 1)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_10_THRESHOLD:
+                delta_time = timedelta(minutes=delta_mins * 5)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_30_THRESHOLD:
+                delta_time = timedelta(minutes=delta_mins * 10)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_60_THRESHOLD:
+                delta_time = timedelta(minutes=delta_mins * 30)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_1440_THRESHOLD:
+                # 1 day == 1440 minutes.
+                delta_time = timedelta(days=delta_mins)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_10080_THRESHOLD:
+                # 1 week == 10080 minutes.
+                delta_time = timedelta(days=delta_mins * 7)
+            elif total_elapsed < UpdateHandler.MULTIPLY_BY_525960_THRESHOLD:
+                # 1 year =~ 525960 minutes.
+                # 365.25 days / Julian year. 365.242189 days / Tropical year.
+                # 365.2425 days / Mean year. 365.25636 days / Sidereal year.
+                delta_time = timedelta(days=delta_mins * 365.25636)
+            else:
+                delta_time = timedelta(minutes=delta_mins * 60 * 8760)
         self.last_time_time_adjust = time.time()
         self.press_cnt_time_adjust += 1
+
         return delta_time
 
     # ***
