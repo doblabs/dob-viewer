@@ -25,13 +25,19 @@ __all__ = (
 class FactsManager_RiftInc(object):
     """"""
     def jump_rift_inc(self):
+        next_fact = self.find_rift_fact(is_next=True)
+        if next_fact is None:
+            next_fact = self.jump_to_latest_fact(reason='rift-inc')
+        return next_fact
+
+    # ***
+
+    def jump_to_latest_fact(self, reason):
         """"""
-        def _jump_rift_inc():
-            next_fact = self.find_rift_fact(is_next=True)
-            if next_fact is None:
-                _final_group, final_fact = group_latest(ceil_groups())
-                next_fact = final_fact
-                self.fulfill_jump(next_fact, reason='rift-inc')
+        def _jump_to_latest_fact():
+            _final_group, final_fact = group_latest(ceil_groups())
+            next_fact = final_fact
+            self.fulfill_jump(next_fact, reason=reason)
             return next_fact
 
         def ceil_groups():
@@ -91,5 +97,5 @@ class FactsManager_RiftInc(object):
             latest_fact = final_group[-1]
             return final_group, latest_fact
 
-        return _jump_rift_inc()
+        return _jump_to_latest_fact()
 

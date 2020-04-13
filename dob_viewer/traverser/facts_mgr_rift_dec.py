@@ -26,12 +26,20 @@ class FactsManager_RiftDec(object):
     """"""
     def jump_rift_dec(self):
         """"""
-        def _jump_rift_dec():
-            prev_fact = self.find_rift_fact(is_prev=True)
-            if prev_fact is None:
-                _first_group, first_fact = group_oldest(floor_groups())
-                prev_fact = first_fact
-                self.fulfill_jump(prev_fact, reason='rift-dec')
+        # find_rift_fact calls jump_to_fact_nearest (which calls fulfill_jump).
+        prev_fact = self.find_rift_fact(is_prev=True)
+        if prev_fact is None:
+            prev_fact = self.jump_to_oldest_fact(reason='rift-dec')
+        return prev_fact
+
+    # ***
+
+    def jump_to_oldest_fact(self, reason):
+        """"""
+        def _jump_to_oldest_fact():
+            _first_group, first_fact = group_oldest(floor_groups())
+            prev_fact = first_fact
+            self.fulfill_jump(prev_fact, reason=reason)
             return prev_fact
 
         def floor_groups():
@@ -89,5 +97,5 @@ class FactsManager_RiftDec(object):
             first_fact = first_group[0]
             return first_group, first_fact
 
-        return _jump_rift_dec()
+        return _jump_to_oldest_fact()
 
