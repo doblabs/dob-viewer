@@ -101,7 +101,7 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("Exit Quietly if No Changes"),
     )
-    def cancel_softly(self):
+    def exit_quietly(self):
         return 'q'
 
     # ***
@@ -110,7 +110,7 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("Exit with Prompt if Changes"),
     )
-    def cancel_command(self):
+    def exit_command(self):
         # There are two Quit mapping: Ctrl-Q and ESCAPE.
         # - NOTE: Using 'escape' to exit is slow because PPT waits to
         #         see if escape sequence follows (which it wouldn't, after

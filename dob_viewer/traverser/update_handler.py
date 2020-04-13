@@ -460,7 +460,7 @@ class UpdateHandler(object):
             self.carousel.save_edited_and_live(event)
         elif typed_commando == keys_config['quit_commando']:
             # E.g., `:q`.
-            self.carousel.cancel_command(event)
+            self.carousel.exit_command(event)
         elif typed_commando == keys_config['save_quit_commando']:
             self.carousel.save_edited_and_exit(event)
         else:

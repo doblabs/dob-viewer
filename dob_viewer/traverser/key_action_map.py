@@ -123,16 +123,16 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.reset_time_multipliers
-    def cancel_command(self, event):
-        self.carousel.cancel_command(event)
+    def exit_command(self, event):
+        self.carousel.exit_command(event)
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.reset_time_multipliers
-    def cancel_softly(self, event):
+    def exit_quietly(self, event):
         was_helping = self.zone_content.on_reset_hide_help()
         if was_helping:
             return
-        self.carousel.cancel_softly(event)
+        self.carousel.exit_quietly(event)
 
     # #### Key bindings wired by KeyBonder.edit_time().
 

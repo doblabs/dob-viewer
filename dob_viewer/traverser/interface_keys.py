@@ -142,9 +142,9 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'save_edited_and_live')
         key_bonds += self._key_bonds(action_map, 'save_edited_and_exit')
         # User can always real-quit, but prompted if edits.
-        key_bonds += self._key_bonds(action_map, 'cancel_command')
+        key_bonds += self._key_bonds(action_map, 'exit_command')
         # User can soft-cancel if they have not edited.
-        key_bonds += self._key_bonds(action_map, 'cancel_softly')
+        key_bonds += self._key_bonds(action_map, 'exit_quietly')
         return key_bonds
 
     # ***

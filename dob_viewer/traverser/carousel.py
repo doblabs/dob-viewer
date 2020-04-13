@@ -483,7 +483,7 @@ class Carousel(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def cancel_command(self, event):
+    def exit_command(self, event):
         """"""
         self.confirm_exit = True
         self.enduring_edit = False
@@ -491,7 +491,7 @@ class Carousel(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def cancel_softly(self, event):
+    def exit_quietly(self, event):
         """"""
         # (lb): A little awkward: Meta-key combinations start with 'escape',
         # even though the user doesn't explicitly press the escape key. E.g.,
