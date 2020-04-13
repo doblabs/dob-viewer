@@ -225,8 +225,7 @@ class StartEndEdit(object):
         if curr_time is None:
             # The ongoing, un-ended, active Fact.
             self.controller.affirm(start_or_end == 'end')
-            # NOTE: Not using controller.now.
-            curr_time = self.controller.store.now_tz_aware()
+            curr_time = self.controller.now
         new_time = curr_time + delta_time
 
         if start_or_end == 'start':

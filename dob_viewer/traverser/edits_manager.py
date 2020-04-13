@@ -381,6 +381,8 @@ class EditsManager(object):
         def at_least_load_latest_fact():
             self.controller.affirm(len(self.conjoined.groups) == 0)
             latest_fact = self.controller.facts.antecedent(
+                # Should not matter controller.store.now_tz_aware() vs. now
+                # because this runs just once, on carousel.gallop startup.
                 ref_time=self.controller.now,
             )
             self.controller.affirm(latest_fact is not None)

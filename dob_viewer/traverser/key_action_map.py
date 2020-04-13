@@ -61,6 +61,20 @@ class KeyActionMap(object):
         # ***
 
         @classmethod
+        def refresh_now(cls, func):
+            def wrapper(obj, event, *args, **kwargs):
+                # So that we don't have to call controller.store.now_tz_aware()
+                # in our handlers, and so our handlers do not have to worry that
+                # "now" has different values during the event handling, reset now
+                # now.
+                obj.carousel.controller.now_refresh()
+                func(obj, event, *args, **kwargs)
+
+            return update_wrapper(wrapper, func)
+
+        # ***
+
+        @classmethod
         def reset_time_multipliers(cls, func):
             def wrapper(obj, event, *args, **kwargs):
                 # Check if '.' and pass to count modifier if counting
@@ -90,21 +104,25 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.widget_focus().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def focus_next(self, event):
         self.zone_manager.focus_next(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def focus_previous(self, event):
         self.zone_manager.focus_previous(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_time_start(self, event):
         self.zone_manager.toggle_focus_time_start(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_time_end(self, event):
         self.zone_manager.toggle_focus_time_end(event)
@@ -112,21 +130,25 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.save_and_quit().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def save_edited_and_live(self, event):
         self.carousel.save_edited_and_live(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def save_edited_and_exit(self, event):
         self.carousel.save_edited_and_exit(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def exit_command(self, event):
         self.carousel.exit_command(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def exit_quietly(self, event):
         was_helping = self.zone_content.on_reset_hide_help()
@@ -137,16 +159,19 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.edit_time().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_time_enter(self, event):
         self.zone_details.edit_time_enter(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def toggle_focus_description(self, event):
         self.zone_details.toggle_focus_description(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_time_any_key(self, event):
         self.zone_details.edit_time_any_key(event)
@@ -154,21 +179,25 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.undo_redo().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def undo_command_content(self, event):
         self.update_handler.undo_command(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def redo_command_content(self, event):
         self.update_handler.redo_command(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def undo_command_edit_time(self, event):
         self.zone_details.undo_command(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def redo_command_edit_time(self, event):
         self.zone_details.redo_command(event)
@@ -176,11 +205,13 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.normal().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def rotate_help(self, event):
         self.zone_content.rotate_help(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def dev_breakpoint(self, event):
         self.carousel.dev_breakpoint(event)
@@ -188,12 +219,14 @@ class KeyActionMap(object):
     # *** Next/Prev: Fact
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def jump_fact_dec(self, event):
         self.zone_manager.jump_fact_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def jump_fact_inc(self, event):
@@ -207,12 +240,14 @@ class KeyActionMap(object):
     # *** Next/Prev: Day
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def jump_day_dec(self, event):
         self.zone_manager.jump_day_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def jump_day_inc(self, event):
@@ -221,11 +256,13 @@ class KeyActionMap(object):
     # *** Next/Prev: Rift
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def jump_rift_dec(self, event):
         self.zone_manager.jump_rift_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def jump_rift_inc(self, event):
         self.zone_manager.jump_rift_inc(event)
@@ -233,12 +270,14 @@ class KeyActionMap(object):
     # *** Up/Down: Content Cursor Motion
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def cursor_up_one(self, event):
         self.zone_content.cursor_up_one(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def cursor_down_one(self, event):
@@ -247,21 +286,25 @@ class KeyActionMap(object):
     # *** Up/Down/Top/Bottom: Content Scrolling
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def scroll_up(self, event):
         self.zone_content.scroll_up(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def scroll_down(self, event):
         self.zone_content.scroll_down(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def scroll_top(self, event):
         self.zone_content.scroll_top(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def scroll_bottom(self, event):
         self.zone_content.scroll_bottom(event)
@@ -269,21 +312,25 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.edit_fact().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_fact(self, event):
         self.update_handler.edit_fact(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_actegory(self, event):
         self.update_handler.edit_actegory(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_description(self, event):
         self.update_handler.edit_description(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def edit_tags(self, event):
         self.update_handler.edit_tags(event)
@@ -291,60 +338,70 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.nudge_time().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_decrement_start(self, event):
         self.update_handler.edit_time_decrement_start(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_increment_start(self, event):
         self.update_handler.edit_time_increment_start(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_decrement_end(self, event):
         self.update_handler.edit_time_decrement_end(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_increment_end(self, event):
         self.update_handler.edit_time_increment_end(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_decrement_both(self, event):
         self.update_handler.edit_time_decrement_both(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_increment_both(self, event):
         self.update_handler.edit_time_increment_both(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_decrement_start_5min(self, event):
         self.update_handler.edit_time_decrement_start_5min(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_increment_start_5min(self, event):
         self.update_handler.edit_time_increment_start_5min(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_decrement_end_5min(self, event):
         self.update_handler.edit_time_decrement_end_5min(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     @Decorators.handle_kludgey_period_duality
     def edit_time_increment_end_5min(self, event):
@@ -353,6 +410,7 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.count_modifier().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # Not necessary: @Decorators.handle_kludgey_period_duality
     def count_modifier_any_key(self, event):
@@ -363,21 +421,25 @@ class KeyActionMap(object):
     # FIXME/2020-04-11: Remove these, or implement!
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_split(self, event):
         self.update_handler.fact_split(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_erase(self, event):
         self.update_handler.fact_erase(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_merge_prev(self, event):
         self.update_handler.fact_merge_prev(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_merge_next(self, event):
         self.update_handler.fact_merge_next(event)
@@ -385,31 +447,37 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.clipboard().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_copy_fact(self, event):
         self.update_handler.fact_copy_fact(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_cut(self, event):
         self.update_handler.fact_cut(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_paste(self, event):
         self.update_handler.fact_paste(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_copy_activity(self, event):
         self.update_handler.fact_copy_activity(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_copy_tags(self, event):
         self.update_handler.fact_copy_tags(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def fact_copy_description(self, event):
         self.update_handler.fact_copy_description(event)
@@ -417,6 +485,7 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.begin_commando().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def begin_commando(self, event):
         self.update_handler.begin_commando(event)
@@ -424,11 +493,13 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.going_commando().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def parts_commando(self, event):
         self.update_handler.parts_commando(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     @Decorators.reset_time_multipliers
     def final_commando(self, event):
         self.update_handler.final_commando(event)
@@ -436,12 +507,14 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.begin_delta_time().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def begin_delta_time_start(self, event):
         self.update_handler.begin_delta_time_start(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def begin_delta_time_end(self, event):
@@ -450,36 +523,42 @@ class KeyActionMap(object):
     # #### Key bindings wired by KeyBonder.going_delta_time().
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def parts_delta_time(self, event):
         self.update_handler.parts_delta_time(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def allow_time_gap(self, event):
         self.update_handler.allow_time_gap(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def final_delta_time_apply(self, event):
         self.update_handler.final_delta_time_apply(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def final_delta_time_minutes(self, event):
         self.update_handler.final_delta_time_minutes(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def final_delta_time_hours(self, event):
         self.update_handler.final_delta_time_hours(event)
 
     @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # NOPE: @Decorators.handle_kludgey_period_duality
     def panic_delta_time(self, event):
