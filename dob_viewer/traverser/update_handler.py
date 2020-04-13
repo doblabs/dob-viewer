@@ -299,6 +299,7 @@ class UpdateHandler(object):
             start_or_end,
             end_maybe,
             gap_okay=self.time_gap_allowed,
+            modified=modifier is not None,
         )
         self.edit_time_reset_refresh()
 
@@ -590,6 +591,7 @@ class UpdateHandler(object):
             apply_time,
             self.delta_time_target,
             gap_okay=self.time_gap_allowed,
+            modified=True,
         )
         self.edit_time_reset_refresh()
 

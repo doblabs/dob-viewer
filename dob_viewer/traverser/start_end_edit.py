@@ -49,6 +49,7 @@ class StartEndEdit(object):
         start_or_end,
         end_maybe=None,
         gap_okay=False,
+        modified=False,
     ):
         def _edit_time_adjust():
             edit_fact = self.editable_fact()
@@ -106,6 +107,7 @@ class StartEndEdit(object):
                 delta_mins_or_time,
                 apply_start_or_end,
                 gap_okay,
+                modified,
                 start_or_end,
                 end_maybe,
             )
@@ -216,7 +218,7 @@ class StartEndEdit(object):
     # ***
 
     def edit_time_adjust_time(
-        self, edit_fact, neighbor, delta_time, start_or_end, gap_okay, *attrs
+        self, edit_fact, neighbor, delta_time, start_or_end, gap_okay, modified, *attrs
     ):
         if start_or_end not in attrs:
             return
@@ -226,6 +228,11 @@ class StartEndEdit(object):
             # The ongoing, un-ended, active Fact.
             self.controller.affirm(start_or_end == 'end')
             curr_time = self.controller.now
+            # To make it easy to set "now" on the active Fact, when user presses
+            # `[` or `]`, do not add the one minute delta time passed us, but just
+            # use now. Unless user entered a number modifier first, e.g., `3[`.
+            if not modified and delta_time.total_seconds() in (60, -60):
+                delta_time = timedelta(seconds=0)
         new_time = curr_time + delta_time
 
         if start_or_end == 'start':
