@@ -583,7 +583,7 @@ def must_complete_times(
         elif which == 'end':
             dt_suss, _next_fact = find_next_datetime(later_facts)
             if dt_suss is None:
-                dt_suss = controller.store.now
+                dt_suss = controller.now
         return dt_suss
 
     def conflicts_add_unresolved_relative(fact, which, conflicts, dt_fact):
