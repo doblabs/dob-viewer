@@ -39,7 +39,16 @@ class FactsManager_JumpTime(object):
             self._jump_time_reference or '{} (reset)'.format(self.curr_fact.start)
         ))
         if not self._jump_time_reference:
-            self.jump_time_reference = self.curr_fact.start
+            if not self.curr_fact.end:
+                # If user is looking at Active Fact, and they want to, e.g.,
+                # see Fact 1 day ago, use now time, not start of Fact, or
+                # we might show a Fact before one they'd naturally expect.
+                time_ref = self.controller.now
+            else:
+                # (lb): For any other Fact, I dunno, split the diff.
+                half_delta = (self.curr_fact.end - self.curr_fact.start) / 2
+                time_ref = self.curr_fact.start + half_delta
+            self.jump_time_reference = time_ref
         return self._jump_time_reference
 
     @jump_time_reference.setter
