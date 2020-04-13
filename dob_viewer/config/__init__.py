@@ -613,7 +613,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def final_delta_time_apply(self):
-        return 'enter'
+        return json.dumps([('enter',), ('tab',)])
 
     # ***
 
