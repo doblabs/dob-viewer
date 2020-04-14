@@ -441,13 +441,14 @@ class UpdateHandler(object):
     @catch_action_exception
     def final_commando(self, event):
         """"""
+        # Reset the status message first, because the command being called
+        # may have something to say.
+        self.zone_manager.zone_lowdown.reset_status()
         hot_notif = self.colon_commando(event, self.typed_commando)
-        del self.began_commando
-        del self.typed_commando
         if hot_notif:
             self.zone_manager.zone_lowdown.update_status(hot_notif)
-        else:
-            self.zone_manager.zone_lowdown.reset_status()
+        del self.began_commando
+        del self.typed_commando
         self.carousel.action_manager.unwire_keys_commando()
 
     # ***
