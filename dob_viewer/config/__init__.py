@@ -666,6 +666,30 @@ class DobViewerConfigurableDev(object):
 
     # ***
 
+    # Reminder from nark's parse_time: iso8601 date formats:
+    #   YYYY-MM-DD | YYYYMMDD | YYYY-MM | YYYY
+    # Note that the only non-digit character allowed is the dash/minus.
+    # - Here we allow the user to specify other characters that are okay
+    #   to use as a separator, so we're not limiting to just dash.
+    # - Note, too, that we can allow YYYYMM (sans dash) because why not.
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def date_separators(self):
+        # NOTE: These are used in a regex, so escape as necessary.
+        return json.dumps([
+            # Conventional `YYYY-MM/DD` separators.
+            ('-',), ('/',),
+            # Convention separators between `YYYYMMDD` and `hh:mm`.
+            (' ',), ('t',), ('T',),
+            # Conventional `hh:mm` separator.
+            (':',),
+        ])
+
+    # ***
+
 
 # ***
 

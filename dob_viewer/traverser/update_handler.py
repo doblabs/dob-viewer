@@ -46,6 +46,18 @@ class UpdateHandler(object):
     def standup(self):
         self.edits_manager = self.carousel.edits_manager
         self.zone_manager = self.carousel.zone_manager
+        self.load_date_separators()
+
+    def load_date_separators(self):
+        # For convenience later.
+        self.re_date_seps = None
+        # (lb): Highly coupled now. I know. Oh well.
+        date_seps = self.carousel.action_manager.key_bonder.date_separators
+        if not date_seps:
+            return
+        # Unpack array of arrays.
+        sep_choices = '|'.join([''.join(sep_arr) for sep_arr in date_seps])
+        self.re_date_seps = re.compile(r'^({})$'.format(sep_choices))
 
     # ***
 
@@ -575,10 +587,14 @@ class UpdateHandler(object):
                 self.command_modifier_reset()
             else:
                 self.command_modifier += '.'
-        elif UpdateHandler.RE_NUMERIC.match(event.data):
+        elif (
+            UpdateHandler.RE_NUMERIC.match(event.data)
+            or self.re_date_seps.match(event.data)
+        ):
             self.command_modifier += event.data
         else:
-            # Not '[0-9]' or '.'. Ignore it and reset state.
+            # Not a number ('[0-9]'), a dot ('.'), or a date separator
+            # ('-', etc.). Ignore it and reset state.
             self.command_modifier_reset()
 
     @catch_action_exception

@@ -83,6 +83,7 @@ class KeyActionMap(object):
             def _intercept_modifier(func):
                 def wrapper(obj, event, *args, **kwargs):
                     command_modifier = obj.carousel.update_handler.command_modifier
+                    re_date_seps = obj.carousel.update_handler.re_date_seps
                     # Check if '.' and pass to command modifier if started.
                     # - This enables a fractional command modifier to coexist
                     #   with a user command mapped to '.'. I.e., if no modifier
@@ -90,9 +91,24 @@ class KeyActionMap(object):
                     #   if modifier started and '.', treat as decimal point.
                     if (
                         command_modifier
-                        and event.data == '.'
-                        # Can only be one '.' in modifier, so check not seen.
-                        and '.' not in command_modifier
+                        and (
+                            (
+                                event.data == '.'
+                                # Can only be one '.' in modifier, so check not seen.
+                                # (lb): This is somewhat awkward behavior, e.g., if
+                                # user tries typing a date prefix (e.g., for the 'G'
+                                # command) using periods, say, `2020.01.` on the
+                                # second dot, it'll execute the '.' command. Oh well.
+                                and '.' not in command_modifier
+                            )
+                            or (
+                                # Note that date separators are allowed more than once,
+                                # meaning any command mapped to a key also used as a
+                                # date separator will be shadowed by this code and
+                                # therefore cannot be called with a command modifier.
+                                re_date_seps.match(event.data)
+                            )
+                        )
                     ):
                         obj.carousel.update_handler.command_modifier_any_key(event)
                     else:

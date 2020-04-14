@@ -20,6 +20,7 @@
 from gettext import gettext as _
 
 from datetime import datetime
+import re
 
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
@@ -799,17 +800,60 @@ class ZoneDetails(
     # ***
 
     def parse_dated(self, edit_text):
-        time_now = self.carousel.controller.now
-        try:
-            edit_time = parse_dated(edit_text, time_now, cruftless=True)
-        except ParserInvalidDatetimeException as err:
-            # E.g., try entering date "2019-01-27 18."
-            edit_time = None
-            parse_err = str(err)
-        else:
-            self.affirm(isinstance(edit_time, datetime))
-            parse_err = None
-        return edit_time, parse_err
+        def _parse_dated():
+            time_now = self.carousel.controller.now
+            parseable = prepare_dated()
+            try:
+                edit_time = parse_dated(parseable, time_now, cruftless=True)
+            except ParserInvalidDatetimeException as err:
+                # E.g., try entering date "2019-01-27 18."
+                edit_time = None
+                parse_err = str(err)
+            else:
+                self.affirm(isinstance(edit_time, datetime))
+                parse_err = None
+            return edit_time, parse_err
+
+        def prepare_dated():
+            # Per date_separators, we let user specify which optional
+            # separators they'd like to, but iso8601 only allows dashes to
+            # separate the year parts; a space, 't', or 'T' to distinguish
+            # the year from the time; and colons to separate clock time's
+            # hours from minutes. Here we remove all those non-numeric
+            # characters and just build the iso8601-worthy string ourselves.
+            # We also allow incomplete YYYYMM (iso8601 only allows YYYY-MM
+            # or YYYYMMDD), as well as incomplete time (say, '12', for noon).
+            numberless = re.sub(r'[^\d]+', '', edit_text)
+            # (lb): Alright, maybe this parsing should be pushed down to parse_dated.
+            # - Add punctuation based on number of digits, i.e.,
+            #   YYYY 4 | YYYYMM 6 | YYYYMMDD 8 | YYYYMMDDhh 10 | YYYYMMDDhhmm 12
+            # - Note that clock time still works, e.g., `1000` will be interpreted
+            #   as 10 AM. And `100` as 1 AM.
+            pattern = r''
+            replace = r''
+            n_digits = len(numberless)
+            if n_digits >= 4:
+                pattern += r'(....)'
+                replace += r'\1'
+            if n_digits >= 6:
+                pattern += r'(..)'
+                replace += r'-\2'
+            if n_digits >= 8:
+                pattern += r'(..)'
+                replace += r'-\3'
+            if n_digits >= 10:
+                pattern += r'(..)'
+                replace += r' \4'
+            if n_digits >= 12:
+                pattern += r'(..)'
+                replace += r':\5'
+            reformatted = re.sub(pattern, replace, numberless)
+            self.carousel.controller.client_logger.debug(
+                'reformatted: {}'.format(reformatted)
+            )
+            return reformatted
+
+        return _parse_dated()
 
     # ***
 

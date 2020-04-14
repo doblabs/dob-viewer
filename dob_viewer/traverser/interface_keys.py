@@ -102,6 +102,23 @@ class KeyBonder(object):
 
     # ***
 
+    @property
+    def date_separators(self):
+        try:
+            return self._date_separators
+        except AttributeError:
+            return self._load_date_separators()
+
+    def _load_date_separators(self):
+        cfgname = 'date_separators'
+        date_seps = self.config['editor-keys'][cfgname]
+        self._date_separators, errmsg = json_load_sublisted(cfgname, date_seps)
+        if errmsg is not None:
+            return self.add_error_and_return_empty(errmsg)
+        return self._date_separators
+
+    # ***
+
     def print_warnings(self):
         if not self.errors:
             return
