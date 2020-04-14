@@ -666,13 +666,6 @@ class DobViewerConfigurableDev(object):
 
     # ***
 
-    @property
-    @ConfigRoot.setting(
-        _("XXX"),
-    )
-    def panic_delta_time(self):
-        return 'q'
-
 
 # ***
 

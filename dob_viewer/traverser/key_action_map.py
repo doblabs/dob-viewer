@@ -507,6 +507,11 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
+    def cancel_commando(self, event):
+        self.update_handler.cancel_commando(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     def parts_commando(self, event):
         self.update_handler.parts_commando(event)
 
@@ -538,6 +543,11 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
+    def cancel_delta_time(self, event):
+        self.update_handler.cancel_delta_time(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     def parts_delta_time(self, event):
         self.update_handler.parts_delta_time(event)
 
@@ -557,9 +567,4 @@ class KeyActionMap(object):
     @Decorators.refresh_now
     def final_delta_time_hours(self, event):
         self.update_handler.final_delta_time_hours(event)
-
-    @Decorators.debug_log_trace_enter_leave
-    @Decorators.refresh_now
-    def panic_delta_time(self, event):
-        self.update_handler.panic_delta_time(event)
 

@@ -434,6 +434,11 @@ class UpdateHandler(object):
         self.carousel.action_manager.wire_keys_commando()
 
     @catch_action_exception
+    def cancel_commando(self, event):
+        self.zone_manager.zone_lowdown.reset_status()
+        self.reset_commando()
+
+    @catch_action_exception
     def parts_commando(self, event):
         """"""
         # Don't use key_sequence but go straight for the raw data.
@@ -449,6 +454,9 @@ class UpdateHandler(object):
         hot_notif = self.colon_commando(event, self.typed_commando)
         if hot_notif:
             self.zone_manager.zone_lowdown.update_status(hot_notif)
+        self.reset_commando()
+
+    def reset_commando(self):
         del self.began_commando
         del self.typed_commando
         self.carousel.action_manager.unwire_keys_commando()
@@ -531,6 +539,11 @@ class UpdateHandler(object):
             # This allows user to press '!' before '-'.
             self.command_modifier_setup()
         self.delta_time_target = 'start'
+
+    @catch_action_exception
+    def cancel_delta_time(self, event):
+        self.zone_manager.zone_lowdown.reset_status()
+        self.command_modifier_reset()
 
     RE_NUMERIC = re.compile('^[0-9]$')
 
@@ -637,11 +650,6 @@ class UpdateHandler(object):
                 count = int(count)
         self.reset_time_multipliers()
         return count
-
-    @catch_action_exception
-    def panic_delta_time(self, event):
-        """"""
-        self.command_modifier_reset()
 
     def reset_time_multipliers(self):
         self.command_modifier_reset()
