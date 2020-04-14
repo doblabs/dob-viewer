@@ -804,6 +804,7 @@ class ZoneDetails(
             edit_time = parse_dated(edit_text, time_now, cruftless=True)
         except ParserInvalidDatetimeException as err:
             # E.g., try entering date "2019-01-27 18."
+            edit_time = None
             parse_err = str(err)
         else:
             self.affirm(isinstance(edit_time, datetime))
