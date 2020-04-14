@@ -333,8 +333,9 @@ class Carousel(object):
     def standup_always(self, **kwargs):
         self.zone_manager = ZoneManager(self)
         self.zone_manager.standup()
-        self.update_handler.standup()
         self.action_manager.standup()
+        self.update_handler.standup()
+        self.action_manager.finalize_standup()  # Prints key binding errors.
         self.zone_manager.build_and_show(**kwargs)
 
     # ***

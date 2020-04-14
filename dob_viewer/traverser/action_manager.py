@@ -44,6 +44,9 @@ class ActionManager(object):
         )
         self.setup_key_bindings()
 
+    def finalize_standup(self):
+        self.key_bonder.print_warnings()
+
     # ***
 
     def _wire_keys(self, key_bindings):
@@ -117,7 +120,6 @@ class ActionManager(object):
         self.setup_key_bindings_modal()
         self.setup_key_bindings_commando()
         self.setup_key_bindings_delta_time()
-        self.key_bonder.print_warnings()
 
     def setup_key_bindings_shared(self):
         bindings = []
