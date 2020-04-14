@@ -432,7 +432,8 @@ class UpdateHandler(object):
     @catch_action_exception
     def parts_commando(self, event):
         """"""
-        self.typed_commando += self._key_sequence_str(event)
+        # Don't use key_sequence but go straight for the raw data.
+        self.typed_commando += event.data
         self.zone_manager.zone_lowdown.update_status(
             self.began_commando + self.typed_commando,
             clear_after_secs=0,
