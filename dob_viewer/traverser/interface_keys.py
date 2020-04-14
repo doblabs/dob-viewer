@@ -107,6 +107,7 @@ class KeyBonder(object):
             return
         dob_in_user_warning('\n'.join(self.errors))
         time.sleep(2.666)
+        self.errors = []
 
     # ***
 
