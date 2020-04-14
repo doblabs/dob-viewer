@@ -91,8 +91,13 @@ class DobViewerConfigurableDev(object):
     def save_edited_and_exit(self):
         # (lb): I had this mapped to Ctrl-W, but that feels like it should
         # just close the application... which would be a simple exit.
-        # - We can return empty string here and let user set if they want.
-        #  return 'c-w'
+        # - I think Ctrl-W would break people's mental model:
+        #     return 'c-w'
+        # - But users can perform this same (two-commands-in-one) feature via
+        #   the `:wq` commando. Except the commando has option to linger after
+        #   save, to display the 'Saved {} Facts' message before exiting.
+        # - Here we return the empty string to disable it, but it's left as a
+        #   configurable option should the user want to map it to use it.
         return ''
 
     # ***

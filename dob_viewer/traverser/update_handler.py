@@ -464,7 +464,21 @@ class UpdateHandler(object):
             # E.g., `:q`.
             self.carousel.exit_command(event)
         elif typed_commando == keys_config['save_quit_commando']:
-            self.carousel.save_edited_and_exit(event)
+            # (lb): My first go was to just save-and-exit, but then I thought
+            # maybe we could linger for a hot mo. to let user see the 'Saved'
+            # message. I'll keep both options here for now: maybe later we'll
+            # want to make (yet another) user configurable option.
+            save_exit_message_linger = 0.999  # Herman Cain would be proud.
+            if save_exit_message_linger <= 0:
+                self.carousel.save_edited_and_exit(event)
+            else:
+                self.carousel.save_edited_and_live(event)
+                # Hang out briefly to provide 'save' command feedback (via
+                # 'Saved {} Facts' status message). (lb): This seems like a
+                # good thing for new users; veteran dobbers will probably
+                # disable (by setting configurable option to '0' seconds).
+                time.sleep(save_exit_message_linger)
+                self.carousel.exit_command(event)
         else:
             # (lb): Copying Vim's message for now. Verbatim. Don't judge.
             msg = 'E492: Not an editor command: {}'.format(typed_commando)
