@@ -267,6 +267,20 @@ class KeyActionMap(object):
     def jump_rift_inc(self, event):
         self.zone_manager.jump_rift_inc(event)
 
+    # *** First/Final: Fact
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.reset_time_multipliers
+    def jump_fact_first(self, event):
+        self.zone_manager.jump_fact_first(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.reset_time_multipliers
+    def jump_fact_final(self, event):
+        self.zone_manager.jump_fact_final(event)
+
     # *** Up/Down: Content Cursor Motion
 
     @Decorators.debug_log_trace_enter_leave

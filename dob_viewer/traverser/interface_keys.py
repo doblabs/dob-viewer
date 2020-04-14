@@ -175,6 +175,9 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'jump_rift_dec')
         key_bonds += self._key_bonds(action_map, 'jump_rift_inc')
 
+        key_bonds += self._key_bonds(action_map, 'jump_fact_first')
+        key_bonds += self._key_bonds(action_map, 'jump_fact_final')
+
         key_bonds += self._key_bonds(action_map, 'cursor_up_one')
         key_bonds += self._key_bonds(action_map, 'cursor_down_one')
 

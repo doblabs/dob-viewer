@@ -467,6 +467,24 @@ class ZoneManager(object):
 
     # ***
 
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def jump_fact_first(self, event):
+        """"""
+        was_curr = self.carousel.edits_manager.curr_fact
+        self.carousel.edits_manager.jump_fact_first()
+        self.refresh_fact_or_notify_noop(was_curr, _("Already on first Fact"))
+
+    @catch_action_exception
+    @ZoneContent.Decorators.reset_showing_help
+    def jump_fact_final(self, event):
+        """"""
+        was_curr = self.carousel.edits_manager.curr_fact
+        self.carousel.edits_manager.jump_fact_final()
+        self.refresh_fact_or_notify_noop(was_curr, _("Already on final Fact"))
+
+    # ***
+
     def finalize_jump_dec(self, prev_fact, jump_msg):
         """"""
         self.finalize_jump_check_overlapped(

@@ -545,6 +545,16 @@ class EditsManager(object):
 
     # ***
 
+    def jump_fact_first(self):
+        """"""
+        self.conjoined.jump_fact_first()
+
+    def jump_fact_final(self):
+        """"""
+        self.conjoined.jump_fact_final()
+
+    # ***
+
     def save_edited_facts(self):
         """"""
         # 2019-01-23 22:28: (lb): I wrote this quick in the past hour.

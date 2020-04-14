@@ -27,8 +27,12 @@ class FactsManager_RiftInc(object):
     def jump_rift_inc(self):
         next_fact = self.find_rift_fact(is_next=True)
         if next_fact is None:
-            next_fact = self.jump_to_latest_fact(reason='rift-inc')
+            return self.jump_fact_final('rift-inc')
         return next_fact
+
+    def jump_fact_final(self, reason='fact-final'):
+        """"""
+        return self.jump_to_latest_fact(reason=reason)
 
     # ***
 

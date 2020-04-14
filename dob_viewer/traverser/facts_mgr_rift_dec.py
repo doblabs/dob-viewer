@@ -29,8 +29,12 @@ class FactsManager_RiftDec(object):
         # find_rift_fact calls jump_to_fact_nearest (which calls fulfill_jump).
         prev_fact = self.find_rift_fact(is_prev=True)
         if prev_fact is None:
-            prev_fact = self.jump_to_oldest_fact(reason='rift-dec')
+            return self.jump_fact_first('rift-dec')
         return prev_fact
+
+    def jump_fact_first(self, reason='fact-first'):
+        """"""
+        return self.jump_to_oldest_fact(reason=reason)
 
     # ***
 
