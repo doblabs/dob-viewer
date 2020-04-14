@@ -643,16 +643,7 @@ class ZoneDetails(
         # ***
 
         def apply_edit_time_changed(edit_fact, edit_text):
-            time_now = self.carousel.controller.now
-            try:
-                edit_time = parse_dated(edit_text, time_now, cruftless=True)
-            except ParserInvalidDatetimeException as err:
-                # E.g., try entering date "2019-01-27 18."
-                parse_err = str(err)
-            else:
-                self.affirm(isinstance(edit_time, datetime))
-                parse_err = None
-
+            edit_time, parse_err = self.parse_dated(edit_text)
             if parse_err:
                 show_message_cannot_parse_time(parse_err)
             else:
@@ -807,10 +798,26 @@ class ZoneDetails(
 
     # ***
 
+    def parse_dated(self, edit_text):
+        time_now = self.carousel.controller.now
+        try:
+            edit_time = parse_dated(edit_text, time_now, cruftless=True)
+        except ParserInvalidDatetimeException as err:
+            # E.g., try entering date "2019-01-27 18."
+            parse_err = str(err)
+        else:
+            self.affirm(isinstance(edit_time, datetime))
+            parse_err = None
+        return edit_time, parse_err
+
+    # ***
+
     @catch_action_exception
     # SKIP: @ZoneContent.Decorators.reset_showing_help
     def toggle_focus_description(self, event):
         self.zone_manager.toggle_focus_time_widget(self.zone_manager.content_control)
+
+    # ***
 
     @catch_action_exception
     def undo_command(self, event):
