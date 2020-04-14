@@ -234,10 +234,10 @@ class KeyBonder(object):
 
     # ***
 
-    def count_modifier(self, action_map):
+    def command_modifier(self, action_map):
         key_bonds = []
         key_bonds += self._key_bonds(action_map, 'allow_time_gap')
-        key_bonds += [KeyBond(Keys.Any, action=action_map.count_modifier_any_key)]
+        key_bonds += [KeyBond(Keys.Any, action=action_map.command_modifier_any_key)]
         return key_bonds
 
     # ***

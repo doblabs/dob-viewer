@@ -36,7 +36,7 @@ class UpdateHandler(object):
     def __init__(self, carousel):
         self.carousel = carousel
         self.long_press_multiplier_init()
-        self.count_modifier_init()
+        self.command_modifier_init()
 
     def long_press_multiplier_init(self):
         self.last_time_time_adjust = None
@@ -290,7 +290,7 @@ class UpdateHandler(object):
         self.edit_time_adjust(5, 'end')
 
     def edit_time_adjust(self, delta_mins, start_or_end, end_maybe=None):
-        modifier = self.count_modifier_parse()
+        modifier = self.command_modifier_parse()
         if modifier is not None:
             delta_mins *= modifier
         delta_time = self.edit_time_multiplier(delta_mins)
@@ -304,7 +304,7 @@ class UpdateHandler(object):
         self.edit_time_reset_refresh()
 
     def edit_time_reset_refresh(self):
-        self.count_modifier_reset()
+        self.command_modifier_reset()
         self.zone_manager.reset_diff_fact()
         self.zone_manager.selectively_refresh()
 
@@ -322,7 +322,7 @@ class UpdateHandler(object):
     # press. But I added reset_time_multipliers decorator to key_action_map
     # handlers, so we probably do not even need this threshold, because now
     # if last_time_time_adjust is set, it should mean user has not pressed
-    # any other key since (see also count_modifier_any_key).
+    # any other key since (see also command_modifier_any_key).
     DOUBLE_KEYLICK_THRESHOLD = 0.33
     MULTIPLY_BY_05_THRESHOLD = 4
     MULTIPLY_BY_10_THRESHOLD = 7
@@ -486,14 +486,14 @@ class UpdateHandler(object):
 
     # ***
 
-    def count_modifier_init(self):
-        self.count_modifier = None
+    def command_modifier_init(self):
+        self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
         self.delta_time_target = None
 
-    def count_modifier_setup(self):
-        self.count_modifier = ''
+    def command_modifier_setup(self):
+        self.command_modifier = ''
         self.final_modifier = None
         self.time_gap_allowed = False
         # If user presses '+'/'-', then we'll set self.delta_time_target.
@@ -501,13 +501,13 @@ class UpdateHandler(object):
     # ***
 
     @catch_action_exception
-    def count_modifier_any_key(self, event=None):
+    def command_modifier_any_key(self, event=None):
         # Note: This only catches keys not mapped elsewhere.
         # And we only care about digits and decimal points.
-        if self.count_modifier is None:
+        if self.command_modifier is None:
             # Do not reset count modifier whilst building it!
-            self.count_modifier_setup()
-        self.count_modifier_feed(event)
+            self.command_modifier_setup()
+        self.command_modifier_feed(event)
 
     # ***
 
@@ -515,18 +515,18 @@ class UpdateHandler(object):
     def begin_delta_time_start(self, event):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
-        if self.count_modifier is None:
+        if self.command_modifier is None:
             # This allows user to press '!' before '+'.
-            self.count_modifier_setup()
+            self.command_modifier_setup()
         self.delta_time_target = 'end'
 
     @catch_action_exception
     def begin_delta_time_end(self, event):
         """"""
         self.carousel.action_manager.wire_keys_delta_time()
-        if self.count_modifier is None:
+        if self.command_modifier is None:
             # This allows user to press '!' before '-'.
-            self.count_modifier_setup()
+            self.command_modifier_setup()
         self.delta_time_target = 'start'
 
     RE_NUMERIC = re.compile('^[0-9]$')
@@ -534,43 +534,43 @@ class UpdateHandler(object):
     @catch_action_exception
     def parts_delta_time(self, event):
         """"""
-        self.count_modifier_feed(event)
+        self.command_modifier_feed(event)
 
-    def count_modifier_feed(self, event):
+    def command_modifier_feed(self, event):
         # If user pressed allow-gap key already (e.g., '!'), do not allow
         # more time to be entered; be strict and reset instead. Unless
         # user has not entered any time yet.
         if self.final_modifier:
-            self.count_modifier_reset()
+            self.command_modifier_reset()
         # We could allow any character and then parse at error, potentially
         # showing an error message. Or, if user types non-number now, we
         # could just go back to old state. -- It's not completely silent,
         # as the cursor will reappear.
         elif event.data == '.':
-            if '.' in self.count_modifier:
+            if '.' in self.command_modifier:
                 # So strict!
-                self.count_modifier_reset()
+                self.command_modifier_reset()
             else:
-                self.count_modifier += '.'
+                self.command_modifier += '.'
         elif UpdateHandler.RE_NUMERIC.match(event.data):
-            self.count_modifier += event.data
+            self.command_modifier += event.data
         else:
             # Not '[0-9]' or '.'. Ignore it and reset state.
-            self.count_modifier_reset()
+            self.command_modifier_reset()
 
     @catch_action_exception
     def allow_time_gap(self, event):
         """"""
         if self.time_gap_allowed is True:
             # Be strict. Consider a second '!' to be syntax error, so reset.
-            self.count_modifier_reset()
+            self.command_modifier_reset()
         else:
-            if self.count_modifier is None:
+            if self.command_modifier is None:
                 # Allow '!' to precede '[0-9]' or '+'/'-'.
-                self.count_modifier_setup()
-            elif self.count_modifier:
+                self.command_modifier_setup()
+            elif self.command_modifier:
                 # User entered some numbers or a decimal already. Mark it final
-                self.final_modifier = self.count_modifier
+                self.final_modifier = self.command_modifier
             self.time_gap_allowed = True
 
     @catch_action_exception
@@ -589,7 +589,7 @@ class UpdateHandler(object):
         self.apply_delta_time(event, scalar=60)
 
     def apply_delta_time(self, event, scalar):
-        delta_time = self.count_modifier_parse()
+        delta_time = self.command_modifier_parse()
         if delta_time is None:
             # Happens if user types, e.g., `+h`, i.e., without any digits.
             self.edit_time_reset_refresh()
@@ -610,17 +610,17 @@ class UpdateHandler(object):
         )
         self.edit_time_reset_refresh()
 
-    def count_modifier_parse(self):
-        if not self.count_modifier:
+    def command_modifier_parse(self):
+        if not self.command_modifier:
             return None
         try:
-            delta_time = int(self.count_modifier)
+            delta_time = int(self.command_modifier)
         except ValueError:
-            delta_time = float(self.count_modifier)
+            delta_time = float(self.command_modifier)
         return delta_time
 
     def apply_count_multiplier(self, count=1, floats=False):
-        modifier = self.count_modifier_parse()
+        modifier = self.command_modifier_parse()
         if modifier is not None:
             count = count * modifier
             if not floats:
@@ -631,19 +631,19 @@ class UpdateHandler(object):
     @catch_action_exception
     def panic_delta_time(self, event):
         """"""
-        self.count_modifier_reset()
+        self.command_modifier_reset()
 
     def reset_time_multipliers(self):
-        self.count_modifier_reset()
+        self.command_modifier_reset()
         # Also the long-press multipliers.
         self.last_time_time_adjust = None
         self.init_time_time_adjust = None
         self.press_cnt_time_adjust = 0
 
-    def count_modifier_reset(self):
-        if self.count_modifier is None:
+    def command_modifier_reset(self):
+        if self.command_modifier is None:
             return
-        self.count_modifier = None
+        self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
         if self.delta_time_target is not None:

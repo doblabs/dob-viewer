@@ -78,9 +78,9 @@ class KeyActionMap(object):
         def reset_time_multipliers(cls, func):
             def wrapper(obj, event, *args, **kwargs):
                 # Check if '.' and pass to count modifier if counting
-                count_modifier = obj.carousel.update_handler.count_modifier
-                if event.data == '.' and count_modifier is not None:
-                    obj.carousel.update_handler.count_modifier_feed(event)
+                command_modifier = obj.carousel.update_handler.command_modifier
+                if event.data == '.' and command_modifier is not None:
+                    obj.carousel.update_handler.command_modifier_feed(event)
                 else:
                     obj.carousel.update_handler.reset_time_multipliers()
                     func(obj, event, *args, **kwargs)
@@ -93,9 +93,9 @@ class KeyActionMap(object):
         def handle_kludgey_period_duality(cls, func):
             def wrapper(obj, event, *args, **kwargs):
                 # Check if '.' and pass to count modifier if counting
-                count_modifier = obj.carousel.update_handler.count_modifier
-                if event.data == '.' and count_modifier is not None:
-                    obj.carousel.update_handler.count_modifier_feed(event)
+                command_modifier = obj.carousel.update_handler.command_modifier
+                if event.data == '.' and command_modifier is not None:
+                    obj.carousel.update_handler.command_modifier_feed(event)
                 else:
                     func(obj, event, *args, **kwargs)
 
@@ -407,14 +407,14 @@ class KeyActionMap(object):
     def edit_time_increment_end_5min(self, event):
         self.update_handler.edit_time_increment_end_5min(event)
 
-    # #### Key bindings wired by KeyBonder.count_modifier().
+    # #### Key bindings wired by KeyBonder.command_modifier().
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
     # NOPE: @Decorators.reset_time_multipliers
     # Not necessary: @Decorators.handle_kludgey_period_duality
-    def count_modifier_any_key(self, event):
-        self.update_handler.count_modifier_any_key(event)
+    def command_modifier_any_key(self, event):
+        self.update_handler.command_modifier_any_key(event)
 
     # #### Key bindings wired by KeyBonder.create_delete_fact().
 
