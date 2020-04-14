@@ -257,13 +257,13 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
-    @Decorators.reset_time_multipliers
+    # NOPE: @Decorators.reset_time_multipliers
     def jump_rift_dec(self, event):
         self.zone_manager.jump_rift_dec(event)
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
-    @Decorators.reset_time_multipliers
+    # NOPE: @Decorators.reset_time_multipliers
     def jump_rift_inc(self, event):
         self.zone_manager.jump_rift_inc(event)
 

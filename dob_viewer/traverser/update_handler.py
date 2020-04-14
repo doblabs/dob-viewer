@@ -540,6 +540,13 @@ class UpdateHandler(object):
         self.command_modifier_feed(event)
 
     def command_modifier_feed(self, event):
+        """Accumulates individual key presses until a command action is specified.
+
+        This is like the [count] prefix option in Vim, but we also support
+        entering a date instead, for the `G` command (whereas in Vim, `nG`
+        moves the cursor to line 'n', in Dob, `nG` moves the current view
+        to date 'n').
+        """
         # If user pressed allow-gap key already (e.g., '!'), do not allow
         # more time to be entered; be strict and reset instead. Unless
         # user has not entered any time yet.

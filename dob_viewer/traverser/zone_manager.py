@@ -447,17 +447,34 @@ class ZoneManager(object):
     @ZoneContent.Decorators.reset_showing_help
     def jump_rift_dec(self, event):
         """"""
-        was_curr = self.carousel.edits_manager.curr_fact
-        self.carousel.edits_manager.jump_rift_dec()
-        self.refresh_fact_or_notify_noop(was_curr, _("Already on first Fact"))
+        rift_jumper = self.carousel.edits_manager.jump_rift_dec
+        noop_msg = _("Already on first Fact")
+        self.jump_rift_or_time(rift_jumper, 'until_time', noop_msg)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def jump_rift_inc(self, event):
         """"""
+        rift_jumper = self.carousel.edits_manager.jump_rift_inc
+        noop_msg = _("Already on final Fact")
+        self.jump_rift_or_time(rift_jumper, 'since_time', noop_msg)
+
+    def jump_rift_or_time(self, rift_jumper, which_time, noop_msg):
         was_curr = self.carousel.edits_manager.curr_fact
-        self.carousel.edits_manager.jump_rift_inc()
-        self.refresh_fact_or_notify_noop(was_curr, _("Already on final Fact"))
+        modifier = self.carousel.update_handler.command_modifier
+        self.carousel.update_handler.command_modifier_reset()
+        if not modifier:
+            rift_jumper()
+        else:
+            jump_time, parse_err = self.zone_details.parse_dated(modifier)
+            if parse_err is not None:
+                noop_msg = _("Not a time or date")
+            else:
+                facts_mgr = self.carousel.edits_manager.conjoined
+                kwargs = {which_time: jump_time}
+                facts_mgr.jump_to_fact_nearest(**kwargs)
+                noop_msg = _("Nothing on that date")
+        self.refresh_fact_or_notify_noop(was_curr, noop_msg)
 
     def refresh_fact_or_notify_noop(self, was_curr, noop_msg):
         if was_curr is not self.carousel.edits_manager.curr_fact:
