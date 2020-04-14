@@ -510,6 +510,7 @@ class UpdateHandler(object):
             # Do not reset count modifier whilst building it!
             self.command_modifier_setup()
         self.command_modifier_feed(event)
+        self.persist_status(self.command_modifier)
 
     # ***
 
