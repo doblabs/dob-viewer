@@ -17,7 +17,6 @@
 
 """Key Binding Wiring Manager"""
 
-import json
 import time
 
 from gettext import gettext as _
@@ -28,6 +27,8 @@ from prompt_toolkit.keys import Keys
 from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
+
+from ..config import json_load_sublisted
 
 __all__ = (
     'KeyBonder',
@@ -58,34 +59,20 @@ class KeyBonder(object):
             return action, cfgval
 
         def build_bonds(action, cfgval):
-            keybonds = []
-            # (lb): We could skip the startswith check and just use except,
-            #       but it feels more readable this way.
-            if cfgval.startswith('['):
-                try:
-                    # List of lists. Top-level is keybindings, each a single key or many.
-                    keycodes = json.loads(cfgval)
-                    assert isinstance(keycodes, list)  # Would it be anything else?
-                    if not sanity_check(keycodes):
-                        return add_error_not_list_within_list(cfgval)
-                    keybonds = [KeyBond(keycode, action=action) for keycode in keycodes]
-                except json.decoder.JSONDecodeError:
-                    pass
-            if cfgval and not keybonds:
-                keybonds = [KeyBond(cfgval, action=action)]
+            # Note that the json loader discards any entry that would just
+            # be the empty string (which the user can apply to a key binding to
+            # effectively "disable" (render unreachable) the associated command).
+            keycodes, errmsg = json_load_sublisted(action_name, cfgval)
+            if errmsg is not None:
+                return self.add_error_and_return_empty(errmsg)
+            keybonds = [KeyBond(keycode, action=action) for keycode in keycodes]
             return keybonds
 
-        def sanity_check(keycodes):
-            return all(isinstance(keycode, list) for keycode in keycodes)
-
-        def add_error_not_list_within_list(cfgval):
-            self.errors.append(_(
-                'ERROR: Key binding for ‘{}’ should be single key'
-                ' or list of lists, not: {}'.format(action_name, cfgval)
-            ))
-            return []
-
         return __key_bonds()
+
+    def add_error_and_return_empty(self, errmsg):
+        self.errors.append(errmsg)
+        return []
 
     # ***
 
