@@ -49,6 +49,13 @@ class UpdateHandler(object):
 
     # ***
 
+    def persist_status(self, hot_notif):
+        self.zone_manager.zone_lowdown.update_status(
+            hot_notif, clear_after_secs=0,
+        )
+
+    # ***
+
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
     def undo_command(self, event):
@@ -423,10 +430,7 @@ class UpdateHandler(object):
         """"""
         self.began_commando = self._key_sequence_str(event)
         self.typed_commando = ''
-        self.zone_manager.zone_lowdown.update_status(
-            self.began_commando,
-            clear_after_secs=0,
-        )
+        self.persist_status(self.began_commando)
         self.carousel.action_manager.wire_keys_commando()
 
     @catch_action_exception
@@ -434,10 +438,7 @@ class UpdateHandler(object):
         """"""
         # Don't use key_sequence but go straight for the raw data.
         self.typed_commando += event.data
-        self.zone_manager.zone_lowdown.update_status(
-            self.began_commando + self.typed_commando,
-            clear_after_secs=0,
-        )
+        self.persist_status(self.began_commando + self.typed_commando)
 
     @catch_action_exception
     def final_commando(self, event):
