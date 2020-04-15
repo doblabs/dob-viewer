@@ -516,10 +516,11 @@ class UpdateHandler(object):
         self.delta_time_target = None
         self.delta_time_keycode = ''
 
-    def command_modifier_setup(self):
+    def command_modifier_setup(self, keep_gap=False):
         self.command_modifier = ''
         self.final_modifier = None
-        self.time_gap_allowed = False
+        if not keep_gap:
+            self.time_gap_allowed = False
         # If user presses '+'/'-', then we'll set self.delta_time_target.
 
     # ***
@@ -557,9 +558,10 @@ class UpdateHandler(object):
 
     def begin_delta_time_both(self, event):
         self.carousel.action_manager.wire_keys_delta_time()
-        if self.command_modifier is None:
-            # This allows user to press '!' before '-'.
-            self.command_modifier_setup()
+        # Allow user to press '!' before '+'/'-'. But not '!' then some
+        # numbers, then '+'/'-', "that would be illegal". (So, e.g.,
+        # if user pressed `!123+`, we'd ignore the `!123`.
+        self.command_modifier_setup(keep_gap=not self.command_modifier)
         self.delta_time_keycode = self._key_sequence_str(event)
         self.command_modifier_stat()
 
