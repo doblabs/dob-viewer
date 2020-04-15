@@ -27,21 +27,30 @@ class FactsManager_RiftInc(object):
     def jump_rift_inc(self):
         next_fact = self.find_rift_fact(is_next=True)
         if next_fact is None:
-            return self.jump_fact_final('rift-inc')
+            return self.jump_to_latest_fact(reason='rift-inc')
         return next_fact
 
     def jump_fact_final(self, reason='fact-final'):
         """"""
-        return self.jump_to_latest_fact(reason=reason)
+        return self.jump_to_latest_fact(reason, include_edge_gap=True)
 
     # ***
 
-    def jump_to_latest_fact(self, reason):
+    def jump_to_latest_fact(self, reason, include_edge_gap=False):
         """"""
         def _jump_to_latest_fact():
-            _final_group, final_fact = group_latest(ceil_groups())
+            final_group = self.groups[-1] if include_edge_gap else ceil_groups()
+            _final_group, final_fact = group_latest(final_group)
             next_fact = final_fact
+            # Set Edit/FactsManagers' curr_fact; Clear _jump_time_ref.;
+            # Update viewed_fact_pks; Maybe call reset_paste/reset paste_cnt.
             self.fulfill_jump(next_fact, reason=reason)
+            if include_edge_gap and next_fact.end is not None:
+                # Create the active gap Fact.
+                # - This'll happen if final Fact is complete: start dob (starts
+                #   on final Fact), press 'left' 0 or more times, press 'G'.
+                next_fact = self.jump_fact_inc()
+                self.controller.affirm(next_fact.is_gap)
             return next_fact
 
         def ceil_groups():
@@ -73,18 +82,35 @@ class FactsManager_RiftInc(object):
             final_fact = final_group[-1]
             if final_group is not self.groups[-1]:
                 return final_group, final_fact
-            if final_group.until_time_stops:
-                # Look no further! (To test: press `G` a bunch.)
+            # else, we're on the final group.
+            elif final_group.until_time_stops:
+                # The final_group's last element is the active Fact.
+                # If it's a gap Fact, however, which is unsaved (contains
+                # no user data), caller can opt to receive last real Fact.
+                if not include_edge_gap and final_fact.is_gap:
+                    # final_fact.is_gap, so try the second-to-last Fact.
+                    # - This'll happen if last saved Fact is complete: start dob,
+                    # press 'right' to create Gap fact, 'left', 'left', press 'f'
+                    # to return to final true fact (find_rift_fact handles it),
+                    # then press 'f' again, and the code will branch to here.
+                    try:
+                        final_fact = final_group[-2]
+                    except IndexError:
+                        # Well, at least we tried.
+                        # (lb): I need to test this branch. Happens on empty db.
+                        pass
                 return final_group, final_fact
             self.controller.affirm(final_fact.next_fact is None)
             latest_fact = self.controller.find_latest_fact()
             if not latest_fact:
+                # Empty database, meaning local Facts unsaved.
                 self.controller.affirm(final_fact.unstored)
             else:
                 try:
                     latest_fact = self.by_pk[latest_fact.pk]
                     self.controller.affirm(latest_fact.orig_fact is not None)
                 except KeyError:
+                    # The latest Fact from the db is new to us!
                     self.controller.affirm(latest_fact.orig_fact is None)
                     latest_fact.orig_fact = 0
                     self.add_facts([latest_fact])
@@ -94,6 +120,8 @@ class FactsManager_RiftInc(object):
                 or (latest_fact.pk == final_fact.pk)
                 or (latest_fact < final_fact)
             ):
+                # The call above to find_latest_fact excluded deleted, so only
+                # way latest_fact.deleted is if local copy in self.by_pk is so.
                 return final_group, final_fact
             # If the new_facts were after latest_fact, we'll have loaded
             # latest_fact, but we'll be showing the final new, next Fact.

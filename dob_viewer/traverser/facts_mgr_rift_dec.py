@@ -29,21 +29,26 @@ class FactsManager_RiftDec(object):
         # find_rift_fact calls jump_to_fact_nearest (which calls fulfill_jump).
         prev_fact = self.find_rift_fact(is_prev=True)
         if prev_fact is None:
-            return self.jump_fact_first('rift-dec')
+            return self.jump_to_oldest_fact(reason='rift-dec')
         return prev_fact
 
     def jump_fact_first(self, reason='fact-first'):
         """"""
-        return self.jump_to_oldest_fact(reason=reason)
+        return self.jump_to_oldest_fact(reason, include_edge_gap=True)
 
     # ***
 
-    def jump_to_oldest_fact(self, reason):
+    def jump_to_oldest_fact(self, reason, include_edge_gap=False):
         """"""
         def _jump_to_oldest_fact():
-            _first_group, first_fact = group_oldest(floor_groups())
+            first_group = self.groups[0] if include_edge_gap else floor_groups()
+            _first_group, first_fact = group_oldest(first_group)
             prev_fact = first_fact
             self.fulfill_jump(prev_fact, reason=reason)
+            if include_edge_gap and not prev_fact.is_gap:
+                # Create the prehistoric gap Fact. Run dob then `gg` to test.
+                prev_fact = self.jump_fact_dec()
+                self.controller.affirm(prev_fact.is_gap)
             return prev_fact
 
         def floor_groups():
@@ -73,8 +78,17 @@ class FactsManager_RiftDec(object):
             first_fact = first_group[0]
             if first_group is not self.groups[0]:
                 return first_group, first_fact
-            if first_group.since_time_began:
-                # Look no further! (To test: press `gg` a bunch.)
+            # else, we're on the first group.
+            elif first_group.since_time_began:
+                # On first group, which starts with gap Fact.
+                if not include_edge_gap and first_fact.is_gap:
+                    # Try for first actual, saved Fact, if one exists. This
+                    # implements the difference between 'F' and 'gg' commands.
+                    try:
+                        first_fact = first_group[1]
+                    except IndexError:
+                        # I.e., database is empty.
+                        pass
                 return first_group, first_fact
             self.controller.affirm(first_fact.prev_fact is None)
             oldest_fact = self.controller.find_oldest_fact()
