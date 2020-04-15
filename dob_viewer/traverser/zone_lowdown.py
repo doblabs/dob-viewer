@@ -65,6 +65,15 @@ class ZoneLowdown(object):
         # Clear status messages after timeout.
         if self.notif_expiry and time.time() >= self.notif_expiry:
             self.reset_status()
+        elif not self.hot_notif:
+            # Update active gap Fact status message, e.g.,
+            #   "Gap Fact of X.XX mins. [edit tp add]"
+            # so the X.XX keeps climbing.
+            # - (lb): Looks kinda ridiculous. Perhaps it'll nudge
+            #   user to solidify the gap.
+            curr_edit = self.carousel.edits_manager.curr_edit
+            if 'interval-gap' in curr_edit.dirty_reasons:
+                self.update_status(hot_notif='')
 
     # ***
 
@@ -108,7 +117,9 @@ class ZoneLowdown(object):
             curr_edit = self.carousel.edits_manager.curr_edit
             if 'interval-gap' in curr_edit.dirty_reasons:
                 context = _('Gap')
-                location = _("of {0}").format(curr_edit.format_delta(style=''))
+                location = _("of {0}").format(
+                    curr_edit.format_delta(style='', precision=1)
+                )
                 deleted = _(' [edit to add]')
             else:
                 if curr_edit.pk > 0:
