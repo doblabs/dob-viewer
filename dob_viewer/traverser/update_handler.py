@@ -179,7 +179,7 @@ class UpdateHandler(object):
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
-    def fact_paste(self, event):
+    def fact_paste(self, event=None):
         """"""
         def _fact_paste():
             paste_what = self.edits_manager.paste_copied_meta()
@@ -698,7 +698,12 @@ class UpdateHandler(object):
         try:
             delta_time = int(self.command_modifier)
         except ValueError:
-            delta_time = float(self.command_modifier)
+            try:
+                delta_time = float(self.command_modifier)
+            except ValueError:
+                # Happens if user entered, e.g., a date string but then
+                # pressed a [count] modifier command. E.g., '2020-04-01'.
+                return None
         return delta_time
 
     def apply_count_multiplier(self, count=1, floats=False):
