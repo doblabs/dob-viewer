@@ -512,7 +512,9 @@ class UpdateHandler(object):
         self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
+        self.time_gap_keycode = ''
         self.delta_time_target = None
+        self.delta_time_keycode = ''
 
     def command_modifier_setup(self):
         self.command_modifier = ''
@@ -530,27 +532,36 @@ class UpdateHandler(object):
             # Do not reset count modifier whilst building it!
             self.command_modifier_setup()
         self.command_modifier_feed(event)
-        self.persist_status(self.command_modifier)
+        self.command_modifier_stat()
+
+    def command_modifier_stat(self):
+        statmsg = ''
+        statmsg += self.delta_time_keycode
+        statmsg += self.command_modifier if self.command_modifier else ''
+        statmsg += self.time_gap_keycode if self.time_gap_allowed else ''
+        self.persist_status(statmsg)
 
     # ***
 
     @catch_action_exception
     def begin_delta_time_start(self, event):
         """"""
-        self.carousel.action_manager.wire_keys_delta_time()
-        if self.command_modifier is None:
-            # This allows user to press '!' before '+'.
-            self.command_modifier_setup()
         self.delta_time_target = 'end'
+        self.begin_delta_time_both(event)
 
     @catch_action_exception
     def begin_delta_time_end(self, event):
         """"""
+        self.delta_time_target = 'start'
+        self.begin_delta_time_both(event)
+
+    def begin_delta_time_both(self, event):
         self.carousel.action_manager.wire_keys_delta_time()
         if self.command_modifier is None:
             # This allows user to press '!' before '-'.
             self.command_modifier_setup()
-        self.delta_time_target = 'start'
+        self.delta_time_keycode = self._key_sequence_str(event)
+        self.command_modifier_stat()
 
     @catch_action_exception
     def cancel_delta_time(self, event):
@@ -563,6 +574,7 @@ class UpdateHandler(object):
     def parts_delta_time(self, event):
         """"""
         self.command_modifier_feed(event)
+        self.command_modifier_stat()
 
     def command_modifier_feed(self, event):
         """Accumulates individual key presses until a command action is specified.
@@ -611,6 +623,7 @@ class UpdateHandler(object):
                 # User entered some numbers or a decimal already. Mark it final
                 self.final_modifier = self.command_modifier
             self.time_gap_allowed = True
+        self.command_modifier_stat()
 
     @catch_action_exception
     def final_delta_time_apply(self, event):
@@ -680,7 +693,10 @@ class UpdateHandler(object):
         self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
+        self.time_gap_keycode = ''
         if self.delta_time_target is not None:
             self.carousel.action_manager.unwire_keys_delta_time()
             self.delta_time_target = None
+            self.delta_time_keycode = ''
+        self.zone_manager.zone_lowdown.reset_status()
 
