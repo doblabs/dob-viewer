@@ -236,31 +236,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def jump_rift_dec(self):
-        return json.dumps([('g', 'g')])
-
-    # ***
-
-    @property
-    @ConfigRoot.setting(
-        _("XXX"),
-    )
-    def jump_rift_inc(self):
-        return 'G'
-
-    # ***
-
-    @property
-    @ConfigRoot.setting(
-        _("XXX"),
-    )
-    def jump_fact_first(self):
-        # 2020-04-14: (lb): The original 'G' and 'gg' commands sorta morphed
-        # into the "rift" jumpers, which stop on the boundaries of the
-        # FactsManager groups. But we really should have a true Home/End Fact
-        # command.
-        # - (lb): Let's try 'f' and 'F' for the final/First Fact jumpers.
-        #   I realize this might conflict later with a potential 'f'ind
-        #   command... but the '/' mapping (Vim's find) is still available.
+        # A good pneumonic: 'F'irst Fact.
         return 'F'
 
     # ***
@@ -269,8 +245,27 @@ class DobViewerConfigurableDev(object):
     @ConfigRoot.setting(
         _("XXX"),
     )
-    def jump_fact_final(self):
+    def jump_rift_inc(self):
+        # A good pneumonic: 'f'inal Fact.
         return 'f'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def jump_fact_first(self):
+        return json.dumps([('g', 'g')])
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def jump_fact_final(self):
+        return 'G'
 
     # ***
 
