@@ -155,6 +155,14 @@ class StartEndEdit(object):
                 or (newest_changes.pristine == last_undo_or_newest_changes.altered)
             )
 
+            if newest_changes.pristine == last_undo_or_newest_changes.altered:
+                # Nothing changed! We're done here. E.g., given a completed Fact
+                # that is exactly 30 minutes long, if you typed '+30<TAB>' to set
+                # end to 30 minutes after start, if we kept going, the fact would
+                # be marked dirty, but the Diff Fact would not show anything changed.
+                # Then user tries to quit, and dob says they have unsaved work.
+                return
+
             # Mark things dirty (or not).
             self.edits_manager.manage_edited_dirty_flags(newest_changes.altered)
 
