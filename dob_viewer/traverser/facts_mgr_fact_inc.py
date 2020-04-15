@@ -187,23 +187,24 @@ class FactsManager_FactInc(object):
                 return next_fact
             self.controller.affirm(not self.curr_fact.has_next_fact)
             if next_fact is None:
-                gap_or_next = fill_gap_until_users_life_ended()
+                gap_or_next = fill_gap_is_endless()
             else:
-                gap_or_next = fill_gap_until_next_fact(next_fact)
+                gap_or_next = fill_gap_until_fact(next_fact)
             if gap_or_next is None:
+                self.controller.affirm(False)  # 2020-04-15: (lb): Impossible?
                 return None
             if gap_or_next is not next_fact:
                 curr_group_add_next(gap_or_next)
             wire_two_facts_until(gap_or_next, next_fact)
             return gap_or_next
 
-        def fill_gap_until_users_life_ended():
+        def fill_gap_is_endless():
             gap_fact = self.fact_from_interval_gap(
                 self.curr_fact.end, None,
             )
             return gap_fact
 
-        def fill_gap_until_next_fact(next_fact):
+        def fill_gap_until_fact(next_fact):
             if next_fact.start == self.curr_fact.end:
                 gap_fact = next_fact
             elif next_fact.is_gap:
