@@ -80,7 +80,7 @@ class ZoneDetails_TimeEnd(object):
         edits_manager = self.carousel.edits_manager
         edit_next = edits_manager.editable_fact_next(edit_fact)
         if (
-            'interval-gap' in edit_next.dirty_reasons
+            edit_next.is_gap
             and self.carousel.edits_manager.conjoined.is_final_fact(edit_next)
         ):
             # Use case: User sets end time of active Fact, then tabs away
@@ -131,7 +131,7 @@ class ZoneDetails_TimeEnd(object):
                 edit_next.start
                 and edit_fact.end
                 and (edit_fact.end > edit_next.start)
-            ) or ('interval-gap' in edit_next.dirty_reasons)
+            ) or edit_next.is_gap
             ):
                 undoable_facts.append(edit_next.copy())
                 edit_next.start = was_time

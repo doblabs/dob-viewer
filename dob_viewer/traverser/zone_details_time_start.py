@@ -118,7 +118,7 @@ class ZoneDetails_TimeStart(object):
         if edit_prev:
             if (
                 (edit_fact.start < edit_prev.end)
-                or ('interval-gap' in edit_prev.dirty_reasons)
+                or edit_prev.is_gap
             ):
                 undoable_facts.append(edit_prev.copy())
                 edit_prev.end = edit_fact.start

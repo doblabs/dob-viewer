@@ -72,7 +72,7 @@ class ZoneLowdown(object):
             # - (lb): Looks kinda ridiculous. Perhaps it'll nudge
             #   user to solidify the gap.
             curr_edit = self.carousel.edits_manager.curr_edit
-            if 'interval-gap' in curr_edit.dirty_reasons:
+            if curr_edit.is_gap:
                 self.update_status(hot_notif='')
 
     # ***
@@ -115,7 +115,7 @@ class ZoneLowdown(object):
 
         def showing_fact():
             curr_edit = self.carousel.edits_manager.curr_edit
-            if 'interval-gap' in curr_edit.dirty_reasons:
+            if curr_edit.is_gap:
                 context = _('Gap')
                 location = _("of {0}").format(
                     curr_edit.format_delta(style='', precision=1)

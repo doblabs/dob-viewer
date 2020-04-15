@@ -267,7 +267,7 @@ class StartEndEdit(object):
         # "do not automatically squash an out-of-view neighbor Fact to 0!"
         # Let's at least ensure a 1 second minimum squash neighbor width.
         fact_min_delta = 0
-        if 'interval-gap' not in neighbor.dirty_reasons:
+        if not neighbor.is_gap:
             fact_min_delta = int(self.controller.config['time.fact_min_delta'])
             fact_min_delta = max(fact_min_delta, 1)
         min_delta = timedelta(minutes=fact_min_delta)

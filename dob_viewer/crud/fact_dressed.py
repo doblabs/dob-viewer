@@ -194,10 +194,7 @@ class FactDressed(Fact):
     @property
     def dirty(self):  # MAYBE: Rename: positive()?
         # MAYBE/FIXME: Set dirty_reasons if fact.pk < 0, on new FactDressed.
-        return (
-            (self.unstored or len(self.dirty_reasons) > 0)
-            and ('interval-gap' not in self.dirty_reasons)
-        )
+        return ((self.unstored or len(self.dirty_reasons) > 0) and not self.is_gap)
 
     # *** Linked list methods.
 
@@ -208,6 +205,19 @@ class FactDressed(Fact):
     @property
     def has_prev_fact(self):
         return self.prev_fact is not None
+
+    # ***
+
+    @property
+    def is_gap(self):
+        return 'interval-gap' in self.dirty_reasons
+
+    @is_gap.setter
+    def is_gap(self, is_gap):
+        if is_gap:
+            self.dirty_reasons.add('interval-gap')
+        else:
+            self.dirty_reasons.discard('interval-gap')
 
     # *** Presentation concerns.
 

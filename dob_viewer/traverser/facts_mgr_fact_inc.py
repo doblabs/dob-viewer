@@ -206,7 +206,7 @@ class FactsManager_FactInc(object):
         def fill_gap_until_next_fact(next_fact):
             if next_fact.start == self.curr_fact.end:
                 gap_fact = next_fact
-            elif 'interval-gap' in next_fact.dirty_reasons:
+            elif next_fact.is_gap:
                 # Next fact is already unedited interval gap, so just edit its time.
                 next_fact.start = self.curr_fact.end
                 gap_fact = next_fact

@@ -324,9 +324,9 @@ class EditsManager(object):
         if not undelete:
             return
 
-        # If user edited gap-fact, ensure returned by prepared_facts;
-        # and clear its highlight.
-        edit_fact.dirty_reasons.discard('interval-gap')
+        # If user edited gap-fact, ensure returned by prepared_facts; and clear
+        # its gap-fact highlight (i.e., remove 'interval-gap' from dirty_reasons).
+        edit_fact.is_gap = False
 
         # An interval-gap is not necessarily marked deleted,
         #  but if edited, we should make sure it no longer is.

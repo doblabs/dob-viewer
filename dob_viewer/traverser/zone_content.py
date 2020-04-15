@@ -239,7 +239,7 @@ class ZoneContent(object):
         # BACKLOG: Fact InterVal GaP Interval
         # MAYBE: Don't color after edited/added?
         #        Or probably 'unsaved-fact' style will override.
-        if 'interval-gap' in curr_edit.dirty_reasons:
+        if curr_edit.is_gap:
             self.scrollable_frame.container.style += ' class:interval-gap'
 
         # MAYBE: Just go through dirty_reasons and add as classes...

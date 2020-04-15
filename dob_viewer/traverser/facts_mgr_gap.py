@@ -39,7 +39,8 @@ class FactsManager_Gap(object):
             start=since_time,
             end=until_time,
         )
-        gap_fact.dirty_reasons.add('interval-gap')
+        # Add 'interval-gap' dirty reason.
+        gap_fact.is_gap = True
         # Mark deleted until edited, so gap is not saved unless edited.
         gap_fact.deleted = True
         # No exceptions! All Fact copies must eventually lead to the original.
