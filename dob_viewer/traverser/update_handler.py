@@ -446,7 +446,7 @@ class UpdateHandler(object):
         self.carousel.action_manager.wire_keys_commando()
 
     @catch_action_exception
-    def cancel_commando(self, event):
+    def cancel_commando(self, event=None):
         self.zone_manager.zone_lowdown.reset_status()
         self.reset_commando()
 
@@ -456,6 +456,14 @@ class UpdateHandler(object):
         # Don't use key_sequence but go straight for the raw data.
         self.typed_commando += event.data
         self.persist_status(self.began_commando + self.typed_commando)
+
+    @catch_action_exception
+    def backspace_commando(self, event):
+        if not self.typed_commando:
+            self.cancel_commando()
+        else:
+            self.typed_commando = self.typed_commando[:-1]
+            self.persist_status(self.began_commando + self.typed_commando)
 
     @catch_action_exception
     def final_commando(self, event):
@@ -535,6 +543,18 @@ class UpdateHandler(object):
         self.command_modifier_feed(event)
         self.command_modifier_stat()
 
+    @catch_action_exception
+    def backspace_command_modifier(self, event, limit=1):
+        if self.command_modifier is None:
+            return
+        if len(self.command_modifier) <= limit:
+            # Not quite the right name because not necessarily in delta-time
+            # mode, but the effect is what we want.
+            self.cancel_delta_time()
+        else:
+            self.command_modifier = self.command_modifier[:-1]
+            self.command_modifier_stat()
+
     def command_modifier_stat(self):
         statmsg = ''
         statmsg += self.delta_time_keycode
@@ -610,6 +630,10 @@ class UpdateHandler(object):
             # Not a number ('[0-9]'), a dot ('.'), or a date separator
             # ('-', etc.). Ignore it and reset state.
             self.command_modifier_reset()
+
+    @catch_action_exception
+    def backspace_delta_time(self, event):
+        self.backspace_command_modifier(event, limit=0)
 
     @catch_action_exception
     def allow_time_gap(self, event):

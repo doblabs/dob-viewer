@@ -440,6 +440,12 @@ class KeyActionMap(object):
     def command_modifier_any_key(self, event):
         self.update_handler.command_modifier_any_key(event)
 
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    # NOPE: @Decorators.intercept_modifier()
+    def backspace_command_modifier(self, event):
+        self.update_handler.backspace_command_modifier(event)
+
     # #### Key bindings wired by KeyBonder.create_delete_fact().
 
     # FIXME/2020-04-11: Remove these, or implement!
@@ -533,6 +539,11 @@ class KeyActionMap(object):
 
     @Decorators.debug_log_trace_enter_leave
     @Decorators.refresh_now
+    def backspace_commando(self, event):
+        self.update_handler.backspace_commando(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
     def final_commando(self, event):
         self.update_handler.final_commando(event)
 
@@ -566,6 +577,11 @@ class KeyActionMap(object):
     @Decorators.refresh_now
     def parts_delta_time(self, event):
         self.update_handler.parts_delta_time(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    def backspace_delta_time(self, event):
+        self.update_handler.backspace_delta_time(event)
 
     # Elsewhere: allow_time_gap (Wired by KeyBonder.command_modifier, too).
 

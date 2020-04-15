@@ -246,6 +246,7 @@ class KeyBonder(object):
         key_bonds = []
         key_bonds += self._key_bonds(action_map, 'allow_time_gap')
         key_bonds += [KeyBond(Keys.Any, action=action_map.command_modifier_any_key)]
+        key_bonds += [KeyBond('c-h', action=action_map.backspace_command_modifier)]
         return key_bonds
 
     # ***
@@ -287,6 +288,7 @@ class KeyBonder(object):
         # So Ctrl-c is not user configurable. Go configure.
         key_bonds += [KeyBond('c-c', action=action_map.cancel_commando)]
         key_bonds += [KeyBond(Keys.Any, action=action_map.parts_commando)]
+        key_bonds += [KeyBond('c-h', action=action_map.backspace_commando)]
         key_bonds += self._key_bonds(action_map, 'final_commando')
         return key_bonds
 
@@ -304,6 +306,7 @@ class KeyBonder(object):
         # otherwise not handled unless we explicitly do so.
         key_bonds += [KeyBond('c-c', action=action_map.cancel_delta_time)]
         key_bonds += [KeyBond(Keys.Any, action=action_map.parts_delta_time)]
+        key_bonds += [KeyBond('c-h', action=action_map.backspace_delta_time)]
         key_bonds += self._key_bonds(action_map, 'allow_time_gap')
         key_bonds += self._key_bonds(action_map, 'final_delta_time_apply')
         key_bonds += self._key_bonds(action_map, 'final_delta_time_minutes')
