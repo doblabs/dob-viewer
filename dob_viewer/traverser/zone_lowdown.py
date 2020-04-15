@@ -42,7 +42,7 @@ class ZoneLowdown(object):
 
     def update_status(self, hot_notif, clear_after_secs=None):
         self.hot_notif = hot_notif
-        self.status_label.text = hot_notif
+        self.status_label.text = self.format_lowdown_text()
         self.reset_notif_expiry(clear_after_secs)
 
     LOWDOWN_NOTIFY_MESSAGE_LIFETIME_SECS = 2.71828
@@ -58,10 +58,8 @@ class ZoneLowdown(object):
     # ***
 
     def reset_status(self):
-        self.hot_notif = ''  # So format_lowdown_text prints PK.
-        formatted_text = self.format_lowdown_text()
-        self.notif_expiry = None
-        self.update_status(hot_notif=formatted_text, clear_after_secs=0)
+        default_notif = ''  # So format_lowdown_text prints PK.
+        self.update_status(hot_notif=default_notif, clear_after_secs=0)
 
     def selectively_refresh(self):
         # Clear status messages after timeout.
