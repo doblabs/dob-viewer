@@ -735,3 +735,49 @@ class UpdateHandler(object):
             self.delta_time_keycode = ''
         self.zone_manager.zone_lowdown.reset_status()
 
+    # ***
+
+    def complete_active_and_start_now(self):
+        edit_fact = self.edits_manager.editable_fact()
+        if not edit_fact.is_gap:
+            start_or_end = 'end'
+        else:
+            # Activate Fact is gap Fact, and we want to start new Fact now,
+            # knowingly leaving a gap behind, so bump gap's start.
+            start_or_end = 'start'
+        delta_mins_or_time = timedelta()  # I.e., 0.
+        self.edits_manager.edit_time_adjust(
+            delta_mins_or_time=delta_mins_or_time,
+            start_or_end=start_or_end,
+            end_maybe=None,
+            gap_okay=True,
+            modified=False,
+        )
+
+    # ***
+
+    @catch_action_exception
+    def copy_complete_and_paste_active(self, event):
+        self.fact_copy_fact(event)
+        self.edits_manager.jump_fact_final()
+        self.fact_paste(event)
+
+    # ***
+
+    @catch_action_exception
+    def copy_complete_and_paste_new(self, event):
+        self.edits_manager.fact_copy_fact()
+        self.edits_manager.jump_fact_final()
+        self.complete_active_and_start_now()
+        self.edits_manager.jump_fact_inc()
+        self.fact_paste()
+
+    # ***
+
+    @catch_action_exception
+    def complete_and_prompt_new(self, event):
+        self.edits_manager.jump_fact_final()
+        self.complete_active_and_start_now()
+        self.edits_manager.jump_fact_inc()
+        self.edit_actegory(event)
+

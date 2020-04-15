@@ -685,6 +685,49 @@ class DobViewerConfigurableDev(object):
 
     # ***
 
+    # Command shortcuts.
+
+    # 2020-04-15: (lb): I did not consider much before picking the
+    # key bindings below. There are not any obvious mappings, other
+    # than perhaps (a) avoiding keys that have universal mappings
+    # (like Ctrl-c, Ctrl-q, etc.). Also (b) making it easy to press
+    # (i.e., not Ctrl-g), as these may be used often.
+    # - I suppose between 'c-e' and 'V', on an English keyboard, they
+    #   are similar motions (pinky plus pointer), so maybe that'll
+    #   help people remember. And 'o' is pretty baked in from Vim.
+    #   Open a new fact -- and prompt for the act@gory.
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def copy_complete_and_paste_active(self):
+        return 'c-e'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def copy_complete_and_paste_new(self):
+        return 'V'
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("XXX"),
+    )
+    def complete_and_prompt_new(self):
+        # 'a' for act@gory, like plain 'a' command mapping.
+        # Or not. 'c-a' is a common tmux prefix key.
+        #  return 'c-a'
+        # How 'bout, 'o'pen a new entry?
+        return 'o'
+
+    # ***
+
 
 # ***
 

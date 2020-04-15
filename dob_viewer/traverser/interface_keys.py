@@ -93,6 +93,8 @@ class KeyBonder(object):
                 ))
 
         def add_binding_str_or_list(key_bindings, keyb):
+            # YOU: Toss an eager=True to the add if you think PTK is
+            # hooking a binding. Or check your tmux config, mayhap.
             if isinstance(keyb.keycode, str):
                 key_bindings.add(keyb.keycode)(keyb.action)
             else:
@@ -272,6 +274,15 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'fact_copy_activity')
         key_bonds += self._key_bonds(action_map, 'fact_copy_tags')
         key_bonds += self._key_bonds(action_map, 'fact_copy_description')
+        return key_bonds
+
+    # ***
+
+    def shortcuts(self, action_map):
+        key_bonds = []
+        key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_active')
+        key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_new')
+        key_bonds += self._key_bonds(action_map, 'complete_and_prompt_new')
         return key_bonds
 
     # ***

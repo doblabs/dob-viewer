@@ -223,6 +223,26 @@ class KeyActionMap(object):
     def redo_command_edit_time(self, event):
         self.zone_details.redo_command(event)
 
+    # #### Key bindings wired by KeyBonder.shortcuts().
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.intercept_modifier(reset=True)
+    def copy_complete_and_paste_active(self, event):
+        self.update_handler.copy_complete_and_paste_active(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.intercept_modifier(reset=True)
+    def copy_complete_and_paste_new(self, event):
+        self.update_handler.copy_complete_and_paste_new(event)
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.intercept_modifier(reset=True)
+    def complete_and_prompt_new(self, event):
+        self.update_handler.complete_and_prompt_new(event)
+
     # #### Key bindings wired by KeyBonder.normal().
 
     @Decorators.debug_log_trace_enter_leave
