@@ -612,9 +612,13 @@ class UpdateHandler(object):
     @catch_action_exception
     def allow_time_gap(self, event):
         """"""
-        if self.time_gap_allowed is True:
-            # Be strict. Consider a second '!' to be syntax error, so reset.
-            self.command_modifier_reset()
+        self.time_gap_keycode = self._key_sequence_str(event)
+        if self.time_gap_allowed is not None:
+            # (lb): Originally, I considered a second '!' to be a syntax error,
+            # and would reset here -- command_modifier_reset() -- but there's
+            # no reason we cannot toggle, especially because status message
+            # shows current command modifier input.
+            self.time_gap_allowed = not self.time_gap_allowed
         else:
             if self.command_modifier is None:
                 # Allow '!' to precede '[0-9]' or '+'/'-'.
