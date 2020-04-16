@@ -28,7 +28,7 @@ from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
-from ..config import json_load_sublisted
+from ..config import json_load_sublisted, DobViewerCustomPaste
 
 __all__ = (
     'KeyBonder',
@@ -301,34 +301,29 @@ class KeyBonder(object):
     def custom_factoids(self, action_map):
         self.keyed_factoids = {}
         key_bonds = []
-        config_idx = 0
         custom_paste = KeyBonder.FACTOID_CFG_SECTION
-        while True:
-            config_idx += 1
-            mapping_name = '{}{}'.format(KeyBonder.FACTOID_CFG_MAPPING, config_idx)
-            try:
-                custom_bonds = self._key_bonds(
-                    action_map,
-                    'custom_factoid_paste',
-                    config_name=mapping_name,
-                    config_section=custom_paste,
-                )
-            except AttributeError:
-                # No more custom mappings!
-                break
-            if custom_bonds:
-                custom_bond = custom_bonds[0]
-                factoid_name = '{}{}'.format(KeyBonder.FACTOID_CFG_FACTOID, config_idx)
-                try:
-                    custom_factoid = self.config[custom_paste][factoid_name]
-                except AttributeError:
-                    self.errors.append(_(
-                        'ERROR: Custom key mapping ‘{}’ has not matching factoid: “{}”'
-                        .format(mapping_name, factoid_name)
-                    ))
-                else:
-                    self.keyed_factoids[custom_bond.keycode] = custom_factoid
-                    key_bonds += [custom_bond]
+        for postfix in range(1, DobViewerCustomPaste._innercls.A_PERFECT_NUMBER):
+            mapping_name = '{}{}'.format(KeyBonder.FACTOID_CFG_MAPPING, postfix)
+            custom_bonds = self._key_bonds(
+                action_map,
+                'custom_factoid_paste',
+                config_name=mapping_name,
+                config_section=custom_paste,
+            )
+            if not custom_bonds:
+                # No custom mapping at this postfix.
+                continue
+            custom_bond = custom_bonds[0]
+            factoid_name = '{}{}'.format(KeyBonder.FACTOID_CFG_FACTOID, postfix)
+            custom_factoid = self.config[custom_paste][factoid_name]
+            if not custom_factoid:
+                self.errors.append(_(
+                    'ERROR: Custom key mapping ‘{}’ has no matching factoid: “{}”'
+                    .format(mapping_name, factoid_name)
+                ))
+            else:
+                self.keyed_factoids[custom_bond.keycode] = custom_factoid
+                key_bonds += [custom_bond]
         return key_bonds
 
     # ***
