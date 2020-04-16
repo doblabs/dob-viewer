@@ -12,6 +12,14 @@ dob\_viewer.crud.fact\_dressed module
    :undoc-members:
    :show-inheritance:
 
+dob\_viewer.crud.fact\_from\_factoid module
+-------------------------------------------
+
+.. automodule:: dob_viewer.crud.fact_from_factoid
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 dob\_viewer.crud.facts\_diff module
 -----------------------------------
 
