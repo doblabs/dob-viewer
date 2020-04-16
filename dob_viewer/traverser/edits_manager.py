@@ -17,6 +17,8 @@
 
 """Fact Editing State Machine"""
 
+from ..crud.fact_from_factoid import must_create_fact_from_factoid
+
 from .clipboard_edit import ClipboardEdit
 from .facts_manager import FactsManager
 from .group_chained import sorted_facts_list
@@ -475,6 +477,66 @@ class EditsManager(object):
         self.redo_undo.add_undoable([edit_fact.copy()], before_paste.what)
         # EditManager.paste_copied_meta calls its apply_edits after
         # calling this method, which ensures UndoRedoTuple.altered is set.
+
+    # ***
+
+    def paste_factoid(self, factoid):
+        def _paste_factoid():
+            try:
+                user_fact = parse_factoid()
+            except Exception as err:
+                return False, str(err)
+            else:
+                if not apply_changes(user_fact):
+                    return False, None
+                return True, None
+
+        def parse_factoid():
+            user_fact = must_create_fact_from_factoid(
+                self.controller, factoid, time_hint='verify_none',
+            )
+            return user_fact
+
+        def apply_changes(user_fact):
+            edit_fact = self.editable_fact()
+            if not verify_differences(user_fact, edit_fact):
+                return False
+            apply_edits(user_fact, edit_fact)
+            return True
+
+        def verify_differences(user_fact, edit_fact):
+            # The Factoid's PKs are all None, so a direct == won't work. Also, time
+            # wouldn't match. Which is also why as_tuple(include_pk=False) won't work.
+            if (
+                True
+                and edit_fact.activity.equal_fields(user_fact.activity)
+                and set(tag_names(edit_fact)) == set(tag_names(user_fact))
+                and edit_fact.description == user_fact.description
+            ):
+                return False
+            return True
+
+        # We can just compare tag names and not call tag.as_tuple(include_pk=False)
+        # to compare the two Facts. (Tag has 'deleted' and 'hidden', but both have
+        # been abandoned -- there's no way to 'delete' a tag, rather, just remove it
+        # from all Facts; and 'hidden' was added to the front end where it belongs.)
+        def tag_names(fact):
+            return [tag.name for tag in fact.tags]
+
+        def apply_edits(user_fact, edit_fact):
+            self.undoable_editable_fact(what='paste-factoid', edit_fact=edit_fact)
+            if not edit_fact.activity.equal_fields(user_fact.activity):
+                edit_fact.activity = user_fact.activity
+            # Send new tag name strings to rags_replace, so it'll look through
+            # the Fact's existing tags for a matching tag (and its Tag object).
+            edit_fact.tags_replace(edit_fact.tags + tag_names(user_fact))
+            # We could append description if one already exists, but seems more
+            # logical to not add description if already there.
+            if not edit_fact.description and user_fact.description:
+                edit_fact.description = user_fact.description
+            self.apply_edits(edit_fact)
+
+        return _paste_factoid()
 
     # ***
 

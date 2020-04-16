@@ -140,6 +140,7 @@ class ActionManager(object):
         bindings += self.key_bonder.clipboard(self.key_action_map)
         bindings += self.key_bonder.undo_redo(self.key_action_map, 'content')
         bindings += self.key_bonder.shortcuts(self.key_action_map)
+        bindings += self.key_bonder.custom_factoids(self.key_action_map)
         bindings += self.key_bindings_shared
 
         self.key_bindings_normal = self.key_bonder.make_bindings(bindings)

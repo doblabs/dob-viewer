@@ -42,10 +42,15 @@ class KeyBonder(object):
     def __init__(self, config):
         self.config = config
         self.errors = []
+        self.keyed_factoids = {}
 
     # ***
 
-    def _key_bonds(self, action_map, action_name, config_name=None):
+    KEYBONDS_CFG_SECTION = 'editor-keys'
+
+    def _key_bonds(
+        self, action_map, action_name, config_name=None, config_section=None,
+    ):
         """"""
         def __key_bonds():
             action, cfgval = resolve_action_cfgval()
@@ -53,9 +58,10 @@ class KeyBonder(object):
             return keybonds
 
         def resolve_action_cfgval():
+            editor_keys = config_section or KeyBonder.KEYBONDS_CFG_SECTION
             cfgname = config_name or action_name
             action = getattr(action_map, action_name)
-            cfgval = self.config['editor-keys'][cfgname]
+            cfgval = self.config[editor_keys][cfgname]
             return action, cfgval
 
         def build_bonds(action, cfgval):
@@ -112,8 +118,9 @@ class KeyBonder(object):
             return self._load_date_separators()
 
     def _load_date_separators(self):
+        editor_keys = KeyBonder.KEYBONDS_CFG_SECTION
         cfgname = 'date_separators'
-        date_seps = self.config['editor-keys'][cfgname]
+        date_seps = self.config[editor_keys][cfgname]
         self._date_separators, errmsg = json_load_sublisted(cfgname, date_seps)
         if errmsg is not None:
             return self.add_error_and_return_empty(errmsg)
@@ -283,6 +290,45 @@ class KeyBonder(object):
         key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_active')
         key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_new')
         key_bonds += self._key_bonds(action_map, 'complete_and_prompt_new')
+        return key_bonds
+
+    # ***
+
+    FACTOID_CFG_SECTION = 'custom-paste'
+    FACTOID_CFG_MAPPING = 'mapping_'
+    FACTOID_CFG_FACTOID = 'factoid_'
+
+    def custom_factoids(self, action_map):
+        self.keyed_factoids = {}
+        key_bonds = []
+        config_idx = 0
+        custom_paste = KeyBonder.FACTOID_CFG_SECTION
+        while True:
+            config_idx += 1
+            mapping_name = '{}{}'.format(KeyBonder.FACTOID_CFG_MAPPING, config_idx)
+            try:
+                custom_bonds = self._key_bonds(
+                    action_map,
+                    'custom_factoid_paste',
+                    config_name=mapping_name,
+                    config_section=custom_paste,
+                )
+            except AttributeError:
+                # No more custom mappings!
+                break
+            if custom_bonds:
+                custom_bond = custom_bonds[0]
+                factoid_name = '{}{}'.format(KeyBonder.FACTOID_CFG_FACTOID, config_idx)
+                try:
+                    custom_factoid = self.config[custom_paste][factoid_name]
+                except AttributeError:
+                    self.errors.append(_(
+                        'ERROR: Custom key mapping ‘{}’ has not matching factoid: “{}”'
+                        .format(mapping_name, factoid_name)
+                    ))
+                else:
+                    self.keyed_factoids[custom_bond.keycode] = custom_factoid
+                    key_bonds += [custom_bond]
         return key_bonds
 
     # ***

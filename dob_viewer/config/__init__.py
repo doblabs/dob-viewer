@@ -768,3 +768,48 @@ def json_load_sublisted(cfgname, cfgval):
 
     return _json_load_sublisted()
 
+
+# ***
+
+@ConfigRoot.section('custom-paste')
+class DobViewerCustomPaste(object):
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    # ***
+
+    # (lb): This is the best I've got on a moment's thought:
+    # Create placeholder config so that it'll be read from user's dob.conf.
+    # (lb): This is not the cleanest solutions (we have to arbitrarily decide how
+    # many placeholders to create), but it's otherwise transparent to the user.
+
+    def add_custom_paste(postfix):
+        """"""
+        factoid_name = 'factoid_{}'.format(postfix)
+        mapping_name = 'mapping_{}'.format(postfix)
+
+        @property
+        @ConfigRoot.setting(
+            _("XXX"),
+            name=factoid_name,
+            hidden=True,
+        )
+        def factoid_prop(self):
+            return ''
+
+        @property
+        @ConfigRoot.setting(
+            _("XXX"),
+            name=mapping_name,
+            hidden=True,
+        )
+        def mapping_prop(self):
+            return ''
+
+    A_PERFECT_NUMBER = 28
+
+    for postfix in range(1, A_PERFECT_NUMBER):
+        add_custom_paste(postfix)
+

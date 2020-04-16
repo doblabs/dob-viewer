@@ -243,6 +243,14 @@ class KeyActionMap(object):
     def complete_and_prompt_new(self, event):
         self.update_handler.complete_and_prompt_new(event)
 
+    # #### Key bindings wired by KeyBonder.custom_factoids().
+
+    @Decorators.debug_log_trace_enter_leave
+    @Decorators.refresh_now
+    @Decorators.intercept_modifier(reset=True)
+    def custom_factoid_paste(self, event):
+        self.update_handler.custom_factoid_paste(event)
+
     # #### Key bindings wired by KeyBonder.normal().
 
     @Decorators.debug_log_trace_enter_leave

@@ -781,3 +781,30 @@ class UpdateHandler(object):
         self.edits_manager.jump_fact_inc()
         self.edit_actegory(event)
 
+    # ***
+
+    @catch_action_exception
+    def custom_factoid_paste(self, event):
+        keycode = self._key_sequence_str(event)
+        # (lb): Highly coupled now. I know. Oh well.
+        keyed_factoids = self.carousel.action_manager.key_bonder.keyed_factoids
+        try:
+            user_factoid = keyed_factoids[keycode]
+        except AttributeError:
+            self.carousel.controller.affirm(False)  # Should not get this far.
+            pass
+        else:
+            pasted, errmsg = self.edits_manager.paste_factoid(user_factoid)
+            if errmsg is not None:
+                self.zone_manager.show_message_and_deny_leave(
+                    self.zone_manager.root,
+                    _('Factoid?'),
+                    errmsg,
+                )
+            elif not pasted:
+                hot_notif = _("Already pasted factoid")
+            else:
+                self.zone_manager.rebuild_viewable()
+                hot_notif = _("Pasted custom factoid")
+            self.zone_manager.update_status(hot_notif)
+
