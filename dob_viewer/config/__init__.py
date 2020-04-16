@@ -328,7 +328,7 @@ class DobViewerConfigurableDev(object):
         _("XXX"),
     )
     def edit_fact(self):
-        # Raw Fact Editing. With a Capital E.
+        # Edit merry-go-round: Prompt for act@gory, then tags, then description.
         return 'E'
 
     # ***
