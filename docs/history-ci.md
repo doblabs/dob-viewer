@@ -2,6 +2,10 @@
 
 [comment]: # DEV: release-ghub-pypi scrapes Markdown from the first section below for the GitHub release.
 
+## 1.0.10 (2020-04-17)
+
+- Improve: Remove requirement that custom paste config be numbered sequentially.
+
 ## 1.0.9 (2020-04-15)
 
 - Feature: Let user define custom key bindings for pasting arbitrary factoids.
