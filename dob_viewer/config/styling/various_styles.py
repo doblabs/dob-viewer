@@ -25,7 +25,7 @@ import click_hotoffthehamster as click  # merely for get_terminal_size.
 
 from config_decorator import section
 
-from ..ptkui.ppt_markup import namilize
+from ...ptkui.ppt_markup import namilize
 
 __all__ = (
     'color',

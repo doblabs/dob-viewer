@@ -25,8 +25,8 @@ from configobj import ConfigObj, ConfigObjError
 
 from dob_bright.termio import dob_in_user_warning
 
-from ...traverser import various_styles
 from . import load_obj_from_internal
+from . import various_styles
 
 __all__ = (
     'load_classes_style',
