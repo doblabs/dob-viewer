@@ -107,15 +107,15 @@ class FactDressed(Fact):
         """
         # FIXME: Turn this into config. (And check BonW vs WonB.)
         lookup = {
-            'pk': ('grey_78'),
-            'act@gory': ('cornflower_blue', 'bold', 'underlined'),
-            '#': ('grey_78'),
-            'tag': ('dark_olive_green_1b'),
-            '#tag': ('underlined'),
-            'start': ('sandy_brown'),
-            'end': ('sandy_brown'),
-            'to': ('grey_85'),
-            'duration': ('grey_78'),
+            'pk': ('grey_78',),
+            'act@gory': ('cornflower_blue', 'bold', 'underlined',),
+            '#': ('grey_78',),
+            'tag': ('dark_olive_green_1b',),
+            '#tag': ('underlined',),
+            'start': ('sandy_brown',),
+            'end': ('sandy_brown',),
+            'to': ('grey_85',),
+            'duration': ('grey_78',),
         }
         colorized = colorize(oid_text, *lookup[oid_part])
         return colorized
