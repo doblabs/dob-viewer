@@ -33,6 +33,7 @@ from nark.helpers.dev.profiling import profile_elapsed
 
 from dob_viewer.ptkui.re_confirm import confirm
 
+from ..config.styling.various_styles import color as styling_color
 from ..crud.interrogate import ask_user_for_edits
 from ..ptkui.dialog_overlay import show_message
 from .action_manager import ActionManager
@@ -40,7 +41,6 @@ from .edits_manager import EditsManager
 from .exceptions import catch_action_exception
 from .styling_config import StylingConfig
 from .update_handler import UpdateHandler
-from .various_styles import color as styling_color
 from .zone_content import ZoneContent
 from .zone_manager import ZoneManager
 

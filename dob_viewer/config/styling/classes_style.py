@@ -45,26 +45,16 @@ def load_classes_style(controller, style_name=''):
 
     def _load_classes_style():
         named_style = style_name or resolve_named_style(controller.config)
-        classes_dict = try_load_dict_from_user_styling(named_style)
+        classes_dict = load_dict_from_styles_conf(named_style)
         classes_style = instantiate_or_try_internal_style(named_style, classes_dict)
         return classes_style
 
-    def try_load_dict_from_user_styling(named_style):
-        styles_path = resolve_path_styles()
-        if not os.path.exists(styles_path):
-            return None
-        return load_dict_from_user_styling(styles_path, named_style)
-
-    def resolve_path_styles():
-        cfg_key_fpath = 'editor.styles_fpath'
-        return controller.config[cfg_key_fpath]
-
-    def load_dict_from_user_styling(styles_path, named_style):
-        config_obj = create_configobj(styles_path, nickname='styles')
-        if config_obj is None:
+    def load_dict_from_styles_conf(named_style):
+        styles_conf, failed = load_styles_conf(controller.config)
+        if failed:
             load_failed['styles'] = True
-        elif named_style in config_obj:
-            classes_dict = config_obj[named_style]
+        elif styles_conf and named_style in styles_conf:
+            classes_dict = styles_conf[named_style]
             return classes_dict
         return None
 
@@ -120,6 +110,34 @@ def load_classes_style(controller, style_name=''):
     # ***
 
     return _load_classes_style()
+
+
+# ***
+
+def load_styles_conf(config):
+    """Return 2-tuple, the styles.conf ConfigObj, and a bool indicating failure.
+
+    The config object will be None if the path does not exist, or if it failed to
+    loaded. Failure will be False if the object was loaded, or if the path does
+    not exists; failure is True if the file exists, but ConfigObj failed to load it.
+    """
+    def _load_styles_conf():
+        styles_path = resolve_path_styles()
+        if not os.path.exists(styles_path):
+            return None, False
+        return load_dict_from_user_styling(styles_path)
+
+    def resolve_path_styles():
+        cfg_key_fpath = 'editor.styles_fpath'
+        return config[cfg_key_fpath]
+
+    def load_dict_from_user_styling(styles_path):
+        styles_conf = create_configobj(styles_path, nickname='styles')
+        if styles_conf is None:
+            return None, True
+        return styles_conf, False
+
+    return _load_styles_conf()
 
 
 # ***
