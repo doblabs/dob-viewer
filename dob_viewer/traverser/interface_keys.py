@@ -17,8 +17,6 @@
 
 """Key Binding Wiring Manager"""
 
-import time
-
 from gettext import gettext as _
 
 from prompt_toolkit.key_binding import KeyBindings
@@ -28,7 +26,7 @@ from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
-from ..config import json_load_sublisted
+from ..config import json_load_sublisted, pause_on_error_message_maybe
 from ..config.custom_paste import DobViewerConfigCustomPaste
 
 __all__ = (
@@ -133,7 +131,7 @@ class KeyBonder(object):
         if not self.errors:
             return
         dob_in_user_warning('\n'.join(self.errors))
-        time.sleep(2.666)
+        pause_on_error_message_maybe()
         self.errors = []
 
     # ***

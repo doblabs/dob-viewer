@@ -25,8 +25,9 @@ from configobj import ConfigObj, ConfigObjError
 
 from dob_bright.termio import dob_in_user_warning
 
-from . import load_obj_from_internal
-from . import various_styles
+from .. import pause_on_error_message_maybe
+
+from . import load_obj_from_internal, various_styles
 
 __all__ = (
     'load_classes_style',
@@ -53,6 +54,7 @@ def load_classes_style(controller, style_name=''):
         styles_conf, failed = load_styles_conf(controller.config)
         if failed:
             load_failed['styles'] = True
+            pause_on_error_message_maybe(controller.ctx)
         elif styles_conf and named_style in styles_conf:
             classes_dict = styles_conf[named_style]
             return classes_dict
