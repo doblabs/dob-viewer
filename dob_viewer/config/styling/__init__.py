@@ -17,6 +17,8 @@
 
 """User configurable interactive editor styling settings loaders."""
 
+import time
+
 from gettext import gettext as _
 
 from dob_bright.termio import dob_in_user_warning
@@ -32,6 +34,7 @@ def load_obj_from_internal(
     internal,
     default_name=None,
     warn_tell_not_found=False,
+    config_key='',
 ):
     """"""
 
@@ -53,11 +56,14 @@ def load_obj_from_internal(
     def warn_tell_on_object_not_found(obj_name):
         if not obj_name or not warn_tell_not_found:
             return
-        msg = _('No object from “{0}” named “{1}”.').format(
-            internal.__name__, obj_name,
+        msg = _('Nothing matches “{0}”, from config setting “{1}”, in “{2}”.').format(
+            obj_name, config_key, internal.__name__,
         )
         controller.client_logger.warning(msg)
         dob_in_user_warning(msg)  # Also blather to stdout.
+        # If `dob edit`, linger, otherwise user unlikely to see the message.
+        if controller.ctx.command.name == 'edit':
+            time.sleep(2.666)
 
     def debug_loaded_default(loaded_obj):
         controller.affirm(loaded_obj is not None)  # Because you specified default!

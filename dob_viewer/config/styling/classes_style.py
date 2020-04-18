@@ -101,6 +101,7 @@ def load_classes_style(controller, style_name=''):
             internal=various_styles,
             default_name=default_style,
             warn_tell_not_found=not load_failed['styles'],
+            config_key=CFG_KEY_ACTIVE_STYLE,
         )
         # If None, Carousel will eventually set to a default of its choosing.
         # - (lb): Except that we specified default_name, so never None:
@@ -215,7 +216,9 @@ def create_configobj(conf_path, nickname=''):
 
 # ***
 
+CFG_KEY_ACTIVE_STYLE = 'editor.styling'
+
+
 def resolve_named_style(config):
-    cfg_key_style = 'editor.styling'
-    return config[cfg_key_style]
+    return config[CFG_KEY_ACTIVE_STYLE]
 

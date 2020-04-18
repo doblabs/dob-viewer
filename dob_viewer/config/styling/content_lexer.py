@@ -46,6 +46,7 @@ __all__ = (
 
 def load_content_lexer(controller):
     config = controller.config
+    cfg_key_lexer = 'editor.lexer'
 
     def _load_content_lexer():
         named_lexer = resolve_named_lexer()
@@ -55,11 +56,11 @@ def load_content_lexer(controller):
             internal=various_lexers,
             default_name=None,
             warn_tell_not_found=False,
+            config_key=cfg_key_lexer,
         )
         return instantiate_or_try_pygments_lexer(named_lexer, lexer_class)
 
     def resolve_named_lexer():
-        cfg_key_lexer = 'editor.lexer'
         return config[cfg_key_lexer]
 
     def instantiate_or_try_pygments_lexer(named_lexer, lexer_class):
