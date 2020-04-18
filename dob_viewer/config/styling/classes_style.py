@@ -33,26 +33,21 @@ __all__ = (
     'load_matches_style',
     # PRIVATE:
     # 'create_configobj',
+    'resolve_named_style',
 )
 
 
-def load_classes_style(controller):
-    config = controller.config
-
+def load_classes_style(controller, style_name=''):
     # (lb): It's times like these -- adding a dict to get around scoping
     # when sharing a variable -- that I think a method (load_classes_style)
     # should be a class. But this works for now.
     load_failed = {'styles': False}
 
     def _load_classes_style():
-        named_style = resolve_named_style()
+        named_style = style_name or resolve_named_style(controller.config)
         classes_dict = try_load_dict_from_user_styling(named_style)
         classes_style = instantiate_or_try_internal_style(named_style, classes_dict)
         return classes_style
-
-    def resolve_named_style():
-        cfg_key_style = 'editor.styling'
-        return config[cfg_key_style]
 
     def try_load_dict_from_user_styling(named_style):
         styles_path = resolve_path_styles()
@@ -62,7 +57,7 @@ def load_classes_style(controller):
 
     def resolve_path_styles():
         cfg_key_fpath = 'editor.styles_fpath'
-        return config[cfg_key_fpath]
+        return controller.config[cfg_key_fpath]
 
     def load_dict_from_user_styling(styles_path, named_style):
         config_obj = create_configobj(styles_path, nickname='styles')
@@ -88,6 +83,7 @@ def load_classes_style(controller):
         if 'base-style' in classes_dict:
             base_style = classes_dict['base-style'] or 'default'
         try:
+            # This gets a StylesRoot object created by _create_style_object.
             defaults = getattr(various_styles, base_style)()
         except AttributeError as err:  # noqa: F841
             # Unexpected, because of choices= on base-style @setting def.
@@ -197,4 +193,11 @@ def create_configobj(conf_path, nickname=''):
         )
         dob_in_user_warning(msg)
         return None
+
+
+# ***
+
+def resolve_named_style(config):
+    cfg_key_style = 'editor.styling'
+    return config[cfg_key_style]
 
