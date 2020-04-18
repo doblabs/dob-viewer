@@ -30,10 +30,9 @@ from .. import pause_on_error_message_maybe
 from . import load_obj_from_internal, various_styles
 
 __all__ = (
+    'create_configobj',
     'load_classes_style',
     'load_matches_style',
-    # PRIVATE:
-    # 'create_configobj',
     'resolve_named_style',
 )
 
@@ -203,6 +202,7 @@ def create_configobj(conf_path, nickname=''):
     try:
         return ConfigObj(
             conf_path,
+            encoding='UTF8',
             interpolation=False,
             write_empty_values=False,
         )
