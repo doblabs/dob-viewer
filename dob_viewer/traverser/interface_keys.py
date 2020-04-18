@@ -28,7 +28,8 @@ from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
-from ..config import json_load_sublisted, DobViewerCustomPaste
+from ..config import json_load_sublisted
+from ..config.custom_paste import DobViewerConfigCustomPaste
 
 __all__ = (
     'KeyBonder',
@@ -302,7 +303,7 @@ class KeyBonder(object):
         self.keyed_factoids = {}
         key_bonds = []
         custom_paste = KeyBonder.FACTOID_CFG_SECTION
-        for postfix in range(1, DobViewerCustomPaste._innercls.A_PERFECT_NUMBER):
+        for postfix in range(1, DobViewerConfigCustomPaste._innercls.A_PERFECT_NUMBER):
             mapping_name = '{}{}'.format(KeyBonder.FACTOID_CFG_MAPPING, postfix)
             custom_bonds = self._key_bonds(
                 action_map,
