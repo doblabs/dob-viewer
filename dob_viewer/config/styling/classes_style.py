@@ -38,7 +38,7 @@ __all__ = (
 )
 
 
-def load_classes_style(controller, style_name=''):
+def load_classes_style(controller, style_name='', skip_default=False):
     # (lb): It's times like these -- adding a dict to get around scoping
     # when sharing a variable -- that I think a method (load_classes_style)
     # should be a class. But this works for now.
@@ -101,13 +101,14 @@ def load_classes_style(controller, style_name=''):
             controller,
             obj_name=named_style,
             internal=various_styles,
-            default_name=default_style,
+            default_name=not skip_default and default_style or None,
             warn_tell_not_found=not load_failed['styles'],
             config_key=CFG_KEY_ACTIVE_STYLE,
         )
-        # If None, Carousel will eventually set to a default of its choosing.
-        # - (lb): Except that we specified default_name, so never None:
-        controller.affirm(classes_style_fn is not None)
+        # The Carousel/`dob edit` path leaves skip_default=False, so it will
+        # receive at least the default config. The fetch styles config path/
+        # `dob config styles.conf` wants None if nothing found (skip_default=True).
+        controller.affirm(skip_default or classes_style_fn is not None)
         return classes_style_fn and classes_style_fn() or None
 
     # ***
