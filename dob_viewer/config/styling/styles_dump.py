@@ -106,18 +106,7 @@ def print_styles_conf(controller, style_name='', internal=False, complete=False)
         # the leading [style_name].
         styles_conf = ConfigDecorator(object, cls_or_name='', parent=None)
         styles_conf.set_section(style_name, classes_style)
-        return wrap_in_configobj(styles_conf)
-
-    def wrap_in_configobj(styles_conf):
-        config_obj = create_configobj(conf_path=None)
-        # Set skip_unset so none of the default values are spit out (keeps the
-        # config more concise); and set keep_empties so empty sections are spit
-        # out (so, e.g., `[default]` at least appears).
-        config_obj.merge(styles_conf.as_dict(
-            skip_unset=not complete,
-            keep_empties=not complete,
-        ))
-        return config_obj
+        return wrap_in_configobj(styles_conf, complete)
 
     def load_known_styles():
         """Adds all internal styles to a configobj.
@@ -166,4 +155,18 @@ def print_styles_conf(controller, style_name='', internal=False, complete=False)
         os.unlink(temp_f.name)
 
     return _print_styles_conf()
+
+
+# ***
+
+def wrap_in_configobj(styles_conf, complete=False):
+    config_obj = create_configobj(conf_path=None)
+    # Set skip_unset so none of the default values are spit out (keeps the
+    # config more concise); and set keep_empties so empty sections are spit
+    # out (so, e.g., `[default]` at least appears).
+    config_obj.merge(styles_conf.as_dict(
+        skip_unset=not complete,
+        keep_empties=not complete,
+    ))
+    return config_obj
 
