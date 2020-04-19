@@ -34,6 +34,7 @@ __all__ = (
     'load_classes_style',
     'load_matches_style',
     'resolve_named_style',
+    'resolve_path_styles',
     'DEFAULT_STYLE',
 )
 
@@ -128,14 +129,10 @@ def load_styles_conf(config):
     not exists; failure is True if the file exists, but ConfigObj failed to load it.
     """
     def _load_styles_conf():
-        styles_path = resolve_path_styles()
+        styles_path = resolve_path_styles(config)
         if not os.path.exists(styles_path):
             return None, False
         return load_dict_from_user_styling(styles_path)
-
-    def resolve_path_styles():
-        cfg_key_fpath = 'editor.styles_fpath'
-        return config[cfg_key_fpath]
 
     def load_dict_from_user_styling(styles_path):
         styles_conf = create_configobj(styles_path, nickname='styles')
@@ -227,4 +224,13 @@ CFG_KEY_ACTIVE_STYLE = 'editor.styling'
 
 def resolve_named_style(config):
     return config[CFG_KEY_ACTIVE_STYLE]
+
+
+# ***
+
+CFG_KEY_STYLES_FPATH = 'editor.styles_fpath'
+
+
+def resolve_path_styles(config):
+    return config[CFG_KEY_STYLES_FPATH]
 
