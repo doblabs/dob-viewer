@@ -32,10 +32,14 @@ __all__ = (
     'default',
     'light',
     'night',
+    'KNOWN_STYLES',
     # PRIVATE:
     # '_create_style_object',
     # '_stylize_all_one',
 )
+
+
+KNOWN_STYLES = ['default', 'night', 'light', 'color']
 
 
 def _create_style_object():
