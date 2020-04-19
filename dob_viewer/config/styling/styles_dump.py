@@ -106,7 +106,7 @@ def print_styles_conf(controller, style_name='', internal=False, complete=False)
         # the leading [style_name].
         styles_conf = ConfigDecorator(object, cls_or_name='', parent=None)
         styles_conf.set_section(style_name, classes_style)
-        return wrap_in_configobj(styles_conf, complete)
+        return wrap_in_configobj(styles_conf, complete=complete)
 
     def load_known_styles():
         """Adds all internal styles to a configobj.
@@ -159,8 +159,8 @@ def print_styles_conf(controller, style_name='', internal=False, complete=False)
 
 # ***
 
-def wrap_in_configobj(styles_conf, complete=False):
-    config_obj = create_configobj(conf_path=None)
+def wrap_in_configobj(styles_conf, conf_path=None, complete=False):
+    config_obj = create_configobj(conf_path=conf_path)
     # Set skip_unset so none of the default values are spit out (keeps the
     # config more concise); and set keep_empties so empty sections are spit
     # out (so, e.g., `[default]` at least appears).
