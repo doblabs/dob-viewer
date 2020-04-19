@@ -147,7 +147,7 @@ class StylingConfig(object):
         # ***
 
         def ruleset_triggered(section, ruleset, fact):
-            # NOTE: If more than one rules apply, we assume AND (because
+            # NOTE: If more than one rule applies, we assume AND (because
             #       user can OR simply by using additional [ruleset]s).
             triggered = False
 
