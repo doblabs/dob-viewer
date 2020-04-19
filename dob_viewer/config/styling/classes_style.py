@@ -34,7 +34,11 @@ __all__ = (
     'load_classes_style',
     'load_matches_style',
     'resolve_named_style',
+    'DEFAULT_STYLE',
 )
+
+
+DEFAULT_STYLE = 'default'
 
 
 def load_classes_style(controller, style_name='', skip_default=False):
@@ -70,7 +74,7 @@ def load_classes_style(controller, style_name='', skip_default=False):
     def prepare_base_style(classes_dict):
         # Load base-style (e.g., various_styles.default) to ensure
         # all keys present (and defaulted), and then update that.
-        base_style = 'default'
+        base_style = DEFAULT_STYLE
         if 'base-style' in classes_dict:
             base_style = classes_dict['base-style'] or 'default'
         try:
@@ -95,12 +99,11 @@ def load_classes_style(controller, style_name='', skip_default=False):
         # HARDCODED/DEFAULT: classes_style default: 'default' (Ha!).
         # - This style uses no colors, so the UX will default to however
         #   the terminal already looks.
-        default_style = 'default'
         classes_style_fn = load_obj_from_internal(
             controller,
             obj_name=named_style,
             internal=various_styles,
-            default_name=not skip_default and default_style or None,
+            default_name=not skip_default and DEFAULT_STYLE or None,
             warn_tell_not_found=not load_failed['styles'],
             config_key=CFG_KEY_ACTIVE_STYLE,
         )
