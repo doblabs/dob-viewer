@@ -17,11 +17,14 @@
 
 """Fact Editing State Machine"""
 
+from gettext import gettext as _
+
 from collections import namedtuple
 
 from nark.items.fact import Fact
 
-from dob_bright.termio.style import colorize, set_coloring
+from dob_bright.termio import dob_in_user_warning
+from dob_bright.termio.style import colorize, set_coloring, verify_colors_attrs
 
 from ..ptkui.ppt_markup import namilize
 
@@ -102,22 +105,30 @@ class FactDressed(Fact):
         set_coloring(was_coloring)
         return friendly_str
 
+    # ***
+
+    FACTOID_STYLE = {}
+
+    @classmethod
+    def register_factoid_style(cls, factoid_style=None):
+        """Registers a dictionary of style lists for oid_stylize.
+        """
+        for part, styles in factoid_style.items():
+            errs = ', '.join(verify_colors_attrs(*styles))
+            if errs:
+                emsg = _('Unknown colors or attrs for “{}”: {}').format(part, errs)
+                dob_in_user_warning(emsg)
+        # Nonetheless, can still use even if some/all unknown colors/attrs.
+        cls.FACTOID_STYLE = factoid_style or {}
+
     def oid_colorize(self, oid_part, oid_text):
         """Stylizes parts of the Factoid with color and emphasis.
         """
-        # FIXME: Turn this into config. (And check BonW vs WonB.)
-        lookup = {
-            'pk': ('grey_78',),
-            'act@gory': ('cornflower_blue', 'bold', 'underlined',),
-            '#': ('grey_78',),
-            'tag': ('dark_olive_green_1b',),
-            '#tag': ('underlined',),
-            'start': ('sandy_brown',),
-            'end': ('sandy_brown',),
-            'to': ('grey_85',),
-            'duration': ('grey_78',),
-        }
-        colorized = colorize(oid_text, *lookup[oid_part])
+        try:
+            styles = FactDressed.FACTOID_STYLE[oid_part]
+        except KeyError:
+            styles = []
+        colorized = styles and colorize(oid_text, *styles) or oid_text
         return colorized
 
     # ***

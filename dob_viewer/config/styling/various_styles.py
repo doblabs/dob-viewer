@@ -518,6 +518,121 @@ def _create_style_object():
 
         # ***
 
+    # ***
+
+    # The following class adds its members to the same root config object as the
+    # previous class -- it uses not_a_style, like the first class above, to keep
+    # these strings out of the Application object -- but these settings are sorta
+    # styles, they're just handled manually by dob-viewer.
+
+    @StylesRoot.section(None)
+    class CustomFactoid(object):
+        """"""
+
+        def __init__(self):
+            pass
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to Fact ID in Factoid output (e.g., `git show`)."),
+            name='factoid-pk',
+            not_a_style=True,
+        )
+        def factoid_pk(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to act@gory in Factoid output (e.g., `git show`)."),
+            name='factoid-act@gory',
+            not_a_style=True,
+        )
+        def factoid_actegory(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to # symbol in Factoid output (e.g., `git show`)."),
+            name='factoid-#',
+            not_a_style=True,
+        )
+        def factoid_hash(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to Tag in Factoid output (e.g., `git show`)."),
+            name='factoid-tag',
+            not_a_style=True,
+        )
+        def factoid_tag(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to #tag in Factoid output (e.g., `git show`)."),
+            name='factoid-#tag',
+            not_a_style=True,
+        )
+        def factoid_hashtag(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to start time in Factoid output (e.g., `git show`)."),
+            name='factoid-start',
+            not_a_style=True,
+        )
+        def factoid_start(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to end time in Factoid output (e.g., `git show`)."),
+            name='factoid-end',
+            not_a_style=True,
+        )
+        def factoid_end(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to ‘to’ in Factoid output (e.g., `git show`)."),
+            name='factoid-to',
+            not_a_style=True,
+        )
+        def factoid_to(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to duration in Factoid output (e.g., `git show`)."),
+            name='factoid-duration',
+            not_a_style=True,
+        )
+        def factoid_duration(self):
+            return ''
+
+        # ***
+
     return StylesRoot
 
 
@@ -525,15 +640,12 @@ def _create_style_object():
 
 def default():
     """Default defines all options so tweaked stylings may omit any."""
-
     # (lb): Because of the magic of @section and how StylesRoot is not
     # really a class, but rather a ConfigDecorator object, we use a wrapper
     # function to both define the config (every time it's called) and to
     # return the newly instantiated ConfigDecorator object (which can only
     # be accessed using the name of the @section-decorated class!).
-
     styling = _create_style_object()
-
     return styling
 
 
@@ -589,9 +701,25 @@ def light():
 # ***
 
 def night():
-    styling = default()
-    _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
-    return styling
+    def _night():
+        styling = default()
+        _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
+        factoid_style_night(styling)
+        return styling
+
+    def factoid_style_night(styling):
+        # FIXME: (lb): Devise a similar style for 'light'. #styling
+        styling['factoid-pk'] = 'grey_78'
+        styling['factoid-act@gory'] = 'cornflower_blue, bold, underlined'
+        styling['factoid-#'] = 'grey_78'
+        styling['factoid-tag'] = 'dark_olive_green_1b'
+        styling['factoid-#tag'] = 'underlined'
+        styling['factoid-start'] = 'sandy_brown'
+        styling['factoid-end'] = 'sandy_brown'
+        styling['factoid-to'] = 'grey_85'
+        styling['factoid-duration'] = 'grey_78'
+
+    return _night()
 
 
 # ***
