@@ -147,10 +147,10 @@ def load_styles_conf(config):
 
 def load_matches_style(controller):
     def _load_matches_style():
-        matches_style = try_load_dict_from_user_stylit()
+        matches_style = try_load_dict_from_user_style_rules()
         return matches_style
 
-    def try_load_dict_from_user_stylit():
+    def try_load_dict_from_user_style_rules():
         matches_style, failed = load_matches_conf(controller.config)
         if matches_style is None:
             return matches_style
