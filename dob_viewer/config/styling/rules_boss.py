@@ -61,26 +61,26 @@ def echo_rules_conf(controller, rule_name, complete=False):
     config = controller.config
 
     def _echo_rules_conf():
-        config_obj = load_config_obj()
-        if config_obj:
-            echo_config_obj(config_obj)
+        rules_confobj = load_rules_confobj()
+        if rules_confobj:
+            echo_config_obj(rules_confobj)
         # Else, already printed error message.
 
-    def load_config_obj():
-        config_obj, failed = load_rules_conf(config)
-        if config_obj:
-            return filter_config_obj(config_obj)
+    def load_rules_confobj():
+        rules_confobj, failed = load_rules_conf(config)
+        if rules_confobj:
+            return filter_rules_confobj(rules_confobj)
         if failed:
             # load_styles_conf prints a ConfigObj error message. Our job is done.
             return None
         return echo_error_no_rules_conf()
 
-    def filter_config_obj(config_obj):
+    def filter_rules_confobj(rules_confobj):
         if not rule_name:
-            return config_obj
+            return rules_confobj
         new_config = create_configobj(conf_path=None)
         try:
-            new_config.merge({rule_name: config_obj[rule_name]})
+            new_config.merge({rule_name: rules_confobj[rule_name]})
         except KeyError:
             return echo_error_no_rules_section(rule_name)
         else:
@@ -155,12 +155,12 @@ def edit_rules_conf(controller):
 def echo_rule_names(controller):
     """"""
     def _echo_rule_names():
-        rules = load_style_rules(controller)
-        print_rules_names(rules, _('User-created rules'))
+        rules_confobj = load_style_rules(controller)
+        print_rules_names(rules_confobj, _('User-created rules'))
 
-    def print_rules_names(rules, title):
+    def print_rules_names(rules_confobj, title):
         click_echo('{}{}{}'.format(attr('underlined'), title, attr('reset')))
-        for rule_name in rules.keys():
+        for rule_name in rules_confobj.keys():
             click_echo('  ' + highlight_value(rule_name))
 
     return _echo_rule_names()

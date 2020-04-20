@@ -38,12 +38,12 @@ class StylingConfig(object):
     """Encapsulate Carousel-specific user configurable styling, PPT class names,
     and Pygments style syntax."""
 
-    def __init__(self, matches_style):
+    def __init__(self, rules_confobj):
         # The caller passes a dict-like object of rules read from
         # the user's rules.conf file. We convert that to a StylitRoot
         # object, which encapsulates business logic in a dict-like
         # candy wrapper.
-        self.rulesets = self.consume_style_rules_conf(matches_style)
+        self.rulesets = self.consume_style_rules_conf(rules_confobj)
 
         # As the Carousel builds the PPT UX and creates and add components
         # to it, it'll register each stylable component. At that time, we
@@ -56,16 +56,16 @@ class StylingConfig(object):
 
     # ***
 
-    def consume_style_rules_conf(self, matches_style):
+    def consume_style_rules_conf(self, rules_confobj):
 
         def _consume_style_rules_conf():
-            if matches_style is None:
+            if rules_confobj is None:
                 return {}
-            return _create_rulesets(matches_style)
+            return _create_rulesets(rules_confobj)
 
-        def _create_rulesets(matches_style):
+        def _create_rulesets(rules_confobj):
             rulesets = {}
-            for section, rules in matches_style.items():
+            for section, rules in rules_confobj.items():
                 ruleset = create_ruleset_from_rules(rulesets, rules)
                 rulesets[section] = ruleset
             return rulesets

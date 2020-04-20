@@ -147,22 +147,22 @@ def load_styles_conf(config):
 
 def load_style_rules(controller):
     def _load_style_rules():
-        matches_style = try_load_dict_from_user_style_rules()
-        return matches_style
+        rules_confobj = try_load_dict_from_user_style_rules()
+        return rules_confobj
 
     def try_load_dict_from_user_style_rules():
-        matches_style, failed = load_rules_conf(controller.config)
-        if matches_style is None:
-            return matches_style
-        compile_eval_rules(matches_style)
-        return matches_style
+        rules_confobj, failed = load_rules_conf(controller.config)
+        if rules_confobj is None:
+            return None
+        compile_eval_rules(rules_confobj)
+        return rules_confobj
 
-    def compile_eval_rules(matches_style):
+    def compile_eval_rules(rules_confobj):
         # Each section may optionally contain one code/eval component. Compile
         # it now to check for errors, with the bonus that it's cached for later
         # ((lb): not that you'd likely notice any change in performance with or
         # without the pre-compile).
-        for section, rules in matches_style.items():
+        for section, rules in rules_confobj.items():
             if 'eval' not in rules:
                 continue
             try:
@@ -195,10 +195,10 @@ def load_rules_conf(config):
         return wrap_in_configobj(rules_path)
 
     def wrap_in_configobj(rules_path):
-        matches_style = create_configobj(rules_path, nickname='stylit')
-        if matches_style is None:
+        rules_confobj = create_configobj(rules_path, nickname='stylit')
+        if rules_confobj is None:
             return None, True
-        return matches_style, False
+        return rules_confobj, False
 
     return _load_rules_conf()
 

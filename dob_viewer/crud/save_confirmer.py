@@ -40,7 +40,7 @@ def prompt_and_save_confirmer(
     # (lb): run_cli.run._setup_tty_style() now loads the style and caches it.
     #           classes_style = load_classes_style(controller)
     classes_style = controller.style_conf
-    matches_style = load_style_rules(controller)
+    rules_confobj = load_style_rules(controller)
     content_lexer = load_content_lexer(controller)
     no_completion = load_no_completion(controller)
 
@@ -54,7 +54,7 @@ def prompt_and_save_confirmer(
         dirty_callback=backup_callback,
         dry=dry,
         classes_style=classes_style,
-        matches_style=matches_style,
+        rules_confobj=rules_confobj,
         content_lexer=content_lexer,
         no_completion=no_completion,
     )

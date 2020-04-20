@@ -63,7 +63,7 @@ class Carousel(object):
         dry,
         content_lexer=None,  # Lexer() instance, used by ZoneContent.
         classes_style=None,  # Style dict, used by all the zone_*.py.
-        matches_style=None,  # Matching logic and container-class map.
+        rules_confobj=None,  # Matching logic and container-class map.
         no_completion=None,  # act/cat/tag list to not complete/suggest.
     ):
         self.controller = controller
@@ -76,7 +76,7 @@ class Carousel(object):
         )
         self.dry = dry
         self.content_lexer = content_lexer
-        self.setup_styling(classes_style, matches_style)
+        self.setup_styling(classes_style, rules_confobj)
         self.no_completion = no_completion
         self.action_manager = ActionManager(self)
         self.update_handler = UpdateHandler(self)
@@ -136,12 +136,12 @@ class Carousel(object):
 
     # ***
 
-    def setup_styling(self, classes_style, matches_style):
+    def setup_styling(self, classes_style, rules_confobj):
         """"""
 
         def _setup_styling():
             setup_classes_style(classes_style)
-            setup_matches_style(matches_style)
+            setup_rules_confobj(rules_confobj)
 
         def setup_classes_style(classes_style):
             if classes_style is None:
@@ -156,8 +156,8 @@ class Carousel(object):
                 classes_style = styling_color()
             self.classes_style = classes_style
 
-        def setup_matches_style(matches_style):
-            self.stylability = StylingConfig(matches_style)
+        def setup_rules_confobj(rules_confobj):
+            self.stylability = StylingConfig(rules_confobj)
 
         _setup_styling()
 
