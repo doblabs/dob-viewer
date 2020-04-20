@@ -181,10 +181,10 @@ class StylingConfig(object):
             # For each attribute, there are multiple rules the user can choose
             # from to specify one of more names, e.g., one or more Activity
             # names might share the same style, and user could specify:
-            #   [my-stylit-section]
+            #   [my-custom-rule]
             #   activities = Name1, Name2
             # or, if the user wants to be absurd, they could instead specify:
-            #   [my-stylit-section]
+            #   [my-custom-rule]
             #   activity = Name1
             #   activities = Name2
             # because we'll just combine both rules and check for one to match.
@@ -260,7 +260,7 @@ class StylingConfig(object):
                 trinary = eval(compiled_code)
             except Exception as err:
                 msg = _(
-                    "eval() failed on ‘eval’ stylit rule from “{0}”: {1}"
+                    "eval() failed on style rule ‘eval’ from “{0}”: {1}"
                 ).format(section, str(err))
                 # MAYBE/2019-12-02: (lb): Show errors in Carousel?
                 # - Also one of few places where traverser imports ...helpers
