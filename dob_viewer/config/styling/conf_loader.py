@@ -137,7 +137,7 @@ def load_styles_conf(config):
         return load_dict_from_user_styling(styles_path)
 
     def load_dict_from_user_styling(styles_path):
-        styles_conf = create_configobj(styles_path, nickname='styles')
+        styles_conf = create_configobj(styles_path, errname='styles_conf')
         if styles_conf is None:
             return None, True
         return styles_conf, False
@@ -197,7 +197,7 @@ def load_rules_conf(config):
         return wrap_in_configobj(rules_path)
 
     def wrap_in_configobj(rules_path):
-        rules_confobj = create_configobj(rules_path, nickname='stylit')
+        rules_confobj = create_configobj(rules_path, errname='rules_conf')
         if rules_confobj is None:
             return None, True
         return rules_confobj, False
