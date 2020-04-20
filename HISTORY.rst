@@ -13,6 +13,31 @@ History
 
 .. :changelog:
 
+1.1.0 (2020-04-20)
+==================
+
+- Bugfix: Import FactsDiff display broken.
+
+- Bugfix: 'value-tags' class missing from hash-and-label tag parts' styles.
+
+- Feature: New ``dob styles`` commands.
+
+- Feature: New ``dob rules`` commands.
+
+- Feature: New ``dob ignore`` commands.
+
+- Feature: Make tags_tuples parts styleable (for ``git edit``).
+
+- Feature: Make factoid parts styleable (for ``git show``).
+
+- Tweak: Update 'night' style settings.
+
+- Enhance: Apply 'value-tags' class to tags diff parts.
+
+- API: Rename functions; move functions between libraries.
+
+- API: Update renamed config setting: ``stylit_fpath`` → ``rules_fpath``.
+
 1.0.10 (2020-04-17)
 ===================
 
