@@ -35,22 +35,22 @@ from .classes_style import (
 from .various_styles import KNOWN_STYLES
 
 __all__ = (
-    'print_styles_conf',
+    'echo_styles_conf',
 )
 
 
-def print_styles_conf(controller, style_name='', internal=False, complete=False):
+def echo_styles_conf(controller, style_name='', internal=False, complete=False):
     """Prints style config section(s) from styles.conf or internal sources.
     """
     config = controller.config
 
-    def _print_styles_conf():
+    def _echo_styles_conf():
         if not internal:
             config_obj = load_config_obj()
         else:
             config_obj = load_style_conf()
         if config_obj:
-            print_result(config_obj)
+            echo_config_obj(config_obj)
         # Else, already printed error message.
 
     # ***
