@@ -27,6 +27,7 @@ from dob_bright.termio import dob_in_user_warning
 from dob_prompt.prompters.enc_actegory_re import RegExpActegory
 
 __all__ = (
+    'ignores_file_path',
     'load_no_completion',
     'NoComplete',
 )
@@ -39,6 +40,8 @@ class NoComplete(object):
         self.re_act = re_act
         self.re_cat = re_cat
         self.re_tag = re_tag
+
+        self.raw = {}
 
 
 def load_no_completion(controller):
@@ -110,7 +113,13 @@ def load_no_completion(controller):
             # FIXME/2019-11-30: (lb): Better error message.
             dob_in_user_warning(str(err))
             re_act, re_cat, re_tag = nothing_matches
-        return NoComplete(re_act, re_cat, re_tag)
+        no_completions = NoComplete(re_act, re_cat, re_tag)
+        no_completions.raw = {
+            'activities': _activities,
+            'categories': _categories,
+            'tags': _tagsofname,
+        }
+        return no_completions
 
     def re_compiled_user_ignores():
         ignore_fpath = ignores_file_path(config)
