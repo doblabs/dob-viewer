@@ -39,7 +39,7 @@ from dob_bright.termio.style import attr
 from .. import decorate_and_wrap
 
 from .classes_style import (
-    load_matches_conf,
+    load_rules_conf,
     load_matches_style,
     resolve_path_rules
 )
@@ -67,7 +67,7 @@ def echo_rules_conf(controller, rule_name, complete=False):
         # Else, already printed error message.
 
     def load_config_obj():
-        config_obj, failed = load_matches_conf(config)
+        config_obj, failed = load_rules_conf(config)
         if config_obj:
             return filter_config_obj(config_obj)
         if failed:

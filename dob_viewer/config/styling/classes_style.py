@@ -30,7 +30,7 @@ from . import load_obj_from_internal, various_styles
 
 __all__ = (
     'load_classes_style',
-    'load_matches_conf',
+    'load_rules_conf',
     'load_matches_style',
     'resolve_named_style',
     'resolve_path_rules',
@@ -151,7 +151,7 @@ def load_matches_style(controller):
         return matches_style
 
     def try_load_dict_from_user_style_rules():
-        matches_style, failed = load_matches_conf(controller.config)
+        matches_style, failed = load_rules_conf(controller.config)
         if matches_style is None:
             return matches_style
         compile_eval_rules(matches_style)
@@ -187,8 +187,8 @@ def load_matches_style(controller):
 
 # ***
 
-def load_matches_conf(config):
-    def _load_matches_conf():
+def load_rules_conf(config):
+    def _load_rules_conf():
         rules_path = resolve_path_rules(config)
         if not os.path.exists(rules_path):
             return None, False
@@ -200,7 +200,7 @@ def load_matches_conf(config):
             return None, True
         return matches_style, False
 
-    return _load_matches_conf()
+    return _load_rules_conf()
 
 
 # ***
