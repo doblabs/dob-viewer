@@ -174,9 +174,9 @@ def load_matches_style(controller):
                     mode='eval',
                 )
             except Exception as err:
-                stylit_path = resolve_path_rules(controller.config)
+                rules_path = resolve_path_rules(controller.config)
                 msg = _("compile() failed on 'eval' from “{0}” in “{1}”: {2}").format(
-                    section, stylit_path, str(err),
+                    section, rules_path, str(err),
                 )
                 dob_in_user_warning(msg)
 
@@ -189,13 +189,13 @@ def load_matches_style(controller):
 
 def load_matches_conf(config):
     def _load_matches_conf():
-        stylit_path = resolve_path_rules(config)
-        if not os.path.exists(stylit_path):
+        rules_path = resolve_path_rules(config)
+        if not os.path.exists(rules_path):
             return None, False
-        return wrap_in_configobj(stylit_path)
+        return wrap_in_configobj(rules_path)
 
-    def wrap_in_configobj(stylit_path):
-        matches_style = create_configobj(stylit_path, nickname='stylit')
+    def wrap_in_configobj(rules_path):
+        matches_style = create_configobj(rules_path, nickname='stylit')
         if matches_style is None:
             return None, True
         return matches_style, False
