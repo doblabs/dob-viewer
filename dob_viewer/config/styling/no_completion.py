@@ -113,15 +113,11 @@ def load_no_completion(controller):
         return NoComplete(re_act, re_cat, re_tag)
 
     def re_compiled_user_ignores():
-        ignore_fpath = ignores_file_path()
+        ignore_fpath = ignores_file_path(config)
+        if not os.path.exists(ignore_fpath):
+            return nothing_matches
         compiled_re = ignores_file_parse(ignore_fpath)
         return compiled_re
-
-    def ignores_file_path():
-        ignore_fpath = config['editor.ignore_fpath']
-        if not os.path.exists(ignore_fpath):
-            return None
-        return ignore_fpath
 
     def ignores_file_parse(ignore_fpath):
         if not ignore_fpath:
@@ -199,4 +195,14 @@ def load_no_completion(controller):
     # ***
 
     return _load_no_completion()
+
+
+# ***
+
+CFG_KEY_IGNORE_FPATH = 'editor.ignore_fpath'
+
+
+def ignores_file_path(config):
+    ignore_fpath = config[CFG_KEY_IGNORE_FPATH]
+    return ignore_fpath
 
