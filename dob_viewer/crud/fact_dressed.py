@@ -244,6 +244,19 @@ class FactDressed(Fact):
         set_coloring(was_coloring)
         return friendly_tags
 
+    # ***
+
+    TAGS_TUPLE_STYLE = {}
+
+    @classmethod
+    def register_tags_tuples_style(cls, tags_tuples_style=None):
+        """Registers a dictionary of PTK-style styles for tags_tuples.
+        """
+        # (lb): See command in CustomHeaderValues. These two special styles,
+        # 'value-tag-#' and 'value-tag-label', let you style the hash symbol
+        # separately from the tag label. As opposed to the 'value-tag' option.
+        cls.TAGS_TUPLE_STYLE = tags_tuples_style or {}
+
     # NOTE/2020-01-27: (lb): Returns PPT tuple, not something dob knows about.
     # - We could move this method to dob-viewer, to truly decouple.
     #   But then dob-viewer needs to override FactDressed (self.store.fact_cls).
@@ -258,21 +271,18 @@ class FactDressed(Fact):
     ):
 
         def format_tagname(tag):
-            # FIXME/2020-01-28: (lb): make underline and colors configable.
-            underline_fmt = ' underline' if colorful else ''
             tagged = []
             #
+            # (lb): I had ' fg: ' prefix for class name, but not needed.
             tclss_fmt = ' class:tag-{}'.format(namilize(tag.name))
             #
-            token_fmt = 'fg: ' if (colorful or underline_fmt) else ''
-            token_fmt += '#C6C6C6' if colorful else ''
-            token_fmt += underline_fmt
+            token_fmt = ''
+            token_fmt += fetch_tag_part_fmt('value-tag-#')
             token_fmt += tclss_fmt
             tagged.append((token_fmt, hashtag_token))
             #
-            tname_fmt = 'fg: ' if (colorful or underline_fmt) else ''
-            tname_fmt += '#D7FF87' if colorful else ''
-            tname_fmt += underline_fmt
+            tname_fmt = ''
+            tname_fmt += fetch_tag_part_fmt('value-tag-label')
             tname_fmt += tclss_fmt
             tagged.append((tname_fmt, tag.name))
             #
@@ -281,6 +291,14 @@ class FactDressed(Fact):
                 tagged.insert(0, fmt_quote)
                 tagged.append(fmt_quote)
             return tagged
+
+        def fetch_tag_part_fmt(style_attr):
+            if not colorful:
+                return ''
+            try:
+                return FactDressed.TAGS_TUPLE_STYLE[style_attr]
+            except KeyError:
+                return ''
 
         # NOTE: The returned string includes leading space if nonempty!
         tagnames = []

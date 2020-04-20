@@ -526,6 +526,47 @@ def _create_style_object():
     # styles, they're just handled manually by dob-viewer.
 
     @StylesRoot.section(None)
+    class CustomHeaderValues(object):
+        """"""
+
+        def __init__(self):
+            pass
+
+        # ***
+
+        # EXPLAIN: (lb): I don't recall how these two ended up so special,
+        # I think because FactsDressed formats the tags for the Carousel
+        # header. But for the other metadata -- Activity@Category, and start
+        # and end times, even duration -- you can modify the style using one
+        # of the 'value-*' options defined above. There's even a 'value-tag'
+        # options, which leads me to believe I had this hardcoded because it
+        # lets you style the hash symbol separately from the tag label.
+        #
+        # EXPLAIN: How do these interact with value-tag?
+
+        @property
+        @setting(
+            _("Default style to apply to tag hashmarks in editor header."),
+            name='value-tag-#',
+            not_a_style=True,
+        )
+        def header_value_hash(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Default style to apply to tag labels in editor header."),
+            name='value-tag-label',
+            not_a_style=True,
+        )
+        def header_value_tag(self):
+            return ''
+
+    # ***
+
+    @StylesRoot.section(None)
     class CustomFactoid(object):
         """"""
 
@@ -704,8 +745,14 @@ def night():
     def _night():
         styling = default()
         _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
+        header_value_style_night(styling)
         factoid_style_night(styling)
         return styling
+
+    def header_value_style_night(styling):
+        # FIXME: (lb): Devise a similar style for 'light'. #styling
+        styling['value-tag-#'] = 'fg: #C6C6C6 underline'
+        styling['value-tag-label'] = 'fg: #D7FF87 underline'
 
     def factoid_style_night(styling):
         # FIXME: (lb): Devise a similar style for 'light'. #styling

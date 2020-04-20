@@ -32,6 +32,7 @@ def apply_styles(controller):
     def _apply_styles():
         style_conf = load_classes_style(controller)
         register_factoid_style(style_conf)
+        register_tags_tuples_style(style_conf)
         return style_conf
 
     def register_factoid_style(style_conf):
@@ -56,6 +57,17 @@ def apply_styles(controller):
 
     def unpack(csv):
         return RE_COMMA_WHITESPACE.split(csv)
+
+    def register_tags_tuples_style(style_conf):
+        tags_tuples_style = unpack_tags_tuples_style(style_conf)
+        FactDressed.register_tags_tuples_style(tags_tuples_style)
+
+    def unpack_tags_tuples_style(style_conf):
+        tags_tuples_style = {
+            'value-tag-#': style_conf['value-tag-#'],
+            'value-tag-label': style_conf['value-tag-label'],
+        }
+        return tags_tuples_style
 
     return _apply_styles()
 
