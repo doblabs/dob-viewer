@@ -66,6 +66,12 @@ class FactDressed(Fact):
     # ***
 
     @property
+    def pk_str(self):
+        return str(self.pk)
+
+    # ***
+
+    @property
     def short(self):
         friendly = (
             '0x{:12x} / 🏭 {} / {} to {:23} / prev: {:12x} / next: {:12x}'.format(

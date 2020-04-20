@@ -94,7 +94,7 @@ class FactsDiff(object):
             else:
                 result += self.diff_attrs('end_fmt_local_nowwed', 'end')
             if (not truncate) or self.orig_fact.pk or self.edit_fact.pk:
-                result += self.diff_attrs('pk', 'id', beautify=self.beautify_pk)
+                result += self.diff_attrs('pk_str', 'id', beautify=self.beautify_pk)
             result += self.diff_attrs('deleted', 'deleted')
             # MAYBE?: (lb): Would we even want to show the split_from fact?
             #  result += self.diff_attrs('split_from', 'split_from')
