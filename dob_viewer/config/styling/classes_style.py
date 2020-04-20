@@ -223,7 +223,7 @@ def resolve_path_styles(config):
 
 # ***
 
-CFG_KEY_RULESETS_FPATH = 'editor.stylit_fpath'
+CFG_KEY_RULESETS_FPATH = 'editor.rules_fpath'
 
 
 def resolve_path_rules(config):
