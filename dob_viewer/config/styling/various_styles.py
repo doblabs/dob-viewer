@@ -567,6 +567,59 @@ def _create_style_object():
     # ***
 
     @StylesRoot.section(None)
+    class CustomFactsDiff(object):
+        """"""
+
+        def __init__(self):
+            pass
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to FactsDiff parts in editor header."),
+            name='value-diff-old-raw',
+            not_a_style=True,
+        )
+        def value_diff_old_raw(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to FactsDiff parts in editor header."),
+            name='value-diff-old-ptk',
+            not_a_style=True,
+        )
+        def value_diff_old_ptk(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to FactsDiff parts in editor header."),
+            name='value-diff-new-raw',
+            not_a_style=True,
+        )
+        def value_diff_new_raw(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to FactsDiff parts in editor header."),
+            name='value-diff-new-ptk',
+            not_a_style=True,
+        )
+        def value_diff_new_ptk(self):
+            return ''
+
+    # ***
+
+    @StylesRoot.section(None)
     class CustomFactoid(object):
         """"""
 
@@ -745,17 +798,30 @@ def night():
     def _night():
         styling = default()
         _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
-        header_value_style_night(styling)
-        factoid_style_night(styling)
+        set_header_tag_parts_style(styling)
+        set_header_facts_diff_style(styling)
+        set_factoid_parts_style(styling)
         return styling
 
-    def header_value_style_night(styling):
-        # FIXME: (lb): Devise a similar style for 'light'. #styling
-        styling['value-tag-#'] = 'fg: #C6C6C6 underline'
-        styling['value-tag-label'] = 'fg: #D7FF87 underline'
+    # FIXME: (lb): Devise similar #styling for 'light'.
 
-    def factoid_style_night(styling):
-        # FIXME: (lb): Devise a similar style for 'light'. #styling
+    def set_header_tag_parts_style(styling):
+        styling['value-tag-#'] = 'fg:#C6C6C6 underline'
+        styling['value-tag-label'] = 'fg:#D7FF87 underline'
+
+    def set_header_facts_diff_style(styling):
+        # The *-raw styles are sent to ansi_escape_room's color() and attr() lookups.
+        # The *-ptk styles are inserted into Python Prompt Toolkit (style, tuples, ).
+        # - Styles for the 'before' Fact parts -- from before user edited it.
+        styling['value-diff-old-raw'] = 'spring_green_3a'
+        spring_green_3a = '00AF5F'
+        styling['value-diff-old-ptk'] = 'fg:#{}'.format(spring_green_3a)
+        # Styles for the 'after' Fact parts -- edits ready to be saved.
+        styling['value-diff-new-raw'] = 'light_salmon_3b, bold, underlined'
+        light_salmon_3b = 'D7875F'
+        styling['value-diff-new-ptk'] = 'fg:#{} bold underline'.format(light_salmon_3b)
+
+    def set_factoid_parts_style(styling):
         styling['factoid-pk'] = 'grey_78'
         styling['factoid-act@gory'] = 'cornflower_blue, bold, underlined'
         styling['factoid-#'] = 'grey_78'

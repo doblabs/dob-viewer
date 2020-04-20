@@ -19,7 +19,8 @@
 
 import re
 
-from dob_viewer.crud.fact_dressed import FactDressed
+from ...crud.fact_dressed import FactDressed
+from ...crud.facts_diff import FactsDiff
 
 from .classes_style import load_classes_style
 
@@ -32,8 +33,18 @@ def apply_styles(controller):
     def _apply_styles():
         style_conf = load_classes_style(controller)
         register_factoid_style(style_conf)
+        register_facts_diff_style(style_conf)
         register_tags_tuples_style(style_conf)
         return style_conf
+
+    # ***
+
+    RE_COMMA_WHITESPACE = re.compile(r',\s*')
+
+    def unpack(csv):
+        return RE_COMMA_WHITESPACE.split(csv)
+
+    # ***
 
     def register_factoid_style(style_conf):
         factoioid_style = unpack_factoioid_style(style_conf)
@@ -53,10 +64,22 @@ def apply_styles(controller):
         }
         return factoioid_style
 
-    RE_COMMA_WHITESPACE = re.compile(r',\s*')
+    # ***
 
-    def unpack(csv):
-        return RE_COMMA_WHITESPACE.split(csv)
+    def register_facts_diff_style(style_conf):
+        facts_diff_style = unpack_facts_diff_style(style_conf)
+        FactsDiff.register_facts_diff_style(facts_diff_style)
+
+    def unpack_facts_diff_style(style_conf):
+        facts_diff_style = {
+            'value-diff-old-raw': unpack(style_conf['value-diff-old-raw']),
+            'value-diff-old-ptk': style_conf['value-diff-old-ptk'],
+            'value-diff-new-raw': unpack(style_conf['value-diff-new-raw']),
+            'value-diff-new-ptk': style_conf['value-diff-new-ptk'],
+        }
+        return facts_diff_style
+
+    # ***
 
     def register_tags_tuples_style(style_conf):
         tags_tuples_style = unpack_tags_tuples_style(style_conf)

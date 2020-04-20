@@ -15,13 +15,16 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
+from gettext import gettext as _
+
 # MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
 import click_hotoffthehamster as click  # merely for get_terminal_size.
 
 from nark.helpers.format_text import format_value_truncate
 from nark.helpers.objects import resolve_attr_or_method
 
-from dob_bright.termio import attr, fg
+from dob_bright.termio import dob_in_user_warning
+from dob_bright.termio.style import stylize, verify_colors_attrs
 
 __all__ = (
     'FactsDiff',
@@ -242,15 +245,41 @@ class FactsDiff(object):
 
     # ***
 
+    FACTS_DIFF_STYLE = {}
+
+    @classmethod
+    def register_facts_diff_style(cls, facts_diff_style=None):
+        """Registers a dictionary of style lists for FactsDiff methods.
+        """
+        for part, styles in facts_diff_style.items():
+            if not part.endswith('-raw'):
+                continue
+            errs = ', '.join(verify_colors_attrs(*styles))
+            if errs:
+                emsg = _('Unknown colors or attrs for “{}”: {}').format(part, errs)
+                dob_in_user_warning(emsg)
+        # Nonetheless, can still use even if some/all unknown colors/attrs.
+        cls.FACTS_DIFF_STYLE = facts_diff_style or {}
+
+    @classmethod
+    def fetch_style(cls, style_attr):
+        try:
+            return cls.FACTS_DIFF_STYLE[style_attr]
+        except KeyError:
+            if style_attr.endswith('-raw'):
+                # Expect list of (color, *attrs) to pass to stylize()
+                return []
+            else:
+                # Except ready-to-go PTK tuple style string.
+                return ''
+
+    # ***
+
     def format_edited_before(self, before_val):
         if not self.formatted:
-            return '{}{}{}'.format(
-                fg('spring_green_3a'),
-                before_val,
-                attr('reset'),
-            )
-        spring_green_3a = '00AF5F'
-        style = 'fg:#{}'.format(spring_green_3a)
+            styles = FactsDiff.fetch_style('value-diff-old-raw')
+            return styles and stylize(before_val, *styles) or before_val
+        style = FactsDiff.fetch_style('value-diff-old-ptk')
         before_parts = []
         if isinstance(before_val, str):
             before_parts += [(style, before_val)]
@@ -261,16 +290,11 @@ class FactsDiff(object):
 
     def format_edited_after(self, self_val, other_val):
         if not self.formatted:
-            return '{}{}{}{}{} | was: '.format(
-                attr('bold'),
-                attr('underlined'),
-                fg('light_salmon_3b'),
-                other_val,
-                attr('reset'),
-                # (lb): What, emphasis has no italic option?
+            styles = FactsDiff.fetch_style('value-diff-new-raw')
+            return '{} | was: '.format(
+                styles and stylize(other_val, *styles) or other_val
             ), self_val
-        light_salmon_3b = 'D7875F'
-        style = 'fg:#{} bold underline'.format(light_salmon_3b)
+        style = FactsDiff.fetch_style('value-diff-new-ptk')
         after_parts = []
         if isinstance(other_val, str):
             after_parts += [(style, other_val)]
