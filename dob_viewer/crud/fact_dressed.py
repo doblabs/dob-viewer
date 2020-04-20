@@ -266,7 +266,6 @@ class FactDressed(Fact):
         hashtag_token='#',
         quote_tokens=False,
         colorful=False,
-        underlined=False,
         split_lines=False,
     ):
 

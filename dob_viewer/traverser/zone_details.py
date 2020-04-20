@@ -140,7 +140,6 @@ class ZoneDetails(
                 'tags_tuples',
                 split_lines=True,
                 colorful=True,
-                underlined=True,
                 mouse_handler=header_widget_mouse_handler('tags'),
             )
 
