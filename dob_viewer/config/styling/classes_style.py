@@ -32,8 +32,10 @@ from . import load_obj_from_internal, various_styles
 __all__ = (
     'create_configobj',
     'load_classes_style',
+    'load_matches_conf',
     'load_matches_style',
     'resolve_named_style',
+    'resolve_path_rules',
     'resolve_path_styles',
     'DEFAULT_STYLE',
 )
@@ -146,30 +148,18 @@ def load_styles_conf(config):
 # ***
 
 def load_matches_style(controller):
-    config = controller.config
-
     def _load_matches_style():
         matches_style = try_load_dict_from_user_stylit()
         return matches_style
 
     def try_load_dict_from_user_stylit():
-        stylit_path = resolve_path_stylit()
-        if not os.path.exists(stylit_path):
-            return None
-        return load_dict_from_user_stylit(stylit_path)
-
-    def resolve_path_stylit():
-        cfg_key_fpath = 'editor.stylit_fpath'
-        return config[cfg_key_fpath]
-
-    def load_dict_from_user_stylit(stylit_path):
-        matches_style = create_configobj(stylit_path, nickname='stylit')
+        matches_style, failed = load_matches_conf(controller.config)
         if matches_style is None:
-            return None
-        compile_eval_rules(matches_style, stylit_path)
+            return matches_style
+        compile_eval_rules(matches_style)
         return matches_style
 
-    def compile_eval_rules(matches_style, stylit_path):
+    def compile_eval_rules(matches_style):
         # Each section may optionally contain one code/eval component. Compile
         # it now to check for errors, with the bonus that it's cached for later
         # ((lb): not that you'd likely notice any change in performance with or
@@ -186,6 +176,7 @@ def load_matches_style(controller):
                     mode='eval',
                 )
             except Exception as err:
+                stylit_path = resolve_path_rules(controller.config)
                 msg = _("compile() failed on 'eval' from “{0}” in “{1}”: {2}").format(
                     section, stylit_path, str(err),
                 )
@@ -194,6 +185,24 @@ def load_matches_style(controller):
     # ***
 
     return _load_matches_style()
+
+
+# ***
+
+def load_matches_conf(config):
+    def _load_matches_conf():
+        stylit_path = resolve_path_rules(config)
+        if not os.path.exists(stylit_path):
+            return None, False
+        return wrap_in_configobj(stylit_path)
+
+    def wrap_in_configobj(stylit_path):
+        matches_style = create_configobj(stylit_path, nickname='stylit')
+        if matches_style is None:
+            return None, True
+        return matches_style, False
+
+    return _load_matches_conf()
 
 
 # ***
@@ -233,4 +242,13 @@ CFG_KEY_STYLES_FPATH = 'editor.styles_fpath'
 
 def resolve_path_styles(config):
     return config[CFG_KEY_STYLES_FPATH]
+
+
+# ***
+
+CFG_KEY_RULESETS_FPATH = 'editor.stylit_fpath'
+
+
+def resolve_path_rules(config):
+    return config[CFG_KEY_RULESETS_FPATH]
 
