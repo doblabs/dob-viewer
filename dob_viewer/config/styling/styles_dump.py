@@ -21,13 +21,12 @@ from gettext import gettext as _
 
 from config_decorator.config_decorator import ConfigDecorator
 
-from dob_bright.config.fileboss import echo_config_obj
+from dob_bright.config.fileboss import create_configobj, echo_config_obj
 from dob_bright.termio import dob_in_user_warning
 
 from .. import decorate_and_wrap
 
 from .classes_style import (
-    create_configobj,
     load_classes_style,
     load_styles_conf,
     resolve_path_styles

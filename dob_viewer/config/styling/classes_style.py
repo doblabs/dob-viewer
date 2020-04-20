@@ -21,8 +21,7 @@ from gettext import gettext as _
 
 import os
 
-from configobj import ConfigObj, ConfigObjError
-
+from dob_bright.config.fileboss import create_configobj
 from dob_bright.termio import dob_in_user_warning
 
 from .. import pause_on_error_message_maybe
@@ -30,7 +29,6 @@ from .. import pause_on_error_message_maybe
 from . import load_obj_from_internal, various_styles
 
 __all__ = (
-    'create_configobj',
     'load_classes_style',
     'load_matches_conf',
     'load_matches_style',
@@ -203,27 +201,6 @@ def load_matches_conf(config):
         return matches_style, False
 
     return _load_matches_conf()
-
-
-# ***
-
-def create_configobj(conf_path, nickname=''):
-    try:
-        return ConfigObj(
-            conf_path,
-            encoding='UTF8',
-            interpolation=False,
-            write_empty_values=False,
-        )
-    except ConfigObjError as err:
-        # Catches DuplicateError, and other errors, e.g.,
-        #       Parsing failed with several errors.
-        #       First error at line 55.
-        msg = _("Failed to load {0} config at “{1}”: {2}").format(
-            nickname, conf_path, str(err),
-        )
-        dob_in_user_warning(msg)
-        return None
 
 
 # ***
