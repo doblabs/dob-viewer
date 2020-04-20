@@ -15,10 +15,7 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-from ..config.styling.classes_style import (
-    load_classes_style,
-    load_matches_style
-)
+from ..config.styling.classes_style import load_matches_style
 from ..config.styling.content_lexer import load_content_lexer
 from ..config.styling.no_completion import load_no_completion
 
@@ -40,7 +37,9 @@ def prompt_and_save_confirmer(
 ):
     """"""
 
-    classes_style = load_classes_style(controller)
+    # (lb): run_cli.run._setup_tty_style() now loads the style and caches it.
+    #           classes_style = load_classes_style(controller)
+    classes_style = controller.style_conf
     matches_style = load_matches_style(controller)
     content_lexer = load_content_lexer(controller)
     no_completion = load_no_completion(controller)
