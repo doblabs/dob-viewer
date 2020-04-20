@@ -22,11 +22,11 @@ from gettext import gettext as _
 from config_decorator import section
 
 __all__ = (
-    'create_stylit_object',
+    'create_style_rules_object',
 )
 
 
-def create_stylit_object():
+def create_style_rules_object():
 
     COMPONENTRY_CLASSIFIER_HELP = _(
         "For component.style or (style, text) tuple, e.g., 'class:my-class1 fg:#000000'."

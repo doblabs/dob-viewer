@@ -44,7 +44,7 @@ from .classes_style import (
     resolve_path_rules
 )
 from .styling_config import StylingConfig
-from .styling_stylit import create_stylit_object
+from .styling_stylit import create_style_rules_object
 
 __all__ = (
     'create_rules_conf',
@@ -126,7 +126,7 @@ def create_rules_conf(controller, force):
 
     def create_rules_file(rules_path):
         # Load specified style, or DEFAULT_STYLE if not specified.
-        classes_style = create_stylit_object()
+        classes_style = create_style_rules_object()
         rule_name = _('Example Style Rule - Showing all built-in options')
         config_obj = decorate_and_wrap(rule_name, classes_style, complete=True)
         config_obj.filename = rules_path
@@ -178,7 +178,7 @@ def echo_rules_table(controller, name, table_type):
 
     def create_example_rule():
         rule_name = _('example')
-        ruleset = create_stylit_object()
+        ruleset = create_style_rules_object()
         return rule_name, ruleset
 
     def fetch_existing_rule():

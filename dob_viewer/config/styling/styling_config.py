@@ -27,7 +27,7 @@ from prompt_toolkit.widgets.base import TextArea
 #                        Or should we use the Carousel (e.g., PPT modal)?
 from dob_bright.termio import dob_in_user_warning
 
-from .styling_stylit import create_stylit_object
+from .styling_stylit import create_style_rules_object
 
 __all__ = (
     'StylingConfig',
@@ -71,7 +71,7 @@ class StylingConfig(object):
             return rulesets
 
         def create_ruleset_from_rules(rulesets, rules):
-            ruleset = create_stylit_object()
+            ruleset = create_style_rules_object()
             unconsumed = ruleset.update_known(rules)
             warn_user_any_unconsumed(unconsumed)
             return ruleset
@@ -252,7 +252,7 @@ class StylingConfig(object):
         def probe_eval(section, ruleset, fact):
             # (lb): `'<str>' in ruleset` sends 0, not '<str>', to __getitem__?!
             # So do `'__eval__' not in ruleset.keys()`. Except no need, because
-            # the key should exist, because create_stylit_object.
+            # the key should exist, because create_style_rules_object.
             compiled_code = ruleset['__eval__']
             if compiled_code is None:
                 return 0
