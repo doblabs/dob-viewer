@@ -26,7 +26,7 @@ from dob_bright.termio import dob_in_user_warning
 
 from .. import decorate_and_wrap
 
-from .conf_loader import (
+from .load_styling import (
     load_style_classes,
     load_styles_conf,
     resolve_path_styles

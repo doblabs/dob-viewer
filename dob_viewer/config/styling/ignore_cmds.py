@@ -25,7 +25,7 @@ from dob_bright.termio import click_echo, dob_in_user_exit, highlight_value
 from dob_bright.termio.ascii_table import generate_table
 from dob_bright.termio.style import attr
 
-from .ignore_completion import ignore_file_path, load_no_completion
+from .load_ignore import ignore_file_path, load_no_completion
 
 __all__ = (
     'create_ignore_conf',

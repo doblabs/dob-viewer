@@ -15,9 +15,9 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-from ..config.styling.classes_style import load_style_rules
+from ..config.styling.load_styling import load_style_rules
 from ..config.styling.content_lexer import load_content_lexer
-from ..config.styling.ignore_completion import load_no_completion
+from ..config.styling.load_ignore import load_no_completion
 
 
 __all__ = (

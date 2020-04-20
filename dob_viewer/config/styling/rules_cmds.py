@@ -38,7 +38,7 @@ from dob_bright.termio.style import attr
 
 from .. import decorate_and_wrap
 
-from .conf_loader import (
+from .load_styling import (
     load_rules_conf,
     load_style_rules,
     resolve_path_rules

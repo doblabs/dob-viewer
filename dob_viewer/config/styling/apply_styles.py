@@ -22,7 +22,7 @@ import re
 from ...crud.fact_dressed import FactDressed
 from ...crud.facts_diff import FactsDiff
 
-from .conf_loader import load_style_classes
+from .load_styling import load_style_classes
 
 __all__ = (
     'apply_styles',
