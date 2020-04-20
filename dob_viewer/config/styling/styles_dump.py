@@ -17,14 +17,14 @@
 
 """Prints styles and stylit config to stdout to help user setup custom styling."""
 
-import os
-import tempfile
-
 from gettext import gettext as _
 
 from config_decorator.config_decorator import ConfigDecorator
 
-from dob_bright.termio import click_echo, dob_in_user_warning
+from dob_bright.config.fileboss import echo_config_obj
+from dob_bright.termio import dob_in_user_warning
+
+from .. import decorate_and_wrap
 
 from .classes_style import (
     create_configobj,
@@ -99,14 +99,7 @@ def echo_styles_conf(controller, style_name='', internal=False, complete=False):
         if not classes_style:
             # load_obj_from_internal will have output a warning message.
             return None
-        return decorate_and_wrap(classes_style)
-
-    def decorate_and_wrap(classes_style):
-        # Sink the section once so we can get ConfigObj to print
-        # the leading [style_name].
-        styles_conf = ConfigDecorator(object, cls_or_name='', parent=None)
-        styles_conf.set_section(style_name, classes_style)
-        return wrap_in_configobj(styles_conf, complete=complete)
+        return decorate_and_wrap(style_name, classes_style, complete=complete)
 
     def load_known_styles():
         """Adds all internal styles to a configobj.
@@ -129,44 +122,5 @@ def echo_styles_conf(controller, style_name='', internal=False, complete=False):
 
     # ***
 
-    def print_result(config_obj):
-        temp_f = prepare_temp_file(config_obj)
-        write_styles_conf(config_obj)
-        open_and_print_dump(temp_f)
-
-    def prepare_temp_file(config_obj):
-        # Not that easy:
-        #   config_obj.filename = sys.stdout
-        # (lb): My understanding is that for the TemporaryFile to be openable
-        # on Windows, we should close it first (Linux can open an opened file
-        # again, but not Windows).
-        #   https://docs.python.org/3/library/tempfile.html#tempfile.NamedTemporaryFile
-        temp_f = tempfile.NamedTemporaryFile(delete=False)
-        temp_f.close()
-        config_obj.filename = temp_f.name
-        return temp_f
-
-    def write_styles_conf(config_obj):
-        config_obj.write()
-
-    def open_and_print_dump(temp_f):
-        with open(temp_f.name, 'r') as fobj:
-            click_echo(fobj.read().strip())
-        os.unlink(temp_f.name)
-
-    return _print_styles_conf()
-
-
-# ***
-
-def wrap_in_configobj(styles_conf, conf_path=None, complete=False):
-    config_obj = create_configobj(conf_path=conf_path)
-    # Set skip_unset so none of the default values are spit out (keeps the
-    # config more concise); and set keep_empties so empty sections are spit
-    # out (so, e.g., `[default]` at least appears).
-    config_obj.merge(styles_conf.as_dict(
-        skip_unset=not complete,
-        keep_empties=not complete,
-    ))
-    return config_obj
+    return _echo_styles_conf()
 

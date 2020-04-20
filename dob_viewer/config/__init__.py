@@ -22,14 +22,42 @@ import time
 
 from gettext import gettext as _
 
+from config_decorator.config_decorator import ConfigDecorator
+
+from dob_bright.config.fileboss import create_configobj
+
 # Add our settings to the config.
 from .custom_paste import DobViewerConfigCustomPaste  # noqa: F401 '<>' imported ...
 from .editor_keys import DobViewerConfigEditorKeys    # noqa: F401  ... but unused
 
 __all__ = (
+    'decorate_and_wrap',
     'json_load_keycodes',
     'pause_on_error_message_maybe',
 )
+
+
+# ***
+
+def decorate_and_wrap(section_name, classes_style, complete=False):
+    def _decorate_and_wrap():
+        # Sink the section once so we can get ConfigObj to print
+        # the leading [section_name].
+        condec = ConfigDecorator.create_root_for_section(section_name, classes_style)
+        return wrap_in_configobj(condec, complete=complete)
+
+    def wrap_in_configobj(condec, complete=False):
+        config_obj = create_configobj(conf_path=None)
+        # Set skip_unset so none of the default values are spit out (keeps the
+        # config more concise); and set keep_empties so empty sections are spit
+        # out (so, e.g., `[default]` at least appears).
+        config_obj.merge(condec.as_dict(
+            skip_unset=not complete,
+            keep_empties=not complete,
+        ))
+        return config_obj
+
+    return _decorate_and_wrap()
 
 
 # ***
