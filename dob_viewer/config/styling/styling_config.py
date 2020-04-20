@@ -43,7 +43,7 @@ class StylingConfig(object):
         # the user's rules.conf file. We convert that to a StylitRoot
         # object, which encapsulates business logic in a dict-like
         # candy wrapper.
-        self.rulesets = self.consume_stylit_conf(matches_style)
+        self.rulesets = self.consume_style_rules_conf(matches_style)
 
         # As the Carousel builds the PPT UX and creates and add components
         # to it, it'll register each stylable component. At that time, we
@@ -56,9 +56,9 @@ class StylingConfig(object):
 
     # ***
 
-    def consume_stylit_conf(self, matches_style):
+    def consume_style_rules_conf(self, matches_style):
 
-        def _consume_stylit_conf():
+        def _consume_style_rules_conf():
             if matches_style is None:
                 return {}
             return _create_rulesets(matches_style)
@@ -84,7 +84,7 @@ class StylingConfig(object):
             ).format(unconsumed)
             dob_in_user_warning(msg)
 
-        return _consume_stylit_conf()
+        return _consume_style_rules_conf()
 
     # ***
 
