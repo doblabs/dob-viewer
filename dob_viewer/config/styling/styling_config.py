@@ -40,7 +40,7 @@ class StylingConfig(object):
 
     def __init__(self, rules_confobj):
         # The caller passes a dict-like object of rules read from
-        # the user's rules.conf file. We convert that to a StylitRoot
+        # the user's rules.conf file. We convert that to a RulesRoot
         # object, which encapsulates business logic in a dict-like
         # candy wrapper.
         self.rulesets = self.consume_style_rules_conf(rules_confobj)

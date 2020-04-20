@@ -33,14 +33,14 @@ def create_style_rules_object():
     )
 
     @section(None)
-    class StylitRoot(object):
+    class RulesRoot(object):
 
         def __init__(self):
             pass
 
     # ***
 
-    @StylitRoot.section(None)
+    @RulesRoot.section(None)
     class StylitRuleset(object):
         """"""
 
@@ -50,7 +50,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("If True, skip this ruleset."),
         )
         def disabled(self):
@@ -59,7 +59,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("ADVANCED: Optional code to run in context of rules evaluator."),
         )
         def eval(self):
@@ -68,7 +68,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Generated value."),
             name='__eval__',
             hidden=True,
@@ -81,7 +81,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with the specified Activity name."),
         )
         def activity(self):
@@ -90,7 +90,7 @@ def create_style_rules_object():
         # ---
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with specified comma-separated list of Activities."),
         )
         def activities(self):
@@ -99,7 +99,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with the specified Category name."),
         )
         def category(self):
@@ -108,7 +108,7 @@ def create_style_rules_object():
         # ---
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with specified comma-separated list of Categories."),
         )
         def categories(self):
@@ -117,7 +117,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with the specified Tag."),
         )
         def tag(self):
@@ -126,7 +126,7 @@ def create_style_rules_object():
         # ---
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with any of the matching tags."),
         )
         def tags(self):
@@ -135,7 +135,7 @@ def create_style_rules_object():
         # ...
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with any of the matching tags."),
             name='tags-any',
         )
@@ -145,7 +145,7 @@ def create_style_rules_object():
         # (lb): I'm indecisive. tags-any, or tags-or, or both??
         # - We can just 'hidden' one of them, and still let users decide.
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with any of the matching tags."),
             name='tags-or',
             hidden=True,
@@ -156,7 +156,7 @@ def create_style_rules_object():
         # ...
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with *all* of the matching tags."),
             name='tags-all',
         )
@@ -166,7 +166,7 @@ def create_style_rules_object():
         # (lb): I'm indecisive. tags-all, or tags-and, or both??
         # - We can just 'hidden' one of them, and still let users decide.
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             _("Match Facts with *all* of the matching tags."),
             name='tags-and',
             hidden=True,
@@ -184,7 +184,7 @@ def create_style_rules_object():
 
     # ***
 
-    @StylitRoot.section(None)
+    @RulesRoot.section(None)
     class StylitClassify(object):
         """"""
 
@@ -206,14 +206,14 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
         )
         def streamer(self):
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='streamer-line',
         )
@@ -225,7 +225,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-normal',
         )
@@ -233,7 +233,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-normal-line',
         )
@@ -241,7 +241,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-focus',
         )
@@ -249,7 +249,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-focus-line',
         )
@@ -259,7 +259,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-duration',
         )
@@ -267,7 +267,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-duration-line',
         )
@@ -277,7 +277,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start',
         )
@@ -285,7 +285,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start-line',
         )
@@ -293,7 +293,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start-focus',
         )
@@ -301,7 +301,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-start-focus-line',
         )
@@ -311,7 +311,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end',
         )
@@ -319,7 +319,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end-line',
         )
@@ -327,7 +327,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end-focus',
         )
@@ -335,7 +335,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-end-focus-line',
         )
@@ -345,7 +345,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-activity',
         )
@@ -353,7 +353,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-activity-line',
         )
@@ -363,7 +363,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-category',
         )
@@ -371,7 +371,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-category-line',
         )
@@ -381,7 +381,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-tags',
         )
@@ -389,7 +389,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='title-tags-line',
         )
@@ -401,7 +401,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-normal',
         )
@@ -409,7 +409,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-normal-line',
         )
@@ -417,7 +417,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-focus',
         )
@@ -425,7 +425,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-focus-line',
         )
@@ -435,7 +435,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-duration',
         )
@@ -443,7 +443,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-duration-line',
         )
@@ -453,7 +453,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start',
         )
@@ -461,7 +461,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start-line',
         )
@@ -469,7 +469,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start-focus',
         )
@@ -477,7 +477,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-start-focus-line',
         )
@@ -487,7 +487,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end',
         )
@@ -495,7 +495,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end-line',
         )
@@ -503,7 +503,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end-focus',
         )
@@ -511,7 +511,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-end-focus-line',
         )
@@ -521,7 +521,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-activity',
         )
@@ -529,7 +529,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-activity-line',
         )
@@ -539,7 +539,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-category',
         )
@@ -547,7 +547,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-category-line',
         )
@@ -557,7 +557,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-tags',
         )
@@ -565,7 +565,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='value-tags-line',
         )
@@ -575,7 +575,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='blank-line',
         )
@@ -587,7 +587,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='content-fact',
         )
@@ -595,7 +595,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='content-help',
         )
@@ -603,7 +603,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='interval-gap',
         )
@@ -611,7 +611,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='unsaved-fact',
         )
@@ -623,7 +623,7 @@ def create_style_rules_object():
         # ***
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='footer',
         )
@@ -631,7 +631,7 @@ def create_style_rules_object():
             return ''
 
         @property
-        @StylitRoot.setting(
+        @RulesRoot.setting(
             COMPONENTRY_CLASSIFIER_HELP,
             name='footer-fact-id',
         )
@@ -641,5 +641,5 @@ def create_style_rules_object():
         # ***
         # ***
 
-    return StylitRoot
+    return RulesRoot
 
