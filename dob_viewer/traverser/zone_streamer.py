@@ -35,7 +35,7 @@ class ZoneStreamer(object):
     def standup(self):
         """"""
         def _standup():
-            self.streamer_style = self.carousel.classes_style['streamer']
+            self.streamer_style = self.carousel.style_classes['streamer']
             self.zone_manager = self.carousel.zone_manager
             assemble_children()
             self.streamer_container = build_container()

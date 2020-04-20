@@ -26,8 +26,8 @@ from dob_bright.termio import dob_in_user_warning
 
 from .. import decorate_and_wrap
 
-from .classes_style import (
-    load_classes_style,
+from .conf_loader import (
+    load_style_classes,
     load_styles_conf,
     resolve_path_styles
 )
@@ -94,11 +94,11 @@ def echo_styles_conf(controller, style_name='', internal=False, complete=False):
         return load_known_styles()
 
     def load_single_style():
-        classes_style = load_classes_style(controller, style_name, skip_default=True)
-        if not classes_style:
+        style_classes = load_style_classes(controller, style_name, skip_default=True)
+        if not style_classes:
             # load_obj_from_internal will have output a warning message.
             return None
-        return decorate_and_wrap(style_name, classes_style, complete=complete)
+        return decorate_and_wrap(style_name, style_classes, complete=complete)
 
     def load_known_styles():
         """Adds all internal styles to a configobj.
@@ -109,9 +109,9 @@ def echo_styles_conf(controller, style_name='', internal=False, complete=False):
         config_obj = create_configobj(conf_path=None)
         is_default = True
         for name in KNOWN_STYLES:
-            classes_style = load_classes_style(controller, name, skip_default=True)
+            style_classes = load_style_classes(controller, name, skip_default=True)
             styles_conf = ConfigDecorator(object, cls_or_name='', parent=None)
-            styles_conf.set_section(name, classes_style)
+            styles_conf.set_section(name, style_classes)
             config_obj.merge(styles_conf.as_dict(
                 skip_unset=not is_default and not complete,
                 keep_empties=not is_default and not complete,

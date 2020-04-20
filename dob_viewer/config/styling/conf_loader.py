@@ -29,7 +29,7 @@ from .. import pause_on_error_message_maybe
 from . import load_obj_from_internal, various_styles
 
 __all__ = (
-    'load_classes_style',
+    'load_style_classes',
     'load_style_rules',
     'load_rules_conf',
     'resolve_named_style',
@@ -42,17 +42,17 @@ __all__ = (
 DEFAULT_STYLE = 'default'
 
 
-def load_classes_style(controller, style_name='', skip_default=False):
+def load_style_classes(controller, style_name='', skip_default=False):
     # (lb): It's times like these -- adding a dict to get around scoping
-    # when sharing a variable -- that I think a method (load_classes_style)
+    # when sharing a variable -- that I think a method (load_style_classes)
     # should be a class. But this works for now.
     load_failed = {'styles': False}
 
-    def _load_classes_style():
+    def _load_style_classes():
         named_style = style_name or resolve_named_style(controller.config)
         classes_dict = load_dict_from_styles_conf(named_style)
-        classes_style = instantiate_or_try_internal_style(named_style, classes_dict)
-        return classes_style
+        style_classes = instantiate_or_try_internal_style(named_style, classes_dict)
+        return style_classes
 
     def load_dict_from_styles_conf(named_style):
         styles_conf, failed = load_styles_conf(controller.config)
@@ -60,6 +60,8 @@ def load_classes_style(controller, style_name='', skip_default=False):
             load_failed['styles'] = True
             pause_on_error_message_maybe(controller.ctx)
         elif styles_conf and named_style in styles_conf:
+            # We could keep as ConfigObj, but not necessary, e.g.:
+            #   style_conf = create_configobj(styles_conf[named_style])
             classes_dict = styles_conf[named_style]
             return classes_dict
         return None
@@ -97,10 +99,10 @@ def load_classes_style(controller, style_name='', skip_default=False):
             dob_in_user_warning(msg)
 
     def load_internal_style(named_style):
-        # HARDCODED/DEFAULT: classes_style default: 'default' (Ha!).
+        # HARDCODED/DEFAULT: style_classes default: 'default' (Ha!).
         # - This style uses no colors, so the UX will default to however
         #   the terminal already looks.
-        classes_style_fn = load_obj_from_internal(
+        style_classes_fn = load_obj_from_internal(
             controller,
             obj_name=named_style,
             internal=various_styles,
@@ -111,12 +113,12 @@ def load_classes_style(controller, style_name='', skip_default=False):
         # The Carousel/`dob edit` path leaves skip_default=False, so it will
         # receive at least the default config. The fetch styles config path/
         # `dob config styles.conf` wants None if nothing found (skip_default=True).
-        controller.affirm(skip_default or classes_style_fn is not None)
-        return classes_style_fn and classes_style_fn() or None
+        controller.affirm(skip_default or style_classes_fn is not None)
+        return style_classes_fn and style_classes_fn() or None
 
     # ***
 
-    return _load_classes_style()
+    return _load_style_classes()
 
 
 # ***

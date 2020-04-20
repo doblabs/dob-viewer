@@ -62,7 +62,7 @@ class Carousel(object):
         dirty_callback,
         dry,
         content_lexer=None,  # Lexer() instance, used by ZoneContent.
-        classes_style=None,  # Style dict, used by all the zone_*.py.
+        style_classes=None,  # Style dict, used by all the zone_*.py.
         rules_confobj=None,  # Matching logic and container-class map.
         no_completion=None,  # act/cat/tag list to not complete/suggest.
     ):
@@ -76,7 +76,7 @@ class Carousel(object):
         )
         self.dry = dry
         self.content_lexer = content_lexer
-        self.setup_styling(classes_style, rules_confobj)
+        self.setup_styling(style_classes, rules_confobj)
         self.no_completion = no_completion
         self.action_manager = ActionManager(self)
         self.update_handler = UpdateHandler(self)
@@ -104,9 +104,9 @@ class Carousel(object):
         # NOTE: Without the - 2, to account for the '|' borders,
         #       app apparently hangs.
         full_width = click.get_terminal_size()[0] - 2
-        if not self.classes_style['content-width']:
+        if not self.style_classes['content-width']:
             return full_width
-        avail_width = min(self.classes_style['content-width'], full_width)
+        avail_width = min(self.style_classes['content-width'], full_width)
         return avail_width
 
     # ***
@@ -136,25 +136,25 @@ class Carousel(object):
 
     # ***
 
-    def setup_styling(self, classes_style, rules_confobj):
+    def setup_styling(self, style_classes, rules_confobj):
         """"""
 
         def _setup_styling():
-            setup_classes_style(classes_style)
+            setup_style_classes(style_classes)
             setup_rules_confobj(rules_confobj)
 
-        def setup_classes_style(classes_style):
-            if classes_style is None:
-                # HARDCODED/DEFAULT: classes_style default: 'color'.
+        def setup_style_classes(style_classes):
+            if style_classes is None:
+                # HARDCODED/DEFAULT: style_classes default: 'color'.
                 # (lb): The styling_color() method (an alias of various_style.color())
                 # qualifies as a *hardcoded* value (e.g., we could instead call light()
                 # or night()). But this is merely a fallback in case the user cleared
                 # the setting in their configuration, and then for some reason our
-                # load_classes_style() stopped fetching the default first. In fact,
+                # load_style_classes() stopped fetching the default first. In fact,
                 # per that last point, this code is technically unreachable!
                 self.controller.affirm(False)  # Nawgunnhappen.
-                classes_style = styling_color()
-            self.classes_style = classes_style
+                style_classes = styling_color()
+            self.style_classes = style_classes
 
         def setup_rules_confobj(rules_confobj):
             self.stylability = StylingConfig(rules_confobj)

@@ -37,7 +37,7 @@ class ZoneContent(object):
         self.showing_help = 0
         # For your convenience, attributes to eliminate one object hop.
         self.content_lexer = self.carousel.content_lexer
-        self.classes_style = self.carousel.classes_style
+        self.style_classes = self.carousel.style_classes
 
     # ***
 
@@ -62,9 +62,9 @@ class ZoneContent(object):
     # ***
 
     def standup(self):
-        self.scrollable_height = self.classes_style['content-height']
-        self.scrollable_width = self.classes_style['content-width']
-        self.enable_wrapping = self.classes_style['content-wrap']
+        self.scrollable_height = self.style_classes['content-height']
+        self.scrollable_width = self.style_classes['content-width']
+        self.enable_wrapping = self.style_classes['content-wrap']
         self.setup_scrollable()
 
     # ***

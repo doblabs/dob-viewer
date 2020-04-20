@@ -38,7 +38,7 @@ from dob_bright.termio.style import attr
 
 from .. import decorate_and_wrap
 
-from .classes_style import (
+from .conf_loader import (
     load_rules_conf,
     load_style_rules,
     resolve_path_rules
@@ -126,9 +126,9 @@ def create_rules_conf(controller, force):
 
     def create_rules_file(rules_path):
         # Load specified style, or DEFAULT_STYLE if not specified.
-        classes_style = create_style_rules_object()
+        ruleset = create_style_rules_object()
         rule_name = _('Example Style Rule - Showing all built-in options')
-        config_obj = decorate_and_wrap(rule_name, classes_style, complete=True)
+        config_obj = decorate_and_wrap(rule_name, ruleset, complete=True)
         config_obj.filename = rules_path
         config_obj.write()
 

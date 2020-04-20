@@ -39,11 +39,11 @@ __all__ = (
 
 # ***
 
-def decorate_and_wrap(section_name, classes_style, complete=False):
+def decorate_and_wrap(section_name, style_classes, complete=False):
     def _decorate_and_wrap():
         # Sink the section once so we can get ConfigObj to print
         # the leading [section_name].
-        condec = ConfigDecorator.create_root_for_section(section_name, classes_style)
+        condec = ConfigDecorator.create_root_for_section(section_name, style_classes)
         return wrap_in_configobj(condec, complete=complete)
 
     def wrap_in_configobj(condec, complete=False):

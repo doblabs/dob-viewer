@@ -22,7 +22,7 @@ import re
 from ...crud.fact_dressed import FactDressed
 from ...crud.facts_diff import FactsDiff
 
-from .classes_style import load_classes_style
+from .conf_loader import load_style_classes
 
 __all__ = (
     'apply_styles',
@@ -31,7 +31,7 @@ __all__ = (
 
 def apply_styles(controller):
     def _apply_styles():
-        style_conf = load_classes_style(controller)
+        style_conf = load_style_classes(controller)
         register_factoid_style(style_conf)
         register_facts_diff_style(style_conf)
         register_tags_tuples_style(style_conf)

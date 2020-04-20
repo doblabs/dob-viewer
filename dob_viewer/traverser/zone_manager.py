@@ -104,17 +104,17 @@ class ZoneManager(object):
             #  padding_style='',
         )
 
-        if self.carousel.classes_style['editor-align'] == 'LEFT':
+        if self.carousel.style_classes['editor-align'] == 'LEFT':
             app_align = HorizontalAlign.LEFT
             app_width = click.get_terminal_size()[0]
-        elif self.carousel.classes_style['editor-align'] == 'CENTER':
+        elif self.carousel.style_classes['editor-align'] == 'CENTER':
             app_align = HorizontalAlign.CENTER
             app_width = None
-        elif self.carousel.classes_style['editor-align'] == 'RIGHT':
+        elif self.carousel.style_classes['editor-align'] == 'RIGHT':
             app_align = HorizontalAlign.RIGHT
             app_width = click.get_terminal_size()[0]
         else:
-            # self.carousel.classes_style['editor-align'] == 'JUSTIFY'
+            # self.carousel.style_classes['editor-align'] == 'JUSTIFY'
             app_align = HorizontalAlign.JUSTIFY
             app_width = None
 
@@ -140,7 +140,7 @@ class ZoneManager(object):
         return layout
 
     def setup_styling(self):
-        class_styles = self.carousel.classes_style['collect_tups']
+        class_styles = self.carousel.style_classes['collect_tups']
         try:
             self.style = Style(class_styles)
         except Exception as err:

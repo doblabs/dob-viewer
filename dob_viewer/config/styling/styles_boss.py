@@ -29,8 +29,8 @@ from dob_bright.termio.style import attr
 
 from .. import decorate_and_wrap
 
-from .classes_style import (
-    load_classes_style,
+from .conf_loader import (
+    load_style_classes,
     load_styles_conf,
     resolve_named_style,
     resolve_path_styles,
@@ -78,8 +78,8 @@ def create_styles_conf(controller, name, force):
     def create_styles_file(styles_path):
         # Load specified style, or DEFAULT_STYLE if not specified.
         style_name = name or DEFAULT_STYLE
-        classes_style = load_classes_style(controller, style_name=style_name)
-        config_obj = decorate_and_wrap(style_name, classes_style, complete=True)
+        style_classes = load_style_classes(controller, style_name=style_name)
+        config_obj = decorate_and_wrap(style_name, style_classes, complete=True)
         config_obj.filename = styles_path
         config_obj.write()
 
@@ -137,15 +137,15 @@ def echo_styles_list(controller, internal=False):
 def echo_styles_table(controller, name, table_type):
     def _echo_styles_table():
         style_name = name or resolve_named_style(controller.config)
-        classes_style = load_classes_style(
+        style_classes = load_style_classes(
             controller, style_name=style_name, skip_default=True,
         )
-        if classes_style is not None:
-            echo_table(style_name, classes_style)
+        if style_classes is not None:
+            echo_table(style_name, style_classes)
         # Else, already printed error.
 
-    def echo_table(style_name, classes_style):
-        condec = ConfigDecorator.create_root_for_section(style_name, classes_style)
+    def echo_table(style_name, style_classes):
+        condec = ConfigDecorator.create_root_for_section(style_name, style_classes)
         conf_objs = [condec]
         echo_config_decorator_table(conf_objs, table_type, exclude_section=False)
 
