@@ -15,7 +15,7 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-"""~/.config/dob/styling/stylit.conf definition and encapsulating class."""
+"""~/.config/dob/styling/rules.conf definition and encapsulating class."""
 
 from gettext import gettext as _
 
@@ -40,7 +40,7 @@ class StylingConfig(object):
 
     def __init__(self, matches_style):
         # The caller passes a dict-like object of rules read from
-        # the user's stylit.conf file. We convert that to a StylitRoot
+        # the user's rules.conf file. We convert that to a StylitRoot
         # object, which encapsulates business logic in a dict-like
         # candy wrapper.
         self.rulesets = self.consume_stylit_conf(matches_style)
@@ -80,7 +80,7 @@ class StylingConfig(object):
             if not unconsumed:
                 return
             msg = _(
-                "The stylit.conf contains unknown settings: {}"
+                "The rules.conf contains unknown settings: {}"
             ).format(unconsumed)
             dob_in_user_warning(msg)
 
@@ -89,8 +89,8 @@ class StylingConfig(object):
     # ***
 
     def add_stylable_classes(self, ppt_widget, friendly_name, fact):
-        # Here's an example stylit.conf contents that'll get you here:
-        #   $ cat ~/.config/dob/styling/stylit.conf
+        # Here's an example rules.conf contents that'll get you here:
+        #   $ cat ~/.config/dob/styling/rules.conf
         #   [My Category Style]
         #   category_name = 'My Category'
         #   scrollable_frame = class:my-category
@@ -121,7 +121,7 @@ class StylingConfig(object):
             self.componentry[friendly_name] = {}
             for section, ruleset in self.rulesets.items():
                 # The friendly_name is the name of the component in the UX.
-                # The user uses the friendly_name in the stylit.conf to add
+                # The user uses the friendly_name in the rules.conf to add
                 # a class string to the component. Check here if it's empty,
                 # meaning the user does not have this setting in their conf
                 # (and the default '' was used); or, the user specified the

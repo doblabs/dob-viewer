@@ -94,7 +94,7 @@ def _create_style_object():
     #     - The reason we mix the two types of settings in the same config
     #     section, rather than using two separate sections, is to keep the
     #     config flat and simple. It helps minimize the types of errors the
-    #     user can make while editing their stylit.conf file.
+    #     user can make while editing their rules.conf file.
     #     - The hack is reaching into StylesRoot (which is also a hack: it's
     #     not a class, but an object instance! because of the eccentric magic
     #     of @section) and finding our @setting_wrap through the special
@@ -306,11 +306,11 @@ def _create_style_object():
         #       activity value component, that component would have `style`:
         #         'class:value-normal class:value-activity class:{custom-value}'
         #       where {custom-value} is the value of the value-activity setting
-        #       from this class (which gets the value from the user's stylit.conf).
+        #       from this class (which gets the value from the user's rules.conf).
         #       - Note that 'class:value-activity' (a string) is always added to
         #         the component, regardless of any conditionals, and its definition
         #         comes from the user's styles.conf.
-        #       - By specifying 'value-activity' in stylit.conf, what ends up
+        #       - By specifying 'value-activity' in rules.conf, what ends up
         #         happening is that the conditional style is appended to the
         #         component style, following 'class:value-activity', thereby
         #         shadowing the basic style. What you have, in a sense, is

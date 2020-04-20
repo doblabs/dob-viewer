@@ -15,7 +15,7 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-"""~/.config/dob/styling/stylit.conf definition and encapsulating class."""
+"""~/.config/dob/styling/rules.conf definition and encapsulating class."""
 
 from gettext import gettext as _
 

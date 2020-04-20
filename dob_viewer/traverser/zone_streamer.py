@@ -128,7 +128,7 @@ class ZoneStreamer(object):
             # banner and ANSI border; and the 'streamer-line' class is used to
             # style the same, and also the blank lines before and after. You can
             # also stylize the banner conditionally using the same two options,
-            # 'streamer' and 'streamer-line', from a stylit.conf rule set.
+            # 'streamer' and 'streamer-line', from a rules.conf rule set.
             bannerful = colorful_banner_town(text)
             parts = []
             # Inline style only applies to parts with text, so
