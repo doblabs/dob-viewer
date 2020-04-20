@@ -17,7 +17,7 @@
 
 from ..config.styling.classes_style import load_matches_style
 from ..config.styling.content_lexer import load_content_lexer
-from ..config.styling.no_completion import load_no_completion
+from ..config.styling.ignore_completion import load_no_completion
 
 
 __all__ = (
