@@ -41,7 +41,7 @@ def create_style_rules_object():
     # ***
 
     @RulesRoot.section(None)
-    class StylitRuleset(object):
+    class Ruleset(object):
         """"""
 
         def __init__(self):
@@ -180,7 +180,7 @@ def create_style_rules_object():
         #   e.g., for start/end/duration.
         # Until then (if ever), use the 'eval' conditional to work with time
         #   or any of the other Fact attributes that are not magically wired
-        #   to a Stylit setting.
+        #   to a style rule setting.
 
     # ***
 
@@ -583,7 +583,7 @@ def create_style_rules_object():
             return ''
 
         # ***
-        # *** CONTENT AREA CONDITIONAL STYLIT
+        # *** CONTENT AREA CONDITIONAL STYLE RULE
         # ***
 
         @property
@@ -619,7 +619,7 @@ def create_style_rules_object():
             return ''
 
         # ***
-        # *** FACT ID CONDITIONAL STYLIT (LOWER LEFT CORNER)
+        # *** FACT ID CONDITIONAL STYLE RULE (LOWER LEFT CORNER)
         # ***
 
         @property

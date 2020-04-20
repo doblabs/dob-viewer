@@ -314,8 +314,8 @@ def _create_style_object():
         #         happening is that the conditional style is appended to the
         #         component style, following 'class:value-activity', thereby
         #         shadowing the basic style. What you have, in a sense, is
-        #         'class:value-activity' serving as a default value, and stylit's
-        #         'value-activity' being applied after that default.
+        #         'class:value-activity' serving as a default value, and the
+        #         style rules' 'value-activity' being applied after that default.
         # (lb): I hope this isn't too confusing. But I think it'd be more confusing
         #   if the names were not the same in both configs. In any case, the methods
         #   listed here should be ordered like in the other class, to make it easier
