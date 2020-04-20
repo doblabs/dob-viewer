@@ -36,8 +36,8 @@ from .conf_loader import (
     resolve_path_styles,
     DEFAULT_STYLE
 )
+from .style_conf import KNOWN_STYLES
 from .styles_dump import echo_styles_conf as dump_styles_conf
-from .various_styles import KNOWN_STYLES
 
 __all__ = (
     'create_styles_conf',

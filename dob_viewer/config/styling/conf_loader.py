@@ -26,7 +26,7 @@ from dob_bright.termio import dob_in_user_warning
 
 from .. import pause_on_error_message_maybe
 
-from . import load_obj_from_internal, various_styles
+from . import load_obj_from_internal, style_conf
 
 __all__ = (
     'load_style_classes',
@@ -61,7 +61,7 @@ def load_style_classes(controller, style_name='', skip_default=False):
             pause_on_error_message_maybe(controller.ctx)
         elif styles_conf and named_style in styles_conf:
             # We could keep as ConfigObj, but not necessary, e.g.:
-            #   style_conf = create_configobj(styles_conf[named_style])
+            #   classes_dict = create_configobj(styles_conf[named_style])
             classes_dict = styles_conf[named_style]
             return classes_dict
         return None
@@ -75,18 +75,18 @@ def load_style_classes(controller, style_name='', skip_default=False):
         return load_internal_style(named_style)
 
     def prepare_base_style(classes_dict):
-        # Load base-style (e.g., various_styles.default) to ensure
+        # Load base-style (e.g., style_conf.default) to ensure
         # all keys present (and defaulted), and then update that.
         base_style = DEFAULT_STYLE
         if 'base-style' in classes_dict:
             base_style = classes_dict['base-style'] or 'default'
         try:
             # This gets a StylesRoot object created by _create_style_object.
-            defaults = getattr(various_styles, base_style)()
+            defaults = getattr(style_conf, base_style)()
         except AttributeError as err:  # noqa: F841
             # Unexpected, because of choices= on base-style @setting def.
             controller.affirm(False)
-            defaults = various_styles.default()
+            defaults = style_conf.default()
         return defaults
 
     def update_base_style(named_style, classes_dict, defaults):
@@ -105,7 +105,7 @@ def load_style_classes(controller, style_name='', skip_default=False):
         style_classes_fn = load_obj_from_internal(
             controller,
             obj_name=named_style,
-            internal=various_styles,
+            internal=style_conf,
             default_name=not skip_default and DEFAULT_STYLE or None,
             warn_tell_not_found=not load_failed['styles'],
             config_key=CFG_KEY_ACTIVE_STYLE,

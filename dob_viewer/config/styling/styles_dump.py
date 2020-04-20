@@ -31,7 +31,7 @@ from .conf_loader import (
     load_styles_conf,
     resolve_path_styles
 )
-from .various_styles import KNOWN_STYLES
+from .style_conf import KNOWN_STYLES
 
 __all__ = (
     'echo_styles_conf',
