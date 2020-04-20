@@ -24,7 +24,7 @@ from collections import namedtuple
 from nark.items.fact import Fact
 
 from dob_bright.termio import dob_in_user_warning
-from dob_bright.termio.style import colorize, set_coloring, verify_colors_attrs
+from dob_bright.termio.style import stylize, set_coloring, verify_colors_attrs
 
 from ..ptkui.ppt_markup import namilize
 
@@ -121,15 +121,15 @@ class FactDressed(Fact):
         # Nonetheless, can still use even if some/all unknown colors/attrs.
         cls.FACTOID_STYLE = factoid_style or {}
 
-    def oid_colorize(self, oid_part, oid_text):
+    def oid_stylize(self, oid_part, oid_text):
         """Stylizes parts of the Factoid with color and emphasis.
         """
         try:
             styles = FactDressed.FACTOID_STYLE[oid_part]
         except KeyError:
             styles = []
-        colorized = styles and colorize(oid_text, *styles) or oid_text
-        return colorized
+        stylized = styles and stylize(oid_text, *styles) or oid_text
+        return stylized
 
     # ***
 
