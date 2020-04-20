@@ -56,6 +56,7 @@ def prepare_log_msg(fact_or_dict, msg_content):
         line_num = line_num or 0
         line_raw = line_raw or ''
         # NOTE: Using colors overrides logger's coloring, which is great!
+        # FIXME: (lb): Replace hardcoding. Assign from styles.conf. #styling
         return _(
             '{}{}{}: {}{}: {}{} / {}{}{}\n\n{}: {}“{}”{}\n\n{}: {}{}{}'
             .format(
