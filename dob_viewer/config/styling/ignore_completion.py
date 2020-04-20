@@ -27,7 +27,7 @@ from dob_bright.termio import dob_in_user_warning
 from dob_prompt.prompters.enc_actegory_re import RegExpActegory
 
 __all__ = (
-    'ignores_file_path',
+    'ignore_file_path',
     'load_no_completion',
     'NoComplete',
 )
@@ -122,7 +122,7 @@ def load_no_completion(controller):
         return no_completions
 
     def re_compiled_user_ignores():
-        ignore_fpath = ignores_file_path(config)
+        ignore_fpath = ignore_file_path(config)
         if not os.path.exists(ignore_fpath):
             return nothing_matches
         compiled_re = ignores_file_parse(ignore_fpath)
@@ -211,7 +211,7 @@ def load_no_completion(controller):
 CFG_KEY_IGNORE_FPATH = 'editor.ignore_fpath'
 
 
-def ignores_file_path(config):
+def ignore_file_path(config):
     ignore_fpath = config[CFG_KEY_IGNORE_FPATH]
     return ignore_fpath
 

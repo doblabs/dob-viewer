@@ -25,7 +25,7 @@ from dob_bright.termio import click_echo, dob_in_user_exit, highlight_value
 from dob_bright.termio.ascii_table import generate_table
 from dob_bright.termio.style import attr
 
-from .ignore_completion import ignores_file_path, load_no_completion
+from .ignore_completion import ignore_file_path, load_no_completion
 
 __all__ = (
     'create_ignore_conf',
@@ -79,7 +79,7 @@ def create_ignore_conf(controller, force):
         # SIMILAR funcs: See also: ConfigUrable.create_config and
         #   reset_config; and styles_cmds.create_styles_conf;
         #                  and rules_cmds.create_rules_conf.
-        ignore_path = ignores_file_path(controller.config)
+        ignore_path = ignore_file_path(controller.config)
         exit_if_exists_unless_force(ignore_path, force)
         ensure_file_path_dirred(ignore_path)
         create_ignore_file(ignore_path)
@@ -110,7 +110,7 @@ def create_ignore_conf(controller, force):
 # *** [EDIT] IGNORE
 
 def edit_ignore_file(controller):
-    ignore_path = ignores_file_path(controller.config)
+    ignore_path = ignore_file_path(controller.config)
     editor.edit(filename=ignore_path)
     # If we cared, could call `edited = editor.edit().decode()`, but we're all done!
 
