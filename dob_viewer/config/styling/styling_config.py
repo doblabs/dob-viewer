@@ -27,7 +27,7 @@ from prompt_toolkit.widgets.base import TextArea
 #                        Or should we use the Carousel (e.g., PPT modal)?
 from dob_bright.termio import dob_in_user_warning
 
-from .styling_stylit import create_style_rules_object
+from .rules_conf import create_style_rules_object
 
 __all__ = (
     'StylingConfig',

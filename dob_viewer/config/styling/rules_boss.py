@@ -43,8 +43,8 @@ from .conf_loader import (
     load_style_rules,
     resolve_path_rules
 )
+from .rules_conf import create_style_rules_object
 from .styling_config import StylingConfig
-from .styling_stylit import create_style_rules_object
 
 __all__ = (
     'create_rules_conf',
