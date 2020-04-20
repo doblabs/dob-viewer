@@ -34,7 +34,7 @@ from nark.helpers.dev.profiling import profile_elapsed
 from dob_viewer.ptkui.re_confirm import confirm
 
 from ..config.styling.style_conf import color as styling_color
-from ..config.styling.styling_config import StylingConfig
+from ..config.styling.style_engine import StyleEngine
 
 from ..crud.interrogate import ask_user_for_edits
 
@@ -157,7 +157,7 @@ class Carousel(object):
             self.style_classes = style_classes
 
         def setup_rules_confobj(rules_confobj):
-            self.stylability = StylingConfig(rules_confobj)
+            self.stylability = StyleEngine(rules_confobj)
 
         _setup_styling()
 

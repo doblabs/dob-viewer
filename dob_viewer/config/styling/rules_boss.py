@@ -44,7 +44,7 @@ from .conf_loader import (
     resolve_path_rules
 )
 from .rules_conf import create_style_rules_object
-from .styling_config import StylingConfig
+from .style_engine import StyleEngine
 
 __all__ = (
     'create_rules_conf',
@@ -183,7 +183,7 @@ def echo_rules_table(controller, name, table_type):
 
     def fetch_existing_rule():
         rules_confobj = load_style_rules(controller)
-        styling_rules = StylingConfig(rules_confobj)
+        styling_rules = StyleEngine(rules_confobj)
         try:
             ruleset = styling_rules.rulesets[name]
         except KeyError:

@@ -30,11 +30,11 @@ from dob_bright.termio import dob_in_user_warning
 from .rules_conf import create_style_rules_object
 
 __all__ = (
-    'StylingConfig',
+    'StyleEngine',
 )
 
 
-class StylingConfig(object):
+class StyleEngine(object):
     """Encapsulate Carousel-specific user configurable styling, PPT class names,
     and Pygments style syntax."""
 
