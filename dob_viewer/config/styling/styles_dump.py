@@ -76,12 +76,12 @@ def echo_styles_conf(controller, style_name='', internal=False, complete=False):
             return new_config
 
     def echo_error_no_styles_conf():
-        msg = _("No styles.conf found at: {0}").format(resolve_path_styles(config))
+        msg = _("No styles file at: {0}").format(resolve_path_styles(config))
         dob_in_user_warning(msg)
         return None
 
     def echo_error_no_styles_section():
-        msg = _("No matching section “{0}” found in styles.conf at: {1}").format(
+        msg = _("No matching section “{0}” found in styles file at: {1}").format(
             style_name, resolve_path_styles(config),
         )
         dob_in_user_warning(msg)
