@@ -30,8 +30,8 @@ from . import load_obj_from_internal, various_styles
 
 __all__ = (
     'load_classes_style',
+    'load_style_rules',
     'load_rules_conf',
-    'load_matches_style',
     'resolve_named_style',
     'resolve_path_rules',
     'resolve_path_styles',
@@ -145,8 +145,8 @@ def load_styles_conf(config):
 
 # ***
 
-def load_matches_style(controller):
-    def _load_matches_style():
+def load_style_rules(controller):
+    def _load_style_rules():
         matches_style = try_load_dict_from_user_style_rules()
         return matches_style
 
@@ -182,7 +182,7 @@ def load_matches_style(controller):
 
     # ***
 
-    return _load_matches_style()
+    return _load_style_rules()
 
 
 # ***

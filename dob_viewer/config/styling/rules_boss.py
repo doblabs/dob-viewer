@@ -40,7 +40,7 @@ from .. import decorate_and_wrap
 
 from .classes_style import (
     load_rules_conf,
-    load_matches_style,
+    load_style_rules,
     resolve_path_rules
 )
 from .styling_config import StylingConfig
@@ -155,7 +155,7 @@ def edit_rules_conf(controller):
 def echo_rule_names(controller):
     """"""
     def _echo_rule_names():
-        rules = load_matches_style(controller)
+        rules = load_style_rules(controller)
         print_rules_names(rules, _('User-created rules'))
 
     def print_rules_names(rules, title):
@@ -182,7 +182,7 @@ def echo_rules_table(controller, name, table_type):
         return rule_name, ruleset
 
     def fetch_existing_rule():
-        rules_confobj = load_matches_style(controller)
+        rules_confobj = load_style_rules(controller)
         styling_rules = StylingConfig(rules_confobj)
         try:
             ruleset = styling_rules.rulesets[name]
