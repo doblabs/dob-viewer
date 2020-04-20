@@ -109,7 +109,8 @@ def create_rules_conf(controller, force):
 
     def _create_rules_conf():
         # SIMILAR funcs: See also: ConfigUrable.create_config and
-        #   reset_config; and styles_boss.create_styles_conf.
+        #   reset_config; and styles_cmds.create_styles_conf;
+        #                 and ignore_cmds.create_rules_conf.
         rules_path = resolve_path_rules(controller.config)
         exit_if_exists_unless_force(rules_path, force)
         ensure_file_path_dirred(rules_path)

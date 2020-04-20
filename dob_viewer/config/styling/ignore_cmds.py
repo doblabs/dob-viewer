@@ -77,8 +77,8 @@ def create_ignore_conf(controller, force):
 
     def _create_ignore_conf():
         # SIMILAR funcs: See also: ConfigUrable.create_config and
-        #   reset_config; and styles_boss.create_styles_conf;
-        #                  and rules_boss.create_rules_conf.
+        #   reset_config; and styles_cmds.create_styles_conf;
+        #                  and rules_cmds.create_rules_conf.
         ignore_path = ignores_file_path(controller.config)
         exit_if_exists_unless_force(ignore_path, force)
         ensure_file_path_dirred(ignore_path)

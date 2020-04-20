@@ -60,7 +60,8 @@ def create_styles_conf(controller, name, force):
 
     def _create_styles_conf():
         # SIMILAR funcs: See also: ConfigUrable.create_config and
-        #   reset_config; and rules_boss.create_styles_conf.
+        #   reset_config; and styles_cmds.create_styles_conf;
+        #                  and rules_cmds.create_rules_conf.
         styles_path = resolve_path_styles(controller.config)
         exit_if_exists_unless_force(styles_path, force)
         ensure_file_path_dirred(styles_path)
