@@ -406,7 +406,7 @@ class ZoneDetails(
             self.carousel.add_stylable_classes(dot_padded_title, friendly_name)
 
     def add_stylable_classes_header_values_normal(self, keyval_parts):
-        # For matching rules, apply any stylits for: value-normal, value-normal-line,
+        # For matching rules, apply rule styles for: value-normal, value-normal-line,
         # and value-[duration|start|end|activity|category|tags][-line]
         value_part = 'value-{}'.format(keyval_parts.what_part)
         for friendly_name in ('value-normal', value_part):
@@ -420,7 +420,7 @@ class ZoneDetails(
         if not set_focus:
             return
 
-        # For matching rules, apply any stylits for:
+        # For matching rules, apply any rule styles for:
         # value-focus, value-focus-line, and value-[start|end]-focus[-line].
         value_part = 'value-{}-focus'.format(keyval_parts.what_part)
         for friendly_name in ('value-focus', value_part):
