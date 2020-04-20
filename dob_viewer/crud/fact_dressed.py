@@ -323,6 +323,7 @@ class FactDressed(Fact):
         duration = '[{}]'.format(self.format_delta(style=''))
         actegory = self.oid_actegory(omit_empty_actegory=True)
         actegory = actegory or '<i>No activity</i>'
+        # MAYBE: Make cut_width=39 styleable. #styling
         description = self.oid_description(cut_width=39, sep=': ')
         simple_str = (
             '{} {}{}'
