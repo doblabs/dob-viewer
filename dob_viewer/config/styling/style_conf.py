@@ -286,9 +286,9 @@ def _create_style_object():
     class CustomStyles(object):
         """"""
 
-        # DRY alert: StylitClassify and CustomStyles have similarly-named methods,
+        # DRY alert: RulesClassify and CustomStyles have similarly-named methods,
         # but they're used differently.
-        # - In StylitClassify, the methods are the (style) class names, and the
+        # - In RulesClassify, the methods are the (style) class names, and the
         #   values are the style definitions (e.g., bg and fg colors) that are
         #   used to make the PPT Style object. (The Style() object is used to
         #   lookup a class name and get the style definition).

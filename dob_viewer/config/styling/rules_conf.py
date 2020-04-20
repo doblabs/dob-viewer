@@ -185,7 +185,7 @@ def create_style_rules_object():
     # ***
 
     @RulesRoot.section(None)
-    class StylitClassify(object):
+    class RulesClassify(object):
         """"""
 
         def __init__(self):
