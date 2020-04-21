@@ -17,12 +17,18 @@
 
 import tempfile
 
+from gettext import gettext as _
+
 import editor
 
 from nark.items.activity import Activity
 
+from dob_bright.termio import dob_in_user_warning
+
 # Lazy-load AwesomePrompt to save ~0.1 seconds when not needed.
 from dob_prompt import prompters
+
+from ..config import pause_on_error_message_maybe
 
 __all__ = (
     'ask_user_for_edits',
@@ -167,8 +173,7 @@ def ask_edit_with_editor(controller, fact=None, content=''):
     def _ask_edit_with_editor():
         contents = prepare_contents(content)
         filename = temp_filename()
-        edited = run_editor(filename, contents)
-        return edited
+        return run_editor_safe(filename, contents)
 
     def prepare_contents(content):
         content = content if content else ''
@@ -208,6 +213,15 @@ def ask_edit_with_editor(controller, fact=None, content=''):
         # (lb): I like my Hamster logs to look like reST documents!
         suffix = controller.config['term.editor_suffix'] or None
         return suffix
+
+    def run_editor_safe(filename, contents):
+        try:
+            return run_editor(filename, contents)
+        except Exception as err:
+            msg = _('Unable to run $EDITOR: {}').format(str(err))
+            dob_in_user_warning(msg)
+            pause_on_error_message_maybe()
+            return ''
 
     def run_editor(filename, contents):
         # NOTE: You'll find EDITOR features in multiple libraries.
