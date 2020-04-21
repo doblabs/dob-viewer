@@ -253,8 +253,7 @@ class ZoneDetails(
         padded = '{:.<19}'.format(name)
         kv_sep = ' : '
 
-        tline_style = 'class:title-normal-line'
-        title_style = 'class:title-normal-line class:title-normal'
+        tline_style, title_style = self.header_line_styles(part_type, set_focus=False)
 
         labels = [
             self.make_section_component(
@@ -432,6 +431,28 @@ class ZoneDetails(
 
     # ***
 
+    def header_line_styles(self, part_type, set_focus=False):
+        focus_state = set_focus and 'focus' or 'normal'
+        # Set classes on each part, title-normal-line, or title-focus-line.
+        # Set also on inner text, title-normal or title-focus.
+        title_base_class = 'class:title-{}'.format(focus_state)
+        title_line_class = '{}-line'.format(title_base_class)
+        # Set classes more specific to the part type, e.g.,
+        # title-[duration|start|end|activity|category|tags][-focus][-line].
+        tpart_base_class = 'class:title-{}'.format(part_type)
+        if set_focus:
+            tpart_base_class += '-{}'.format(focus_state)  # += '-focus'
+        tpart_line_class = '{}-line'.format(tpart_base_class)
+
+        line_classes = '{} {} '.format(title_line_class, tpart_line_class)
+        text_classes = '{} {} {} {} '.format(
+            title_line_class, title_base_class, tpart_line_class, tpart_base_class,
+        )
+
+        return line_classes, text_classes
+
+    # ***
+
     def replace_val_container(
         self,
         val_container,
@@ -442,25 +463,12 @@ class ZoneDetails(
 
         focus_state = set_focus and 'focus' or 'normal'
 
-        # ***
-
-        # Set classes on each part, title-normal-line, or title-focus-line.
-        # Set also on inner text, title-normal or title-focus.
-        # This clobbers default style that PPT uses on Label, 'class:label '.
-        title_base_class = 'class:title-{}'.format(focus_state)
-        title_line_class = '{}-line'.format(title_base_class)
-        # Set classes more specific to the part type, e.g.,
-        # title-[duration|start|end|activity|category|tags][-focus][-line].
-        tpart_base_class = 'class:title-{}'.format(keyval_widgets.what_part)
-        if set_focus:
-            tpart_base_class += '-{}'.format(focus_state)  # += '-focus'
-        tpart_line_class = '{}-line'.format(tpart_base_class)
-
-        line_classes = '{} {} '.format(title_line_class, tpart_line_class)
-        text_classes = '{} {} {} {} '.format(
-            title_line_class, title_base_class, tpart_line_class, tpart_base_class,
+        line_classes, text_classes = self.header_line_styles(
+            keyval_widgets.what_part, set_focus=set_focus,
         )
 
+        # On first time through since label = Label(), this clobbers the
+        # default built-in style that PTK adds to each Label, 'class:label'.
         keyval_vsplit.get_children()[0].style = line_classes
         title_widget = keyval_vsplit.get_children()[1]
         title_widget.style = text_classes
