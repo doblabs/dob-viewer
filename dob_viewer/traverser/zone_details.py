@@ -54,6 +54,7 @@ class ZoneDetails(
         self.active_widgets = None
         # Convenience attrs.
         self.affirm = self.carousel.controller.affirm
+        self.debug = self.carousel.controller.client_logger.debug
 
     class HeaderKeyVal(object):
         """"""
@@ -560,12 +561,10 @@ class ZoneDetails(
             return keyval_widgets.text_area.text != keyval_widgets.orig_val
 
         def debug_log_text():
-            self.carousel.controller.client_logger.debug(
-                'text_area.text: {} / orig_val: {}'.format(
-                    keyval_widgets.text_area.text,
-                    keyval_widgets.orig_val,
-                )
-            )
+            self.debug('text_area.text: {} / orig_val: {}'.format(
+                keyval_widgets.text_area.text,
+                keyval_widgets.orig_val,
+            ))
 
         def refresh_keyval():
             # Refresh labels now, so that old value isn't shown briefly and then
@@ -587,7 +586,7 @@ class ZoneDetails(
     # ***
 
     def edit_time_any_key(self, event=None):
-        self.carousel.controller.client_logger.debug('event: {}'.format(event))
+        self.debug('event: {}'.format(event))
         # Ignore all alpha characters except those for [t|T]imezone delimiter.
         if event.data.isalpha() and event.data not in ('t', 'T'):
             return
@@ -628,9 +627,7 @@ class ZoneDetails(
             return leave_okayed[0]
 
         def apply_edited_time(edit_fact, edit_text):
-            self.carousel.controller.client_logger.debug(
-                'edit_time_enter: edit_text: {}'.format(edit_text)
-            )
+            self.debug('edit_time_enter: edit_text: {}'.format(edit_text))
             if not edit_text:
                 apply_edit_time_removed(edit_fact)
             else:
@@ -757,9 +754,7 @@ class ZoneDetails(
                 other_edits=other_edits,
                 suppress_barf=True,
             )
-            self.carousel.controller.client_logger.debug(
-                'no. conflicts found: {}'.format(len(conflicts))
-            )
+            self.debug('no. conflicts found: {}'.format(len(conflicts)))
             return conflicts
 
         # ***
@@ -862,9 +857,7 @@ class ZoneDetails(
                 pattern += r'(..)'
                 replace += r':\5'
             reformatted = re.sub(pattern, replace, numberless)
-            self.carousel.controller.client_logger.debug(
-                'reformatted: {}'.format(reformatted)
-            )
+            self.debug('reformatted: {}'.format(reformatted))
             return reformatted
 
         return _parse_dated()
