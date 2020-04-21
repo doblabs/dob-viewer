@@ -161,11 +161,11 @@ class Carousel(object):
 
         _setup_styling()
 
-    def add_stylable_classes(self, ppt_widget, friendly_name, fact=None):
+    def process_style_rules(self, ppt_widget, friendly_name, fact=None):
         """Apply custom user classes from ~/.config/dob/styling/styles|rules.conf
         to, e.g., use custom color backgrounds for Facts with matching Category."""
         fact = fact or self.carousel.edits_manager.curr_edit
-        return self.style_engine.add_stylable_classes(ppt_widget, friendly_name, fact)
+        return self.style_engine.process_style_rules(ppt_widget, friendly_name, fact)
 
     # ***
 

@@ -254,7 +254,8 @@ class ZoneContent(object):
         # is, so we could call it "content-fact"... or "body" is pretty familiar,
         # though the word "body" feels like a harbinger of HTML, or at least Clue.
         # (I also considered just "content" but I like the common "fact-" prefix.)
-        self.carousel.add_stylable_classes(
+        # tl;dr Why I chose the term 'content-fact' and not, say, 'fact-description'.
+        self.carousel.process_style_rules(
             self.scrollable_frame.container,
             'content-fact',
             fact=curr_edit,

@@ -324,7 +324,7 @@ class ZoneDetails(
             orig_val, edit_val, style_class=style_class,
         )
         self.label_duration.val_label.text = diff_tuples
-        self.add_stylable_classes(self.label_duration)
+        self.process_style_rules(self.label_duration)
 
     def refresh_activity(self):
         self.refresh_val_widgets(self.widgets_activity)
@@ -337,7 +337,7 @@ class ZoneDetails(
 
     def refresh_blank_line(self):
         # Lets the user override the blank line style for matching rules.
-        custom_classes = self.carousel.add_stylable_classes(
+        custom_classes = self.carousel.process_style_rules(
             ppt_widget=None, friendly_name='blank-line',
         )
         # - (lb): Rules replace, not append, widget's style. #rule_replace
@@ -362,19 +362,20 @@ class ZoneDetails(
         #     'class:label class:value-normal-line'
         # and now we'll set value-{normal|activity|category|etc}[-line], if rules apply.
         # (lb): Note also widgets_start and widgets_end come through here.
-        self.add_stylable_classes(keyval_widgets)
+        self.process_style_rules(keyval_widgets)
 
     def assemble_style_class_for_part(self, keyval_widgets):
         style_class = 'class:value-normal '
         style_class += 'class:value-{} '.format(keyval_widgets.what_part)
         return style_class
 
-    def add_stylable_classes(self, keyval_parts, set_focus=None):
-        self.add_stylable_classes_header_titles(keyval_parts, set_focus)
-        self.add_stylable_classes_header_values_normal(keyval_parts)
-        self.add_stylable_classes_header_values_focus(keyval_parts, set_focus)
+    def process_style_rules(self, keyval_parts, set_focus=None):
+        # (lb): Reminder that rules replace, not append, widget's style. #rule_replace
+        self.process_style_rules_header_titles(keyval_parts, set_focus)
+        self.process_style_rules_header_values_normal(keyval_parts)
+        self.process_style_rules_header_values_focus(keyval_parts, set_focus)
 
-    def add_stylable_classes_header_titles(self, keyval_parts, set_focus=None):
+    def process_style_rules_header_titles(self, keyval_parts, set_focus=None):
         # keyval_parts.key_parts is a list of Labels (from make_header_label_parts).
         # - The first item is the left column padding. E.g.: '  '.
         # - The second item is the meta label and the ...-padding.
@@ -401,23 +402,23 @@ class ZoneDetails(
         for friendly_name in friendlies:
             # Register the -line style, which means assigns same style to all parts.
             for label in keyval_parts.key_parts:
-                self.carousel.add_stylable_classes(label, friendly_name + '-line')
+                self.carousel.process_style_rules(label, friendly_name + '-line')
             # Register title-[normal|duration|start|end|activity|category|tags][-focus]
             # on just the title label part of the header.
-            self.carousel.add_stylable_classes(dot_padded_title, friendly_name)
+            self.carousel.process_style_rules(dot_padded_title, friendly_name)
 
-    def add_stylable_classes_header_values_normal(self, keyval_parts):
+    def process_style_rules_header_values_normal(self, keyval_parts):
         # For matching rules, apply rule styles for: value-normal, value-normal-line,
         # and value-[duration|start|end|activity|category|tags][-line]
         value_part = 'value-{}'.format(keyval_parts.what_part)
         for friendly_name in ('value-normal', value_part):
             for suffix in ('-line', ''):
-                self.carousel.add_stylable_classes(
+                self.carousel.process_style_rules(
                     keyval_parts.val_label,
                     friendly_name + suffix,
                 )
 
-    def add_stylable_classes_header_values_focus(self, keyval_parts, set_focus=False):
+    def process_style_rules_header_values_focus(self, keyval_parts, set_focus=False):
         if not set_focus:
             return
 
@@ -426,7 +427,7 @@ class ZoneDetails(
         value_part = 'value-{}-focus'.format(keyval_parts.what_part)
         for friendly_name in ('value-focus', value_part):
             for suffix in ('-line', ''):
-                self.carousel.add_stylable_classes(
+                self.carousel.process_style_rules(
                     keyval_parts.text_area,
                     friendly_name + suffix,
                 )
@@ -501,7 +502,7 @@ class ZoneDetails(
 
         # ***
 
-        self.add_stylable_classes(keyval_widgets, set_focus=set_focus)
+        self.process_style_rules(keyval_widgets, set_focus=set_focus)
 
     def replace_val_container_label(self, keyval_widgets):
         self.replace_val_container(

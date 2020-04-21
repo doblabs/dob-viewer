@@ -88,7 +88,9 @@ class StyleEngine(object):
 
     # ***
 
-    def add_stylable_classes(self, ppt_widget, friendly_name, fact):
+    # (lb): If you see remnants of the term 'stylable' or 'stylability', that's
+    # from before I began trying to stick with the terms 'rule' or 'style rule'.
+    def process_style_rules(self, ppt_widget, friendly_name, fact):
         # Here's an example rules.conf contents that'll get you here:
         #   $ cat ~/.config/dob/styling/rules.conf
         #   [My Category Style]
@@ -101,7 +103,7 @@ class StyleEngine(object):
         # and then wire it all via the config:
         #   $ dob config set style my-style
 
-        def _add_stylable_classes():
+        def _process_style_rules():
             rulesets = rules_for_component(friendly_name)
             return add_stylable_if_triggered(ppt_widget, rulesets, fact)
 
@@ -346,5 +348,5 @@ class StyleEngine(object):
 
         # ***
 
-        return _add_stylable_classes()
+        return _process_style_rules()
 

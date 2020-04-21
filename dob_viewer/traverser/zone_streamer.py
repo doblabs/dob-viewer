@@ -90,7 +90,7 @@ class ZoneStreamer(object):
         tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
         interval_text = tod_humanize(show_now=True)
         self.interval_banner.text = self.bannerize(interval_text)
-        # (lb): Not sure why, but unlike add_stylable_classes, which sets
+        # (lb): Not sure why, but unlike process_style_rules, which sets
         # widget.formatted_text_control.style, here we set widget.window's
         # style instead.
         # (lb): Note that we set the style on refresh, and not standup, so
@@ -100,9 +100,9 @@ class ZoneStreamer(object):
         match = ZoneStreamer.RE_STYLE_HAS_CLASS.search(self.interval_banner.window.style)
         if match is None:
             self.interval_banner.window.style += ' ' + ZoneStreamer.STREAMER_LINE_CLASS
-        self.add_stylable_classes()
+        self.process_style_rules()
 
-    def add_stylable_classes(self):
+    def process_style_rules(self):
         # Register class:streamer[-line] styles.
         friendly_name = 'streamer'
         for suffix in ('', '-line'):
@@ -110,7 +110,7 @@ class ZoneStreamer(object):
             # so 3 rows of output are styled. If you specify the whole container,
             # 'streamer-line', the style will include the blank lines, one
             # each, above and below those 3 rows.
-            self.carousel.add_stylable_classes(
+            self.carousel.process_style_rules(
                 self.interval_banner,
                 friendly_name + suffix,
             )
