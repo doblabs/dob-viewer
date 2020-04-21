@@ -197,7 +197,9 @@ class FactsDiff(object):
                 and (isinstance(some_val[0], tuple))
                 and (len(some_val[0]) == 2)
             ):
-                return [(tup[0], tup[1], mouse_handler,) for tup in some_val]
+                return [
+                    (style_class + tup[0], tup[1], mouse_handler,) for tup in some_val
+                ]
             return some_val
         if mouse_handler is None:
             return [(style_class, some_val)]
