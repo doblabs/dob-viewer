@@ -116,9 +116,10 @@ class ZoneLowdown(object):
         def showing_fact():
             curr_edit = self.carousel.edits_manager.curr_edit
             if curr_edit.is_gap:
+                precision = 1 if curr_edit.delta().total_seconds() > 60 else 0
                 context = _('Gap')
                 location = _("of {0}").format(
-                    curr_edit.format_delta(style='', precision=1)
+                    curr_edit.format_delta(style='', precision=precision)
                 )
                 deleted = _(' [edit to add]')
             else:
