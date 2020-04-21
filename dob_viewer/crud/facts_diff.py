@@ -175,8 +175,10 @@ class FactsDiff(object):
             if self_val != other_val:
                 differ = True
         if differ:
-            self_val = self.format_edited_before(self_val)
-            self_val, other_val = self.format_edited_after(self_val, other_val)
+            self_val = self.format_edited_before(self_val, style_class)
+            self_val, other_val = self.format_edited_after(
+                self_val, other_val, style_class,
+            )
         else:
             self_val = self.format_prepare(
                 self_val, style_class=style_class, mouse_handler=mouse_handler,
@@ -277,11 +279,12 @@ class FactsDiff(object):
 
     # ***
 
-    def format_edited_before(self, before_val):
+    def format_edited_before(self, before_val, style_class):
         if not self.formatted:
             styles = FactsDiff.fetch_style('value-diff-old-raw')
             return styles and stylize(before_val, *styles) or before_val
-        style = FactsDiff.fetch_style('value-diff-old-ptk')
+        style = style_class
+        style += FactsDiff.fetch_style('value-diff-old-ptk')
         before_parts = []
         if isinstance(before_val, str):
             before_parts += [(style, before_val)]
@@ -290,13 +293,14 @@ class FactsDiff(object):
                 before_parts.append((style, tup[1]))
         return before_parts
 
-    def format_edited_after(self, self_val, other_val):
+    def format_edited_after(self, self_val, other_val, style_class):
         if not self.formatted:
             styles = FactsDiff.fetch_style('value-diff-new-raw')
             return '{} | was: '.format(
                 styles and stylize(other_val, *styles) or other_val
             ), self_val
-        style = FactsDiff.fetch_style('value-diff-new-ptk')
+        style = style_class
+        style += FactsDiff.fetch_style('value-diff-new-ptk')
         after_parts = []
         if isinstance(other_val, str):
             after_parts += [(style, other_val)]
