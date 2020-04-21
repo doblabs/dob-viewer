@@ -15,7 +15,7 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-from ..config.styling.load_styling import load_style_rules
+from ..config.styling.load_styling import load_style_classes, load_style_rules
 from ..config.styling.content_lexer import load_content_lexer
 from ..config.styling.load_ignore import load_no_completion
 
@@ -37,9 +37,12 @@ def prompt_and_save_confirmer(
 ):
     """"""
 
-    # (lb): run_cli.run._setup_tty_style() now loads the style and caches it.
-    #           style_classes = load_style_classes(controller)
-    style_classes = controller.style_conf
+    try:
+        style_classes = controller.style_conf
+    except AttributeError:
+        # Normally, run_cli.run or the tests call pre_apply_style_conf, so
+        # that the style conf is cached. But just in case it's not.
+        style_classes = load_style_classes(controller)
     rules_confobj = load_style_rules(controller)
     content_lexer = load_content_lexer(controller)
     no_completion = load_no_completion(controller)

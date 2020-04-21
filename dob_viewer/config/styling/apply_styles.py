@@ -25,16 +25,18 @@ from ...crud.facts_diff import FactsDiff
 from .load_styling import load_style_classes
 
 __all__ = (
-    'apply_styles',
+    'pre_apply_style_conf',
 )
 
 
-def apply_styles(controller):
-    def _apply_styles():
+def pre_apply_style_conf(controller):
+    def _pre_apply_style_conf():
         style_conf = load_style_classes(controller)
         register_factoid_style(style_conf)
         register_facts_diff_style(style_conf)
         register_tags_tuples_style(style_conf)
+        # Cache the style conf for the Carousel (if `dob edit` being called). #PROFILING
+        controller.style_conf = style_conf
         return style_conf
 
     # ***
@@ -92,5 +94,5 @@ def apply_styles(controller):
         }
         return tags_tuples_style
 
-    return _apply_styles()
+    return _pre_apply_style_conf()
 
