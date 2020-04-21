@@ -51,7 +51,7 @@ class StyleEngine(object):
         # and we'll cache them here, in self.componentry. (We'll also see what
         # rules apply to the component, but if the rules are applied a second
         # time, at least the rulesets will be cached.)
-        # - tl;dr, A ruleset cache for each of the stylable PPT component:
+        # - tl;dr, This is a ruleset cache for each of the stylable PPT components.
         self.componentry = {}
 
     # ***
@@ -88,8 +88,6 @@ class StyleEngine(object):
 
     # ***
 
-    # (lb): If you see remnants of the term 'stylable' or 'stylability', that's
-    # from before I began trying to stick with the terms 'rule' or 'style rule'.
     def process_style_rules(self, ppt_widget, friendly_name, fact):
         # Here's an example rules.conf contents that'll get you here:
         #   $ cat ~/.config/dob/styling/rules.conf
@@ -105,7 +103,7 @@ class StyleEngine(object):
 
         def _process_style_rules():
             rulesets = rules_for_component(friendly_name)
-            return add_stylable_if_triggered(ppt_widget, rulesets, fact)
+            return apply_triggered_style_rules(ppt_widget, rulesets, fact)
 
         # ***
 
@@ -138,12 +136,12 @@ class StyleEngine(object):
 
         # ***
 
-        def add_stylable_if_triggered(ppt_widget, rulesets, fact):
+        def apply_triggered_style_rules(ppt_widget, rulesets, fact):
             accumulated = ''
             for section, ruleset in rulesets.items():
                 if not ruleset_triggered(section, ruleset, fact):
                     continue
-                accumulated += apply_stylable_class(ppt_widget, ruleset)
+                accumulated += apply_style_rule_class(ppt_widget, ruleset)
             return accumulated
 
         # ***
@@ -275,17 +273,17 @@ class StyleEngine(object):
 
         # ***
 
-        def apply_stylable_class(ppt_widget, ruleset):
+        def apply_style_rule_class(ppt_widget, ruleset):
             custom_classes = ' {}'.format(ruleset[friendly_name])
             if ppt_widget is None:
                 # Style being used in a (style, text, handler) tuple.
                 pass
             elif isinstance(ppt_widget, Label):
-                apply_stylable_to_label(ppt_widget, custom_classes)
+                apply_style_rule_to_label(ppt_widget, custom_classes)
             elif isinstance(ppt_widget, Container):
-                apply_stylable_to_container(ppt_widget, custom_classes)
+                apply_style_rule_to_container(ppt_widget, custom_classes)
             elif isinstance(ppt_widget, TextArea):
-                apply_stylable_to_text_area(ppt_widget, custom_classes)
+                apply_style_rule_to_text_area(ppt_widget, custom_classes)
             else:
                 # Unexpected path. Unhandled PPT type.
                 # (lb): This is a wee bit coupled to the whole application
@@ -305,7 +303,7 @@ class StyleEngine(object):
                 pass
             return custom_classes
 
-        def apply_stylable_to_label(label, custom_classes):
+        def apply_style_rule_to_label(label, custom_classes):
             # (lb): I'm totally wingin' it, in the sense that this works,
             # but I'm sure I'm bending the rules. The Label object has
             # three children we can play with to affect style:
@@ -340,10 +338,10 @@ class StyleEngine(object):
             else:
                 label.window.style += custom_classes
 
-        def apply_stylable_to_container(container, custom_classes):
+        def apply_style_rule_to_container(container, custom_classes):
             container.style += custom_classes
 
-        def apply_stylable_to_text_area(container, custom_classes):
+        def apply_style_rule_to_text_area(container, custom_classes):
             container.window.style += custom_classes
 
         # ***
