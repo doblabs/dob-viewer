@@ -156,34 +156,10 @@ dob\_viewer.traverser.start\_end\_edit module
    :undoc-members:
    :show-inheritance:
 
-dob\_viewer.traverser.styling\_config module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.styling_config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dob\_viewer.traverser.styling\_stylit module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.styling_stylit
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 dob\_viewer.traverser.update\_handler module
 --------------------------------------------
 
 .. automodule:: dob_viewer.traverser.update_handler
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-dob\_viewer.traverser.various\_styles module
---------------------------------------------
-
-.. automodule:: dob_viewer.traverser.various_styles
    :members:
    :undoc-members:
    :show-inheritance:
