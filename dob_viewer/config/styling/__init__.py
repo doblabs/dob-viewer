@@ -44,7 +44,7 @@ def load_obj_from_internal(
             warn_tell_on_object_not_found(obj_name)
             if default_name:
                 loaded_obj = try_loading_internal(internal, default_name)
-                debug_loaded_default(loaded_obj)
+                controller.affirm(loaded_obj is not None)  # Because 'default'!
         return loaded_obj
 
     def try_loading_internal(internal, obj_name):
@@ -59,16 +59,9 @@ def load_obj_from_internal(
         msg = _('Nothing matches “{0}”, from config setting “{1}”, in “{2}”.').format(
             obj_name, config_key, internal.__name__,
         )
-        controller.client_logger.warning(msg)
         dob_in_user_warning(msg)  # Also blather to stdout.
         # If `dob edit`, linger, otherwise user unlikely to see the message.
         pause_on_error_message_maybe(controller.ctx)
-
-    def debug_loaded_default(loaded_obj):
-        controller.affirm(loaded_obj is not None)  # Because you specified default!
-        controller.client_logger.debug(
-            _('Loaded default object for “{0}”.'.format(obj_name))
-        )
 
     return _load_obj_from_internal()
 
