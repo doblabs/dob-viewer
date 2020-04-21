@@ -13,10 +13,15 @@ History
 
 .. :changelog:
 
+1.1.1 (2020-04-20)
+==================
+
+- Regression: Fetching 'default' style fails during style config load.
+
 1.1.0 (2020-04-20)
 ==================
 
-- Bugfix: Import FactsDiff display broken.
+- Bugfix: Import ``FactsDiff`` display broken.
 
 - Bugfix: 'value-tags' class missing from hash-and-label tag parts' styles.
 
