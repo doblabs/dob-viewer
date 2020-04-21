@@ -213,6 +213,10 @@ class ZoneManager(object):
             # FIXME: Make this feature optionable. Seems like some
             #   people may appreciate this wiring.
             mouse_support=True,
+            # (lb): I tried changing style at runtime, e.g., editing a class
+            # name's 'fg:#xxxxxx' value in the Application style_rules, but
+            # it did not have an impact. So stick to adding and removing
+            # class names from each widget's style component, which works.
             style=self.style,
             # The scrollable content area disables input with
             #   read_only=True
