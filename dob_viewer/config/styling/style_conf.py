@@ -577,7 +577,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to FactsDiff parts in editor header."),
+            _("Style to apply to old Fact parts when not running editor."),
             name='value-diff-old-raw',
             not_a_style=True,
         )
@@ -588,7 +588,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to FactsDiff parts in editor header."),
+            _("Style to apply to old Fact parts in the editor header."),
             name='value-diff-old-ptk',
             not_a_style=True,
         )
@@ -599,7 +599,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to FactsDiff parts in editor header."),
+            _("Style to apply to new Fact parts when not running editor."),
             name='value-diff-new-raw',
             not_a_style=True,
         )
@@ -610,7 +610,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to FactsDiff parts in editor header."),
+            _("Style to apply to new Fact parts in the editor header."),
             name='value-diff-new-ptk',
             not_a_style=True,
         )
@@ -806,16 +806,31 @@ def night():
     # FIXME: (lb): Devise similar #styling for 'light'.
 
     def set_header_tag_parts_style(styling):
-        styling['value-tag-#'] = 'fg:#C6C6C6 underline'
-        styling['value-tag-label'] = 'fg:#D7FF87 underline'
+        # (lb): Did I pick these color when testing, to be jarring and noticeable?
+        # Should smooth these out a bit.
+        # Note that you can use either value-tag-# for value-tag-label (to style
+        # hash mark separately from tag); or you can use value-tags to do both.
+        # The value-tag-# and value-tag-label take precedence.
+        # Note: User can override color easily -- just specify a different one --
+        # but remember to nobold/noitalic/nounderline as desired.
+        #   https://pygments.org/docs/styles/
+        # For help testing:
+        #   styling['value-tags'] = 'fg:#0000FF bold italic'
+        #   styling['value-tag-#'] = 'fg:#C6C6C6 underline'
+        #   styling['value-tag-label'] = 'fg:#D7FF87 underline'
+        styling['value-tags'] = 'fg:#D7FF87 underline'
 
     def set_header_facts_diff_style(styling):
         # The *-raw styles are sent to ansi_escape_room's color() and attr() lookups.
+        # - They are used when not running the interactive editor.
         # The *-ptk styles are inserted into Python Prompt Toolkit (style, tuples, ).
-        # - Styles for the 'before' Fact parts -- from before user edited it.
+        # - These styles are used in the interactive editor's header area.
+        # Styles for the 'before' Fact parts -- from before user edited it.
         styling['value-diff-old-raw'] = 'spring_green_3a'
         spring_green_3a = '00AF5F'
-        styling['value-diff-old-ptk'] = 'fg:#{}'.format(spring_green_3a)
+        styling['value-diff-old-ptk'] = (
+            'fg:#{} nobold noitalic nounderline'.format(spring_green_3a)
+        )
         # Styles for the 'after' Fact parts -- edits ready to be saved.
         styling['value-diff-new-raw'] = 'light_salmon_3b, bold, underlined'
         light_salmon_3b = 'D7875F'

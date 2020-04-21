@@ -99,8 +99,10 @@ class FactsDiff(object):
             result += self.diff_attrs('activity_name', 'activity')
             result += self.diff_attrs('category_name', 'category')
             if not self.formatted:
+                # For the command line, ANSI escape sequences.
                 result += self.diff_attrs('oid_tags', 'tags', colorful=True)
             else:
+                # For the interactive editor/Carousel, PTK style tuples.
                 result += self.diff_attrs('tags_tuples', 'tags', colorful=True)
             result += self.diff_attrs('description', 'description', truncate=truncate)
             return result
