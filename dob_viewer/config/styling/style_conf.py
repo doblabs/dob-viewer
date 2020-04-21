@@ -756,6 +756,24 @@ def default():
 
 def _stylize_all_one(styling, style):
     """"""
+    # BEWARE: Don't do it this way! If you set all the classes,
+    # it makes it more difficult to tweak just the styles you
+    # want -- remember that some widgets have multiple classes
+    # assigned to them, e.g., the end time widget has these set:
+    #   class:title-normal-line class:title-normal class:title-end-line class:title-end
+    # and PTK assigns styles from left to right, stacking them, so if
+    # all four of those classes are assigned a style, the user would
+    # have to set title-end to override the style, because setting
+    # something to the left, like title-normal, would just get
+    # overridden by styles listed after it. (Meaning, if you call
+    # this function and assigns a value to all styles, it makes the
+    # more generic classes, like title-normal, sorta meaningless to
+    # have around. And might confuse the user when they set it and
+    # wonder why it doesn't change anything.)
+    # MAYBE/2020-04-21: (lb): I want to delete this function; but
+    # I also want to be reminded later not to do this again. Give
+    # me a few releases, then I'll probably nix this.
+    assert False  # Abandoned!
 
     styling['streamer'] = style
     # (lb): I cannot decide if I like the streamer bold or not.
@@ -797,7 +815,17 @@ def _stylize_all_one(styling, style):
 
 def light():
     styling = default()
-    _stylize_all_one(styling, 'bg:#FFFFFF #000000')
+    # (lb): I originally set all styles the same, but that makes customizing
+    # difficult and tedious. So use the lowest-ordered, most universal class
+    # of them all, and set class:label to the base color for this style.
+    #   NOPE: _stylize_all_one(styling, 'bg:#FFFFFF #000000')
+    styling['label'] = 'bg:#FFFFFF #000000'
+
+    # FIXME/2020-04-21: See night(): Add some default colors for things.
+    #  set_header_tag_parts_style(styling)
+    #  set_header_facts_diff_style(styling)
+    #  set_factoid_parts_style(styling)
+
     return styling
 
 
@@ -806,7 +834,9 @@ def light():
 def night():
     def _night():
         styling = default()
-        _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
+        # See comment in light(). Use lowest-ordered class to set common style color.
+        #   NOPE: _stylize_all_one(styling, 'bg:#000000 #FFFFFF')
+        styling['label'] = 'bg:#000000 #FFFFFF'
         set_header_tag_parts_style(styling)
         set_header_facts_diff_style(styling)
         set_factoid_parts_style(styling)
