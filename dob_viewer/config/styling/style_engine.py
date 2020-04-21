@@ -327,6 +327,7 @@ class StyleEngine(object):
                     and (len(label.text[0]) > 1)
                 ):
                     # Discard tup[0] (style component) and replace.
+                    # (lb): Rules replace, not append, widget's style. #rule_replace
                     label.text = [
                         (custom_classes, tup[1], *tup[2:]) for tup in label.text
                     ]

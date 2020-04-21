@@ -145,12 +145,9 @@ class ZoneDetails(
 
         def add_blank_line():
             self.blank_line = self.make_section_component('', style='class:blank-line')
-            # Note: Somewhere else we set widget.formatted_text_control.style,
-            # but here it's widget.window.style we want.
-            # Note: Also that blank_line.window.style has one PPT default
-            # style and also a style from our code, i.e.,
-            #   blank_line.window.style: 'class:label class:title-normal'
-            self.blank_line.window.style = 'class:blank-line '
+            # Note that PTK add a default style, class:label, before our style, e.g.,,
+            #    self.blank_line.window.style == 'class:label class:blank-line'
+            # Which we'll keep, because it makes setting an application background easy.
             self.children.append(self.blank_line)
 
         # ***
@@ -255,6 +252,10 @@ class ZoneDetails(
 
         tline_style, title_style = self.header_line_styles(part_type, set_focus=False)
 
+        # Note that Label() inserts its own style, 'class:label', before
+        # the styles we pass it. We'll leave it, because it lets user put
+        # `label = 'fg#<>'` in their styles.conf to (almost) achieve a
+        # uniform application background (save for the content area).
         labels = [
             self.make_section_component(
                 prefix, style=tline_style, dont_extend_width=True,
@@ -338,11 +339,11 @@ class ZoneDetails(
         custom_classes = self.carousel.add_stylable_classes(
             ppt_widget=None, friendly_name='blank-line',
         )
-        # (lb): I'm wondering if we should just clobber style, not append
-        # (and do so other places we fiddle with style).
-        # Probably not necessary:
-        #   self.blank_line.window.style = 'class:blank-line ' + custom_classes
-        self.blank_line.window.style = custom_classes or 'class:blank-line '
+        # - (lb): Rules replace, not append, widget's style. #rule_replace
+        #   I.e., not;
+        #       ...style = 'class:label class:blank-line ' + custom_classes
+        #   This was an arbitrary choice. If it's better the other way, we can switch.
+        self.blank_line.window.style = custom_classes or 'class:label class:blank-line '
 
     def refresh_val_widgets(self, keyval_widgets):
         self.affirm(keyval_widgets.fact_attr)
@@ -466,18 +467,24 @@ class ZoneDetails(
         line_classes, text_classes = self.header_line_styles(
             keyval_widgets.what_part, set_focus=set_focus,
         )
+        # (lb): PTK assigns the same 'class:label' to all widgets. If we maintain it,
+        # then the user can set, e.g., "label = 'bg:#00AA66'" in their styles.conf to
+        # set a universal background color (well, except for content area and border).
+        ptk_label_class = 'class:label '
+        line_classes = ptk_label_class + line_classes
+        text_classes = ptk_label_class + text_classes
 
-        # On first time through since label = Label(), this clobbers the
-        # default built-in style that PTK adds to each Label, 'class:label'.
         keyval_vsplit.get_children()[0].style = line_classes
+
         title_widget = keyval_vsplit.get_children()[1]
         title_widget.style = text_classes
+
         keyval_vsplit.get_children()[2].style = line_classes
 
         # ***
 
         # On Label, to_container gets val_container.formatted_text_control.
-        # On TextArea, to_container get val_container.window.
+        # On TextArea, to_container gets val_container.window.
         value_widget = to_container(val_container)
         # Set class on value component, value-normal-line, or value-focus-line.
         value_line_class = 'class:value-{}-line '.format(focus_state)
@@ -488,7 +495,7 @@ class ZoneDetails(
             value_part_class += '-focus'
         value_part_class += '-line'
         # This clobbers default style that PPT use on TextArea, 'class:text-area '.
-        value_widget.style = value_line_class + value_part_class
+        value_widget.style = ptk_label_class + value_line_class + value_part_class
         keyval_vsplit.get_children()[3] = value_widget
 
         # ***

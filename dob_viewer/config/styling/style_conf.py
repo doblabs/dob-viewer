@@ -334,6 +334,15 @@ def _create_style_object():
 
         @property
         @setting(
+            _("Shared style set on every widget (aka how to set the background color)."),
+        )
+        def label(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
             _("Styles the streamer UX banner (topmost UX)."),
         )
         def streamer(self):
