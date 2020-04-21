@@ -15,7 +15,6 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import editor
 import os
 
 from gettext import gettext as _
@@ -35,6 +34,8 @@ from dob_bright.termio import (
 )
 from dob_bright.termio.config_table import echo_config_decorator_table
 from dob_bright.termio.style import attr
+
+from ...crud.interrogate import run_editor_safe
 
 from .. import decorate_and_wrap
 
@@ -147,8 +148,7 @@ def create_rules_conf(controller, force):
 
 def edit_rules_conf(controller):
     rules_path = resolve_path_rules(controller.config)
-    editor.edit(filename=rules_path)
-    # If we cared, could call `edited = editor.edit().decode()`, but we're all done!
+    run_editor_safe(filename=rules_path)
 
 
 # *** [LIST] RULES

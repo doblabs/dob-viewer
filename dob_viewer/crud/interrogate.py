@@ -28,11 +28,10 @@ from dob_bright.termio import dob_in_user_warning
 # Lazy-load AwesomePrompt to save ~0.1 seconds when not needed.
 from dob_prompt import prompters
 
-from ..config import pause_on_error_message_maybe
-
 __all__ = (
     'ask_user_for_edits',
     'ask_edit_with_editor',
+    'run_editor_safe',
 )
 
 
@@ -214,16 +213,19 @@ def ask_edit_with_editor(controller, fact=None, content=''):
         suffix = controller.config['term.editor_suffix'] or None
         return suffix
 
-    def run_editor_safe(filename, contents):
+    return _ask_edit_with_editor()
+
+
+def run_editor_safe(filename, contents=None):
+    def _run_editor_safe():
         try:
-            return run_editor(filename, contents)
+            return run_editor()
         except Exception as err:
             msg = _('Unable to run $EDITOR: {}').format(str(err))
             dob_in_user_warning(msg)
-            pause_on_error_message_maybe()
             return ''
 
-    def run_editor(filename, contents):
+    def run_editor():
         # NOTE: You'll find EDITOR features in multiple libraries.
         #       The UX should be indistinguishable to the user.
         #       E.g., we could use click's `edit` instead of editor's:
@@ -235,12 +237,30 @@ def ask_edit_with_editor(controller, fact=None, content=''):
         #                      extension='.txt',
         #                      filename=None)
         #
+        #       Except that dob-viewer does not have click as a dependency.
+        #
+        # NOTE: Neither editor.edit nor click.edit appreciate arguments, e.g.,
+        #       you might want to start Vim in insert mode and send cursor home:
+        #
+        #           export EDITOR="vim -c 'startinsert' -c 'norm! gg'"
+        #
+        #       but this'll crash (they treat the complete $EDITOR string as a
+        #       path). (lb): But I'm not wrong expecting this! It works fine in
+        #       other tools, e.g., `git commit -v` is perfectly happy with it.
+        #
+        #       As a work-around, you can put the command in an executable on
+        #       PATH, e.g.,
+        #
+        #           echo -e '#!/bin/sh\nvim -c "startinsert" -c "norm! gg" "${@}"' \
+        #               > ~/.local/bin/vim-wrap
+        #           chmod 755 ~/.local/bin/vim-wrap
+        #           export EDITOR="vim-wrap"
+        #
         result = editor.edit(filename=filename, contents=contents)
-        # FIXME/2018-05-10: (lb): Is this py2 compatible? (2018-06-29: Do I care?)
         edited = result.decode()
         # Necessary?:
         #   edited = result.decode('utf-8')
         return edited
 
-    return _ask_edit_with_editor()
+    return _run_editor_safe()
 

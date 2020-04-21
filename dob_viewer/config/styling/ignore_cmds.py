@@ -15,7 +15,6 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import editor
 import os
 
 from gettext import gettext as _
@@ -24,6 +23,8 @@ from dob_bright.config.fileboss import ensure_file_path_dirred
 from dob_bright.termio import click_echo, dob_in_user_exit, highlight_value
 from dob_bright.termio.ascii_table import generate_table
 from dob_bright.termio.style import attr
+
+from ...crud.interrogate import run_editor_safe
 
 from .load_ignore import ignore_file_path, load_no_completion
 
@@ -111,8 +112,7 @@ def create_ignore_conf(controller, force):
 
 def edit_ignore_file(controller):
     ignore_path = ignore_file_path(controller.config)
-    editor.edit(filename=ignore_path)
-    # If we cared, could call `edited = editor.edit().decode()`, but we're all done!
+    run_editor_safe(filename=ignore_path)
 
 
 # *** [LIST] IGNORE

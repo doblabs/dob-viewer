@@ -15,7 +15,6 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import editor
 import os
 
 from gettext import gettext as _
@@ -26,6 +25,8 @@ from dob_bright.config.fileboss import ensure_file_path_dirred
 from dob_bright.termio import click_echo, dob_in_user_exit, highlight_value
 from dob_bright.termio.config_table import echo_config_decorator_table
 from dob_bright.termio.style import attr
+
+from ...crud.interrogate import run_editor_safe
 
 from .. import decorate_and_wrap
 
@@ -98,8 +99,7 @@ def create_styles_conf(controller, name, force):
 
 def edit_styles_conf(controller):
     styles_path = resolve_path_styles(controller.config)
-    editor.edit(filename=styles_path)
-    # If we cared, could call `edited = editor.edit().decode()`, but we're all done!
+    run_editor_safe(filename=styles_path)
 
 
 # *** [LIST] STYLES
