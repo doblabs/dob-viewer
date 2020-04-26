@@ -13,6 +13,56 @@ History
 
 .. :changelog:
 
+1.1.2 (2020-04-25)
+==================
+
+- Bugfix: Part-specific styles not appearing until after focus.
+
+  - Use case: Run ``dob edit`` and note the start and end time widget
+    styles. Now shift focus to one of the widgets, and then away.
+
+    - Depending on how the style is configured, the look of the widget
+      after shifting focus away from it does not look like how it
+      originally looked.
+
+- Bugfix: Print error rather than crash on ``$EDITOR`` fail.
+
+  - Use case: User sets their ``EDITOR`` environment variable to
+    a bad path, or adds arguments (which is not supported -- but
+    one could use an intermediate shell script wrapper to add args).
+
+- Regression: Cannot enter colon (for clock time) in time widgets.
+
+  - Solution: Only enable colon commands when content has focus.
+
+- Feature: Set app background color via ``label = <>`` in styles.conf.
+
+  - PTK already assigns 'class:label' to every widget. This updates the
+    style-clobbering calls to maintain the label. Thus, user could add,
+    say, ``label = 'bg:#00AA66'`` to their ``styles.conf``, to give the
+    app a uniform background color.
+
+- Improve: Make easier to base styles off 'night' and 'light' base styles.
+
+  - Rather than assign the base color to all classes, which makes it
+    difficult to override them in styles.conf (because user is then
+    forced to override the highest-order class for every widget),
+    leave all the class styles empty except for the lowest ordered
+    class, which is common to all widgets, class:label.
+
+- Improve: Use no precision in 'Gap Fact of' text until duration > 60 seconds.
+
+  - Otherwise the footer status message updates too frequently,
+    is too distracting.
+
+- Improve: Require confirmation after printing errors on Carousel startup.
+
+  - Instead of pausing after printing error messages, require user to
+    confirm. Otherwise, user may not have time to read the errors. Also,
+    after quitting Carousel, errors are still off-screen (up-screen).
+
+- Improve: Warn when syntax errors found in style config.
+
 1.1.1 (2020-04-20)
 ==================
 
