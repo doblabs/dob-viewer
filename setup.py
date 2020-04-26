@@ -19,12 +19,6 @@ from setuptools import find_packages, setup
 # *** Package requirements.
 
 requirements = [
-    # The best optparser of any language, tops.
-    #  https://github.com/pallets/click
-    #    'click',
-    # Because too busy developing our own code, our fork!
-    #  https://github.com/hotoffthehamster/click
-    'click-hotoffthehamster >= 7.1.1, < 8',
     # INI/config parser, even better (preserves comments and ordering).
     #  https://github.com/DiffSK/configobj
     #  https://configobj.readthedocs.io/en/latest/
@@ -46,17 +40,23 @@ requirements = [
     # https://github.com/grantjenks/python-sortedcontainers/
     'sortedcontainers >= 2.1.0, < 3',
 
-    # *** Hamster packages.
+    # *** HOTH packages.
 
+    # The best optparser of any language, tops.
+    #  https://github.com/pallets/click
+    #    'click',
+    # Because too busy developing our own code, our fork!
+    #  https://github.com/hotoffthehamster/click
+    'click-hotoffthehamster == 7.1.1',
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/hotoffthehamster/nark
-    'nark >= 3.1.1, < 3.2',
+    'nark == 3.2.1',
     # The controller, config, and common output and error tossing code.
     #  https://github.com/hotoffthehamster/dob-bright
-    'dob-bright >= 1.1.1, < 1.2',
+    'dob-bright == 1.2.1',
     # The act@gory and tag prompt interface.
     #  https://github.com/hotoffthehamster/dob-prompt
-    'dob-prompt >= 1.0.5, < 1.1',
+    'dob-prompt == 1.1.0',
 ]
 
 # *** Minimal setup() function -- Prefer using config where possible.
