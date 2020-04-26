@@ -24,9 +24,9 @@ import os
 import sys
 import time
 
-# (lb): We're using Click only for get_terminal_size. (The
+# (lb): dob-viewer uses Click only for get_terminal_size. (The
 #  UI and user interaction is otherwise all handled by PPT).
-# MAYBE/2019-12-05: (lb): Decouple dob-viewer from click, used only for term. size.
+# - But the dob-bright package uses it, so will always be installed.
 import click_hotoffthehamster as click  # merely for get_terminal_size.
 
 from inflector import English, Inflector
