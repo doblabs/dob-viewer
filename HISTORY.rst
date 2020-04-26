@@ -13,6 +13,11 @@ History
 
 .. :changelog:
 
+1.2.0 (2020-04-26)
+==================
+
+- Bugfix: Ensure warnings not cleared before awaiting acknowledgment.
+
 1.1.2 (2020-04-25)
 ==================
 

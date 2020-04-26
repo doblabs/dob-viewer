@@ -2,6 +2,10 @@
 
 [comment]: # DEV: release-ghub-pypi scrapes Markdown from the first section below for the GitHub release.
 
+## 1.2.0 (2020-04-26)
+
+- Bugfix: Ensure warnings not cleared before awaiting acknowledgment.
+
 ## 1.1.2 (2020-04-25)
 
 - Bugfix: Part-specific styles not appearing until after focus.
