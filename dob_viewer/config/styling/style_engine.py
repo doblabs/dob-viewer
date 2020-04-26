@@ -17,12 +17,15 @@
 
 """~/.config/dob/styling/rules.conf definition and encapsulating class."""
 
+import os
+
 from gettext import gettext as _
 
 from prompt_toolkit.layout.containers import Container
 from prompt_toolkit.widgets.base import Label
 from prompt_toolkit.widgets.base import TextArea
 
+from dob_bright.config.fileboss import warn_user_config_issues
 # MAYBE/2019-12-02: (lb) Is using normal stdout to print errors okay?
 #                        Or should we use the Carousel (e.g., PPT modal)?
 from dob_bright.termio import dob_in_user_warning
@@ -61,9 +64,9 @@ class StyleEngine(object):
         def _consume_style_rules_conf():
             if rules_confobj is None:
                 return {}
-            return _create_rulesets(rules_confobj)
+            return _create_rulesets()
 
-        def _create_rulesets(rules_confobj):
+        def _create_rulesets():
             rulesets = {}
             for section, rules in rules_confobj.items():
                 ruleset = create_ruleset_from_rules(rulesets, rules)
@@ -72,17 +75,13 @@ class StyleEngine(object):
 
         def create_ruleset_from_rules(rulesets, rules):
             ruleset = create_style_rules_object()
-            unconsumed = ruleset.update_known(rules)
-            warn_user_any_unconsumed(unconsumed)
+            unconsumed, errs = ruleset.update_known(rules, errors_ok=True)
+            warn_if_smelly_config(unconsumed, errs)
             return ruleset
 
-        def warn_user_any_unconsumed(unconsumed):
-            if not unconsumed:
-                return
-            msg = _(
-                "The rules.conf contains unknown settings: {}"
-            ).format(unconsumed)
-            dob_in_user_warning(msg)
+        def warn_if_smelly_config(unconsumed, errs):
+            basename = os.path.basename(rules_confobj.filename)
+            warn_user_config_issues(unconsumed, errs, which=basename)
 
         return _consume_style_rules_conf()
 
