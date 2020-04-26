@@ -79,6 +79,7 @@ class ZoneManager(object):
         self.root = self.build_root_container()
         self.layout = self.build_application_layout()
         self.setup_styling()
+        self.center_thyself()
         self.application = self.build_application_object(**kwargs)
         self.rebuild_viewable()
 
@@ -156,6 +157,17 @@ class ZoneManager(object):
             dob_in_user_warning(str(class_styles))
             dob_in_user_warning(msg)
             self.style = Style([])
+
+    def center_thyself(self):
+        if not self.carousel.controller.config['editor.centered']:
+            return
+        click.clear()
+        # (lb): Revisit this? A little hacky.
+        # Newlines seem to nudge Carousel centered.
+        # Not sure why 3 is magic number, or if always.
+        click.echo()
+        click.echo()
+        click.echo()
 
     def _detect_color_depth(self):
         # MAYBE/2020-01-06: Make color_depth configurable. Or detect better.

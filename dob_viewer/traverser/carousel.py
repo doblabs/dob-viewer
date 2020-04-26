@@ -20,8 +20,6 @@
 from gettext import gettext as _
 
 import asyncio
-import os
-import sys
 import time
 
 import click_hotoffthehamster as click
@@ -335,19 +333,27 @@ class Carousel(object):
         self.edits_manager.stand_up()
 
     def standup_always(self, **kwargs):
+        self.managers_standup()
+        return self.check_nak_if_errors_or_build_and_show(**kwargs)
+
+    def managers_standup(self):
         self.zone_manager = ZoneManager(self)
         self.zone_manager.standup()
         self.action_manager.standup()
         self.update_handler.standup()
         self.action_manager.finalize_standup()
+
+    def check_nak_if_errors_or_build_and_show(self, **kwargs):
         # Linger for errors, with basic config, style config, key binding,
         # etc., otherwise Carousel overwrites screen and user won't see them.
-        self.pause_on_error_message_maybe()
-        self.zone_manager.build_and_show(**kwargs)
+        if self.pause_on_error_message_maybe():
+            self.zone_manager.build_and_show(**kwargs)
+            return True
+        return False
 
     def pause_on_error_message_maybe(self):
         if not dob_been_warned_reset():
-            return
+            return True
         # (lb): My first approach was to sleep:
         #   time.sleep(2.666)
         # but perhaps requiring acknowledgement is better, because even after
@@ -360,7 +366,13 @@ class Carousel(object):
         #   but that seems like a lot of extra work for error handler.
         click.echo(_('Press ENTER to acknowledge.'))
         # Be sure to gobble more than user types, lest it goes to PTK input.
-        os.read(sys.stdin.fileno(), 1024)
+        stdin_text = click.get_text_stream('stdin')
+        try:
+            stdin_text.readline()
+        except KeyboardInterrupt:
+            click.echo(_('You got it!'))
+            return False
+        return True
 
     # ***
 
@@ -386,7 +398,8 @@ class Carousel(object):
         # I mean I added this code last, and it might all that's needed to get
         # around the CPR issue (in which case, the `enduring_edit is None`
         # kludge below may be unnecessary).
-        self.standup_always(**kwargs)
+        if not self.standup_always(**kwargs):
+            return False
 
         if self.async_enable:
             rerun = self.runloop_async()
