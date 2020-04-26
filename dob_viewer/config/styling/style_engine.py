@@ -25,7 +25,7 @@ from prompt_toolkit.layout.containers import Container
 from prompt_toolkit.widgets.base import Label
 from prompt_toolkit.widgets.base import TextArea
 
-from dob_bright.config.fileboss import warn_user_config_issues
+from dob_bright.config.fileboss import warn_user_config_errors
 # MAYBE/2019-12-02: (lb) Is using normal stdout to print errors okay?
 #                        Or should we use the Carousel (e.g., PPT modal)?
 from dob_bright.termio import dob_in_user_warning
@@ -81,7 +81,7 @@ class StyleEngine(object):
 
         def warn_if_smelly_config(unconsumed, errs):
             basename = os.path.basename(rules_confobj.filename)
-            warn_user_config_issues(unconsumed, errs, which=basename)
+            warn_user_config_errors(unconsumed, errs, which=basename)
 
         return _consume_style_rules_conf()
 
