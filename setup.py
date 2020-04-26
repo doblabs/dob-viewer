@@ -50,10 +50,10 @@ requirements = [
 
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/hotoffthehamster/nark
-    'nark >= 3.1.0, < 3.2',
+    'nark >= 3.1.1, < 3.2',
     # The controller, config, and common output and error tossing code.
     #  https://github.com/hotoffthehamster/dob-bright
-    'dob-bright >= 1.1.0, < 1.2',
+    'dob-bright >= 1.1.1, < 1.2',
     # The act@gory and tag prompt interface.
     #  https://github.com/hotoffthehamster/dob-prompt
     'dob-prompt >= 1.0.5, < 1.1',
