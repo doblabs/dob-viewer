@@ -21,6 +21,7 @@ from gettext import gettext as _
 
 from collections import namedtuple
 
+from nark.items.activity import Activity
 from nark.items.fact import Fact
 
 from dob_bright.termio import dob_in_user_warning
@@ -235,6 +236,25 @@ class FactDressed(Fact):
             self.dirty_reasons.add('interval-gap')
         else:
             self.dirty_reasons.discard('interval-gap')
+
+    @classmethod
+    def new_gap_fact(cls, start, end=None, pk=None):
+        if pk is None:
+            pk = -1
+        activity = Activity(name='')
+        gap_fact = FactDressed(
+            pk=pk,
+            activity=activity,
+            start=start,
+            end=end,
+        )
+        # Add 'interval-gap' dirty reason.
+        gap_fact.is_gap = True
+        # Mark deleted until edited, so gap is not saved unless edited.
+        gap_fact.deleted = True
+        # No exceptions! All Fact copies must eventually lead to the original.
+        gap_fact.orig_fact = gap_fact.copy()
+        return gap_fact
 
     # *** Presentation concerns.
 
