@@ -19,9 +19,7 @@
 
 from gettext import gettext as _
 
-# MEH/2019-12-05: (lb): We could decouple dob-viewer from click, which is only
-# used for getting the terminal size. But dob requires Click, so it's there.
-import click_hotoffthehamster as click  # merely for get_terminal_size.
+import click_hotoffthehamster as click
 
 from config_decorator import section
 
