@@ -21,8 +21,6 @@ from gettext import gettext as _
 
 from dob_bright.termio import dob_in_user_warning
 
-from .. import pause_on_error_message_maybe
-
 __all__ = (
     'load_obj_from_internal',
 )
@@ -60,8 +58,6 @@ def load_obj_from_internal(
             obj_name, config_key, internal.__name__,
         )
         dob_in_user_warning(msg)  # Also blather to stdout.
-        # If `dob edit`, linger, otherwise user unlikely to see the message.
-        pause_on_error_message_maybe(controller.ctx)
 
     return _load_obj_from_internal()
 

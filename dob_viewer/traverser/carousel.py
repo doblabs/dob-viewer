@@ -20,6 +20,8 @@
 from gettext import gettext as _
 
 import asyncio
+import os
+import sys
 import time
 
 # (lb): We're using Click only for get_terminal_size. (The
@@ -30,6 +32,8 @@ import click_hotoffthehamster as click  # merely for get_terminal_size.
 from inflector import English, Inflector
 
 from nark.helpers.dev.profiling import profile_elapsed
+
+from dob_bright.termio.errors import dob_been_warned_reset
 
 from dob_viewer.ptkui.re_confirm import confirm
 
@@ -338,8 +342,28 @@ class Carousel(object):
         self.zone_manager.standup()
         self.action_manager.standup()
         self.update_handler.standup()
-        self.action_manager.finalize_standup()  # Prints key binding errors.
+        self.action_manager.finalize_standup()
+        # Linger for errors, with basic config, style config, key binding,
+        # etc., otherwise Carousel overwrites screen and user won't see them.
+        self.pause_on_error_message_maybe()
         self.zone_manager.build_and_show(**kwargs)
+
+    def pause_on_error_message_maybe(self):
+        if not dob_been_warned_reset():
+            return
+        # (lb): My first approach was to sleep:
+        #   time.sleep(2.666)
+        # but perhaps requiring acknowledgement is better, because even after
+        # quitting editor, error is still not visible unless the user scrolls.
+        # - There's a Linux-only single-key reader, i.e., so user needs not ENTER,
+        #     https://pypi.org/project/readchar/
+        #   or, for cross-platform solution, see:
+        #     https://stackoverflow.com/questions/510357/
+        #       python-read-a-single-character-from-the-user
+        #   but that seems like a lot of extra work for error handler.
+        click.echo(_('Press ENTER to acknowledge.'))
+        # Be sure to gobble more than user types, lest it goes to PTK input.
+        os.read(sys.stdin.fileno(), 1024)
 
     # ***
 

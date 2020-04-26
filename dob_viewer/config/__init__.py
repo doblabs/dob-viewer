@@ -18,7 +18,6 @@
 """dob_viewer.config sub.package provides Carousel UX user configuration settings."""
 
 import json
-import time
 
 from gettext import gettext as _
 
@@ -33,7 +32,6 @@ from .editor_keys import DobViewerConfigEditorKeys    # noqa: F401  ... but unus
 __all__ = (
     'decorate_and_wrap',
     'json_load_keycodes',
-    'pause_on_error_message_maybe',
 )
 
 
@@ -98,11 +96,4 @@ def json_load_sublisted(cfgname, cfgval):
         ))
 
     return _json_load_sublisted()
-
-
-# ***
-
-def pause_on_error_message_maybe(ctx=None):
-    if not ctx or ctx.command.name == 'edit':
-        time.sleep(2.666)
 
