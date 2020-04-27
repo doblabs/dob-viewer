@@ -15,6 +15,8 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
+import os
+import platform
 import tempfile
 
 from gettext import gettext as _
@@ -159,7 +161,8 @@ def ask_user_for_edits(
         # we'd have to make the parser a little more intelligent, but currently
         # the parser strip()s while it parses, to simplify the parsing algorithm.)
         raw_description = ask_edit_with_editor(controller, fact, fact.description)
-        fact.description = raw_description.strip()
+        if raw_description is not None:
+            fact.description = raw_description.strip()
 
     # ***
 
@@ -228,6 +231,22 @@ def run_editor_safe(filename, contents=None):
             return ''
 
     def run_editor():
+        if is_editor_set() or not running_windows():
+            # If Linux and EDITOR not set, editor.edit runs Vim.
+            return run_editor_normal()
+        else:
+            return run_editor_windows()
+
+    def is_editor_set():
+        try:
+            return bool(os.environ['EDITOR'])
+        except KeyError:
+            return False
+
+    def running_windows():
+        return platform.system() == 'Windows'
+
+    def run_editor_normal():
         # NOTE: You'll find EDITOR features in multiple libraries.
         #       The UX should be indistinguishable to the user.
         #       E.g., we could use click's `edit` instead of editor's:
@@ -262,6 +281,28 @@ def run_editor_safe(filename, contents=None):
         edited = result.decode()
         # Necessary?:
         #   edited = result.decode('utf-8')
+        return edited
+
+    def run_editor_windows():
+        # NOTE: On Windows, EDITOR is not set by default, but neither is Vim, so
+        #       editor.edit() will not work.
+        #       - To set via PowerShell, try, e.g.,
+        #           $Env:EDITOR = "notepad.exe"
+        #       - In CMD.exe, use setx to set *persistent* variable (and then start
+        #         another CMD prompt), e.g.,
+        #           setx EDITOR "notepad.exe"
+        # NOTE: There's a Windows-only os.startfile() that acts like double-clicking
+        #       the file -- it opens the text file with the user's preferred editor --
+        #       but it runs asynchronously. And we need to block. E.g., not this:
+        #           os.startfile(filename, 'open')
+        #       so just default to notepad, which will be installed. User should set
+        #       EDITOR if they want to use a different text editor on Windows.
+        with open(filename, 'wb') as temp_f:
+            temp_f.write(contents)
+        import subprocess
+        subprocess.call(['notepad.exe', filename])
+        with open(filename, 'r') as temp_f:
+            edited = temp_f.read()
         return edited
 
     return _run_editor_safe()
