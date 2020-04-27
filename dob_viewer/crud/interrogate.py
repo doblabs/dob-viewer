@@ -198,8 +198,10 @@ def ask_edit_with_editor(controller, fact=None, content=''):
         # the title more meaningful.
         prefix = None
         if fact is not None:
-            # E.g., "17:33 07 Apr 2018 "
-            timefmt = '%H:%M %d %b %Y '
+            # (lb): Reminder that colon is not acceptable for Windows paths.
+            #   (I originally had a ':' in the clock time here.)
+            # E.g., "2018_04_07_1733_"
+            timefmt = '%Y_%m_%d_%H%M_'
             if fact.start:
                 prefix = fact.start.strftime(timefmt)
             elif fact.end:
