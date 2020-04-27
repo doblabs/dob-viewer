@@ -13,6 +13,18 @@ History
 
 .. :changelog:
 
+1.2.1 (2020-04-27)
+==================
+
+- Bugfix: Windows: Run ``notepad.exe`` if ``EDITOR`` not set.
+
+  - Normally if ``EDITOR`` is not set, the system's ``sensible-editor``
+    command will run Nano or Vi, neither of which is available on Windows.
+    Consequently, on Windows, when ``EDITOR`` is not set, dob displays a
+    warning, awaits acknowledgment, and then runs the Carousel again.
+
+- Bugfix: Windows: Temporary file path broken because colon.
+
 1.2.0 (2020-04-26)
 ==================
 
