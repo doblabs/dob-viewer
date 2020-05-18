@@ -47,16 +47,16 @@ requirements = [
     #    'click',
     # Because too busy developing our own code, our fork!
     #  https://github.com/hotoffthehamster/click
-    'click-hotoffthehamster == 7.1.1',
+    'click-hotoffthehamster >= 7.1.1, <= 7.1.2',
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/hotoffthehamster/nark
-    'nark == 3.2.1',
+    'nark > 3.2.1, < 3.2.3',  # I.e., release 3.2.2, or whatever dev's running.
     # The controller, config, and common output and error tossing code.
     #  https://github.com/hotoffthehamster/dob-bright
-    'dob-bright == 1.2.1',
+    'dob-bright > 1.2.1, < 1.2.3',  # I.e., release 1.2.2, or dev's intermediate.
     # The act@gory and tag prompt interface.
     #  https://github.com/hotoffthehamster/dob-prompt
-    'dob-prompt == 1.1.0',
+    'dob-prompt > 1.1.0, < 1.1.2',  # I.e., release 1.1.1, or dev's intermediate.
 ]
 
 # *** Minimal setup() function -- Prefer using config where possible.
