@@ -13,6 +13,25 @@ History
 
 .. :changelog:
 
+1.2.2 (2020-06-18)
+==================
+
+- Bugfix: Catch overflow error when day delta too large.
+
+  - E.g., if user enters jump command ``20200615J`` (when they meant
+    to instead use the ``f`` command, not ``J``, i.e., ``20200615f``)
+    catch and recover gracefully from the ``timedelta`` overflow error.
+
+- Improve: Make mash-quit on unsaved changes prompt opt-in.
+
+  - As a convenience to developers, mashing Ctrl-q would skip the
+    save confirmation on exit; this feature is now opt in via the
+    new config setting, ``dev.allow_mash_quit``.
+
+- Packaging: Update dependencies.
+
+- Update: General refactoring and updates per changes to other packages.
+
 1.2.1 (2020-04-27)
 ==================
 
