@@ -507,7 +507,7 @@ class Carousel(object):
                 return False
             except Exception as err:
                 self.controller.client_logger.warning(
-                    _("Unexpected async err: {}").format(err),
+                    "Unexpected async err: {}".format(err),
                 )
             return True
 
@@ -614,7 +614,7 @@ class Carousel(object):
     def dev_breakpoint(self, event):
         if not self.controller.config['dev.catch_errors']:
             self.controller.client_logger.warning(
-                _('Please enable ‘dev.catch_errors’ to use live debugging.')
+                'Please enable ‘dev.catch_errors’ to use live debugging.'
             )
             return
         self.pdb_set_trace(event)

@@ -790,9 +790,9 @@ def insert_forcefully(controller, fact, squash_sep=''):
             conflicts = facts.surrounding(fact_time)
             if conflicts:
                 if len(conflicts) != 1:
-                    controller.client_logger.warning(_(
+                    controller.client_logger.warning(
                         "Found more than one Fact ({} total) at: '{}'"
-                        .format(len(conflicts), fact_time))
+                        .format(len(conflicts), fact_time)
                     )
             else:
                 find_edge = True
