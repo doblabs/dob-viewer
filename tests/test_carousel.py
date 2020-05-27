@@ -59,7 +59,7 @@ class TestBasicCarousel(object):
         # for overriding I/O. See decent examples under prompt_toolkit/tests/.
 
         # The Carousel will prompt for confirmation on quit without having saved.
-        re_confirm.confirm = mocker.MagicMock(return_value=True)
+        mocker.patch.object(re_confirm, 'confirm', return_value=True)
 
         inp = create_pipe_input()
         try:
