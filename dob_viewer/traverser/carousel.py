@@ -122,7 +122,7 @@ class Carousel(object):
 
     @property
     def async_enable(self):
-        assert(self._async_enable)  # 2020-02-01: Always True now because PTK3.
+        assert self._async_enable  # 2020-02-01: Always True now because PTK3.
         return self._async_enable
 
     @property
@@ -405,7 +405,7 @@ class Carousel(object):
             rerun = self.runloop_async()
             return rerun
         else:
-            assert(False)  # 2020-02-01: Dead path now because always async.
+            assert False  # 2020-02-01: Dead path now because always async.
             self.zone_manager.application.run()
             return False
 

@@ -104,7 +104,7 @@ def _create_style_object():
     #     - I.e., each setting herein will be applied to the StylesRoot object.
     #     In fact, CustomScreen disappears, in a sense, because the decorator
     #     returns the section to which the class settings apply, so you'll find:
-    #       assert(CustomScreen is StylesRoot)  # Totally crazy, I know!
+    #       assert CustomScreen is StylesRoot  # Totally crazy, I know!
     #
     # 3?) I suppose there's actually a third hack, or maybe it's a trick, or just
     #     The Way To Do It: we use the encompassing _create_style_object() method
