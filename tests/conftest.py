@@ -15,22 +15,11 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-"""
-Fixtures available to the tests/.
-
-- In general, fixtures should return a single instance.
-
-- If a fixture is a factory, its name should reflect that.
-
-- A fixture that is parametrized should be suffixed with
-  ``_parametrized`` to imply it has increased complexity.
-"""
-
 import pytest
 
-# For the sourced fixtures to work, either import specifically, or glob it all.
-# noqa: F401 'foo.bar' imported but unused
-# noqa: F403 'from foo.bar import *' used; unable to detect undefined names
+# When dob was split into Packages of Four, all the fixtures were sent to
+# dob-bright. Import those fixtures into the test namespace with a *-glob,
+# just as though they'd be defined in this module.
 from dob_bright.tests.conftest import *  # noqa: F401, F403
 
 from dob_viewer.crud.fact_dressed import FactDressed
