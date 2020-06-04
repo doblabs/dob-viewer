@@ -20,8 +20,8 @@ import os
 from gettext import gettext as _
 
 from dob_bright.config.fileboss import ensure_file_path_dirred
+from dob_bright.reports.render_results import render_results
 from dob_bright.termio import click_echo, dob_in_user_exit, highlight_value
-from dob_bright.termio.ascii_table import generate_table
 from dob_bright.termio.style import attr
 
 from ...crud.interrogate import run_editor_safe
@@ -134,7 +134,7 @@ def echo_ignore_sections(controller):
 
 # *** [SHOW] IGNORE
 
-def echo_ignore_table(controller, name, table_type):
+def echo_ignore_table(controller, name, output_format):
     def _echo_ignore_table():
         no_completion = load_no_completion(controller)
         if not name:
@@ -160,12 +160,11 @@ def echo_ignore_table(controller, name, table_type):
             rules = sections[section_name]
             sec_key_vals += [(section_name, rule) for rule in rules]
         headers = [_("Section"), _("Rule"), ]
-        generate_table(
-            sec_key_vals,
-            headers,
-            table_type=table_type,
-            truncate=False,
-            trunccol=0,
+        render_results(
+            controller,
+            results=sec_key_vals,
+            headers=headers,
+            output_format=output_format,
         )
 
     _echo_ignore_table()

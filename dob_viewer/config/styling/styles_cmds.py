@@ -135,7 +135,7 @@ def echo_styles_list(controller, internal=False):
 
 # *** [SHOW] STYLES
 
-def echo_styles_table(controller, name, table_type):
+def echo_styles_table(controller, name, output_format):
     def _echo_styles_table():
         style_name = name or resolve_named_style(controller.config)
         style_classes = load_style_classes(
@@ -148,7 +148,9 @@ def echo_styles_table(controller, name, table_type):
     def echo_table(style_name, style_classes):
         condec = ConfigDecorator.create_root_for_section(style_name, style_classes)
         conf_objs = [condec]
-        echo_config_decorator_table(conf_objs, table_type, exclude_section=False)
+        echo_config_decorator_table(
+            controller, conf_objs, output_format, exclude_section=False,
+        )
 
     _echo_styles_table()
 

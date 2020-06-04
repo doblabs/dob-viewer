@@ -169,7 +169,7 @@ def echo_rule_names(controller):
 
 # *** [SHOW] RULES
 
-def echo_rules_table(controller, name, table_type):
+def echo_rules_table(controller, name, output_format):
     def _echo_rules_table():
         if not name:
             rule_name, ruleset = create_example_rule()
@@ -197,7 +197,9 @@ def echo_rules_table(controller, name, table_type):
     def print_ruleset_table(rule_name, ruleset):
         condec = ConfigDecorator.create_root_for_section(rule_name, ruleset)
         conf_objs = [condec]
-        echo_config_decorator_table(conf_objs, table_type, exclude_section=False)
+        echo_config_decorator_table(
+            controller, conf_objs, output_format, exclude_section=False,
+        )
 
     _echo_rules_table()
 
