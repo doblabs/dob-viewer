@@ -198,7 +198,10 @@ def echo_rules_table(controller, name, output_format):
         condec = ConfigDecorator.create_root_for_section(rule_name, ruleset)
         conf_objs = [condec]
         echo_config_decorator_table(
-            controller, conf_objs, output_format, exclude_section=False,
+            controller,
+            conf_objs,
+            output_format,
+            exclude_section=False,
         )
 
     _echo_rules_table()
