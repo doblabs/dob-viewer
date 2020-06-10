@@ -637,7 +637,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to Fact ID in Factoid output (e.g., `git show`)."),
+            _("Style to apply to Fact ID in Factoid output (e.g., `dob show`)."),
             name='factoid-pk',
             not_a_style=True,
         )
@@ -648,7 +648,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to act@gory in Factoid output (e.g., `git show`)."),
+            _("Style to apply to act@gory in Factoid output (e.g., `dob show`)."),
             name='factoid-act@gory',
             not_a_style=True,
         )
@@ -659,7 +659,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to # symbol in Factoid output (e.g., `git show`)."),
+            _("Style to apply to # symbol in Factoid output (e.g., `dob show`)."),
             name='factoid-#',
             not_a_style=True,
         )
@@ -670,7 +670,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to Tag in Factoid output (e.g., `git show`)."),
+            _("Style to apply to Tag in Factoid output (e.g., `dob show`)."),
             name='factoid-tag',
             not_a_style=True,
         )
@@ -681,7 +681,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to #tag in Factoid output (e.g., `git show`)."),
+            _("Style to apply to #tag in Factoid output (e.g., `dob show`)."),
             name='factoid-#tag',
             not_a_style=True,
         )
@@ -692,7 +692,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to start time in Factoid output (e.g., `git show`)."),
+            _("Style to apply to start time in Factoid output (e.g., `dob show`)."),
             name='factoid-start',
             not_a_style=True,
         )
@@ -703,7 +703,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to end time in Factoid output (e.g., `git show`)."),
+            _("Style to apply to end time in Factoid output (e.g., `dob show`)."),
             name='factoid-end',
             not_a_style=True,
         )
@@ -714,7 +714,18 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to ‘to’ in Factoid output (e.g., `git show`)."),
+            _("Style to apply to ‘at’ in Factoid output (e.g., `dob show`)."),
+            name='factoid-at',
+            not_a_style=True,
+        )
+        def factoid_at(self):
+            return ''
+
+        # ***
+
+        @property
+        @setting(
+            _("Style to apply to ‘to’ in Factoid output (e.g., `dob show`)."),
             name='factoid-to',
             not_a_style=True,
         )
@@ -725,7 +736,7 @@ def _create_style_object():
 
         @property
         @setting(
-            _("Style to apply to duration in Factoid output (e.g., `git show`)."),
+            _("Style to apply to duration in Factoid output (e.g., `dob show`)."),
             name='factoid-duration',
             not_a_style=True,
         )
@@ -881,6 +892,7 @@ def night():
         styling['factoid-#tag'] = 'underlined'
         styling['factoid-start'] = 'sandy_brown'
         styling['factoid-end'] = 'sandy_brown'
+        styling['factoid-at'] = 'grey_85'
         styling['factoid-to'] = 'grey_85'
         styling['factoid-duration'] = 'grey_78'
 

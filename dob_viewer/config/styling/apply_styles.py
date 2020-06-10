@@ -61,6 +61,7 @@ def pre_apply_style_conf(controller):
             '#tag': unpack(style_conf['factoid-#tag']),
             'start': unpack(style_conf['factoid-start']),
             'end': unpack(style_conf['factoid-end']),
+            'at': unpack(style_conf['factoid-at']),
             'to': unpack(style_conf['factoid-to']),
             'duration': unpack(style_conf['factoid-duration']),
         }
