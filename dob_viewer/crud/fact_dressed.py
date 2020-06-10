@@ -334,16 +334,15 @@ class FactDressed(Fact):
 
     # ***
 
-    @property
-    def html_notif(self):
+    def html_notif(self, cut_width=None, sep=': '):
         """
         A briefer Fact one-liner using HTML. Useful for, e.g., notifier toast.
         """
+        # (lb): To be honest, the only HTML herein is the <i>No activity</i>.
         was_coloring = set_coloring(False)
         duration = '[{}]'.format(self.format_delta(style=''))
         actegory = self.oid_actegory(empty_actegory_placeholder='<i>No activity</i>')
-        # MAYBE: Make cut_width=39 styleable. #styling
-        description = self.oid_description(cut_width=39, sep=': ')
+        description = self.oid_description(cut_width=cut_width, sep=sep)
         simple_str = (
             '{} {}{}'
             .format(
