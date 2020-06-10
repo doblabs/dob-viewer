@@ -212,23 +212,25 @@ def parse_input(controller, file_in=None, progress=None):
     RE_TIME_HINT = re.compile(
         # SYNC_ME: RE_TIME_HINT, TIME_HINT_MAP, and @generate_add_fact_command's.
         r'^('
-            # Skipping: Doesn't make sense: '(?P<verify_none>on|now)'
-            # MAYBE/2019-01-22: Is "between" okay here?
-            #   We don't have a Click alias for it, so
-            #   there's a `dob from` command, but not `dob between`,
-            #   so maybe we want to remove "between" from here.
-            '(?P<verify_both>from|between)'
-            '|(?P<verify_start>at)'  # noqa: E131
-            '|(?P<verify_end>to|until)'
-            '|(?P<verify_then_none>then:)'
-            '|(?P<verify_then_some>then)'
-            '|(?P<verify_still_none>still:)'
-            '|(?P<verify_still_some>still)'
-            # NOTE: Require colon postfix for options w/o time component.
-            # NOTE: 'now' would be confusing and conflict with other usage,
-            #       (at least I think it would?). E.g., do not do this:
-            #         '|(?P<verify_after>after:|since:|next:|now:)'
-            '|(?P<verify_after>after:|since:|next:)'
+
+        # Skipping: Doesn't make sense: '(?P<verify_none>on|now)'
+        # MAYBE/2019-01-22: Is "between" okay here?
+        #   We don't have a Click alias for it, so
+        #   there's a `dob from` command, but not `dob between`,
+        #   so maybe we want to remove "between" from here.
+        '(?P<verify_both>from|between)'
+        '|(?P<verify_start>at)'  # noqa: E131
+        '|(?P<verify_end>to|until)'
+        '|(?P<verify_then_none>then:)'
+        '|(?P<verify_then_some>then)'
+        '|(?P<verify_still_none>still:)'
+        '|(?P<verify_still_some>still)'
+        # NOTE: Require colon postfix for options w/o time component.
+        # NOTE: 'now' would be confusing and conflict with other usage,
+        #       (at least I think it would?). E.g., do not do this:
+        #         '|(?P<verify_after>after:|since:|next:|now:)'
+        '|(?P<verify_after>after:|since:|next:)'
+
         ' )',  # NOTE The SPACE CHARACTER following THE DIRECTIVE!
         re.IGNORECASE,
     )
