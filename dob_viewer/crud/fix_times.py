@@ -703,12 +703,18 @@ def must_complete_times(
             click_echo(reason)
             if other:
                 # FIXME/2018-06-12: (lb): Subtract edges; this is too much.
+                # FIXME/2020-06-10: (lb): friendly_str updated to handle
+                # cut_width a little differently, but this code not under
+                # test, so not really sure status of "subtract edges" request.
                 cut_width = click.get_terminal_size()[0]
 
                 click_echo('\n{}: {}{}'.format(
                     conflict_prefix(_('Compare')),
                     other_pk,
-                    other.friendly_str(colorful=colorful, cut_width=cut_width),
+                    other.friendly_str(
+                        colorful=colorful,
+                        cut_width_complete=cut_width,
+                    ),
                 ))
             click_echo()
         msg = _(
