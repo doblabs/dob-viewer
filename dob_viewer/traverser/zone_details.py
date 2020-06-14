@@ -30,7 +30,7 @@ from prompt_toolkit.widgets import Label, TextArea
 from nark.helpers.parse_errors import ParserInvalidDatetimeException
 from nark.helpers.parse_time import parse_dated
 
-from ..crud.fix_times import must_complete_times
+from dob_bright.crud.fix_times import must_complete_times
 
 from ..ptkui.dialog_overlay import show_message
 

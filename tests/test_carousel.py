@@ -20,9 +20,10 @@ import pytest
 from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.output import DummyOutput
 
-from dob_viewer.crud.parse_input import parse_input
-from dob_viewer.crud.save_confirmer import prompt_and_save_confirmer
+from dob_bright.crud.parse_input import parse_input
+
 from dob_viewer.ptkui import re_confirm
+from dob_viewer.traverser.save_confirmer import prompt_and_save_confirmer
 
 
 @pytest.fixture
@@ -68,7 +69,7 @@ class TestBasicCarousel(object):
             prompt_and_save_confirmer(
                 controller_with_logging,
                 edit_facts=new_facts,
-                # Test apparatus.
+                # Test apparatus ('input' and 'output' passed as kwargs to Application).
                 input=inp,
                 output=DummyOutput(),
             )

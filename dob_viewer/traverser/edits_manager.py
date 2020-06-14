@@ -17,7 +17,7 @@
 
 """Fact Editing State Machine"""
 
-from ..crud.fact_from_factoid import must_create_fact_from_factoid
+from dob_bright.crud.fact_from_factoid import must_create_fact_from_factoid
 
 from .clipboard_edit import ClipboardEdit
 from .facts_manager import FactsManager

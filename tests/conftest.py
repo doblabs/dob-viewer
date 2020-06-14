@@ -22,7 +22,7 @@ import pytest
 # just as though they'd be defined in this module.
 from dob_bright.tests.conftest import *  # noqa: F401, F403
 
-from dob_viewer.crud.fact_dressed import FactDressed
+from dob_bright.crud.fact_dressed import FactDressed
 
 
 @pytest.fixture

@@ -24,10 +24,10 @@ import inspect
 import pygments.lexers
 from prompt_toolkit.lexers import Lexer, PygmentsLexer
 
+from dob_bright.styling import load_obj_from_internal
 from dob_bright.termio import dob_in_user_warning
 
-from ...ptkui import various_lexers
-from . import load_obj_from_internal
+from ..ptkui import various_lexers
 
 __all__ = (
     'load_content_lexer',

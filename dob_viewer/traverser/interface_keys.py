@@ -26,8 +26,8 @@ from dob_bright.termio import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
-from ..config import json_load_sublisted
 from ..config.custom_paste import DobViewerConfigCustomPaste
+from ..config.json_sublist import json_load_sublisted
 
 __all__ = (
     'KeyBonder',

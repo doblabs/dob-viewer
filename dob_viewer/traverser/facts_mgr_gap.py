@@ -17,7 +17,7 @@
 
 """Facts Carousel"""
 
-from ..crud.fact_dressed import FactDressed
+from dob_bright.crud.fact_dressed import FactDressed
 
 __all__ = (
     'FactsManager_Gap',

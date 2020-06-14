@@ -23,6 +23,8 @@ __all__ = (
     'rainbow',
     'truncater',
     'wordwrapper',
+    # Private:
+    #  'BaseLexer',
 )
 
 

@@ -28,14 +28,13 @@ from inflector import English, Inflector
 
 from nark.helpers.dev.profiling import profile_elapsed
 
+from dob_bright.styling.style_conf import color as styling_color
+from dob_bright.styling.style_engine import StyleEngine
 from dob_bright.termio.errors import dob_been_warned_reset
 
+from dob_prompt.prompters.triple_prompter import ask_user_for_edits
+
 from dob_viewer.ptkui.re_confirm import confirm
-
-from ..config.styling.style_conf import color as styling_color
-from ..config.styling.style_engine import StyleEngine
-
-from ..crud.interrogate import ask_user_for_edits
 
 from ..ptkui.dialog_overlay import show_message
 
