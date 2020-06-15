@@ -59,15 +59,25 @@ class FactsManager_JumpTime(object):
     # ***
 
     def jump_day_dec(self, days=1):
-        prev_day = self.jump_time_reference - timedelta(days=days)
-        prev_fact = self.jump_to_fact_nearest(until_time=prev_day)
+        try:
+            days_delta = timedelta(days=days)
+        except OverflowError:
+            prev_fact = None
+        else:
+            prev_day = self.jump_time_reference - days_delta
+            prev_fact = self.jump_to_fact_nearest(until_time=prev_day)
         if prev_fact is None:
             prev_fact = self.jump_to_oldest_fact(reason='day-dec')
         return prev_fact
 
     def jump_day_inc(self, days=1):
-        next_day = self.jump_time_reference + timedelta(days=days)
-        next_fact = self.jump_to_fact_nearest(since_time=next_day)
+        try:
+            days_delta = timedelta(days=days)
+        except OverflowError:
+            next_fact = None
+        else:
+            next_day = self.jump_time_reference + days_delta
+            next_fact = self.jump_to_fact_nearest(since_time=next_day)
         if next_fact is None:
             next_fact = self.jump_to_latest_fact(reason='day-inc')
         return next_fact
