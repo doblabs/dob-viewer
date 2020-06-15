@@ -286,10 +286,15 @@ class Carousel(object):
             # No Facts edited.
             return True
         question = _('\nReally exit without saving?')
+        allow_mash_quit = self.controller.config['dev.allow_mash_quit']
         try:
-            confirmed = confirm(question, erase_when_done=True)
+            confirmed = confirm(
+                question,
+                erase_when_done=True,
+                allow_mash_quit=allow_mash_quit,
+            )
         except KeyboardInterrupt:
-            confirmed = True  # Eh?
+            confirmed = False
         return confirmed
 
     def process_save_early(self):

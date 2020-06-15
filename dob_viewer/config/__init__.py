@@ -17,7 +17,35 @@
 
 """dob_viewer.config sub.package provides Carousel UX user configuration settings."""
 
+from gettext import gettext as _
+
 # Add our settings to the config.
 from .custom_paste import DobViewerConfigCustomPaste  # noqa: F401 '<>' imported ...
 from .editor_keys import DobViewerConfigEditorKeys    # noqa: F401  ... but unused
+
+from nark.config import ConfigRoot
+
+__all__ = (
+    'DobConfigurableDev',
+)
+
+
+# ***
+
+@ConfigRoot.section('dev')
+class DobConfigurableDev(object):
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    # ***
+
+    @property
+    @ConfigRoot.setting(
+        _("If True, lets you quit without saving by mashing Ctrl-q."),
+        hidden=True,
+    )
+    def allow_mash_quit(self):
+        return False
 

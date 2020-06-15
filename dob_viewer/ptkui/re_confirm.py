@@ -31,7 +31,7 @@ __all__ = (
 # (lb): This is ripped from PPT's shortcuts/prompt.py
 
 
-def create_confirm_session(message, suffix=' (y/n) ', **kwargs):
+def create_confirm_session(message, suffix=' (y/n) ', allow_mash_quit=False, **kwargs):
     """
     Create a `PromptSession` object for the 'confirm' function.
     """
@@ -72,7 +72,7 @@ def create_confirm_session(message, suffix=' (y/n) ', **kwargs):
     @bindings.add('c-q')
     def mash(event):
         count['cc'] += 1
-        if count['cc'] > 1:
+        if allow_mash_quit and count['cc'] > 1:
             event.app.exit(result=True)
 
     @bindings.add(Keys.Any)
@@ -85,10 +85,10 @@ def create_confirm_session(message, suffix=' (y/n) ', **kwargs):
     return session
 
 
-def confirm(message='Confirm?', suffix=' (y/n) ', **kwargs):
+def confirm(message='Confirm?', suffix=' (y/n) ', allow_mash_quit=False, **kwargs):
     """
     Display a confirmation prompt that returns True/False.
     """
-    session = create_confirm_session(message, suffix, **kwargs)
+    session = create_confirm_session(message, suffix, allow_mash_quit, **kwargs)
     return session.prompt()
 
