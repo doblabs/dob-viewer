@@ -28,6 +28,14 @@ dob\_viewer.traverser.clipboard\_edit module
    :undoc-members:
    :show-inheritance:
 
+dob\_viewer.traverser.content\_lexer module
+-------------------------------------------
+
+.. automodule:: dob_viewer.traverser.content_lexer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 dob\_viewer.traverser.edits\_manager module
 -------------------------------------------
 
@@ -144,6 +152,14 @@ dob\_viewer.traverser.redo\_undo\_edit module
 ---------------------------------------------
 
 .. automodule:: dob_viewer.traverser.redo_undo_edit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+dob\_viewer.traverser.save\_confirmer module
+--------------------------------------------
+
+.. automodule:: dob_viewer.traverser.save_confirmer
    :members:
    :undoc-members:
    :show-inheritance:

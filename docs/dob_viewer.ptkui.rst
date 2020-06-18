@@ -12,14 +12,6 @@ dob\_viewer.ptkui.dialog\_overlay module
    :undoc-members:
    :show-inheritance:
 
-dob\_viewer.ptkui.ppt\_markup module
-------------------------------------
-
-.. automodule:: dob_viewer.ptkui.ppt_markup
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 dob\_viewer.ptkui.re\_confirm module
 ------------------------------------
 
