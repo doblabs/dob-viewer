@@ -53,10 +53,10 @@ requirements = [
     'nark > 3.2.1, < 3.2.3',  # I.e., release 3.2.2, or whatever dev's running.
     # The controller, config, and common output and error tossing code.
     #  https://github.com/hotoffthehamster/dob-bright
-    'dob-bright > 1.2.1, < 1.2.3',  # I.e., release 1.2.2, or dev's intermediate.
+    'dob-bright > 1.2.2, < 1.2.4',  # I.e., release 1.2.3, or dev's intermediate.
     # The act@gory and tag prompt interface.
     #  https://github.com/hotoffthehamster/dob-prompt
-    'dob-prompt > 1.1.0, < 1.1.2',  # I.e., release 1.1.1, or dev's intermediate.
+    'dob-prompt > 1.1.1, < 1.1.3',  # I.e., release 1.1.2, or dev's intermediate.
 ]
 
 # *** Minimal setup() function -- Prefer using config where possible.
