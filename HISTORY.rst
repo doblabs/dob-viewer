@@ -9,7 +9,7 @@ History
 .. _dob-prompt: https://github.com/hotoffthehamster/dob-prompt
 
 .. |dob-viewer| replace:: ``dob-viewer``
-.. _dob-viewer: https://github.com/hotoffthehamster/dob-viewer
+.. _dob-viewer: https://github.com/tallybark/dob-viewer
 
 .. :changelog:
 
@@ -481,5 +481,5 @@ History
 1.0.0 (2020-03-30)
 ==================
 
-- Booyeah: Inaugural release (spin-off from dob).
+- Booyeah: Inaugural release (spin-off from |dob|_).
 
