@@ -2,7 +2,7 @@
 
 # This file exists within 'dob-viewer':
 #
-#   https://github.com/hotoffthehamster/dob-viewer
+#   https://github.com/tallybark/dob-viewer
 
 # Boilerplate documentation build configuration file,
 # (Originally) created by sphinx-quickstart on Tue Jul 9 22:26:36 2013

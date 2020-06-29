@@ -1,10 +1,10 @@
 # This file exists within 'dob-viewer':
 #
-#   https://github.com/hotoffthehamster/dob-viewer
+#   https://github.com/tallybark/dob-viewer
 
 # Travis CI config.
 #
-#   https://travis-ci.org/hotoffthehamster/dob-viewer
+#   https://travis-ci.com/github/tallybark/dob-viewer
 
 language: python
 

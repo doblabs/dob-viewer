@@ -1,6 +1,6 @@
 # This file exists within 'dob-viewer':
 #
-#   https://github.com/hotoffthehamster/dob-viewer
+#   https://github.com/tallybark/dob-viewer
 #
 # Copyright © 2019-2020 Landon Bouma. All rights reserved.
 #

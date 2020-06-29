@@ -2,7 +2,7 @@
 
 # This file exists within 'dob-viewer':
 #
-#   https://github.com/hotoffthehamster/dob-viewer
+#   https://github.com/tallybark/dob-viewer
 
 PROJNAME = dob_viewer
 
