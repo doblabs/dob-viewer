@@ -3,10 +3,10 @@ History
 #######
 
 .. |dob| replace:: ``dob``
-.. _dob: https://github.com/hotoffthehamster/dob
+.. _dob: https://github.com/tallybark/dob
 
 .. |dob-prompt| replace:: ``dob-prompt``
-.. _dob-prompt: https://github.com/hotoffthehamster/dob-prompt
+.. _dob-prompt: https://github.com/tallybark/dob-prompt
 
 .. |dob-viewer| replace:: ``dob-viewer``
 .. _dob-viewer: https://github.com/tallybark/dob-viewer

@@ -3,7 +3,7 @@ Installation
 ############
 
 .. |dob-viewer| replace:: ``dob-viewer``
-.. _dob-viewer: https://github.com/hotoffthehamster/dob-viewer
+.. _dob-viewer: https://github.com/tallybark/dob-viewer
 
 .. |virtualenv| replace:: ``virtualenv``
 .. _virtualenv: https://virtualenv.pypa.io/en/latest/
@@ -36,7 +36,7 @@ To develop on the project, link to the source files instead:
 
     (dob-viewer) $ deactivate
     $ rmvirtualenv dob-viewer
-    $ git clone git@github.com:hotoffthehamster/dob-viewer.git
+    $ git clone git@github.com:tallybark/dob-viewer.git
     $ cd dob-viewer
     $ mkvirtualenv -a $(pwd) --python=/usr/bin/python3.6 dob-viewer
     (dob-viewer) $ make develop

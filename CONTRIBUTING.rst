@@ -3,10 +3,10 @@ Contributing
 ############
 
 .. |dob-viewer| replace:: ``dob-viewer``
-.. _dob-viewer: https://github.com/hotoffthehamster/dob-viewer
+.. _dob-viewer: https://github.com/tallybark/dob-viewer
 
 .. |user-docs| replace:: user documentation
-.. _user-docs: https://github.com/hotoffthehamster/dob-viewer/tree/release/docs
+.. _user-docs: https://github.com/tallybark/dob-viewer/tree/release/docs
 
 .. |envlist| replace:: ``envlist``
 .. _envlist: https://tox.readthedocs.io/en/latest/config.html#conf-envlist
@@ -55,7 +55,7 @@ You can contribute in many ways:
 Report Bugs
 -----------
 
-Report bugs at https://github.com/hotoffthehamster/dob-viewer/issues.
+Report bugs at https://github.com/tallybark/dob-viewer/issues.
 
 When reporting a bug, please include:
 
@@ -85,7 +85,7 @@ us to improve it.
 
 This includes the official |user-docs|_,
 the `README
-<https://github.com/hotoffthehamster/dob-viewer/blob/release/README.rst>`__,
+<https://github.com/tallybark/dob-viewer/blob/release/README.rst>`__,
 and the inline docstrings that generate the `API documentation
 <https://dob-viewer.readthedocs.io/en/latest/modules.html>`__
 (per |PEP-257|_ and |goog-py-sty|_).
@@ -96,7 +96,7 @@ Submit Feedback
 ---------------
 
 The best way to send feedback is to file an issue at
-https://github.com/hotoffthehamster/dob-viewer/issues.
+https://github.com/tallybark/dob-viewer/issues.
 
 See above for reporting bugs.
 
@@ -125,7 +125,7 @@ for local development.
 
 1. Fork the |dob-viewer|_ repo on GitHub.
 
-   * Visit `<https://github.com/hotoffthehamster/dob-viewer>`__
+   * Visit `<https://github.com/tallybark/dob-viewer>`__
      and click *Fork*.
 
 2. Clone your fork locally.
@@ -173,7 +173,7 @@ for local development.
    ``proving`` branch is up to date with the official branch::
 
     (dob-viewer) $ cdproject
-    (dob-viewer) $ git remote add upstream git@github.com:hotoffthehamster/dob-viewer.git
+    (dob-viewer) $ git remote add upstream git@github.com:tallybark/dob-viewer.git
     (dob-viewer) $ git fetch upstream
     (dob-viewer) $ git checkout proving
     (dob-viewer) $ git rebase upstream/proving
@@ -343,7 +343,7 @@ for local development.
 
 10. Finally,
     `submit a pull request
-    <https://github.com/hotoffthehamster/dob-viewer/pulls>`_
+    <https://github.com/tallybark/dob-viewer/pulls>`_
     through the GitHub website.
 
     *Important:* Please rebase your code against ``proving`` and resolve

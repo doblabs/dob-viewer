@@ -2,7 +2,7 @@
 
 REM This file exists within 'dob-viewer':
 REM
-REM   https://github.com/hotoffthehamster/dob-viewer
+REM   https://github.com/tallybark/dob-viewer
 
 set PROJECTNAME=dob_viewer
 
