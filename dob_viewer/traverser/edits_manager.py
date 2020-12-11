@@ -577,6 +577,7 @@ class EditsManager(object):
 
     def jump_fact_inc(self, count=1):
         """"""
+        next_fact = None
         for idx in range(count):
             next_fact = self.conjoined.jump_fact_inc()
             if next_fact is None:
