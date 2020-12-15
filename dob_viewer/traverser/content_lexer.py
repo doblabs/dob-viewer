@@ -24,8 +24,9 @@ import inspect
 import pygments.lexers
 from prompt_toolkit.lexers import Lexer, PygmentsLexer
 
+from easy_as_pypi_termio.errors import dob_in_user_warning
+
 from dob_bright.styling import load_obj_from_internal
-from dob_bright.termio import dob_in_user_warning
 
 from ..ptkui import various_lexers
 

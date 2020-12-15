@@ -19,10 +19,6 @@ from setuptools import find_packages, setup
 # *** Package requirements.
 
 requirements = [
-    # INI/config parser, even better (preserves comments and ordering).
-    #  https://github.com/DiffSK/configobj
-    #  https://configobj.readthedocs.io/en/latest/
-    'configobj >= 5.0.6',
     # Vocabulary word pluralizer.
     #  https://github.com/ixmatus/inflector
     'Inflector >= 3.0.1, < 4',
@@ -33,10 +29,6 @@ requirements = [
     # For the Carousel Fact description lexer.
     #  http://pygments.org/
     'pygments >= 2.6.1, < 3',
-    # Just Another EDITOR package.
-    #  https://github.com/fmoo/python-editor
-    # - Imports as `editor`.
-    'python-editor >= 1.0.4, < 2',
     # https://github.com/grantjenks/python-sortedcontainers/
     'sortedcontainers >= 2.1.0, < 3',
 
@@ -51,6 +43,10 @@ requirements = [
     # Get-package-or-Git-version helper.
     #  https://github.com/tallybark/easy-as-pypi-getver
     'easy-as-pypi-getver',
+    # Click + ansi_escape_room (color) + convenience.
+    #  https://github.com/tallybark/easy-as-pypi-termio
+    'easy-as-pypi-termio',
+
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/tallybark/nark
     'nark > 3.2.3, < 3.2.5',  # I.e., release 3.2.4, or whatever dev's running.

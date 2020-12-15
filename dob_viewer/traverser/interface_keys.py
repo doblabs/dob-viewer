@@ -22,7 +22,7 @@ from gettext import gettext as _
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 
-from dob_bright.termio import dob_in_user_warning
+from easy_as_pypi_termio.errors import dob_in_user_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 

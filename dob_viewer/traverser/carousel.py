@@ -22,15 +22,16 @@ from gettext import gettext as _
 import asyncio
 import time
 
+from inflector import English, Inflector
+
 import click_hotoffthehamster as click
 
-from inflector import English, Inflector
+from easy_as_pypi_termio.errors import dob_been_warned_reset
 
 from nark.helpers.dev.profiling import profile_elapsed
 
 from dob_bright.styling.style_conf import color as styling_color
 from dob_bright.styling.style_engine import StyleEngine
-from dob_bright.termio.errors import dob_been_warned_reset
 
 from dob_prompt.prompters.triple_prompter import ask_user_for_edits
 
