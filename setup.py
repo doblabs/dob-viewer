@@ -48,6 +48,9 @@ requirements = [
     # Because too busy developing our own code, our fork!
     #  https://github.com/hotoffthehamster/click
     'click-hotoffthehamster >= 7.1.1, <= 7.1.2',
+    # Get-package-or-Git-version helper.
+    #  https://github.com/tallybark/easy-as-pypi-getver
+    'easy-as-pypi-getver',
     # The heart of Hamster. (Ye olde `hamster-lib`).
     #  https://github.com/tallybark/nark
     'nark > 3.2.3, < 3.2.5',  # I.e., release 3.2.4, or whatever dev's running.
