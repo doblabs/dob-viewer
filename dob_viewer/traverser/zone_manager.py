@@ -151,13 +151,13 @@ class ZoneManager(object):
             #        then continue (could even decide not to show warning again?).
             # FIXME: Find all controller usage from clyde and refactor so has to
             #        be passed in (wire what you need from dob upfront).
-            from easy_as_pypi_termio.errors import dob_in_user_warning
+            from easy_as_pypi_termio.errors import echo_warning
             msg = _('The user style “{0}” failed to load: {1}').format(
                 self.carousel.controller.config['editor.styling'], str(err),
             )
             self.carousel.controller.client_logger.warning(msg)
-            dob_in_user_warning(str(class_styles))
-            dob_in_user_warning(msg)
+            echo_warning(str(class_styles))
+            echo_warning(msg)
             self.style = Style([])
 
     def center_thyself(self):

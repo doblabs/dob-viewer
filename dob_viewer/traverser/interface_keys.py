@@ -22,7 +22,7 @@ from gettext import gettext as _
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 
-from easy_as_pypi_termio.errors import dob_in_user_warning
+from easy_as_pypi_termio.errors import echo_warning
 
 from dob_prompt.prompters.interface_bonds import KeyBond
 
@@ -130,7 +130,7 @@ class KeyBonder(object):
     def print_warnings(self):
         if not self.errors:
             return
-        dob_in_user_warning('\n'.join(self.errors))
+        echo_warning('\n'.join(self.errors))
         self.errors = []
 
     # ***

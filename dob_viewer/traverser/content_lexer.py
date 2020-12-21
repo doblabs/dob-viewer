@@ -24,7 +24,7 @@ import inspect
 import pygments.lexers
 from prompt_toolkit.lexers import Lexer, PygmentsLexer
 
-from easy_as_pypi_termio.errors import dob_in_user_warning
+from easy_as_pypi_termio.errors import echo_warning
 
 from dob_bright.styling import load_obj_from_internal
 
@@ -88,7 +88,7 @@ def load_content_lexer(controller):
             return PygmentsLexer(getattr(pygments.lexers, lexer_name))
         except AttributeError:
             msg = _('Not a recognized Pygments lexer: “{0}”').format(lexer_name)
-            dob_in_user_warning(msg)
+            echo_warning(msg)
             return None
 
     return _load_content_lexer()
