@@ -681,7 +681,7 @@ class EditsManager(object):
                 # A failure on a CLI command (without PPT interface) might do:
                 #   import traceback
                 #   traceback.print_exc()
-                #   dob_in_user_exit(str(err))
+                #   exit_warning(str(err))
                 # But Carousel has a popup message handler.
                 self.error_callback(errmsg='Failed to save fact!\n\n  “{}”'.format(err))
                 return None
