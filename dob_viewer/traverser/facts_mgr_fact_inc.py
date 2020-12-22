@@ -54,7 +54,7 @@ class FactsManager_FactInc(object):
             # If we've reached the ending of all time, there's nothing following.
             if next_fact is None:
                 return None
-            # Just a sanity check. Note that we use fact.times for >, otherwise
+            # Just a validation. Note that we use fact.times for >, otherwise
             # sorty_tuple is used, which also sorts by PK, which masks 2 facts
             # at same time but with unique IDs.
             # - This also shows that we update self.curr_index already, and
