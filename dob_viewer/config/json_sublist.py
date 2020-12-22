@@ -44,13 +44,13 @@ def json_load_sublisted(cfgname, cfgval):
             #   json, so a list), which represents a multiple-key binding.
             keycodes = json.loads(cfgval)
             assert isinstance(keycodes, list)  # Would it be anything else?
-            if not sanity_check(keycodes):
+            if not verify_all_lists(keycodes):
                 return None, error_not_list_within_lists()
         except json.decoder.JSONDecodeError as err:
             return None, error_not_list_within_lists(err)
         return keycodes, None
 
-    def sanity_check(keycodes):
+    def verify_all_lists(keycodes):
         return all(isinstance(keycode, list) for keycode in keycodes)
 
     def error_not_list_within_lists(err=''):
