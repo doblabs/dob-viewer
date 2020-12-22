@@ -15,24 +15,5 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import pytest
-
-from dob_bright.crud.fact_dressed import FactDressed
-
-# When dob was split into Packages of Four, all the fixtures were sent to
-# dob-bright. Import those fixtures into the test namespace with a *-glob,
-# just as though they'd be defined in this module.
-from dob_bright.tests.conftest import *  # noqa: F401, F403
-
-pytest_plugins = (
-    # Set KeyChainedValue._envvar_prefix.
-    'tests.config.envvar_prefix',
-    # Call app_dirs.register_application.
-    'tests.config.init_app_dirs',
-)
-
-
-@pytest.fixture
-def test_fact_cls():
-    return FactDressed
+"""Tests for ``dob_bright/config`` modules."""
 

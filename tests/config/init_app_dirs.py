@@ -15,24 +15,11 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-import pytest
+from easy_as_pypi_apppth.app_dirs import register_application
 
-from dob_bright.crud.fact_dressed import FactDressed
+from dob_viewer import __package_name__
 
-# When dob was split into Packages of Four, all the fixtures were sent to
-# dob-bright. Import those fixtures into the test namespace with a *-glob,
-# just as though they'd be defined in this module.
-from dob_bright.tests.conftest import *  # noqa: F401, F403
-
-pytest_plugins = (
-    # Set KeyChainedValue._envvar_prefix.
-    'tests.config.envvar_prefix',
-    # Call app_dirs.register_application.
-    'tests.config.init_app_dirs',
-)
-
-
-@pytest.fixture
-def test_fact_cls():
-    return FactDressed
+# Register the appname used by AppDirs, which figures into the
+# user file paths, such as ~/.config/dob/dob.conf.
+register_application('test__' + __package_name__)
 
