@@ -26,7 +26,7 @@ from inflector import English, Inflector
 
 import click_hotoffthehamster as click
 
-from easy_as_pypi_termio.errors import dob_been_warned_reset
+from easy_as_pypi_termio.errors import echoed_warnings_reset
 
 from nark.helpers.dev.profiling import profile_elapsed
 
@@ -357,7 +357,7 @@ class Carousel(object):
         return False
 
     def pause_on_error_message_maybe(self):
-        if not dob_been_warned_reset():
+        if not echoed_warnings_reset():
             return True
         # (lb): My first approach was to sleep:
         #   time.sleep(2.666)
