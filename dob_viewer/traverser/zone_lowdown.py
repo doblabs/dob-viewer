@@ -123,7 +123,13 @@ class ZoneLowdown(object):
                 )
                 deleted = _(' [edit to add]')
             else:
-                if curr_edit.pk > 0:
+                # Note that curr_edit.pk is None when the carousel runs on
+                # dob-import and the user saves without having viewed each
+                # Fact -- those Facts not viewed, and even the one being
+                # viewer currently if the user has not moved beyond it,
+                # have no pk. (lb): There might be something bigger at play,
+                # but adding this the None-check at least avoids the fault.
+                if (curr_edit.pk is not None) and (curr_edit.pk > 0):
                     # 2019-01-26: (lb): For parallelism, I had a similar prefix,
                     #   context = _('Old')
                     # here, but I think it looks funny to call a Fact "Old".
