@@ -21,9 +21,7 @@ import datetime
 
 from nark.items.fact import SinceTimeBegan
 
-__all__ = (
-    'FactsManager_FactDec',
-)
+__all__ = ("FactsManager_FactDec",)
 
 
 JULIAN_YEAR = datetime.timedelta(days=365, hours=6)  # 365.25 days, 31557600 secs.
@@ -36,6 +34,7 @@ JULIAN_YEAR = datetime.timedelta(days=365, hours=6)  # 365.25 days, 31557600 sec
 #       meld facts_mgr_fact_dec.py facts_mgr_fact_inc.py &
 class FactsManager_FactDec(object):
     """"""
+
     def __init__(self, controller, *args, **kwargs):
         super(FactsManager_FactDec, self).__init__()
         # FIXME/2018-07-31: Make user_start_time (beginning_of_time) configurable.
@@ -46,9 +45,10 @@ class FactsManager_FactDec(object):
 
     def jump_fact_dec(self):
         """"""
+
         def _jump_fact_dec():
             # Check first if we've reached the beginning of time.
-            is_first_fact = (self.curr_index == 0)
+            is_first_fact = self.curr_index == 0
             if is_first_fact and self.curr_group.since_time_began:
                 return None
             # Each facts group represents a contiguous block of time that is
@@ -71,13 +71,13 @@ class FactsManager_FactDec(object):
             #   is outta sorts).
             self.controller.affirm(self.curr_fact.start >= prev_fact.end)
             # We (re)wired the fact to the group earlier; now rewire the group.
-            self.fulfill_jump(prev_fact, reason='fact-dec')
+            self.fulfill_jump(prev_fact, reason="fact-dec")
             # See if we've identified the boundary of the known factiverse.
             if prev_fact.start <= self.beginning_of_time:
                 with self.fact_group_rekeyed():
                     self.curr_group.claim_time_span(since=SinceTimeBegan)
                 self.controller.affirm(self.curr_group.since_time_began)
-            self.controller.client_logger.debug('\n- prev: {}'.format(prev_fact.short))
+            self.controller.client_logger.debug("\n- prev: {}".format(prev_fact.short))
             return prev_fact
 
         # ***
@@ -139,9 +139,9 @@ class FactsManager_FactDec(object):
                 un_undoable_fact_prev.start,
                 self.curr_group.time_since,
             )
-            un_undoable_fact_prev.dirty_reasons.add('overlapped')
+            un_undoable_fact_prev.dirty_reasons.add("overlapped")
             # (lb): A hack to tell other UX components to alert user.
-            un_undoable_fact_prev.dirty_reasons.add('alert-user')
+            un_undoable_fact_prev.dirty_reasons.add("alert-user")
             return curr_group_add_prev(un_undoable_fact_prev)
 
         # ^^^
@@ -211,7 +211,8 @@ class FactsManager_FactDec(object):
             user_start_time = self.beginning_of_time
             if self.curr_fact.start > user_start_time:
                 gap_fact = self.fact_from_interval_gap(
-                    user_start_time, self.curr_fact.start,
+                    user_start_time,
+                    self.curr_fact.start,
                 )
             return gap_fact
 
@@ -224,7 +225,8 @@ class FactsManager_FactDec(object):
                 gap_fact = prev_fact
             else:
                 gap_fact = self.fact_from_interval_gap(
-                    prev_fact.end, self.curr_fact.start,
+                    prev_fact.end,
+                    self.curr_fact.start,
                 )
             return gap_fact
 
@@ -253,7 +255,8 @@ class FactsManager_FactDec(object):
         # say, calling antecedent(self.curr_fact)), so that we skip time
         # that's currently under our control.
         prev_from_store = self.controller.facts.antecedent(
-            fact=ref_fact, ref_time=ref_time,
+            fact=ref_fact,
+            ref_time=ref_time,
         )
         if not prev_from_store:
             # No more prior facts from store.
@@ -267,4 +270,3 @@ class FactsManager_FactDec(object):
         # one we already know about (in which case, there exists a
         # group already blocking that time window).
         return prev_from_store
-

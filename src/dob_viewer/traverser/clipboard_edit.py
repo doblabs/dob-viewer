@@ -19,13 +19,12 @@
 
 from gettext import gettext as _
 
-__all__ = (
-    'ClipboardEdit',
-)
+__all__ = ("ClipboardEdit",)
 
 
 class ClipboardEdit(object):
     """"""
+
     def __init__(self, edits_manager):
         self.controller = edits_manager.controller
         self.redo_undo = edits_manager.redo_undo
@@ -48,21 +47,30 @@ class ClipboardEdit(object):
     # ***
 
     def copy_activity(self, curr_edit):
-        self.clipboard = {'activity': curr_edit.activity, }
+        self.clipboard = {
+            "activity": curr_edit.activity,
+        }
 
     def copy_tags(self, curr_edit):
-        self.clipboard = {'tags': curr_edit.tags, }
+        self.clipboard = {
+            "tags": curr_edit.tags,
+        }
 
     def copy_description(self, curr_edit):
-        self.clipboard = {'description': curr_edit.description, }
+        self.clipboard = {
+            "description": curr_edit.description,
+        }
 
     def copy_fact(self, curr_edit):
-        self.clipboard = {'fact': curr_edit.copy(), }
+        self.clipboard = {
+            "fact": curr_edit.copy(),
+        }
 
     # ***
 
     def paste_copied_meta(self, edit_fact, reset_fact):
         """"""
+
         def _paste_copied_meta(edit_fact):
             if not self.clipboard:
                 return None
@@ -72,17 +80,17 @@ class ClipboardEdit(object):
             return pasted_what
 
         def paste_copied_what(edit_fact, paste_what, paste_val):
-            if paste_what == 'activity':
+            if paste_what == "activity":
                 edit_fact.activity = paste_val
-                pasted_what = _('activity')
-            elif paste_what == 'tags':
+                pasted_what = _("activity")
+            elif paste_what == "tags":
                 edit_fact.tags = paste_val
-                pasted_what = _('tags')
-            elif paste_what == 'description':
+                pasted_what = _("tags")
+            elif paste_what == "description":
                 edit_fact.description = paste_val
-                pasted_what = _('description')
+                pasted_what = _("description")
             else:
-                self.controller.affirm(paste_what == 'fact')
+                self.controller.affirm(paste_what == "fact")
                 # MAYBE: Add a paste-all meta option? Or is cycle-pasting ok?
                 #  edit_fact.activity = paste_val.activity
                 #  edit_fact.tags = paste_val.tags
@@ -96,19 +104,19 @@ class ClipboardEdit(object):
             if self.paste_cnt == 0:
                 edit_fact.activity = paste_val.activity
                 edit_fact.tags = paste_val.tags
-                pasted_what = _('activity and tags')
+                pasted_what = _("activity and tags")
             elif self.paste_cnt == 1:
                 edit_fact.activity = paste_val.activity
-                pasted_what = _('activity')
+                pasted_what = _("activity")
             elif self.paste_cnt == 2:
                 edit_fact.tags = paste_val.tags
-                pasted_what = _('tags')
+                pasted_what = _("tags")
             else:
                 self.controller.affirm(self.paste_cnt == 3)
                 edit_fact.activity = paste_val.activity
                 edit_fact.tags = paste_val.tags
                 edit_fact.description = paste_val.description
-                pasted_what = _('activity, tags, and description')
+                pasted_what = _("activity, tags, and description")
             return pasted_what
 
         def restore_fact_pre_paste(edit_fact):
@@ -144,4 +152,3 @@ class ClipboardEdit(object):
             return paste_cnt
 
         return _paste_copied_meta(edit_fact)
-

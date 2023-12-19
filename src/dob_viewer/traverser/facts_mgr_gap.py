@@ -19,9 +19,7 @@
 
 from dob_bright.crud.fact_dressed import FactDressed
 
-__all__ = (
-    'FactsManager_Gap',
-)
+__all__ = ("FactsManager_Gap",)
 
 
 class FactsManager_Gap(object):
@@ -45,4 +43,3 @@ class FactsManager_Gap(object):
         self.controller.affirm(fact_1.next_fact is None)
         fact_1.next_fact = fact_2
         fact_2.prev_fact = fact_1
-

@@ -20,8 +20,8 @@
 from gettext import gettext as _
 
 __all__ = (
-    'render_carousel_help',
-    'NUM_HELP_PAGES',
+    "render_carousel_help",
+    "NUM_HELP_PAGES",
 )
 
 
@@ -32,8 +32,9 @@ def render_carousel_help():
     from dob import get_version as get_version_dob
 
     # FIXME/2020-04-01: Revisit this. Some commands changed; some were never implemented!
-    carousel_help = _(
-        """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━┳━━━━ PROMPTS ━━━━┳━━━━━━━ NUDGE TIME ━━━━━━━┓
+    carousel_help = (
+        _(
+            """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━┳━━━━ PROMPTS ━━━━┳━━━━━━━ NUDGE TIME ━━━━━━━┓
  ┃ → / ←   Next/Previous Fact  ┃ a  edit act@cat ┃ [  Sub 1 min. from end   ┃
  ┃ j / k     Same as → / ←     ┃ t  edit tags    ┃ ]  Add 1 minute to end   ┃
  ┃ ↑ / ↓   Move Cursor Up/Down ┣━━━━ $EDITOR ━━━━┫ ,  Sub 1 min. from start ┃
@@ -59,11 +60,13 @@ def render_carousel_help():
  ┃   https://dob.readthedocs.io   ┃  dob v.{dob_vers: <32} ┃
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
         """
-    ).format(
-        dob_vers=get_version_dob()[:34],
-    ).rstrip()
+        )
+        .format(
+            dob_vers=get_version_dob()[:34],
+        )
+        .rstrip()
+    )
     return carousel_help
 
 
 NUM_HELP_PAGES = 2
-

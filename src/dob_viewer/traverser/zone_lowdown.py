@@ -24,20 +24,19 @@ from gettext import gettext as _
 from prompt_toolkit.layout.containers import to_container
 from prompt_toolkit.widgets import Label
 
-__all__ = (
-    'ZoneLowdown',
-)
+__all__ = ("ZoneLowdown",)
 
 
 class ZoneLowdown(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
-        self.hot_notif = ''
+        self.hot_notif = ""
         self.notif_expiry = None
 
     def standup(self):
-        self.status_label = Label(text='', style='class:footer')
+        self.status_label = Label(text="", style="class:footer")
         self.label_container = to_container(self.status_label)
 
     def update_status(self, hot_notif, clear_after_secs=None):
@@ -58,7 +57,7 @@ class ZoneLowdown(object):
     # ***
 
     def reset_status(self):
-        default_notif = ''  # So format_lowdown_text prints PK.
+        default_notif = ""  # So format_lowdown_text prints PK.
         self.update_status(hot_notif=default_notif, clear_after_secs=0)
 
     def selectively_refresh(self):
@@ -73,7 +72,7 @@ class ZoneLowdown(object):
             #   user to solidify the gap.
             curr_edit = self.carousel.edits_manager.curr_edit
             if curr_edit.is_gap:
-                self.update_status(hot_notif='')
+                self.update_status(hot_notif="")
 
     # ***
 
@@ -84,6 +83,7 @@ class ZoneLowdown(object):
 
     def format_lowdown_text(self):
         """"""
+
         def _format_lowdown_text():
             # If message notif, show that, until next reset_showing_help,
             # else show current Fact ID and binding hints.
@@ -93,22 +93,19 @@ class ZoneLowdown(object):
             showing_text = self.hot_notif or showing_fact()
             helpful_text = "[?]: Help / [C-S]: Save / [C-Q]: Quit"
 
-            pad_len = (
-                self.carousel.avail_width
-                - len(showing_text)
-                - len(helpful_text)
-            )
-            padding = ' ' * pad_len
+            pad_len = self.carousel.avail_width - len(showing_text) - len(helpful_text)
+            padding = " " * pad_len
 
             hot_notif_or_fact_id_style = self.carousel.process_style_rules(
-                ppt_widget=None, friendly_name='footer-fact-id',
+                ppt_widget=None,
+                friendly_name="footer-fact-id",
             )
             # MEH/2019-12-02: (lb): I don't feel like styling the whole bottom line...
 
             formatted = [
                 (hot_notif_or_fact_id_style, showing_text),
-                ('', padding),
-                ('', helpful_text),
+                ("", padding),
+                ("", helpful_text),
             ]
 
             return formatted
@@ -117,11 +114,11 @@ class ZoneLowdown(object):
             curr_edit = self.carousel.edits_manager.curr_edit
             if curr_edit.is_gap:
                 precision = 1 if curr_edit.delta().total_seconds() > 60 else 0
-                context = _('Gap')
+                context = _("Gap")
                 location = _("of {0}").format(
-                    curr_edit.format_delta(style='', precision=precision)
+                    curr_edit.format_delta(style="", precision=precision)
                 )
-                deleted = _(' [edit to add]')
+                deleted = _(" [edit to add]")
             else:
                 # Note that curr_edit.pk is None when the carousel runs on
                 # dob-import and the user saves without having viewed each
@@ -133,21 +130,23 @@ class ZoneLowdown(object):
                     # 2019-01-26: (lb): For parallelism, I had a similar prefix,
                     #   context = _('Old')
                     # here, but I think it looks funny to call a Fact "Old".
-                    context = ''
+                    context = ""
                     location = _("ID #{0}").format(curr_edit.pk)
                 else:
                     num_unstored = self.carousel.edits_manager.edit_fact_count
-                    context = _('New')
+                    context = _("New")
                     location = _("{0:>{1}} of {2}").format(
                         self.carousel.edits_manager.edit_fact_index + 1,
                         len(str(num_unstored)),
                         num_unstored,
                     )
-                deleted = _(' [del]') if curr_edit.deleted else ""
+                deleted = _(" [del]") if curr_edit.deleted else ""
             text = _("{0}{1}Fact {2}{3}").format(
-                context, ' ' if context else '', location, deleted,
+                context,
+                " " if context else "",
+                location,
+                deleted,
             )
             return text
 
         return _format_lowdown_text()
-

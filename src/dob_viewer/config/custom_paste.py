@@ -21,14 +21,13 @@ from gettext import gettext as _
 
 from nark.config import ConfigRoot
 
-__all__ = (
-    'DobViewerConfigCustomPaste',
-)
+__all__ = ("DobViewerConfigCustomPaste",)
 
 
 # ***
 
-@ConfigRoot.section('custom-paste')
+
+@ConfigRoot.section("custom-paste")
 class DobViewerConfigCustomPaste(object):
     """"""
 
@@ -44,8 +43,8 @@ class DobViewerConfigCustomPaste(object):
 
     def add_custom_paste(postfix):
         """"""
-        factoid_name = 'factoid_{}'.format(postfix)
-        mapping_name = 'mapping_{}'.format(postfix)
+        factoid_name = "factoid_{}".format(postfix)
+        mapping_name = "mapping_{}".format(postfix)
 
         @property
         @ConfigRoot.setting(
@@ -54,7 +53,7 @@ class DobViewerConfigCustomPaste(object):
             hidden=True,
         )
         def factoid_prop(self):
-            return ''
+            return ""
 
         @property
         @ConfigRoot.setting(
@@ -63,10 +62,9 @@ class DobViewerConfigCustomPaste(object):
             hidden=True,
         )
         def mapping_prop(self):
-            return ''
+            return ""
 
     A_PERFECT_NUMBER = 28
 
     for postfix in range(1, A_PERFECT_NUMBER):
         add_custom_paste(postfix)
-

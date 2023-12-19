@@ -31,9 +31,7 @@ from .facts_mgr_rift_dec import FactsManager_RiftDec
 from .facts_mgr_rift_inc import FactsManager_RiftInc
 from .group_chained import GroupChained
 
-__all__ = (
-    'FactsManager',
-)
+__all__ = ("FactsManager",)
 
 
 class FactsManager(
@@ -123,17 +121,15 @@ class FactsManager(
             return self.groups[0][0]
         elif key == -1:
             return self.groups[-1][-1]
-        raise TypeError(
-            "'{0}' object is not really subscriptable".format(type(self))
-        )
+        raise TypeError("'{0}' object is not really subscriptable".format(type(self)))
 
     def __len__(self):
         return sum([len(group) for group in self.groups])
 
     @property
     def debug__str(self):
-        return '  ' + '\n  '.join(
-            ['#{:3}: {}'.format(idx, grp) for idx, grp in enumerate(self.groups)]
+        return "  " + "\n  ".join(
+            ["#{:3}: {}".format(idx, grp) for idx, grp in enumerate(self.groups)]
         )
 
     # ***
@@ -156,7 +152,7 @@ class FactsManager(
         group = GroupChained(grouped_facts, affirm=self.controller.affirm)
         self.groups.add(group)
 
-        self.logger_debug_groups('add_facts', group=group)
+        self.logger_debug_groups("add_facts", group=group)
 
     def claim_time_span(self, since, until):
         owning_group = None
@@ -201,7 +197,6 @@ class FactsManager(
         group, _index = self.locate_fact(last_edits[0])
 
         with self.fact_group_rekeyed(group):
-
             # Clear time windows of edited facts, as times may have changed.
             for last_edit in last_edits:
                 last_index = group.index(last_edit)
@@ -293,20 +288,20 @@ class FactsManager(
 
         self.groups.add(group)
 
-        self.logger_debug_groups('fact_group_rekeyed', group=group)
+        self.logger_debug_groups("fact_group_rekeyed", group=group)
 
         # Caller is responsible for wiring prev/next references.
 
-    def logger_debug_groups(self, whence='', group=None):
+    def logger_debug_groups(self, whence="", group=None):
         group = group or self.curr_group
         self.debug(
-            '{}\n- group.sorty_times: {}\n-    groups._maxes: {}'.format(
+            "{}\n- group.sorty_times: {}\n-    groups._maxes: {}".format(
                 whence,
-                group and group.sorty_times or '<curr_group is None>',
+                group and group.sorty_times or "<curr_group is None>",
                 self.groups._maxes,
             )
         )
-        self.debug('\n{}'.format(self.debug__str))
+        self.debug("\n{}".format(self.debug__str))
 
     def curr_group_add(self, some_fact):
         # The new fact is not yet wired.
@@ -326,7 +321,7 @@ class FactsManager(
         # 2019-02-13: (lb): Just a *momentaneous* FYI. (Feature should be all wired now.)
         if some_fact.start == some_fact.end:
             self.controller.client_logger.warning(
-                'Found MOMENTANEOUS: {}'.format(some_fact.short),
+                "Found MOMENTANEOUS: {}".format(some_fact.short),
             )
 
         if self.curr_fact.start == some_fact.end:
@@ -365,4 +360,3 @@ class FactsManager(
         group_fact = self.groups[-1].pop(-1)
         self.controller.affirm(group_fact is final_fact)
         return group_fact
-

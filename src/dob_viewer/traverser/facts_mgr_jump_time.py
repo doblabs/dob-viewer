@@ -19,13 +19,12 @@
 
 from datetime import timedelta
 
-__all__ = (
-    'FactsManager_JumpTime',
-)
+__all__ = ("FactsManager_JumpTime",)
 
 
 class FactsManager_JumpTime(object):
     """"""
+
     def __init__(self, *args, **kwargs):
         super(FactsManager_JumpTime, self).__init__()
 
@@ -35,9 +34,11 @@ class FactsManager_JumpTime(object):
 
     @property
     def jump_time_reference(self):
-        self.debug('get: {}'.format(
-            self._jump_time_reference or '{} (reset)'.format(self.curr_fact.start)
-        ))
+        self.debug(
+            "get: {}".format(
+                self._jump_time_reference or "{} (reset)".format(self.curr_fact.start)
+            )
+        )
         if not self._jump_time_reference:
             if not self.curr_fact.end:
                 # If user is looking at Active Fact, and they want to, e.g.,
@@ -53,7 +54,7 @@ class FactsManager_JumpTime(object):
 
     @jump_time_reference.setter
     def jump_time_reference(self, jump_time_reference):
-        self.debug('set: {}'.format(jump_time_reference))
+        self.debug("set: {}".format(jump_time_reference))
         self._jump_time_reference = jump_time_reference
 
     # ***
@@ -67,7 +68,7 @@ class FactsManager_JumpTime(object):
             prev_day = self.jump_time_reference - days_delta
             prev_fact = self.jump_to_fact_nearest(until_time=prev_day)
         if prev_fact is None:
-            prev_fact = self.jump_to_oldest_fact(reason='day-dec')
+            prev_fact = self.jump_to_oldest_fact(reason="day-dec")
         return prev_fact
 
     def jump_day_inc(self, days=1):
@@ -79,6 +80,5 @@ class FactsManager_JumpTime(object):
             next_day = self.jump_time_reference + days_delta
             next_fact = self.jump_to_fact_nearest(since_time=next_day)
         if next_fact is None:
-            next_fact = self.jump_to_latest_fact(reason='day-inc')
+            next_fact = self.jump_to_latest_fact(reason="day-inc")
         return next_fact
-

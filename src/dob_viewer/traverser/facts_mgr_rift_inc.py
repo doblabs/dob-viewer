@@ -17,20 +17,19 @@
 
 """FactsManager_RiftInc"""
 
-__all__ = (
-    'FactsManager_RiftInc',
-)
+__all__ = ("FactsManager_RiftInc",)
 
 
 class FactsManager_RiftInc(object):
     """"""
+
     def jump_rift_inc(self):
         next_fact = self.find_rift_fact(is_next=True)
         if next_fact is None:
-            return self.jump_to_latest_fact(reason='rift-inc')
+            return self.jump_to_latest_fact(reason="rift-inc")
         return next_fact
 
-    def jump_fact_final(self, reason='fact-final'):
+    def jump_fact_final(self, reason="fact-final"):
         """"""
         return self.jump_to_latest_fact(reason, include_edge_gap=True)
 
@@ -38,6 +37,7 @@ class FactsManager_RiftInc(object):
 
     def jump_to_latest_fact(self, reason, include_edge_gap=False):
         """"""
+
         def _jump_to_latest_fact():
             final_group = self.groups[-1] if include_edge_gap else ceil_groups()
             _final_group, final_fact = group_latest(final_group)
@@ -54,9 +54,8 @@ class FactsManager_RiftInc(object):
             return next_fact
 
         def ceil_groups():
-            if (
-                (self.curr_group is self.groups[0])
-                and (self.curr_index < (len(self.groups[0]) - 1))
+            if (self.curr_group is self.groups[0]) and (
+                self.curr_index < (len(self.groups[0]) - 1)
             ):
                 # Looking at new, prev Facts, and not the final new
                 # Fact, so scroll forward to the last new, prev Fact.
@@ -65,14 +64,11 @@ class FactsManager_RiftInc(object):
                 final_group = self.groups[-1]
                 # If new, next Facts, scroll to latest Fact, then to final
                 # new, next Fact.
-                if (
-                    (len(self.groups) > 1)
+                if (len(self.groups) > 1) and (
+                    (self.curr_group is not self.groups[-1])
                     and (
-                        (self.curr_group is not self.groups[-1])
-                        and (
-                            (self.curr_group is not self.groups[-2])
-                            or (self.curr_index < (len(self.groups[-2]) - 1))
-                        )
+                        (self.curr_group is not self.groups[-2])
+                        or (self.curr_index < (len(self.groups[-2]) - 1))
                     )
                 ):
                     final_group = self.groups[-2]
@@ -130,4 +126,3 @@ class FactsManager_RiftInc(object):
             return final_group, latest_fact
 
         return _jump_to_latest_fact()
-

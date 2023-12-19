@@ -20,9 +20,9 @@
 from prompt_toolkit.lexers import Lexer
 
 __all__ = (
-    'rainbow',
-    'truncater',
-    'wordwrapper',
+    "rainbow",
+    "truncater",
+    "wordwrapper",
     # Private:
     #  'BaseLexer',
 )
@@ -30,6 +30,7 @@ __all__ = (
 
 class BaseLexer(Lexer):
     """"""
+
     def __init__(self):
         super(BaseLexer, self).__init__()
         self._content_width = None
@@ -46,10 +47,11 @@ class BaseLexer(Lexer):
 def wordwrapper():
     class WordWrappingLexer(BaseLexer):
         """A very basic, primitive, "dumb", split-on-space line splitter."""
+
         def lex_document(self, document):
             splitdoc = []
             for line in document.lines:
-                for chunk in line.split(' '):
+                for chunk in line.split(" "):
                     splitdoc.append(chunk)
 
             def get_line(lineno):
@@ -74,8 +76,8 @@ def truncater():
                 line = document.lines[lineno]
                 if self.content_width:
                     if len(line) > self.content_width:
-                        line = line[:self.trunc_at]
-                        line += '━' * self.dots_cnt
+                        line = line[: self.trunc_at]
+                        line += "━" * self.dots_cnt
                 return [("#00ff55", c) for c in line]
 
             return get_line
@@ -99,4 +101,3 @@ def rainbow():
             return get_line
 
     return RainbowLexer
-

@@ -46,13 +46,12 @@ from .update_handler import UpdateHandler
 from .zone_content import ZoneContent
 from .zone_manager import ZoneManager
 
-__all__ = (
-    'Carousel',
-)
+__all__ = ("Carousel",)
 
 
 class Carousel(object):
     """"""
+
     def __init__(
         self,
         controller,
@@ -103,9 +102,9 @@ class Carousel(object):
         # NOTE: Without the - 2, to account for the '|' borders,
         #       app apparently hangs.
         full_width = click.get_terminal_size()[0] - 2
-        if not self.style_classes['content-width']:
+        if not self.style_classes["content-width"]:
             return full_width
-        avail_width = min(self.style_classes['content-width'], full_width)
+        avail_width = min(self.style_classes["content-width"], full_width)
         return avail_width
 
     # ***
@@ -286,8 +285,8 @@ class Carousel(object):
         if not self.edits_manager.is_dirty:
             # No Facts edited.
             return True
-        question = _('\nReally exit without saving?')
-        allow_mash_quit = self.controller.config['dev.allow_mash_quit']
+        question = _("\nReally exit without saving?")
+        allow_mash_quit = self.controller.config["dev.allow_mash_quit"]
         try:
             confirmed = confirm(
                 question,
@@ -299,7 +298,7 @@ class Carousel(object):
         return confirmed
 
     def process_save_early(self):
-        question = _('\nReally save without verifying all Facts?')
+        question = _("\nReally save without verifying all Facts?")
         confirmed = confirm(question, erase_when_done=True)
         return confirmed
 
@@ -315,7 +314,7 @@ class Carousel(object):
         return used_prompt
 
     def user_prompt_edit_fact(self, used_prompt):
-        edit_fact = self.edits_manager.undoable_editable_fact(what='prompt-user')
+        edit_fact = self.edits_manager.undoable_editable_fact(what="prompt-user")
         used_prompt = self.prompt_user(edit_fact, used_prompt)
         self.edits_manager.apply_edits(edit_fact)
         self.zone_manager.reset_diff_fact()
@@ -369,13 +368,13 @@ class Carousel(object):
         #     https://stackoverflow.com/questions/510357/
         #       python-read-a-single-character-from-the-user
         #   but that seems like a lot of extra work for error handler.
-        click.echo(_('Press ENTER to acknowledge.'))
+        click.echo(_("Press ENTER to acknowledge."))
         # Be sure to gobble more than user types, lest it goes to PTK input.
-        stdin_text = click.get_text_stream('stdin')
+        stdin_text = click.get_text_stream("stdin")
         try:
             stdin_text.readline()
         except KeyboardInterrupt:
-            click.echo(_('You got it!'))
+            click.echo(_("You got it!"))
             return False
         return True
 
@@ -388,7 +387,7 @@ class Carousel(object):
         # with the application and it exited its loop deliberately (it'll be
         # True or False).
         self.enduring_edit = None
-        self.restrict_edit = ''
+        self.restrict_edit = ""
         rerun_cnt = 0
         keep_running = True
         # MAGIC_NUMBER: CPR_ISSUE: Do not rerun > once, lest stuck in feedback loop.
@@ -397,7 +396,7 @@ class Carousel(object):
             rerun_cnt += 1
 
     def runloop_run(self, **kwargs):
-        profile_elapsed('To dob runloop')
+        profile_elapsed("To dob runloop")
 
         # CPR_ISSUE: (lb): 2019-01-27: This might be the Ultimate Fix, by which
         # I mean I added this code last, and it might all that's needed to get
@@ -449,7 +448,9 @@ class Carousel(object):
         tck_task = self.event_loop.create_task(self.tick_tock_now())
 
         # Leave tck_task out of tasks and manage separately.
-        tasks = [run_async, ]
+        tasks = [
+            run_async,
+        ]
 
         # Run the Carousel!
         self.event_loop.run_until_complete(asyncio.wait(tasks))
@@ -468,14 +469,20 @@ class Carousel(object):
             # Ref:
             #   prompt_toolkit/renderer.py
             #       request_absolute_cursor_position
-            self.controller.client_logger.warning('KLUDGE! Re-running Carousel.')
+            self.controller.client_logger.warning("KLUDGE! Re-running Carousel.")
             rerun = True
 
         tck_task.cancel()
         # Similar to `await tck_task`, but this method not async function, so
         # go through the event loop. -In past, (lb)'s seen warning if skipped:
         #   RuntimeWarning: coroutine 'wait' was never    awaited
-        self.event_loop.run_until_complete(asyncio.wait([tck_task, ]))
+        self.event_loop.run_until_complete(
+            asyncio.wait(
+                [
+                    tck_task,
+                ]
+            )
+        )
 
         return rerun
 
@@ -483,6 +490,7 @@ class Carousel(object):
 
     async def tick_tock_now(self):
         """"""
+
         async def _tick_tock_now():
             tocking = True
             while tocking:
@@ -546,7 +554,7 @@ class Carousel(object):
         if len(event.key_sequence) != 1:
             return
         kseq = event.key_sequence[0]
-        if kseq.key == 'escape' and kseq.data != '\x1b':
+        if kseq.key == "escape" and kseq.data != "\x1b":
             return
         # Allow easy 'q' cancel on editing existing Facts.
         # FIXME: Should allow for new_facts, too... but we don't track edited
@@ -591,11 +599,13 @@ class Carousel(object):
         edit_cnt = len(saved_facts)
         self.zone_manager.finalize_jump(
             curr_fact,
-            noop_msg=_('Nothing to save'),
-            jump_msg=_('Saved {} {}'.format(
-                edit_cnt,
-                Inflector(English).conditional_plural(edit_cnt, 'fact'),
-            )),
+            noop_msg=_("Nothing to save"),
+            jump_msg=_(
+                "Saved {} {}".format(
+                    edit_cnt,
+                    Inflector(English).conditional_plural(edit_cnt, "fact"),
+                )
+            ),
         )
 
     # ***
@@ -603,29 +613,30 @@ class Carousel(object):
     def error_callback(self, errmsg):
         show_message(
             self.zone_manager.root,
-            _('Wah wah'),
+            _("Wah wah"),
             _("dob is buggy! {0}").format(errmsg),
         )
 
     def show_plugin_error(self, errmsg):
         show_message(
             self.zone_manager.root,
-            _('Oops!'),
-            _('{0}').format(errmsg),
+            _("Oops!"),
+            _("{0}").format(errmsg),
         )
 
     # ***
 
     def dev_breakpoint(self, event):
-        if not self.controller.config['dev.catch_errors']:
+        if not self.controller.config["dev.catch_errors"]:
             self.controller.client_logger.warning(
-                'Please enable ‘dev.catch_errors’ to use live debugging.'
+                "Please enable ‘dev.catch_errors’ to use live debugging."
             )
             return
         self.pdb_set_trace(event)
 
     def pdb_set_trace(self, event):
         import pdb
+
         # Just some convenience variables for the developer.
         # F841: local variable '...' is assigned to but never used
         edits = self.edits_manager  # noqa: F841
@@ -650,4 +661,3 @@ class Carousel(object):
             (event is None) or (event.app is self.zone_manager.application),
         )
         self.zone_manager.application.renderer.clear()
-

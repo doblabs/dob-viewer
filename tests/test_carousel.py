@@ -28,7 +28,7 @@ from dob_viewer.traverser.save_confirmer import prompt_and_save_confirmer
 
 @pytest.fixture
 def new_facts(controller_with_logging):
-    input_stream = open(IMPORT_PATH, 'r')
+    input_stream = open(IMPORT_PATH, "r")
     new_facts = parse_input(
         controller_with_logging,
         file_in=input_stream,
@@ -37,7 +37,7 @@ def new_facts(controller_with_logging):
     return new_facts
 
 
-IMPORT_PATH = './tests/fixtures/test-import-fixture.rst'
+IMPORT_PATH = "./tests/fixtures/test-import-fixture.rst"
 """Path to the import file fixture, which is full of Factoids."""
 
 
@@ -60,7 +60,7 @@ class TestBasicCarousel(object):
         # for overriding I/O. See decent examples under prompt_toolkit/tests/.
 
         # The Carousel will prompt for confirmation on quit without having saved.
-        mocker.patch.object(re_confirm, 'confirm', return_value=True)
+        mocker.patch.object(re_confirm, "confirm", return_value=True)
 
         inp = create_pipe_input()
         try:
@@ -79,7 +79,7 @@ class TestBasicCarousel(object):
     # ***
 
     @pytest.mark.parametrize(
-        ('key_sequence'),
+        ("key_sequence"),
         [
             # *** test_basic_import4_left_arrow_three_time
             #
@@ -89,39 +89,37 @@ class TestBasicCarousel(object):
             # - Second time causes at-first-fact message.
             # - Third time's a charm.
             [
-                '\x1bOD',   # Left arrow ←.
-                '\x1bOD',   # Left arrow ←.
-                '\x1bOD',   # Left arrow ←.
-                '\x11',     # Ctrl-Q.
-                '\x11',     # Ctrl-Q.
-                '\x11',     # Ctrl-Q.
+                "\x1bOD",  # Left arrow ←.
+                "\x1bOD",  # Left arrow ←.
+                "\x1bOD",  # Left arrow ←.
+                "\x11",  # Ctrl-Q.
+                "\x11",  # Ctrl-Q.
+                "\x11",  # Ctrl-Q.
             ],
-
             # *** test_basic_import4_right_arrow_left_arrow
             #
             [
                 # Arrow right, arrow left.
-                '\x1bOD',
-                '\x1bOC',
+                "\x1bOD",
+                "\x1bOC",
                 # Three Cancels don't make a Right.
-                '\x11',
-                '\x11',
-                '\x11',
+                "\x11",
+                "\x11",
+                "\x11",
                 # FIXME/2019-02-20: Because, what, arrowing left goes to
                 #                   Previous Big Bang Gap Fact,
                 #                   so extra Ctrl-Q needed?
                 #                   Oddly, in log, I still only see 2 exit_command's!
                 #                   But apparently we need 4 strokes to exit.
-                '\x11',
+                "\x11",
             ],
-
             # *** test_basic_import4_G_go_last
             [
                 # Jump to final fact.
-                'G',
-                '\x11',
-                '\x11',
-                '\x11',
+                "G",
+                "\x11",
+                "\x11",
+                "\x11",
             ],
         ],
     )
@@ -135,7 +133,6 @@ class TestBasicCarousel(object):
         self._feed_cli_with_input(
             controller_with_logging,
             new_facts,
-            ''.join(key_sequence),
+            "".join(key_sequence),
             mocker,
         )
-

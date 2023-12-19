@@ -23,7 +23,7 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.shortcuts import PromptSession
 
 __all__ = (
-    'confirm',
+    "confirm",
     # Private:
     #  'create_confirm_session',
 )
@@ -31,24 +31,26 @@ __all__ = (
 # (lb): This is ripped from PPT's shortcuts/prompt.py
 
 
-def create_confirm_session(message, suffix=' (y/n) ', allow_mash_quit=False, **kwargs):
+def create_confirm_session(message, suffix=" (y/n) ", allow_mash_quit=False, **kwargs):
     """
     Create a `PromptSession` object for the 'confirm' function.
     """
     assert isinstance(message, str)
     bindings = KeyBindings()
 
-    count = {'cc': 0, }
+    count = {
+        "cc": 0,
+    }
 
-    @bindings.add('y')
-    @bindings.add('Y')
+    @bindings.add("y")
+    @bindings.add("Y")
     def yes(event):
-        count['cc'] = 0
-        session.default_buffer.text = 'y'
+        count["cc"] = 0
+        session.default_buffer.text = "y"
         event.app.exit(result=True)
 
-    @bindings.add('n')
-    @bindings.add('N')
+    @bindings.add("n")
+    @bindings.add("N")
     # (lb): PPT's confirm behavior is to assume Ctrl-c means No,
     #   in which case you end up with the following flow in dob:
     #       Ctrl-c => Break out of Application and Bring up confirmation;
@@ -60,8 +62,8 @@ def create_confirm_session(message, suffix=' (y/n) ', allow_mash_quit=False, **k
     #   if nothing else.
     # @bindings.add('c-c')
     def no(event):
-        count['cc'] = 0
-        session.default_buffer.text = 'n'
+        count["cc"] = 0
+        session.default_buffer.text = "n"
         event.app.exit(result=False)
 
     # (lb): 2018-06-17: Here's the workflow I'd think.
@@ -69,10 +71,10 @@ def create_confirm_session(message, suffix=' (y/n) ', allow_mash_quit=False, **k
     #   Second Ctrl-c: Ignored (increment count from 0 to 1).
     #   Third Ctrl-c: Bingo! Really exit.
     # MAYBE: Keep temp file of edits and tell user where/how they can recover.
-    @bindings.add('c-q')
+    @bindings.add("c-q")
     def mash(event):
-        count['cc'] += 1
-        if allow_mash_quit and count['cc'] > 1:
+        count["cc"] += 1
+        if allow_mash_quit and count["cc"] > 1:
             event.app.exit(result=True)
 
     @bindings.add(Keys.Any)
@@ -85,10 +87,9 @@ def create_confirm_session(message, suffix=' (y/n) ', allow_mash_quit=False, **k
     return session
 
 
-def confirm(message='Confirm?', suffix=' (y/n) ', allow_mash_quit=False, **kwargs):
+def confirm(message="Confirm?", suffix=" (y/n) ", allow_mash_quit=False, **kwargs):
     """
     Display a confirmation prompt that returns True/False.
     """
     session = create_confirm_session(message, suffix, allow_mash_quit, **kwargs)
     return session.prompt()
-

@@ -25,13 +25,12 @@ from .group_chained import sorted_facts_list
 from .redo_undo_edit import RedoUndoEdit
 from .start_end_edit import StartEndEdit
 
-__all__ = (
-    'EditsManager',
-)
+__all__ = ("EditsManager",)
 
 
 class EditsManager(object):
     """"""
+
     def __init__(
         self,
         controller,
@@ -167,7 +166,7 @@ class EditsManager(object):
     def curr_fact(self, curr_fact):
         """"""
         self.controller.client_logger.debug(
-            '\n- curr: {}'.format(curr_fact.short),
+            "\n- curr: {}".format(curr_fact.short),
         )
         if self.conjoined.curr_fact is not curr_fact:
             self.clipboard.reset_paste()
@@ -221,9 +220,7 @@ class EditsManager(object):
         Returns list of edited and new facts to persist (to database, export file, etc.).
         """
         prepared_facts_from_edit = sorted_facts_list(self.edit_facts.values())
-        prepared_facts_from_view = [
-            fact for fact in self.conjoined.facts if fact.dirty
-        ]
+        prepared_facts_from_view = [fact for fact in self.conjoined.facts if fact.dirty]
         self.controller.affirm(prepared_facts_from_edit == prepared_facts_from_view)
         return prepared_facts_from_edit
 
@@ -322,7 +319,7 @@ class EditsManager(object):
             self.manage_edited_edit_facts(edit_fact)
 
     def manage_edited_dirty_deleted(self, edit_fact, undelete=False):
-        edit_fact.dirty_reasons.add('unsaved-fact')
+        edit_fact.dirty_reasons.add("unsaved-fact")
         if not undelete:
             return
 
@@ -441,9 +438,10 @@ class EditsManager(object):
         """"""
         if not self.clipboard.clipboard:
             return None
-        edit_fact = self.undoable_editable_fact(what='paste-copied')
+        edit_fact = self.undoable_editable_fact(what="paste-copied")
         pasted_what = self.clipboard.paste_copied_meta(
-            edit_fact, reset_fact=self.reset_copied_meta,
+            edit_fact,
+            reset_fact=self.reset_copied_meta,
         )
         self.apply_edits(edit_fact)
 
@@ -493,7 +491,9 @@ class EditsManager(object):
 
         def parse_factoid():
             user_fact = must_create_fact_from_factoid(
-                self.controller, factoid, time_hint='verify_none',
+                self.controller,
+                factoid,
+                time_hint="verify_none",
             )
             return user_fact
 
@@ -524,7 +524,7 @@ class EditsManager(object):
             return [tag.name for tag in fact.tags]
 
         def apply_edits(user_fact, edit_fact):
-            self.undoable_editable_fact(what='paste-factoid', edit_fact=edit_fact)
+            self.undoable_editable_fact(what="paste-factoid", edit_fact=edit_fact)
             if not edit_fact.activity.equal_fields(user_fact.activity):
                 edit_fact.activity = user_fact.activity
             # Send new tag name strings to rags_replace, so it'll look through
@@ -632,7 +632,8 @@ class EditsManager(object):
             edited_facts = self.prepared_facts
             ignore_pks = [fact.pk for fact in edited_facts]
             keep_fact, saved_facts = save_edited_trustworthy(
-                edited_facts, ignore_pks,
+                edited_facts,
+                ignore_pks,
             )
             keep_fact = reset_editing(keep_fact, saved_facts, curr_fact)
             # Return fact for zone_manager to jump to.
@@ -668,22 +669,24 @@ class EditsManager(object):
                 edit_fact.pk = None
             if edit_fact.pk is None and edit_fact.deleted:
                 self.controller.client_logger.debug(
-                    'Deleted fact: {}'.format(edit_fact.short)
+                    "Deleted fact: {}".format(edit_fact.short)
                 )
                 return []
             try:
                 return self.controller.facts.save(
-                    edit_fact, ignore_pks=ignore_pks,
+                    edit_fact,
+                    ignore_pks=ignore_pks,
                 )
             except Exception as err:
                 import traceback
+
                 self.controller.client_logger.debug(traceback.format_exc())
                 # A failure on a CLI command (without PPT interface) might do:
                 #   import traceback
                 #   traceback.print_exc()
                 #   exit_warning(str(err))
                 # But Carousel has a popup message handler.
-                self.error_callback(errmsg='Failed to save fact!\n\n  “{}”'.format(err))
+                self.error_callback(errmsg="Failed to save fact!\n\n  “{}”".format(err))
                 return None
 
         def affirm_saved_edited_fact(edit_fact, new_fact):
@@ -732,4 +735,3 @@ class EditsManager(object):
             return keep_fact
 
         return _save_edited_facts()
-

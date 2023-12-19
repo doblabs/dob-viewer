@@ -21,12 +21,11 @@ from dob_bright.styling.load_ignore import load_no_completion
 from .content_lexer import load_content_lexer
 
 
-__all__ = (
-    'prompt_and_save_confirmer',
-)
+__all__ = ("prompt_and_save_confirmer",)
 
 
 # ***
+
 
 def prompt_and_save_confirmer(
     controller,

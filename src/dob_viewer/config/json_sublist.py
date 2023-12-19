@@ -21,16 +21,14 @@ import json
 
 from gettext import gettext as _
 
-__all__ = (
-    'json_load_sublisted',
-)
+__all__ = ("json_load_sublisted",)
 
 
 def json_load_sublisted(cfgname, cfgval):
     def _json_load_sublisted():
         # (lb): We could skip the startswith check and just use except,
         #       but it feels more readable this way.
-        if not cfgval.startswith('['):
+        if not cfgval.startswith("["):
             # Just a string. Except don't bother with the empty string,
             # which is used to disable a key command mapping.
             if cfgval:
@@ -53,13 +51,11 @@ def json_load_sublisted(cfgname, cfgval):
     def verify_all_lists(keycodes):
         return all(isinstance(keycode, list) for keycode in keycodes)
 
-    def error_not_list_within_lists(err=''):
-        append_err = ' (“{}”)'.format(err) if err else ''
-        return (_(
-            'ERROR: Key binding for ‘{}’ should be single key'
-            ' or list of lists, not: {}{}'
-            .format(cfgname, cfgval, append_err)
-        ))
+    def error_not_list_within_lists(err=""):
+        append_err = " (“{}”)".format(err) if err else ""
+        return _(
+            "ERROR: Key binding for ‘{}’ should be single key"
+            " or list of lists, not: {}{}".format(cfgname, cfgval, append_err)
+        )
 
     return _json_load_sublisted()
-

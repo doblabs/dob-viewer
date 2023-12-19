@@ -23,12 +23,13 @@ from nark.items.fact import SinceTimeBegan, UntilTimeStops
 from sortedcontainers import SortedKeyList
 
 __all__ = (
-    'GroupChained',
-    'sorted_facts_list',
+    "GroupChained",
+    "sorted_facts_list",
 )
 
 
 # ***
+
 
 def integer_range_groupify(integers):
     from itertools import groupby
@@ -46,7 +47,13 @@ def integer_range_groupify(integers):
         prev_val = int(srtd[prev_idx])
         if ix[1] == prev_val + 1:
             # Previous item value is 1 before this one, so walk backwards.
-            return range_key_recursive(srtd, (prev_idx, prev_val,))
+            return range_key_recursive(
+                srtd,
+                (
+                    prev_idx,
+                    prev_val,
+                ),
+            )
         return ix[1]
 
     def range_key(srtd, ix):
@@ -67,6 +74,7 @@ def integer_range_groupify(integers):
 
 # ***
 
+
 def sorted_facts_list(facts=None):
     sorted_facts_list = SortedKeyList(
         iterable=facts,
@@ -80,6 +88,7 @@ def sorted_facts_list(facts=None):
 
 # ***
 
+
 class GroupChained(object):
     """
     A GroupChained represents an ordered list of Facts.
@@ -88,6 +97,7 @@ class GroupChained(object):
     a mix of stored Facts, new Facts, and gap Facts.
     Or even no Facts, if group is simply claiming time.
     """
+
     # FIXME/2019-12-06: (lb): Just testing. Remove affirm arg. later.
     # def __init__(self, facts=None):
     def __init__(self, facts=None, affirm=None):
@@ -153,15 +163,15 @@ class GroupChained(object):
     def __str__(self):
         def range_str(grp):
             if len(grp) == 0:
-                return 'No IDs!'
+                return "No IDs!"
             elif len(grp) == 1:
-                return '{}'.format(grp[0])
+                return "{}".format(grp[0])
             else:
                 lhs = grp[0]
                 rhs = grp[-1]
                 if grp[1] < 0:
                     lhs, rhs = rhs, lhs
-                return '{} to {}'.format(lhs, rhs)
+                return "{} to {}".format(lhs, rhs)
 
         def assemble_pk_ranges():
             # 2019-12-03: (lb): Cull Fact(s) with pk == None.
@@ -174,13 +184,13 @@ class GroupChained(object):
             self.affirm(len(facts) == len(self.facts))
             pks = [str(fact.pk) for fact in facts]
             grouped = integer_range_groupify(pks)
-            pk_ranges = ', '.join([range_str(grp) for grp in grouped])
+            pk_ranges = ", ".join([range_str(grp) for grp in grouped])
             return len(pks), pk_ranges
 
         num_pks, pk_ranges = assemble_pk_ranges()
-        return _(
-            "‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}"
-        ).format(self.time_since, self.time_until, num_pks, pk_ranges)
+        return _("‘{0}’ to ‘{1}’ / No. Facts: {2} / PK(s): {3}").format(
+            self.time_since, self.time_until, num_pks, pk_ranges
+        )
 
     # ***
 
@@ -213,21 +223,18 @@ class GroupChained(object):
             return
         if (
             (facts[0].start < self.time_since)
-            or (
-                (facts[-1].end is None)
-                and (self.time_until < UntilTimeStops)
-            )
-            or (
-                (facts[-1].end is not None)
-                and (facts[-1].end > self.time_until)
-            )
+            or ((facts[-1].end is None) and (self.time_until < UntilTimeStops))
+            or ((facts[-1].end is not None) and (facts[-1].end > self.time_until))
         ):
             return False
         return True
 
     @property
     def sorty_times(self):
-        return (self.time_since, self.time_until, )
+        return (
+            self.time_since,
+            self.time_until,
+        )
 
     def reset_time_window(self):
         # Default to time window not defined (as opposed to empty
@@ -266,4 +273,3 @@ class GroupChained(object):
 
     def pop(self, index):
         return self.facts.pop(index)
-

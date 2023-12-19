@@ -21,9 +21,7 @@ from datetime import timedelta
 
 from .exceptions import catch_action_exception
 
-__all__ = (
-    'ZoneDetails_TimeEnd',
-)
+__all__ = ("ZoneDetails_TimeEnd",)
 
 
 class ZoneDetails_TimeEnd(object):
@@ -34,7 +32,9 @@ class ZoneDetails_TimeEnd(object):
 
     def add_header_end_time(self):
         self.widgets_end = self.add_header_section(
-            'end', 'end_fmt_local_nowwed', editable=True,
+            "end",
+            "end_fmt_local_nowwed",
+            editable=True,
             mouse_handler=self.header_time_end_mouse_handler,
         )
 
@@ -79,9 +79,8 @@ class ZoneDetails_TimeEnd(object):
 
         edits_manager = self.carousel.edits_manager
         edit_next = edits_manager.editable_fact_next(edit_fact)
-        if (
-            edit_next.is_gap
-            and self.carousel.edits_manager.conjoined.is_final_fact(edit_next)
+        if edit_next.is_gap and self.carousel.edits_manager.conjoined.is_final_fact(
+            edit_next
         ):
             # Use case: User sets end time of active Fact, then tabs away
             # and tabs back, presses Ctrl-U to clear the time entry, then
@@ -113,7 +112,7 @@ class ZoneDetails_TimeEnd(object):
         best_time = edit_time
         if best_time and edit_next and edit_next.end and (best_time > edit_next.end):
             # Adjust adjacent fact's time width to be no less that fact_min_delta.
-            min_delta = int(self.carousel.controller.config['time.fact_min_delta'])
+            min_delta = int(self.carousel.controller.config["time.fact_min_delta"])
             # We do not want to make momentaneous facts, so use at least 1 minute.
             min_delta = max(1, min_delta)
             best_time = edit_next.end - timedelta(minutes=min_delta)
@@ -127,12 +126,9 @@ class ZoneDetails_TimeEnd(object):
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_next:
-            if ((
-                edit_next.start
-                and edit_fact.end
-                and (edit_fact.end > edit_next.start)
-            ) or edit_next.is_gap
-            ):
+            if (
+                edit_next.start and edit_fact.end and (edit_fact.end > edit_next.start)
+            ) or edit_next.is_gap:
                 undoable_facts.append(edit_next.copy())
                 edit_next.start = was_time
                 edited_facts.append(edit_next)
@@ -144,10 +140,9 @@ class ZoneDetails_TimeEnd(object):
                 edit_next.prev_fact = None
         else:
             edit_fact.next_fact = None
-        edits_manager.add_undoable(undoable_facts, what='header-edit')
+        edits_manager.add_undoable(undoable_facts, what="header-edit")
         edits_manager.apply_edits(*edited_facts)
         if edit_time is None:
             # (lb): This feels a little kludgy, or like this belongs elsewhere...
             self.carousel.edits_manager.conjoined.pop_final_gap_fact()
         return True
-

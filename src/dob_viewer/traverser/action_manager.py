@@ -25,13 +25,12 @@ from .interface_keys import (
 )
 from .key_action_map import KeyActionMap
 
-__all__ = (
-    'ActionManager',
-)
+__all__ = ("ActionManager",)
 
 
 class ActionManager(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
 
@@ -137,7 +136,7 @@ class ActionManager(object):
         bindings += self.key_bonder.command_modifier(self.key_action_map)
         bindings += self.key_bonder.create_delete_fact(self.key_action_map)
         bindings += self.key_bonder.clipboard(self.key_action_map)
-        bindings += self.key_bonder.undo_redo(self.key_action_map, 'content')
+        bindings += self.key_bonder.undo_redo(self.key_action_map, "content")
         bindings += self.key_bonder.shortcuts(self.key_action_map)
         bindings += self.key_bonder.begin_commando(self.key_action_map)
         bindings += self.key_bonder.custom_factoids(self.key_action_map)
@@ -148,7 +147,7 @@ class ActionManager(object):
     def setup_key_bindings_edit_time(self):
         bindings = []
         bindings += self.key_bonder.edit_time(self.key_action_map)
-        bindings += self.key_bonder.undo_redo(self.key_action_map, 'edit_time')
+        bindings += self.key_bonder.undo_redo(self.key_action_map, "edit_time")
         bindings += self.key_bindings_shared
 
         self.key_bindings_edit_time = self.key_bonder.make_bindings(bindings)
@@ -170,4 +169,3 @@ class ActionManager(object):
         bindings += self.key_bonder.going_delta_time(self.key_action_map)
         # SKIP: bindings += self.key_bindings_shared
         self.key_bindings_delta_time = self.key_bonder.make_bindings(bindings)
-

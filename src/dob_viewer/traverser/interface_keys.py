@@ -29,15 +29,13 @@ from dob_prompt.prompters.interface_bonds import KeyBond
 from ..config.custom_paste import DobViewerConfigCustomPaste
 from ..config.json_sublist import json_load_sublisted
 
-__all__ = (
-    'KeyBonder',
-)
+__all__ = ("KeyBonder",)
 
 
 # ***
 
-class KeyBonder(object):
 
+class KeyBonder(object):
     def __init__(self, config):
         self.config = config
         self.errors = []
@@ -45,12 +43,17 @@ class KeyBonder(object):
 
     # ***
 
-    KEYBONDS_CFG_SECTION = 'editor-keys'
+    KEYBONDS_CFG_SECTION = "editor-keys"
 
     def _key_bonds(
-        self, action_map, action_name, config_name=None, config_section=None,
+        self,
+        action_map,
+        action_name,
+        config_name=None,
+        config_section=None,
     ):
         """"""
+
         def __key_bonds():
             action, cfgval = resolve_action_cfgval()
             keybonds = build_bonds(action, cfgval)
@@ -83,6 +86,7 @@ class KeyBonder(object):
 
     def make_bindings(self, key_bonds):
         """"""
+
         def _make_bindings():
             key_bindings = KeyBindings()
             [add_binding(key_bindings, keyb) for keyb in key_bonds]
@@ -92,10 +96,13 @@ class KeyBonder(object):
             try:
                 add_binding_str_or_list(key_bindings, keyb)
             except Exception as err:
-                self.errors.append(_(
-                    'ERROR: Failed to add a key binding for ‘{}’: “{}”'
-                    .format(keyb.action.__name__, str(err))
-                ))
+                self.errors.append(
+                    _(
+                        "ERROR: Failed to add a key binding for ‘{}’: “{}”".format(
+                            keyb.action.__name__, str(err)
+                        )
+                    )
+                )
 
         def add_binding_str_or_list(key_bindings, keyb):
             # YOU: Toss an eager=True to the add if you think PTK is
@@ -118,7 +125,7 @@ class KeyBonder(object):
 
     def _load_date_separators(self):
         editor_keys = KeyBonder.KEYBONDS_CFG_SECTION
-        cfgname = 'date_separators'
+        cfgname = "date_separators"
         date_seps = self.config[editor_keys][cfgname]
         self._date_separators, errmsg = json_load_sublisted(cfgname, date_seps)
         if errmsg is not None:
@@ -130,7 +137,7 @@ class KeyBonder(object):
     def print_warnings(self):
         if not self.errors:
             return
-        echo_warning('\n'.join(self.errors))
+        echo_warning("\n".join(self.errors))
         self.errors = []
 
     # ***
@@ -139,11 +146,11 @@ class KeyBonder(object):
         key_bonds = []
         # Use the 'focus_next' config value as the key to wire
         # to the action_map.focus_next handler.
-        key_bonds += self._key_bonds(action_map, 'focus_next')
-        key_bonds += self._key_bonds(action_map, 'focus_previous')
+        key_bonds += self._key_bonds(action_map, "focus_next")
+        key_bonds += self._key_bonds(action_map, "focus_previous")
         # Bindings to edit time are always available (and toggle focus when repeated).
-        key_bonds += self._key_bonds(action_map, 'edit_time_start')
-        key_bonds += self._key_bonds(action_map, 'edit_time_end')
+        key_bonds += self._key_bonds(action_map, "edit_time_start")
+        key_bonds += self._key_bonds(action_map, "edit_time_end")
         return key_bonds
 
     # ***
@@ -151,20 +158,20 @@ class KeyBonder(object):
     def save_and_quit(self, action_map):
         key_bonds = []
         # Save Facts command is where you'd expect it.
-        key_bonds += self._key_bonds(action_map, 'save_edited_and_live')
-        key_bonds += self._key_bonds(action_map, 'save_edited_and_exit')
+        key_bonds += self._key_bonds(action_map, "save_edited_and_live")
+        key_bonds += self._key_bonds(action_map, "save_edited_and_exit")
         # User can always real-quit, but prompted if edits.
-        key_bonds += self._key_bonds(action_map, 'exit_command')
+        key_bonds += self._key_bonds(action_map, "exit_command")
         # User can soft-cancel if they have not edited.
-        key_bonds += self._key_bonds(action_map, 'exit_quietly')
+        key_bonds += self._key_bonds(action_map, "exit_quietly")
         return key_bonds
 
     # ***
 
     def edit_time(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'edit_time_enter')
-        key_bonds += self._key_bonds(action_map, 'toggle_focus_description')
+        key_bonds += self._key_bonds(action_map, "edit_time_enter")
+        key_bonds += self._key_bonds(action_map, "toggle_focus_description")
         # By default, PPT will add any key we don't capture to active widget's
         # buffer, but we'll override so we can ignore alpha characters.
         key_bonds += [KeyBond(Keys.Any, action=action_map.edit_time_any_key)]
@@ -175,10 +182,14 @@ class KeyBonder(object):
     def undo_redo(self, action_map, context):
         key_bonds = []
         key_bonds += self._key_bonds(
-            action_map, 'undo_command_{}'.format(context), 'undo_command',
+            action_map,
+            "undo_command_{}".format(context),
+            "undo_command",
         )
         key_bonds += self._key_bonds(
-            action_map, 'redo_command_{}'.format(context), 'redo_command',
+            action_map,
+            "redo_command_{}".format(context),
+            "redo_command",
         )
         return key_bonds
 
@@ -187,28 +198,28 @@ class KeyBonder(object):
     def normal(self, action_map):
         key_bonds = []
 
-        key_bonds += self._key_bonds(action_map, 'rotate_help')
-        key_bonds += self._key_bonds(action_map, 'dev_breakpoint')
+        key_bonds += self._key_bonds(action_map, "rotate_help")
+        key_bonds += self._key_bonds(action_map, "dev_breakpoint")
 
-        key_bonds += self._key_bonds(action_map, 'jump_fact_dec')
-        key_bonds += self._key_bonds(action_map, 'jump_fact_inc')
+        key_bonds += self._key_bonds(action_map, "jump_fact_dec")
+        key_bonds += self._key_bonds(action_map, "jump_fact_inc")
 
-        key_bonds += self._key_bonds(action_map, 'jump_day_dec')
-        key_bonds += self._key_bonds(action_map, 'jump_day_inc')
+        key_bonds += self._key_bonds(action_map, "jump_day_dec")
+        key_bonds += self._key_bonds(action_map, "jump_day_inc")
 
-        key_bonds += self._key_bonds(action_map, 'jump_rift_dec')
-        key_bonds += self._key_bonds(action_map, 'jump_rift_inc')
+        key_bonds += self._key_bonds(action_map, "jump_rift_dec")
+        key_bonds += self._key_bonds(action_map, "jump_rift_inc")
 
-        key_bonds += self._key_bonds(action_map, 'jump_fact_first')
-        key_bonds += self._key_bonds(action_map, 'jump_fact_final')
+        key_bonds += self._key_bonds(action_map, "jump_fact_first")
+        key_bonds += self._key_bonds(action_map, "jump_fact_final")
 
-        key_bonds += self._key_bonds(action_map, 'cursor_up_one')
-        key_bonds += self._key_bonds(action_map, 'cursor_down_one')
+        key_bonds += self._key_bonds(action_map, "cursor_up_one")
+        key_bonds += self._key_bonds(action_map, "cursor_down_one")
 
-        key_bonds += self._key_bonds(action_map, 'scroll_up')
-        key_bonds += self._key_bonds(action_map, 'scroll_down')
-        key_bonds += self._key_bonds(action_map, 'scroll_top')
-        key_bonds += self._key_bonds(action_map, 'scroll_bottom')
+        key_bonds += self._key_bonds(action_map, "scroll_up")
+        key_bonds += self._key_bonds(action_map, "scroll_down")
+        key_bonds += self._key_bonds(action_map, "scroll_top")
+        key_bonds += self._key_bonds(action_map, "scroll_bottom")
 
         # FIXME/BACKLOG: Search feature. E.g., like Vim's /:
         #   KeyBond('/', action=zone_lowdown.start_search),
@@ -225,35 +236,35 @@ class KeyBonder(object):
 
     def edit_fact(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'edit_fact')
-        key_bonds += self._key_bonds(action_map, 'edit_actegory')
-        key_bonds += self._key_bonds(action_map, 'edit_description')
-        key_bonds += self._key_bonds(action_map, 'edit_tags')
+        key_bonds += self._key_bonds(action_map, "edit_fact")
+        key_bonds += self._key_bonds(action_map, "edit_actegory")
+        key_bonds += self._key_bonds(action_map, "edit_description")
+        key_bonds += self._key_bonds(action_map, "edit_tags")
         return key_bonds
 
     # ***
 
     def nudge_time(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_start')
-        key_bonds += self._key_bonds(action_map, 'edit_time_increment_start')
-        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_end')
-        key_bonds += self._key_bonds(action_map, 'edit_time_increment_end')
-        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_both')
-        key_bonds += self._key_bonds(action_map, 'edit_time_increment_both')
-        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_start_5min')
-        key_bonds += self._key_bonds(action_map, 'edit_time_increment_start_5min')
-        key_bonds += self._key_bonds(action_map, 'edit_time_decrement_end_5min')
-        key_bonds += self._key_bonds(action_map, 'edit_time_increment_end_5min')
+        key_bonds += self._key_bonds(action_map, "edit_time_decrement_start")
+        key_bonds += self._key_bonds(action_map, "edit_time_increment_start")
+        key_bonds += self._key_bonds(action_map, "edit_time_decrement_end")
+        key_bonds += self._key_bonds(action_map, "edit_time_increment_end")
+        key_bonds += self._key_bonds(action_map, "edit_time_decrement_both")
+        key_bonds += self._key_bonds(action_map, "edit_time_increment_both")
+        key_bonds += self._key_bonds(action_map, "edit_time_decrement_start_5min")
+        key_bonds += self._key_bonds(action_map, "edit_time_increment_start_5min")
+        key_bonds += self._key_bonds(action_map, "edit_time_decrement_end_5min")
+        key_bonds += self._key_bonds(action_map, "edit_time_increment_end_5min")
         return key_bonds
 
     # ***
 
     def command_modifier(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'allow_time_gap')
+        key_bonds += self._key_bonds(action_map, "allow_time_gap")
         key_bonds += [KeyBond(Keys.Any, action=action_map.command_modifier_any_key)]
-        key_bonds += [KeyBond('c-h', action=action_map.backspace_command_modifier)]
+        key_bonds += [KeyBond("c-h", action=action_map.backspace_command_modifier)]
         return key_bonds
 
     # ***
@@ -263,48 +274,48 @@ class KeyBonder(object):
 
         # FIXME/2020-04-11: Not implemented:
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'fact_split')
-        key_bonds += self._key_bonds(action_map, 'fact_erase')
-        key_bonds += self._key_bonds(action_map, 'fact_merge_prev')
-        key_bonds += self._key_bonds(action_map, 'fact_merge_next')
+        key_bonds += self._key_bonds(action_map, "fact_split")
+        key_bonds += self._key_bonds(action_map, "fact_erase")
+        key_bonds += self._key_bonds(action_map, "fact_merge_prev")
+        key_bonds += self._key_bonds(action_map, "fact_merge_next")
         return key_bonds
 
     # ***
 
     def clipboard(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'fact_copy_fact')
-        key_bonds += self._key_bonds(action_map, 'fact_cut')
-        key_bonds += self._key_bonds(action_map, 'fact_paste')
-        key_bonds += self._key_bonds(action_map, 'fact_copy_activity')
-        key_bonds += self._key_bonds(action_map, 'fact_copy_tags')
-        key_bonds += self._key_bonds(action_map, 'fact_copy_description')
+        key_bonds += self._key_bonds(action_map, "fact_copy_fact")
+        key_bonds += self._key_bonds(action_map, "fact_cut")
+        key_bonds += self._key_bonds(action_map, "fact_paste")
+        key_bonds += self._key_bonds(action_map, "fact_copy_activity")
+        key_bonds += self._key_bonds(action_map, "fact_copy_tags")
+        key_bonds += self._key_bonds(action_map, "fact_copy_description")
         return key_bonds
 
     # ***
 
     def shortcuts(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_active')
-        key_bonds += self._key_bonds(action_map, 'copy_complete_and_paste_new')
-        key_bonds += self._key_bonds(action_map, 'complete_and_prompt_new')
+        key_bonds += self._key_bonds(action_map, "copy_complete_and_paste_active")
+        key_bonds += self._key_bonds(action_map, "copy_complete_and_paste_new")
+        key_bonds += self._key_bonds(action_map, "complete_and_prompt_new")
         return key_bonds
 
     # ***
 
-    FACTOID_CFG_SECTION = 'custom-paste'
-    FACTOID_CFG_MAPPING = 'mapping_'
-    FACTOID_CFG_FACTOID = 'factoid_'
+    FACTOID_CFG_SECTION = "custom-paste"
+    FACTOID_CFG_MAPPING = "mapping_"
+    FACTOID_CFG_FACTOID = "factoid_"
 
     def custom_factoids(self, action_map):
         self.keyed_factoids = {}
         key_bonds = []
         custom_paste = KeyBonder.FACTOID_CFG_SECTION
         for postfix in range(1, DobViewerConfigCustomPaste._innercls.A_PERFECT_NUMBER):
-            mapping_name = '{}{}'.format(KeyBonder.FACTOID_CFG_MAPPING, postfix)
+            mapping_name = "{}{}".format(KeyBonder.FACTOID_CFG_MAPPING, postfix)
             custom_bonds = self._key_bonds(
                 action_map,
-                'custom_factoid_paste',
+                "custom_factoid_paste",
                 config_name=mapping_name,
                 config_section=custom_paste,
             )
@@ -312,13 +323,16 @@ class KeyBonder(object):
                 # No custom mapping at this postfix.
                 continue
             custom_bond = custom_bonds[0]
-            factoid_name = '{}{}'.format(KeyBonder.FACTOID_CFG_FACTOID, postfix)
+            factoid_name = "{}{}".format(KeyBonder.FACTOID_CFG_FACTOID, postfix)
             custom_factoid = self.config[custom_paste][factoid_name]
             if not custom_factoid:
-                self.errors.append(_(
-                    'ERROR: Custom key mapping ‘{}’ has no matching factoid: “{}”'
-                    .format(mapping_name, factoid_name)
-                ))
+                self.errors.append(
+                    _(
+                        "ERROR: Custom key mapping ‘{}’ has no matching factoid: “{}”".format(
+                            mapping_name, factoid_name
+                        )
+                    )
+                )
             else:
                 self.keyed_factoids[custom_bond.keycode] = custom_factoid
                 key_bonds += [custom_bond]
@@ -330,36 +344,35 @@ class KeyBonder(object):
         # The Colon Commando! Because (by default) type ':' then command + 'ENTER'.
         # I.e., a Vim-like command mode.
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'begin_commando')
+        key_bonds += self._key_bonds(action_map, "begin_commando")
         return key_bonds
 
     def going_commando(self, action_map):
         key_bonds = []
         # So Ctrl-c is not user configurable. Go configure.
-        key_bonds += [KeyBond('c-c', action=action_map.cancel_commando)]
+        key_bonds += [KeyBond("c-c", action=action_map.cancel_commando)]
         key_bonds += [KeyBond(Keys.Any, action=action_map.parts_commando)]
-        key_bonds += [KeyBond('c-h', action=action_map.backspace_commando)]
-        key_bonds += self._key_bonds(action_map, 'final_commando')
+        key_bonds += [KeyBond("c-h", action=action_map.backspace_commando)]
+        key_bonds += self._key_bonds(action_map, "final_commando")
         return key_bonds
 
     # ***
 
     def begin_delta_time(self, action_map):
         key_bonds = []
-        key_bonds += self._key_bonds(action_map, 'begin_delta_time_start')
-        key_bonds += self._key_bonds(action_map, 'begin_delta_time_end')
+        key_bonds += self._key_bonds(action_map, "begin_delta_time_start")
+        key_bonds += self._key_bonds(action_map, "begin_delta_time_end")
         return key_bonds
 
     def going_delta_time(self, action_map):
         key_bonds = []
         # Any non-recognizable key cancels the binding, or Ctrl-C, which is
         # otherwise not handled unless we explicitly do so.
-        key_bonds += [KeyBond('c-c', action=action_map.cancel_delta_time)]
+        key_bonds += [KeyBond("c-c", action=action_map.cancel_delta_time)]
         key_bonds += [KeyBond(Keys.Any, action=action_map.parts_delta_time)]
-        key_bonds += [KeyBond('c-h', action=action_map.backspace_delta_time)]
-        key_bonds += self._key_bonds(action_map, 'allow_time_gap')
-        key_bonds += self._key_bonds(action_map, 'final_delta_time_apply')
-        key_bonds += self._key_bonds(action_map, 'final_delta_time_minutes')
-        key_bonds += self._key_bonds(action_map, 'final_delta_time_hours')
+        key_bonds += [KeyBond("c-h", action=action_map.backspace_delta_time)]
+        key_bonds += self._key_bonds(action_map, "allow_time_gap")
+        key_bonds += self._key_bonds(action_map, "final_delta_time_apply")
+        key_bonds += self._key_bonds(action_map, "final_delta_time_minutes")
+        key_bonds += self._key_bonds(action_map, "final_delta_time_hours")
         return key_bonds
-

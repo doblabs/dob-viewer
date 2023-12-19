@@ -25,13 +25,12 @@ from prompt_toolkit.widgets import Frame, TextArea
 from .exceptions import catch_action_exception
 from .zone_helpful import NUM_HELP_PAGES, render_carousel_help
 
-__all__ = (
-    'ZoneContent',
-)
+__all__ = ("ZoneContent",)
 
 
 class ZoneContent(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
         self.showing_help = 0
@@ -54,7 +53,7 @@ class ZoneContent(object):
                 # So, if, e.g., user is on first Fact and clicks Left, the
                 # Help will not go away, because decrement() won't refresh.
                 obj.carousel.zone_manager.zone_content.on_reset_hide_help()
-                obj.carousel.zone_manager.zone_lowdown.update_status(hot_notif='')
+                obj.carousel.zone_manager.zone_lowdown.update_status(hot_notif="")
                 func(obj, event, *args, **kwargs)
 
             return update_wrapper(wrapper, func)
@@ -62,22 +61,23 @@ class ZoneContent(object):
     # ***
 
     def standup(self):
-        self.scrollable_height = self.style_classes['content-height']
-        self.scrollable_width = self.style_classes['content-width']
-        self.enable_wrapping = self.style_classes['content-wrap']
+        self.scrollable_height = self.style_classes["content-height"]
+        self.scrollable_width = self.style_classes["content-width"]
+        self.enable_wrapping = self.style_classes["content-wrap"]
         self.setup_scrollable()
 
     # ***
 
     def setup_scrollable(self):
         """"""
+
         def _setup_scrollable():
             self.content_width = calculate_width()
             self.content = content_text_area(self.content_width)
             self.scrollable_frame = Frame(
                 self.content,
                 # title="Fact Description",
-                style='class:content-fact',
+                style="class:content-fact",
             )
 
             if self.content_lexer is not None:
@@ -109,7 +109,7 @@ class ZoneContent(object):
             # Layout for displaying Fact description.
             # The Frame creates the border.
             text_area = TextArea(
-                text='',
+                text="",
                 read_only=True,
                 focusable=True,  # Unnecessary; included for completeness.
                 width=content_width,
@@ -178,7 +178,7 @@ class ZoneContent(object):
             # user would have to press PageDown twice to see more text.
             view_height *= 2
         self.carousel.controller.client_logger.debug(
-            'view_height: {}'.format(view_height)
+            "view_height: {}".format(view_height)
         )
         return view_height
 
@@ -224,7 +224,7 @@ class ZoneContent(object):
             return self.apply_scrollable_style_fact()
 
     def apply_scrollable_style_help(self):
-        self.scrollable_frame.container.style = 'class:content-help'
+        self.scrollable_frame.container.style = "class:content-help"
         # MAYBE: (lb): It is easy to format a PPT Frame's content?
         #   (I tried passing HTML(CAROUSEL_HELP) but, uh, nope.)
         #   (This is not too important; I thought it might be nice
@@ -232,7 +232,7 @@ class ZoneContent(object):
         return render_carousel_help()
 
     def apply_scrollable_style_fact(self):
-        self.scrollable_frame.container.style = 'class:content-fact'
+        self.scrollable_frame.container.style = "class:content-fact"
 
         curr_edit = self.carousel.edits_manager.curr_edit
 
@@ -240,11 +240,11 @@ class ZoneContent(object):
         # MAYBE: Don't color after edited/added?
         #        Or probably 'unsaved-fact' style will override.
         if curr_edit.is_gap:
-            self.scrollable_frame.container.style += ' class:interval-gap'
+            self.scrollable_frame.container.style += " class:interval-gap"
 
         # MAYBE: Just go through dirty_reasons and add as classes...
-        if 'unsaved-fact' in curr_edit.dirty_reasons:
-            self.scrollable_frame.container.style += ' class:unsaved-fact'
+        if "unsaved-fact" in curr_edit.dirty_reasons:
+            self.scrollable_frame.container.style += " class:unsaved-fact"
 
         # (lb): So, what do we call the stylable thing we let the user style?
         # The static style is currently 'content-fact'. The text in the content
@@ -257,11 +257,11 @@ class ZoneContent(object):
         # tl;dr Why I chose the term 'content-fact' and not, say, 'fact-description'.
         self.carousel.process_style_rules(
             self.scrollable_frame.container,
-            'content-fact',
+            "content-fact",
             fact=curr_edit,
         )
 
-        content_text = curr_edit.description or ''
+        content_text = curr_edit.description or ""
 
         content_text = self.wrap_on_whitespace_maybe(content_text)
 
@@ -275,20 +275,20 @@ class ZoneContent(object):
         #            (lb): b/c I do not know if horizontal scrollbar is easily doable.
         if not self.enable_wrapping:
             return content_text
-        lines_wrapped = ''
+        lines_wrapped = ""
         for line in content_text.splitlines():
-            line_wrapped = ''
+            line_wrapped = ""
             while len(line) > 0:
                 if len(line) > self.content_width:
-                    space_idx = line.rfind(' ', 0, self.content_width)
+                    space_idx = line.rfind(" ", 0, self.content_width)
                     space_idx = self.content_width if space_idx < 1 else space_idx
                     line_piece = line[:space_idx]
                     space_idx += 1  # Do not write space at beginning of next line,
                     line = line[space_idx:]
                 else:
                     line_piece = line
-                    line = ''
-                line_wrapped += "\n" if line_wrapped else ''
+                    line = ""
+                line_wrapped += "\n" if line_wrapped else ""
                 line_wrapped += line_piece
             lines_wrapped += line_wrapped + "\n"
         return lines_wrapped
@@ -306,4 +306,3 @@ class ZoneContent(object):
         else:
             self.scroll_top(event)
         self.rebuild_viewable()
-

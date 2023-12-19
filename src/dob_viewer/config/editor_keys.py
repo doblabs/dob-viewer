@@ -23,14 +23,13 @@ from gettext import gettext as _
 
 from nark.config import ConfigRoot
 
-__all__ = (
-    'DobViewerConfigEditorKeys',
-)
+__all__ = ("DobViewerConfigEditorKeys",)
 
 
 # ***
 
-@ConfigRoot.section('editor-keys')
+
+@ConfigRoot.section("editor-keys")
 class DobViewerConfigEditorKeys(object):
     """"""
 
@@ -44,16 +43,18 @@ class DobViewerConfigEditorKeys(object):
         _("Switch to Next Widget (description → start time → end time → [repeats])"),
     )
     def focus_next(self):
-        return 'tab'
+        return "tab"
 
     # ***
 
     @property
     @ConfigRoot.setting(
-        _("Switch to Previous Widget (description → end time → start time → [repeats])"),
+        _(
+            "Switch to Previous Widget (description → end time → start time → [repeats])"
+        ),
     )
     def focus_previous(self):
-        return 's-tab'
+        return "s-tab"
 
     # ***
 
@@ -62,7 +63,7 @@ class DobViewerConfigEditorKeys(object):
         _("Toggle To/From Start Time Widget"),
     )
     def edit_time_start(self):
-        return 's'
+        return "s"
 
     # ***
 
@@ -71,7 +72,7 @@ class DobViewerConfigEditorKeys(object):
         _("Toggle To/From End Time Widget"),
     )
     def edit_time_end(self):
-        return 'e'
+        return "e"
 
     # *** interface_keys.Key_Bonder.save_and_quit()
 
@@ -80,7 +81,7 @@ class DobViewerConfigEditorKeys(object):
         _("Save Changes"),
     )
     def save_edited_and_live(self):
-        return 'c-s'
+        return "c-s"
 
     # ***
 
@@ -98,7 +99,7 @@ class DobViewerConfigEditorKeys(object):
         #   save, to display the 'Saved {} Facts' message before exiting.
         # - Here we return the empty string to disable it, but it's left as a
         #   configurable option should the user want to map it to use it.
-        return ''
+        return ""
 
     # ***
 
@@ -107,7 +108,7 @@ class DobViewerConfigEditorKeys(object):
         _("Exit Quietly if No Changes"),
     )
     def exit_quietly(self):
-        return 'q'
+        return "q"
 
     # ***
 
@@ -125,7 +126,7 @@ class DobViewerConfigEditorKeys(object):
         #         Ctrl-Q in the app., if becomes unresponsive.
         #         2020-04-11: I have not investigated, just noting it now
         #         that we're opening up keybindings for user to screw up! =)
-        return 'c-q'
+        return "c-q"
 
     # *** interface_keys.Key_Bonder.edit_time()
 
@@ -134,7 +135,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_enter(self):
-        return 'enter'
+        return "enter"
 
     # ***
 
@@ -143,7 +144,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def toggle_focus_description(self):
-        return 'd'
+        return "d"
 
     # *** interface_keys.Key_Bonder.undo_redo()
 
@@ -160,14 +161,14 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def undo_command(self):
-        return json.dumps([('c-z',), ('u',)])
+        return json.dumps([("c-z",), ("u",)])
 
     @property
     @ConfigRoot.setting(
         _("XXX"),
     )
     def redo_command(self):
-        return json.dumps([('c-y',), ('c-r',), ('r',)])
+        return json.dumps([("c-y",), ("c-r",), ("r",)])
 
     # *** interface_keys.Key_Bonder.normal()
 
@@ -176,7 +177,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def rotate_help(self):
-        return '?'
+        return "?"
 
     # ***
 
@@ -186,7 +187,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def dev_breakpoint(self):
         # I.e., 'm-=', aka, <Alt+=>.
-        return json.dumps([('escape', '=')])
+        return json.dumps([("escape", "=")])
 
     # ***
 
@@ -196,7 +197,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_fact_dec(self):
         # I.e., 'j', or left arrow.
-        return json.dumps([('j',), ('left',)])
+        return json.dumps([("j",), ("left",)])
 
     # ***
 
@@ -206,7 +207,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_fact_inc(self):
         # I.e., 'k', or right arrow.
-        return json.dumps([('k',), ('right',)])
+        return json.dumps([("k",), ("right",)])
 
     # ***
 
@@ -216,7 +217,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_day_dec(self):
         # I.e., 'J', or Alt-left arrow.
-        return json.dumps([('J',), ('escape', 'left')])
+        return json.dumps([("J",), ("escape", "left")])
 
     # ***
 
@@ -226,7 +227,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_day_inc(self):
         # I.e., 'J', or Alt-right arrow.
-        return json.dumps([('K',), ('escape', 'right')])
+        return json.dumps([("K",), ("escape", "right")])
 
     # ***
 
@@ -236,7 +237,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_rift_dec(self):
         # A good pneumonic: 'F'irst Fact.
-        return 'F'
+        return "F"
 
     # ***
 
@@ -246,7 +247,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def jump_rift_inc(self):
         # A good pneumonic: 'f'inal Fact.
-        return 'f'
+        return "f"
 
     # ***
 
@@ -255,7 +256,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def jump_fact_first(self):
-        return json.dumps([('g', 'g')])
+        return json.dumps([("g", "g")])
 
     # ***
 
@@ -264,7 +265,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def jump_fact_final(self):
-        return 'G'
+        return "G"
 
     # ***
 
@@ -273,7 +274,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def cursor_up_one(self):
-        return json.dumps([('h',), ('up',)])
+        return json.dumps([("h",), ("up",)])
 
     # ***
 
@@ -282,7 +283,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def cursor_down_one(self):
-        return json.dumps([('l',), ('down',)])
+        return json.dumps([("l",), ("down",)])
 
     # ***
 
@@ -291,7 +292,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def scroll_up(self):
-        return 'pageup'
+        return "pageup"
 
     # ***
 
@@ -300,7 +301,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def scroll_down(self):
-        return 'pagedown'
+        return "pagedown"
 
     # ***
 
@@ -309,7 +310,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def scroll_top(self):
-        return 'home'
+        return "home"
 
     # ***
 
@@ -318,7 +319,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def scroll_bottom(self):
-        return 'end'
+        return "end"
 
     # *** interface_keys.Key_Bonder.edit_fact()
 
@@ -328,7 +329,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def edit_fact(self):
         # Edit merry-go-round: Prompt for act@gory, then tags, then description.
-        return 'E'
+        return "E"
 
     # ***
 
@@ -337,7 +338,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_description(self):
-        return 'd'
+        return "d"
 
     # ***
 
@@ -352,7 +353,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_actegory(self):
-        return 'a'
+        return "a"
 
     # ***
 
@@ -361,7 +362,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_tags(self):
-        return 't'
+        return "t"
 
     # *** interface_keys.Key_Bonder.nudge_time()
 
@@ -370,7 +371,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_decrement_start(self):
-        return json.dumps([('s-left',), (',',)])
+        return json.dumps([("s-left",), (",",)])
 
     # ***
 
@@ -379,7 +380,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_increment_start(self):
-        return json.dumps([('s-right',), ('.',)])
+        return json.dumps([("s-right",), (".",)])
 
     # ***
 
@@ -388,7 +389,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_decrement_end(self):
-        return json.dumps([('c-left',), ('[',)])
+        return json.dumps([("c-left",), ("[",)])
 
     # ***
 
@@ -397,7 +398,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_increment_end(self):
-        return json.dumps([('c-right',), (']',)])
+        return json.dumps([("c-right",), ("]",)])
 
     # ***
 
@@ -411,7 +412,7 @@ class DobViewerConfigEditorKeys(object):
         # In Terminator: Shift+Ctrl+Left/+Right: Resize the terminal left/right.
         #  (lb): I've disabled the 2 bindings in Terminator,
         #   so this works for me... so fixing it is a low priority!
-        return 's-c-left'
+        return "s-c-left"
 
     # ***
 
@@ -423,7 +424,7 @@ class DobViewerConfigEditorKeys(object):
         # See previous comment about 's-c-left': The user's terminal probably
         # possibly has a mapping already that shadows this. (They can disable
         # their terminal mappings, though, for it to pass through.)
-        return 's-c-right'
+        return "s-c-right"
 
     # ***
 
@@ -432,7 +433,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_decrement_start_5min(self):
-        return '<'
+        return "<"
 
     # ***
 
@@ -441,7 +442,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_increment_start_5min(self):
-        return '>'
+        return ">"
 
     # ***
 
@@ -450,7 +451,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_decrement_end_5min(self):
-        return '{'
+        return "{"
 
     # ***
 
@@ -459,7 +460,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def edit_time_increment_end_5min(self):
-        return '}'
+        return "}"
 
     # *** interface_keys.Key_Bonder.create_delete_fact()
 
@@ -471,7 +472,7 @@ class DobViewerConfigEditorKeys(object):
             _("XXX"),
         )
         def fact_split(self):
-            return json.dumps([('escape', 'p')])
+            return json.dumps([("escape", "p")])
 
         # ***
 
@@ -480,7 +481,7 @@ class DobViewerConfigEditorKeys(object):
             _("XXX"),
         )
         def fact_erase(self):
-            return json.dumps([('escape', 'e')])
+            return json.dumps([("escape", "e")])
 
         # ***
 
@@ -489,7 +490,7 @@ class DobViewerConfigEditorKeys(object):
             _("XXX"),
         )
         def fact_merge_prev(self):
-            return json.dumps([('escape', 'm', 'left')])
+            return json.dumps([("escape", "m", "left")])
 
         # ***
 
@@ -498,7 +499,7 @@ class DobViewerConfigEditorKeys(object):
             _("XXX"),
         )
         def fact_merge_next(self):
-            return json.dumps([('escape', 'm', 'right')])
+            return json.dumps([("escape", "m", "right")])
 
     # *** interface_keys.Key_Bonder.clipboard()
 
@@ -507,7 +508,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_copy_fact(self):
-        return 'c-c'
+        return "c-c"
 
     # ***
 
@@ -516,7 +517,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_cut(self):
-        return 'c-x'
+        return "c-x"
 
     # ***
 
@@ -525,7 +526,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_paste(self):
-        return 'c-v'
+        return "c-v"
 
     # ***
 
@@ -534,7 +535,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_copy_activity(self):
-        return json.dumps([('A', 'c-c')])
+        return json.dumps([("A", "c-c")])
 
     # ***
 
@@ -543,7 +544,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_copy_tags(self):
-        return json.dumps([('T', 'c-c')])
+        return json.dumps([("T", "c-c")])
 
     # ***
 
@@ -552,7 +553,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def fact_copy_description(self):
-        return json.dumps([('D', 'c-c')])
+        return json.dumps([("D", "c-c")])
 
     # *** interface_keys.Key_Bonder.vim_like_command*()
 
@@ -561,7 +562,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def begin_commando(self):
-        return ':'
+        return ":"
 
     # ***
 
@@ -570,7 +571,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def final_commando(self):
-        return 'enter'
+        return "enter"
 
     # *** The ':' command strings.
 
@@ -582,7 +583,7 @@ class DobViewerConfigEditorKeys(object):
     # or should this be named with 'write' because 'w' and Vim suggest that?
     def write_commando(self):
         # As in, `:w`.
-        return 'w'
+        return "w"
 
     # ***
 
@@ -592,7 +593,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def quit_commando(self):
         # As in, `:q`.
-        return 'q'
+        return "q"
 
     # ***
 
@@ -602,7 +603,7 @@ class DobViewerConfigEditorKeys(object):
     )
     def save_quit_commando(self):
         # As in, `:wq`.
-        return 'wq'
+        return "wq"
 
     # *** interface_keys.Key_Bonder.delta_time_width()
 
@@ -611,7 +612,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def begin_delta_time_start(self):
-        return '+'
+        return "+"
 
     # ***
 
@@ -620,7 +621,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def begin_delta_time_end(self):
-        return '-'
+        return "-"
 
     # ***
 
@@ -629,7 +630,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def allow_time_gap(self):
-        return '!'
+        return "!"
 
     # ***
 
@@ -638,7 +639,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def final_delta_time_apply(self):
-        return json.dumps([('enter',), ('tab',)])
+        return json.dumps([("enter",), ("tab",)])
 
     # ***
 
@@ -647,7 +648,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def final_delta_time_minutes(self):
-        return 'm'
+        return "m"
 
     # ***
 
@@ -656,7 +657,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def final_delta_time_hours(self):
-        return 'h'
+        return "h"
 
     # ***
 
@@ -673,14 +674,19 @@ class DobViewerConfigEditorKeys(object):
     )
     def date_separators(self):
         # NOTE: These are used in a regex, so escape as necessary.
-        return json.dumps([
-            # Conventional `YYYY-MM/DD` separators.
-            ('-',), ('/',),
-            # Convention separators between `YYYYMMDD` and `hh:mm`.
-            (' ',), ('t',), ('T',),
-            # Conventional `hh:mm` separator.
-            (':',),
-        ])
+        return json.dumps(
+            [
+                # Conventional `YYYY-MM/DD` separators.
+                ("-",),
+                ("/",),
+                # Convention separators between `YYYYMMDD` and `hh:mm`.
+                (" ",),
+                ("t",),
+                ("T",),
+                # Conventional `hh:mm` separator.
+                (":",),
+            ]
+        )
 
     # ***
 
@@ -701,7 +707,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def copy_complete_and_paste_active(self):
-        return 'c-e'
+        return "c-e"
 
     # ***
 
@@ -710,7 +716,7 @@ class DobViewerConfigEditorKeys(object):
         _("XXX"),
     )
     def copy_complete_and_paste_new(self):
-        return 'V'
+        return "V"
 
     # ***
 
@@ -723,5 +729,4 @@ class DobViewerConfigEditorKeys(object):
         # Or not. 'c-a' is a common tmux prefix key.
         #  return 'c-a'
         # How 'bout, 'o'pen a new entry?
-        return 'o'
-
+        return "o"

@@ -26,13 +26,12 @@ from gettext import gettext as _
 from .exceptions import catch_action_exception
 from .zone_content import ZoneContent
 
-__all__ = (
-    'UpdateHandler',
-)
+__all__ = ("UpdateHandler",)
 
 
 class UpdateHandler(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
         self.long_press_multiplier_init()
@@ -56,14 +55,15 @@ class UpdateHandler(object):
         if not date_seps:
             return
         # Unpack array of arrays.
-        sep_choices = '|'.join([''.join(sep_arr) for sep_arr in date_seps])
-        self.re_date_seps = re.compile(r'^({})$'.format(sep_choices))
+        sep_choices = "|".join(["".join(sep_arr) for sep_arr in date_seps])
+        self.re_date_seps = re.compile(r"^({})$".format(sep_choices))
 
     # ***
 
     def persist_status(self, hot_notif):
         self.zone_manager.zone_lowdown.update_status(
-            hot_notif, clear_after_secs=0,
+            hot_notif,
+            clear_after_secs=0,
         )
 
     # ***
@@ -181,6 +181,7 @@ class UpdateHandler(object):
     @ZoneContent.Decorators.reset_showing_help
     def fact_paste(self, event=None):
         """"""
+
         def _fact_paste():
             paste_what = self.edits_manager.paste_copied_meta()
             hot_notif = paste_response(paste_what)
@@ -270,43 +271,43 @@ class UpdateHandler(object):
 
     @catch_action_exception
     def edit_time_decrement_start(self, event):
-        self.edit_time_adjust(-1, 'start')
+        self.edit_time_adjust(-1, "start")
 
     @catch_action_exception
     def edit_time_increment_start(self, event):
-        self.edit_time_adjust(1, 'start')
+        self.edit_time_adjust(1, "start")
 
     @catch_action_exception
     def edit_time_decrement_end(self, event):
-        self.edit_time_adjust(-1, 'end')
+        self.edit_time_adjust(-1, "end")
 
     @catch_action_exception
     def edit_time_increment_end(self, event):
-        self.edit_time_adjust(1, 'end')
+        self.edit_time_adjust(1, "end")
 
     @catch_action_exception
     def edit_time_decrement_both(self, event):
-        self.edit_time_adjust(-1, 'start', 'end')
+        self.edit_time_adjust(-1, "start", "end")
 
     @catch_action_exception
     def edit_time_increment_both(self, event):
-        self.edit_time_adjust(1, 'start', 'end')
+        self.edit_time_adjust(1, "start", "end")
 
     @catch_action_exception
     def edit_time_decrement_start_5min(self, event):
-        self.edit_time_adjust(-5, 'start')
+        self.edit_time_adjust(-5, "start")
 
     @catch_action_exception
     def edit_time_increment_start_5min(self, event):
-        self.edit_time_adjust(5, 'start')
+        self.edit_time_adjust(5, "start")
 
     @catch_action_exception
     def edit_time_decrement_end_5min(self, event):
-        self.edit_time_adjust(-5, 'end')
+        self.edit_time_adjust(-5, "end")
 
     @catch_action_exception
     def edit_time_increment_end_5min(self, event):
-        self.edit_time_adjust(5, 'end')
+        self.edit_time_adjust(5, "end")
 
     def edit_time_adjust(self, delta_mins, start_or_end, end_maybe=None):
         modifier = self.command_modifier_parse()
@@ -417,17 +418,17 @@ class UpdateHandler(object):
     @catch_action_exception
     def edit_actegory(self, event):
         """"""
-        self.exit_to_awesome_prompt(event, 'actegory')
+        self.exit_to_awesome_prompt(event, "actegory")
 
     @catch_action_exception
     def edit_tags(self, event):
         """"""
-        self.exit_to_awesome_prompt(event, 'tags')
+        self.exit_to_awesome_prompt(event, "tags")
 
     @catch_action_exception
     def edit_description(self, event):
         """"""
-        self.exit_to_awesome_prompt(event, 'description')
+        self.exit_to_awesome_prompt(event, "description")
 
     # ***
 
@@ -435,13 +436,13 @@ class UpdateHandler(object):
         # For normal characters, we could grab event.data, but for combos,
         # use key_sequence for readability. E.g., if combo is ('X', 'c-c'),
         # event.data == '\x03', but joining key_sequences gives 'Xc-c'.
-        return ''.join(seq.key for seq in event.key_sequence)
+        return "".join(seq.key for seq in event.key_sequence)
 
     @catch_action_exception
     def begin_commando(self, event):
         """"""
         self.began_commando = self._key_sequence_str(event)
-        self.typed_commando = ''
+        self.typed_commando = ""
         self.persist_status(self.began_commando)
         self.carousel.action_manager.wire_keys_commando()
 
@@ -486,14 +487,14 @@ class UpdateHandler(object):
     def colon_commando(self, event, typed_commando):
         if not typed_commando:
             return
-        keys_config = self.carousel.controller.config['editor-keys']
-        if typed_commando == keys_config['write_commando']:
+        keys_config = self.carousel.controller.config["editor-keys"]
+        if typed_commando == keys_config["write_commando"]:
             # E.g., `:w`.
             self.carousel.save_edited_and_live(event)
-        elif typed_commando == keys_config['quit_commando']:
+        elif typed_commando == keys_config["quit_commando"]:
             # E.g., `:q`.
             self.carousel.exit_command(event)
-        elif typed_commando == keys_config['save_quit_commando']:
+        elif typed_commando == keys_config["save_quit_commando"]:
             # (lb): My first go was to just save-and-exit, but then I thought
             # maybe we could linger for a hot mo. to let user see the 'Saved'
             # message. I'll keep both options here for now: maybe later we'll
@@ -511,7 +512,7 @@ class UpdateHandler(object):
                 self.carousel.exit_command(event)
         else:
             # (lb): Copying Vim's message for now. Verbatim. Don't judge.
-            msg = 'E492: Not an editor command: {}'.format(typed_commando)
+            msg = "E492: Not an editor command: {}".format(typed_commando)
             return msg
 
     # ***
@@ -520,12 +521,12 @@ class UpdateHandler(object):
         self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
-        self.time_gap_keycode = ''
+        self.time_gap_keycode = ""
         self.delta_time_target = None
-        self.delta_time_keycode = ''
+        self.delta_time_keycode = ""
 
     def command_modifier_setup(self, keep_gap=False):
-        self.command_modifier = ''
+        self.command_modifier = ""
         self.final_modifier = None
         if not keep_gap:
             self.time_gap_allowed = False
@@ -556,10 +557,10 @@ class UpdateHandler(object):
             self.command_modifier_stat()
 
     def command_modifier_stat(self):
-        statmsg = ''
+        statmsg = ""
         statmsg += self.delta_time_keycode
-        statmsg += self.command_modifier if self.command_modifier else ''
-        statmsg += self.time_gap_keycode if self.time_gap_allowed else ''
+        statmsg += self.command_modifier if self.command_modifier else ""
+        statmsg += self.time_gap_keycode if self.time_gap_allowed else ""
         self.persist_status(statmsg)
 
     # ***
@@ -567,13 +568,13 @@ class UpdateHandler(object):
     @catch_action_exception
     def begin_delta_time_start(self, event):
         """"""
-        self.delta_time_target = 'end'
+        self.delta_time_target = "end"
         self.begin_delta_time_both(event)
 
     @catch_action_exception
     def begin_delta_time_end(self, event):
         """"""
-        self.delta_time_target = 'start'
+        self.delta_time_target = "start"
         self.begin_delta_time_both(event)
 
     def begin_delta_time_both(self, event):
@@ -590,7 +591,7 @@ class UpdateHandler(object):
         self.zone_manager.zone_lowdown.reset_status()
         self.command_modifier_reset()
 
-    RE_NUMERIC = re.compile('^[0-9]$')
+    RE_NUMERIC = re.compile("^[0-9]$")
 
     @catch_action_exception
     def parts_delta_time(self, event):
@@ -615,15 +616,14 @@ class UpdateHandler(object):
         # showing an error message. Or, if user types non-number now, we
         # could just go back to old state. -- It's not completely silent,
         # as the cursor will reappear.
-        elif event.data == '.':
-            if '.' in self.command_modifier:
+        elif event.data == ".":
+            if "." in self.command_modifier:
                 # So strict!
                 self.command_modifier_reset()
             else:
-                self.command_modifier += '.'
-        elif (
-            UpdateHandler.RE_NUMERIC.match(event.data)
-            or self.re_date_seps.match(event.data)
+                self.command_modifier += "."
+        elif UpdateHandler.RE_NUMERIC.match(event.data) or self.re_date_seps.match(
+            event.data
         ):
             self.command_modifier += event.data
         else:
@@ -678,7 +678,7 @@ class UpdateHandler(object):
             return
         delta_mins = timedelta(minutes=delta_time * scalar)
         edit_fact = self.edits_manager.editable_fact()
-        if self.delta_time_target == 'end':
+        if self.delta_time_target == "end":
             apply_time = edit_fact.start + delta_mins
         else:  # == 'start'
             end_time = edit_fact.end or self.carousel.controller.now
@@ -728,11 +728,11 @@ class UpdateHandler(object):
         self.command_modifier = None
         self.final_modifier = None
         self.time_gap_allowed = None
-        self.time_gap_keycode = ''
+        self.time_gap_keycode = ""
         if self.delta_time_target is not None:
             self.carousel.action_manager.unwire_keys_delta_time()
             self.delta_time_target = None
-            self.delta_time_keycode = ''
+            self.delta_time_keycode = ""
         self.zone_manager.zone_lowdown.reset_status()
 
     # ***
@@ -740,11 +740,11 @@ class UpdateHandler(object):
     def complete_active_and_start_now(self):
         edit_fact = self.edits_manager.editable_fact()
         if not edit_fact.is_gap:
-            start_or_end = 'end'
+            start_or_end = "end"
         else:
             # Activate Fact is gap Fact, and we want to start new Fact now,
             # knowingly leaving a gap behind, so bump gap's start.
-            start_or_end = 'start'
+            start_or_end = "start"
         delta_mins_or_time = timedelta()  # I.e., 0.
         self.edits_manager.edit_time_adjust(
             delta_mins_or_time=delta_mins_or_time,
@@ -798,7 +798,7 @@ class UpdateHandler(object):
             if errmsg is not None:
                 self.zone_manager.show_message_and_deny_leave(
                     self.zone_manager.root,
-                    _('Factoid?'),
+                    _("Factoid?"),
                     errmsg,
                 )
             elif not pasted:
@@ -807,4 +807,3 @@ class UpdateHandler(object):
                 self.zone_manager.rebuild_viewable()
                 hot_notif = _("Pasted custom factoid")
             self.zone_manager.update_status(hot_notif)
-

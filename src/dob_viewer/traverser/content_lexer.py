@@ -30,9 +30,7 @@ from dob_bright.styling import load_obj_from_internal
 
 from ..ptkui import various_lexers
 
-__all__ = (
-    'load_content_lexer',
-)
+__all__ = ("load_content_lexer",)
 
 
 # If you want to test the lexers (ptkui/various_lexers.py),
@@ -45,9 +43,10 @@ __all__ = (
 #   dob -c editor.lexer=truncater edit
 #   dob -c editor.lexer=wordwrapper edit
 
+
 def load_content_lexer(controller):
     config = controller.config
-    cfg_key_lexer = 'editor.lexer'
+    cfg_key_lexer = "editor.lexer"
 
     def _load_content_lexer():
         named_lexer = resolve_named_lexer()
@@ -83,13 +82,12 @@ def load_content_lexer(controller):
     def load_pygments_lexer(named_lexer):
         # (lb): I'm a reSTie, personally, so we default to that.
         # (Though really the default is set in config/__init__.py.)
-        lexer_name = named_lexer or 'RstLexer'
+        lexer_name = named_lexer or "RstLexer"
         try:
             return PygmentsLexer(getattr(pygments.lexers, lexer_name))
         except AttributeError:
-            msg = _('Not a recognized Pygments lexer: “{0}”').format(lexer_name)
+            msg = _("Not a recognized Pygments lexer: “{0}”").format(lexer_name)
             echo_warning(msg)
             return None
 
     return _load_content_lexer()
-

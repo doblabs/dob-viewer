@@ -31,7 +31,7 @@ from prompt_toolkit.layout.containers import (
     FloatContainer,
     HorizontalAlign,
     HSplit,
-    VSplit
+    VSplit,
 )
 from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
@@ -47,13 +47,12 @@ from .zone_details import ZoneDetails
 from .zone_lowdown import ZoneLowdown
 from .zone_streamer import ZoneStreamer
 
-__all__ = (
-    'ZoneManager',
-)
+__all__ = ("ZoneManager",)
 
 
 class ZoneManager(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
         self.facts_diff = None
@@ -95,10 +94,10 @@ class ZoneManager(object):
         self.hsplit = HSplit(
             # Use placeholders; we'll populate in rebuild_containers().
             children=[
-                Label(text=''),  # zone_streamer
-                Label(text=''),  # zone_details
-                Label(text=''),  # zone_content
-                Label(text=''),  # zone_lowdown
+                Label(text=""),  # zone_streamer
+                Label(text=""),  # zone_details
+                Label(text=""),  # zone_content
+                Label(text=""),  # zone_lowdown
             ],
             # There can be top-bottom padding, e.g.,:
             #  padding=3,
@@ -106,13 +105,13 @@ class ZoneManager(object):
             #  padding_style='',
         )
 
-        if self.carousel.style_classes['editor-align'] == 'LEFT':
+        if self.carousel.style_classes["editor-align"] == "LEFT":
             app_align = HorizontalAlign.LEFT
             app_width = click.get_terminal_size()[0]
-        elif self.carousel.style_classes['editor-align'] == 'CENTER':
+        elif self.carousel.style_classes["editor-align"] == "CENTER":
             app_align = HorizontalAlign.CENTER
             app_width = None
-        elif self.carousel.style_classes['editor-align'] == 'RIGHT':
+        elif self.carousel.style_classes["editor-align"] == "RIGHT":
             app_align = HorizontalAlign.RIGHT
             app_width = click.get_terminal_size()[0]
         else:
@@ -142,7 +141,7 @@ class ZoneManager(object):
         return layout
 
     def setup_styling(self):
-        class_styles = self.carousel.style_classes['collect_tups']
+        class_styles = self.carousel.style_classes["collect_tups"]
         try:
             self.style = Style(class_styles)
         except Exception as err:
@@ -152,8 +151,10 @@ class ZoneManager(object):
             # FIXME: Find all controller usage from clyde and refactor so has to
             #        be passed in (wire what you need from dob upfront).
             from easy_as_pypi_termio.errors import echo_warning
-            msg = _('The user style “{0}” failed to load: {1}').format(
-                self.carousel.controller.config['editor.styling'], str(err),
+
+            msg = _("The user style “{0}” failed to load: {1}").format(
+                self.carousel.controller.config["editor.styling"],
+                str(err),
             )
             self.carousel.controller.client_logger.warning(msg)
             echo_warning(str(class_styles))
@@ -161,7 +162,7 @@ class ZoneManager(object):
             self.style = Style([])
 
     def center_thyself(self):
-        if not self.carousel.controller.config['editor.centered']:
+        if not self.carousel.controller.config["editor.centered"]:
             return
         click.clear()
         # (lb): Revisit this? A little hacky.
@@ -192,7 +193,7 @@ class ZoneManager(object):
         #       not set as expected, which seems like the safest course of action.)
         # Default, which works in raw mate-terminal, but not under tmux:
         #   color_depth=ColorDepth.DEPTH_8_BIT,
-        if os.environ.get('COLORTERM', None) != 'truecolor':
+        if os.environ.get("COLORTERM", None) != "truecolor":
             return None
         return ColorDepth.DEPTH_24_BIT
 
@@ -256,7 +257,7 @@ class ZoneManager(object):
         self.reset_diff_fact()
         self.rebuild_containers()
         self.selectively_refresh()
-        self.carousel.controller.client_logger.debug(_('rebuilt and refreshed'))
+        self.carousel.controller.client_logger.debug(_("rebuilt and refreshed"))
 
     def reset_diff_fact(self):
         orig_fact = self.carousel.edits_manager.curr_orig
@@ -265,7 +266,7 @@ class ZoneManager(object):
         edit_fact = self.carousel.edits_manager.editable_fact()
         self.facts_diff = FactsDiff(orig_fact, edit_fact, formatted=True)
         self.carousel.controller.client_logger.debug(
-            'facts_diff: {}'.format(self.facts_diff),
+            "facts_diff: {}".format(self.facts_diff),
         )
 
     def rebuild_containers(self):
@@ -394,7 +395,8 @@ class ZoneManager(object):
         # widget.
         buffer = control.buffer
         index = buffer.document.translate_row_col_to_index(
-            mouse_event.position.y, mouse_event.position.x,
+            mouse_event.position.y,
+            mouse_event.position.x,
         )
         buffer.exit_selection()
         buffer.cursor_position = index
@@ -402,7 +404,7 @@ class ZoneManager(object):
     # ***
 
     def jump_msg_with_count(self, count, direction, what):
-        return '{} {} {}'.format(
+        return "{} {} {}".format(
             direction,
             count,
             Inflector(English).conditional_plural(count, what),
@@ -413,7 +415,7 @@ class ZoneManager(object):
     def jump_fact_dec(self, event):
         """"""
         count = self.carousel.update_handler.apply_count_multiplier()
-        jump_msg = self.jump_msg_with_count(count, _('Backward'), _('Fact'))
+        jump_msg = self.jump_msg_with_count(count, _("Backward"), _("Fact"))
         prev_fact = self.carousel.edits_manager.jump_fact_dec(count=count)
         self.finalize_jump_dec(prev_fact, jump_msg)
 
@@ -422,7 +424,7 @@ class ZoneManager(object):
     def jump_fact_inc(self, event):
         """"""
         count = self.carousel.update_handler.apply_count_multiplier()
-        jump_msg = self.jump_msg_with_count(count, _('Forward'), _('Fact'))
+        jump_msg = self.jump_msg_with_count(count, _("Forward"), _("Fact"))
         next_fact = self.carousel.edits_manager.jump_fact_inc(count=count)
         self.finalize_jump_inc(next_fact, jump_msg)
 
@@ -434,9 +436,9 @@ class ZoneManager(object):
     # Carousel will start jumping by larger time increments.
 
     def jump_msg_count_and_time(self, count, direction, what):
-        return '{} ({} {})'.format(
+        return "{} ({} {})".format(
             self.jump_msg_with_count(count, direction, what),
-            _('from'),
+            _("from"),
             str(self.carousel.edits_manager.conjoined.jump_time_reference),
         )
 
@@ -445,7 +447,7 @@ class ZoneManager(object):
     def jump_day_dec(self, event):
         """"""
         count = self.carousel.update_handler.apply_count_multiplier(floats=True)
-        jump_msg = self.jump_msg_count_and_time(count, _('Backward'), _('Day'))
+        jump_msg = self.jump_msg_count_and_time(count, _("Backward"), _("Day"))
         prev_fact = self.carousel.edits_manager.jump_day_dec(days=count)
         self.finalize_jump_dec(prev_fact, jump_msg)
 
@@ -454,7 +456,7 @@ class ZoneManager(object):
     def jump_day_inc(self, event):
         """"""
         count = self.carousel.update_handler.apply_count_multiplier(floats=True)
-        jump_msg = self.jump_msg_count_and_time(count, _('Forward'), _('Day'))
+        jump_msg = self.jump_msg_count_and_time(count, _("Forward"), _("Day"))
         next_fact = self.carousel.edits_manager.jump_day_inc(days=count)
         self.finalize_jump_inc(next_fact, jump_msg)
 
@@ -466,7 +468,7 @@ class ZoneManager(object):
         """"""
         rift_jumper = self.carousel.edits_manager.jump_rift_dec
         noop_msg = _("Already on first Fact")
-        self.jump_rift_or_time(rift_jumper, 'until_time', noop_msg)
+        self.jump_rift_or_time(rift_jumper, "until_time", noop_msg)
 
     @catch_action_exception
     @ZoneContent.Decorators.reset_showing_help
@@ -474,7 +476,7 @@ class ZoneManager(object):
         """"""
         rift_jumper = self.carousel.edits_manager.jump_rift_inc
         noop_msg = _("Already on final Fact")
-        self.jump_rift_or_time(rift_jumper, 'since_time', noop_msg)
+        self.jump_rift_or_time(rift_jumper, "since_time", noop_msg)
 
     def jump_rift_or_time(self, rift_jumper, which_time, noop_msg):
         was_curr = self.carousel.edits_manager.curr_fact
@@ -522,26 +524,32 @@ class ZoneManager(object):
     def finalize_jump_dec(self, prev_fact, jump_msg):
         """"""
         self.finalize_jump_check_overlapped(
-            prev_fact, noop_msg=_("Viewing earliest Fact"), jump_msg=jump_msg,
+            prev_fact,
+            noop_msg=_("Viewing earliest Fact"),
+            jump_msg=jump_msg,
         )
 
     def finalize_jump_inc(self, next_fact, jump_msg):
         """"""
         self.finalize_jump_check_overlapped(
-            next_fact, noop_msg=_("Viewing latest Fact"), jump_msg=jump_msg,
+            next_fact,
+            noop_msg=_("Viewing latest Fact"),
+            jump_msg=jump_msg,
         )
 
-    def finalize_jump_check_overlapped(self, curr_fact, noop_msg, jump_msg=''):
+    def finalize_jump_check_overlapped(self, curr_fact, noop_msg, jump_msg=""):
         def _finalize_jump_check_overlapped():
             _jump_msg = jump_msg
-            if curr_fact and 'alert-user' in curr_fact.dirty_reasons:
-                curr_fact.dirty_reasons.discard('alert-user')
+            if curr_fact and "alert-user" in curr_fact.dirty_reasons:
+                curr_fact.dirty_reasons.discard("alert-user")
                 # 2019-02-13: (lb): Currently, only 'overlapped' causes this.
                 self.carousel.controller.affirm(
-                    curr_fact.dirty_reasons == set(['overlapped']),
+                    curr_fact.dirty_reasons == set(["overlapped"]),
                 )
                 popop_modal_alert_overlapped_fact()
-                _jump_msg = _('ALERT! Corrected overlapping Fact times. Save to commit.')
+                _jump_msg = _(
+                    "ALERT! Corrected overlapping Fact times. Save to commit."
+                )
             self.finalize_jump(curr_fact, noop_msg, _jump_msg)
 
         def popop_modal_alert_overlapped_fact():
@@ -549,14 +557,14 @@ class ZoneManager(object):
                 return
             alert_and_question(
                 self.root,
-                title=_('Overlapping Fact'),
+                title=_("Overlapping Fact"),
                 label_text=_(
-                    'A Fact loaded from the data store overlaps an adjacent Fact.'
-                ) + '\n\n' + _(
-                    'The Fact has been updated and is staged to be saved.'
-                ),
-                prompt_ok=_('Got it!'),
-                prompt_no=_('Keep reminding me'),
+                    "A Fact loaded from the data store overlaps an adjacent Fact."
+                )
+                + "\n\n"
+                + _("The Fact has been updated and is staged to be saved."),
+                prompt_ok=_("Got it!"),
+                prompt_no=_("Keep reminding me"),
                 on_close=self.on_alert_overlapped_close,
             )
             # Disable any input recognize (let PPT's dialog handle everything).
@@ -571,7 +579,7 @@ class ZoneManager(object):
         # Re-enable keyboard input processing.
         self.carousel.action_manager.wire_keys_normal()
 
-    def finalize_jump(self, curr_fact, noop_msg, jump_msg=''):
+    def finalize_jump(self, curr_fact, noop_msg, jump_msg=""):
         if curr_fact is None:
             self.update_status(noop_msg)
         else:
@@ -584,4 +592,3 @@ class ZoneManager(object):
 
     def update_status(self, hot_notif):
         self.zone_lowdown.update_status(hot_notif)
-

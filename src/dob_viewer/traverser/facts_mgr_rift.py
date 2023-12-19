@@ -17,13 +17,12 @@
 
 """"""
 
-__all__ = (
-    'FactsManager_Rift',
-)
+__all__ = ("FactsManager_Rift",)
 
 
 class FactsManager_Rift(object):
     """"""
+
     def __init__(self, *args, **kwargs):
         super(FactsManager_Rift, self).__init__()
 
@@ -45,7 +44,7 @@ class FactsManager_Rift(object):
 
         def add_time_rift(some_fact):
             self.controller.client_logger.debug(
-                'time_rifts: {}'.format(some_fact.start),
+                "time_rifts: {}".format(some_fact.start),
             )
             self.time_rifts.append(some_fact.start)
 
@@ -89,4 +88,3 @@ class FactsManager_Rift(object):
             if fact.dirty:
                 return fact
         return None
-

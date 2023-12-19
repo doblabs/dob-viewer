@@ -19,9 +19,7 @@
 
 from nark.items.fact import UntilTimeStops
 
-__all__ = (
-    'FactsManager_FactInc',
-)
+__all__ = ("FactsManager_FactInc",)
 
 
 # SYNC_ME: Keep FactsManager_FactDec and FactsManager_FactInc synced.
@@ -31,11 +29,13 @@ __all__ = (
 #       meld facts_mgr_fact_dec.py facts_mgr_fact_inc.py &
 class FactsManager_FactInc(object):
     """"""
+
     def jump_fact_inc(self):
         """"""
+
         def _jump_fact_inc():
             # Check first if we've reached the ending of all time.
-            is_final_fact = (self.curr_index == (len(self.curr_group) - 1))
+            is_final_fact = self.curr_index == (len(self.curr_group) - 1)
             if (
                 is_final_fact
                 and not self.curr_fact.end
@@ -62,11 +62,11 @@ class FactsManager_FactInc(object):
             #   is outta sorts).
             self.controller.affirm(self.curr_fact.end <= next_fact.start)
             # We (re)wired the fact to the group earlier; now rewire the group.
-            self.fulfill_jump(next_fact, reason='fact-inc')
+            self.fulfill_jump(next_fact, reason="fact-inc")
             # See if we've identified the boundary of the known factiverse.
             if (next_fact.end is None) or (next_fact.end is UntilTimeStops):
                 self.controller.affirm(self.curr_group.until_time_stops)
-            self.controller.client_logger.debug('\n- next: {}'.format(next_fact.short))
+            self.controller.client_logger.debug("\n- next: {}".format(next_fact.short))
             return next_fact
 
         # ***
@@ -127,9 +127,9 @@ class FactsManager_FactInc(object):
                 un_undoable_fact_next.end,
                 self.curr_group.time_until,
             )
-            un_undoable_fact_next.dirty_reasons.add('overlapped')
+            un_undoable_fact_next.dirty_reasons.add("overlapped")
             # (lb): A hack to tell other UX components to alert user.
-            un_undoable_fact_next.dirty_reasons.add('alert-user')
+            un_undoable_fact_next.dirty_reasons.add("alert-user")
             return curr_group_add_next(un_undoable_fact_next)
 
         # ^^^
@@ -200,7 +200,8 @@ class FactsManager_FactInc(object):
 
         def fill_gap_is_endless():
             gap_fact = self.fact_from_interval_gap(
-                self.curr_fact.end, None,
+                self.curr_fact.end,
+                None,
             )
             return gap_fact
 
@@ -213,7 +214,8 @@ class FactsManager_FactInc(object):
                 gap_fact = next_fact
             else:
                 gap_fact = self.fact_from_interval_gap(
-                    self.curr_fact.end, next_fact.start,
+                    self.curr_fact.end,
+                    next_fact.start,
                 )
             return gap_fact
 
@@ -244,7 +246,8 @@ class FactsManager_FactInc(object):
         # say, calling subsequent(self.curr_fact)), so that we skip time
         # that's currently under our control.
         next_from_store = self.controller.facts.subsequent(
-            fact=ref_fact, ref_time=ref_time,
+            fact=ref_fact,
+            ref_time=ref_time,
         )
         if not next_from_store:
             # No more later facts from store.
@@ -258,4 +261,3 @@ class FactsManager_FactInc(object):
         # one we already know about (in which case, there exists a
         # group already blocking that time window).
         return next_from_store
-

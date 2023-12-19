@@ -19,9 +19,7 @@
 
 from nark.items.fact import UntilTimeStops
 
-__all__ = (
-    'FactsManager_Jump',
-)
+__all__ = ("FactsManager_Jump",)
 
 
 class FactsManager_Jump(object):
@@ -29,7 +27,7 @@ class FactsManager_Jump(object):
 
     # ***
 
-    def fulfill_jump(self, jump_fact, reason=''):
+    def fulfill_jump(self, jump_fact, reason=""):
         # Caller will have updated curr_group and curr_index, if necessary.
         # Note that we do not set FactsManager self.curr_fact directly,
         # but call a shim function so EditsManager can react, too.
@@ -42,9 +40,8 @@ class FactsManager_Jump(object):
 
     def debug_log_facts_mgr_state(self, caller_name):
         self.debug(
-            '{}: len(groups): {} / curr_index: {}\n'
-            '- grps:\n{}\n- cgrp: {}\n- curr: {}'
-            .format(
+            "{}: len(groups): {} / curr_index: {}\n"
+            "- grps:\n{}\n- cgrp: {}\n- curr: {}".format(
                 caller_name,
                 len(self.groups),
                 self.curr_index,
@@ -58,6 +55,7 @@ class FactsManager_Jump(object):
 
     def jump_to_fact_nearest(self, since_time=None, until_time=None):
         """"""
+
         def _jump_to_fact_nearest():
             assert (since_time is not None) ^ (until_time is not None)
             ref_time = since_time or until_time
@@ -65,19 +63,23 @@ class FactsManager_Jump(object):
             store_fact = is_perfect and None or find_nearest_store_fact(ref_time)
             nearest_fact = choose_nearest(fact_group, group_fact, store_fact)
             debug_log_chosen_fact(
-                ref_time, nearest_fact, fact_group, group_fact, store_fact,
+                ref_time,
+                nearest_fact,
+                fact_group,
+                group_fact,
+                store_fact,
             )
 
             if nearest_fact is not None:
                 if nearest_fact.pk not in self.by_pk.keys():
                     self.add_facts([nearest_fact])
-                reason = 'jump-{}'.format('next' if since_time else 'prev')
+                reason = "jump-{}".format("next" if since_time else "prev")
                 self.fulfill_jump(nearest_fact, reason=reason)
             update_time_reference(ref_time)
 
             return nearest_fact
 
-    # ***
+        # ***
 
         def find_nearest_group_fact(ref_time):
             # Find the group index nearest ref_time. We use UntilTimeStops
@@ -228,32 +230,27 @@ class FactsManager_Jump(object):
         # ***
 
         def debug_log_chosen_fact(
-            ref_time, nearest_fact, fact_group, group_fact, store_fact,
+            ref_time,
+            nearest_fact,
+            fact_group,
+            group_fact,
+            store_fact,
         ):
-            self.debug('ref_time: {}'.format(ref_time))
-            self.debug(
-                'near_group: {}'.format(fact_group.sorty_times)
-            )
-            self.debug(
-                'nerst_fact: {}'.format(nearest_fact and nearest_fact.short)
-            )
-            self.debug(
-                'group_fact: {}'.format(group_fact and group_fact.short)
-            )
-            self.debug(
-                'store_fact: {}'.format(store_fact and store_fact.short)
-            )
+            self.debug("ref_time: {}".format(ref_time))
+            self.debug("near_group: {}".format(fact_group.sorty_times))
+            self.debug("nerst_fact: {}".format(nearest_fact and nearest_fact.short))
+            self.debug("group_fact: {}".format(group_fact and group_fact.short))
+            self.debug("store_fact: {}".format(store_fact and store_fact.short))
             if nearest_fact is None:
-                chosen_from = 'neither'
+                chosen_from = "neither"
             elif nearest_fact is group_fact:
-                chosen_from = 'group'
+                chosen_from = "group"
             elif nearest_fact is store_fact:
-                chosen_from = 'store'
+                chosen_from = "store"
             else:
-                chosen_from = 'heh?'
-            self.debug('- fact chosen from: {}'.format(chosen_from))
+                chosen_from = "heh?"
+            self.debug("- fact chosen from: {}".format(chosen_from))
 
         # ***
 
         return _jump_to_fact_nearest()
-

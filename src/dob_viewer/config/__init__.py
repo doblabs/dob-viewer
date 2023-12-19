@@ -21,18 +21,17 @@ from gettext import gettext as _
 
 # Add our settings to the config.
 from .custom_paste import DobViewerConfigCustomPaste  # noqa: F401 '<>' imported ...
-from .editor_keys import DobViewerConfigEditorKeys    # noqa: F401  ... but unused
+from .editor_keys import DobViewerConfigEditorKeys  # noqa: F401  ... but unused
 
 from nark.config import ConfigRoot
 
-__all__ = (
-    'DobConfigurableDev',
-)
+__all__ = ("DobConfigurableDev",)
 
 
 # ***
 
-@ConfigRoot.section('dev')
+
+@ConfigRoot.section("dev")
 class DobConfigurableDev(object):
     """"""
 
@@ -48,4 +47,3 @@ class DobConfigurableDev(object):
     )
     def allow_mash_quit(self):
         return False
-

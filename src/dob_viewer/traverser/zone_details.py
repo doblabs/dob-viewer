@@ -38,9 +38,7 @@ from .exceptions import catch_action_exception
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart
 
-__all__ = (
-    'ZoneDetails',
-)
+__all__ = ("ZoneDetails",)
 
 
 class ZoneDetails(
@@ -48,6 +46,7 @@ class ZoneDetails(
     ZoneDetails_TimeEnd,
 ):
     """"""
+
     def __init__(self, carousel):
         super(ZoneDetails, self).__init__()
         self.carousel = carousel
@@ -58,6 +57,7 @@ class ZoneDetails(
 
     class HeaderKeyVal(object):
         """"""
+
         def __init__(
             self,
             index,
@@ -84,6 +84,7 @@ class ZoneDetails(
 
     def standup(self):
         """"""
+
         def _standup():
             # A couple convenience attrs.
             self.zone_manager = self.carousel.zone_manager
@@ -113,20 +114,20 @@ class ZoneDetails(
         def add_header_duration():
             # MEH/2019-11-22: (lb): Duration label mouse handler, but to do what?
             # - User clicks, modal asks for new duration, adjust end time to match?
-            self.label_duration = self.add_header_section('duration')
+            self.label_duration = self.add_header_section("duration")
 
         def add_header_activity():
             self.widgets_activity = self.add_header_section(
-                'activity',
-                'activity_name',
-                mouse_handler=header_widget_mouse_handler('actegory'),
+                "activity",
+                "activity_name",
+                mouse_handler=header_widget_mouse_handler("actegory"),
             )
 
         def add_header_category():
             self.widgets_category = self.add_header_section(
-                'category',
-                'category_name',
-                mouse_handler=header_widget_mouse_handler('actegory'),
+                "category",
+                "category_name",
+                mouse_handler=header_widget_mouse_handler("actegory"),
             )
 
         def add_header_tags():
@@ -137,15 +138,15 @@ class ZoneDetails(
             #   newlines makes the height dance. But keeping for now, as not
             #   many Facts (o' mine) with two or more tags.
             self.widgets_tags = self.add_header_section(
-                'tags',
-                'tags_tuples',
+                "tags",
+                "tags_tuples",
                 split_lines=True,
                 colorful=True,
-                mouse_handler=header_widget_mouse_handler('tags'),
+                mouse_handler=header_widget_mouse_handler("tags"),
             )
 
         def add_blank_line():
-            self.blank_line = self.make_section_component('', style='class:blank-line')
+            self.blank_line = self.make_section_component("", style="class:blank-line")
             # Note that PTK add a default style, class:label, before our style, e.g.,,
             #    self.blank_line.window.style == 'class:label class:blank-line'
             # Which we'll keep, because it makes setting an application background easy.
@@ -180,6 +181,7 @@ class ZoneDetails(
                     self.carousel.enduring_edit = True
                     self.carousel.restrict_edit = restrict_edit
                     get_app().exit()
+
             return _mouse_handler
 
         # ***
@@ -196,12 +198,7 @@ class ZoneDetails(
     # ***
 
     def add_header_section(
-        self,
-        part_type,
-        fact_attr=None,
-        editable=False,
-        mouse_handler=None,
-        **kwargs
+        self, part_type, fact_attr=None, editable=False, mouse_handler=None, **kwargs
     ):
         text_area = None
         if editable:
@@ -222,7 +219,7 @@ class ZoneDetails(
             # lexer that simply styles the input text.
             text_area = TextArea(
                 height=1,
-                lexer=SimpleLexer(style='class:value-focus'),
+                lexer=SimpleLexer(style="class:value-focus"),
             )
 
         keyval_parts = ZoneDetails.HeaderKeyVal(
@@ -245,11 +242,11 @@ class ZoneDetails(
         )
         return keyval_parts
 
-    def make_header_label_parts(self, part_type=''):
+    def make_header_label_parts(self, part_type=""):
         name = _(part_type)
-        prefix = '  '
-        padded = '{:.<19}'.format(name)
-        kv_sep = ' : '
+        prefix = "  "
+        padded = "{:.<19}".format(name)
+        kv_sep = " : "
 
         tline_style, title_style = self.header_line_styles(part_type, set_focus=False)
 
@@ -259,27 +256,36 @@ class ZoneDetails(
         # uniform application background (save for the content area).
         labels = [
             self.make_section_component(
-                prefix, style=tline_style, dont_extend_width=True,
+                prefix,
+                style=tline_style,
+                dont_extend_width=True,
             ),
             self.make_section_component(
-                padded, style=title_style, dont_extend_width=True,
+                padded,
+                style=title_style,
+                dont_extend_width=True,
             ),
             self.make_section_component(
-                kv_sep, style=tline_style, dont_extend_width=True,
+                kv_sep,
+                style=tline_style,
+                dont_extend_width=True,
             ),
         ]
         return labels
 
-    def make_header_value_part(self, part_type=''):
-        style = 'class:value-normal-line '
+    def make_header_value_part(self, part_type=""):
+        style = "class:value-normal-line "
         if part_type:
-            style += 'class:value-{}-line '.format(part_type)
-        return self.make_section_component('', style=style)
+            style += "class:value-{}-line ".format(part_type)
+        return self.make_section_component("", style=style)
 
     # ***
 
     def make_section_component(
-        self, header_text='', style='', dont_extend_width=False,
+        self,
+        header_text="",
+        style="",
+        dont_extend_width=False,
     ):
         # The header label is called once when first showing the Fact,
         # and not called during the rebuild_viewable heartbeat. It's
@@ -318,10 +324,13 @@ class ZoneDetails(
         # The style_class is 'class:value-normal class:value-duration '.
         style_class = self.assemble_style_class_for_part(self.label_duration)
         orig_val, edit_val = self.zone_manager.facts_diff.diff_time_elapsed(
-            show_now=True, style_class=style_class,
+            show_now=True,
+            style_class=style_class,
         )
         diff_tuples = self.zone_manager.facts_diff.diff_line_tuples_style(
-            orig_val, edit_val, style_class=style_class,
+            orig_val,
+            edit_val,
+            style_class=style_class,
         )
         self.label_duration.val_label.text = diff_tuples
         self.process_style_rules(self.label_duration)
@@ -338,13 +347,14 @@ class ZoneDetails(
     def refresh_blank_line(self):
         # Lets the user override the blank line style for matching rules.
         custom_classes = self.carousel.process_style_rules(
-            ppt_widget=None, friendly_name='blank-line',
+            ppt_widget=None,
+            friendly_name="blank-line",
         )
         # - (lb): Rules replace, not append, widget's style. #rule_replace
         #   I.e., not;
         #       ...style = 'class:label class:blank-line ' + custom_classes
         #   This was an arbitrary choice. If it's better the other way, we can switch.
-        self.blank_line.window.style = custom_classes or 'class:label class:blank-line '
+        self.blank_line.window.style = custom_classes or "class:label class:blank-line "
 
     def refresh_val_widgets(self, keyval_widgets):
         self.affirm(keyval_widgets.fact_attr)
@@ -365,8 +375,8 @@ class ZoneDetails(
         self.process_style_rules(keyval_widgets)
 
     def assemble_style_class_for_part(self, keyval_widgets):
-        style_class = 'class:value-normal '
-        style_class += 'class:value-{} '.format(keyval_widgets.what_part)
+        style_class = "class:value-normal "
+        style_class += "class:value-{} ".format(keyval_widgets.what_part)
         return style_class
 
     def process_style_rules(self, keyval_parts, set_focus=None):
@@ -391,18 +401,18 @@ class ZoneDetails(
         if set_focus is None and self.active_widgets is keyval_parts:
             set_focus = True
         dot_padded_title = keyval_parts.key_parts[1]
-        title_part = 'title-{}'.format(keyval_parts.what_part)
+        title_part = "title-{}".format(keyval_parts.what_part)
         if not set_focus:
-            friendlies = ['title-normal', title_part]
+            friendlies = ["title-normal", title_part]
         else:
             # This keyval_parts should be editable.
             self.affirm(keyval_parts.text_area is not None)
-            friendlies = ['title-focus', title_part + '-focus']
+            friendlies = ["title-focus", title_part + "-focus"]
 
         for friendly_name in friendlies:
             # Register the -line style, which means assigns same style to all parts.
             for label in keyval_parts.key_parts:
-                self.carousel.process_style_rules(label, friendly_name + '-line')
+                self.carousel.process_style_rules(label, friendly_name + "-line")
             # Register title-[normal|duration|start|end|activity|category|tags][-focus]
             # on just the title label part of the header.
             self.carousel.process_style_rules(dot_padded_title, friendly_name)
@@ -410,9 +420,9 @@ class ZoneDetails(
     def process_style_rules_header_values_normal(self, keyval_parts):
         # For matching rules, apply rule styles for: value-normal, value-normal-line,
         # and value-[duration|start|end|activity|category|tags][-line]
-        value_part = 'value-{}'.format(keyval_parts.what_part)
-        for friendly_name in ('value-normal', value_part):
-            for suffix in ('-line', ''):
+        value_part = "value-{}".format(keyval_parts.what_part)
+        for friendly_name in ("value-normal", value_part):
+            for suffix in ("-line", ""):
                 self.carousel.process_style_rules(
                     keyval_parts.val_label,
                     friendly_name + suffix,
@@ -424,9 +434,9 @@ class ZoneDetails(
 
         # For matching rules, apply any rule styles for:
         # value-focus, value-focus-line, and value-[start|end]-focus[-line].
-        value_part = 'value-{}-focus'.format(keyval_parts.what_part)
-        for friendly_name in ('value-focus', value_part):
-            for suffix in ('-line', ''):
+        value_part = "value-{}-focus".format(keyval_parts.what_part)
+        for friendly_name in ("value-focus", value_part):
+            for suffix in ("-line", ""):
                 self.carousel.process_style_rules(
                     keyval_parts.text_area,
                     friendly_name + suffix,
@@ -435,21 +445,24 @@ class ZoneDetails(
     # ***
 
     def header_line_styles(self, part_type, set_focus=False):
-        focus_state = set_focus and 'focus' or 'normal'
+        focus_state = set_focus and "focus" or "normal"
         # Set classes on each part, title-normal-line, or title-focus-line.
         # Set also on inner text, title-normal or title-focus.
-        title_base_class = 'class:title-{}'.format(focus_state)
-        title_line_class = '{}-line'.format(title_base_class)
+        title_base_class = "class:title-{}".format(focus_state)
+        title_line_class = "{}-line".format(title_base_class)
         # Set classes more specific to the part type, e.g.,
         # title-[duration|start|end|activity|category|tags][-focus][-line].
-        tpart_base_class = 'class:title-{}'.format(part_type)
+        tpart_base_class = "class:title-{}".format(part_type)
         if set_focus:
-            tpart_base_class += '-{}'.format(focus_state)  # += '-focus'
-        tpart_line_class = '{}-line'.format(tpart_base_class)
+            tpart_base_class += "-{}".format(focus_state)  # += '-focus'
+        tpart_line_class = "{}-line".format(tpart_base_class)
 
-        line_classes = '{} {} '.format(title_line_class, tpart_line_class)
-        text_classes = '{} {} {} {} '.format(
-            title_line_class, title_base_class, tpart_line_class, tpart_base_class,
+        line_classes = "{} {} ".format(title_line_class, tpart_line_class)
+        text_classes = "{} {} {} {} ".format(
+            title_line_class,
+            title_base_class,
+            tpart_line_class,
+            tpart_base_class,
         )
 
         return line_classes, text_classes
@@ -464,15 +477,16 @@ class ZoneDetails(
     ):
         keyval_vsplit = self.details_container.get_children()[keyval_widgets.index]
 
-        focus_state = set_focus and 'focus' or 'normal'
+        focus_state = set_focus and "focus" or "normal"
 
         line_classes, text_classes = self.header_line_styles(
-            keyval_widgets.what_part, set_focus=set_focus,
+            keyval_widgets.what_part,
+            set_focus=set_focus,
         )
         # (lb): PTK assigns the same 'class:label' to all widgets. If we maintain it,
         # then the user can set, e.g., "label = 'bg:#00AA66'" in their styles.conf to
         # set a universal background color (well, except for content area and border).
-        ptk_label_class = 'class:label '
+        ptk_label_class = "class:label "
         line_classes = ptk_label_class + line_classes
         text_classes = ptk_label_class + text_classes
 
@@ -489,13 +503,13 @@ class ZoneDetails(
         # On TextArea, to_container gets val_container.window.
         value_widget = to_container(val_container)
         # Set class on value component, value-normal-line, or value-focus-line.
-        value_line_class = 'class:value-{}-line '.format(focus_state)
+        value_line_class = "class:value-{}-line ".format(focus_state)
         # Set class on value component, value-{part}[-focus]-line,
         # e.g., value-end-focus-line, or value-start-line.
-        value_part_class = 'class:value-{}'.format(keyval_widgets.what_part)
+        value_part_class = "class:value-{}".format(keyval_widgets.what_part)
         if set_focus:
-            value_part_class += '-focus'
-        value_part_class += '-line'
+            value_part_class += "-focus"
+        value_part_class += "-line"
         # This clobbers default style that PPT use on TextArea, 'class:text-area '.
         value_widget.style = ptk_label_class + value_line_class + value_part_class
         keyval_vsplit.get_children()[3] = value_widget
@@ -544,8 +558,7 @@ class ZoneDetails(
     def edit_time_leave(self, keyval_widgets):
         def _edit_time_leave():
             self.affirm(
-                (self.active_widgets is None)
-                or (keyval_widgets is self.active_widgets)
+                (self.active_widgets is None) or (keyval_widgets is self.active_widgets)
             )
             return apply_edited_and_refresh()
 
@@ -562,10 +575,12 @@ class ZoneDetails(
             return keyval_widgets.text_area.text != keyval_widgets.orig_val
 
         def debug_log_text():
-            self.debug('text_area.text: {} / orig_val: {}'.format(
-                keyval_widgets.text_area.text,
-                keyval_widgets.orig_val,
-            ))
+            self.debug(
+                "text_area.text: {} / orig_val: {}".format(
+                    keyval_widgets.text_area.text,
+                    keyval_widgets.orig_val,
+                )
+            )
 
         def refresh_keyval():
             # Refresh labels now, so that old value isn't shown briefly and then
@@ -587,9 +602,9 @@ class ZoneDetails(
     # ***
 
     def edit_time_any_key(self, event=None):
-        self.debug('event: {}'.format(event))
+        self.debug("event: {}".format(event))
         # Ignore all alpha characters except those for [t|T]imezone delimiter.
-        if event.data.isalpha() and event.data not in ('t', 'T'):
+        if event.data.isalpha() and event.data not in ("t", "T"):
             return
         # Like PPT's basic binding's filter=insert_mode, or vi's filter=vi_replace_mode.
         # "Insert data at cursor position."
@@ -615,7 +630,9 @@ class ZoneDetails(
     @catch_action_exception
     def edit_time_enter(self, event=None, passive=False):
         """"""
-        leave_okayed = [True, ]
+        leave_okayed = [
+            True,
+        ]
 
         def _edit_time_enter():
             edit_text = self.active_widgets.text_area.text
@@ -628,7 +645,7 @@ class ZoneDetails(
             return leave_okayed[0]
 
         def apply_edited_time(edit_fact, edit_text):
-            self.debug('edit_time_enter: edit_text: {}'.format(edit_text))
+            self.debug("edit_time_enter: edit_text: {}".format(edit_text))
             if not edit_text:
                 apply_edit_time_removed(edit_fact)
             else:
@@ -667,13 +684,17 @@ class ZoneDetails(
             if self.active_widgets is self.widgets_start:
                 was_time = edit_fact.start_fmt_local
                 applied = self.apply_edit_time_start(
-                    edit_fact, edit_time, verify_fact_times,
+                    edit_fact,
+                    edit_time,
+                    verify_fact_times,
                 )
             else:
                 self.affirm(self.active_widgets is self.widgets_end)
                 was_time = edit_fact.end_fmt_local_or_now
                 applied = self.apply_edit_time_end(
-                    edit_fact, edit_time, verify_fact_times,
+                    edit_fact,
+                    edit_time,
+                    verify_fact_times,
                 )
             check_conflicts_and_confirm(edit_fact, was_fact, was_time, applied)
 
@@ -755,7 +776,7 @@ class ZoneDetails(
                 other_edits=other_edits,
                 suppress_barf=True,
             )
-            self.debug('no. conflicts found: {}'.format(len(conflicts)))
+            self.debug("no. conflicts found: {}".format(len(conflicts)))
             return conflicts
 
         # ***
@@ -763,7 +784,7 @@ class ZoneDetails(
         def show_message_cannot_clear_start():
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Try again'),
+                _("Try again"),
                 _(
                     "You may not clear a Fact's start time.\n\n"
                     "Enter a valid date and time, clock time, or relative time."
@@ -773,21 +794,21 @@ class ZoneDetails(
         def show_message_cannot_clear_end():
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('You lose'),
+                _("You lose"),
                 _("You may not clear a Fact's end time unless it is the final Fact."),
             )
 
         def show_message_cannot_parse_time(edit_text):
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Drat!'),
+                _("Drat!"),
                 edit_text,
             )
 
         def show_message_conflicts_found(conflict_msg):
             show_message_and_deny_leave(
                 self.carousel.zone_manager.root,
-                _('Not so fast!'),
+                _("Not so fast!"),
                 conflict_msg,
             )
 
@@ -833,32 +854,32 @@ class ZoneDetails(
             # characters and just build the iso8601-worthy string ourselves.
             # We also allow incomplete YYYYMM (iso8601 only allows YYYY-MM
             # or YYYYMMDD), as well as incomplete time (say, '12', for noon).
-            numberless = re.sub(r'[^\d]+', '', edit_text)
+            numberless = re.sub(r"[^\d]+", "", edit_text)
             # (lb): Alright, maybe this parsing should be pushed down to parse_dated.
             # - Add punctuation based on number of digits, i.e.,
             #   YYYY 4 | YYYYMM 6 | YYYYMMDD 8 | YYYYMMDDhh 10 | YYYYMMDDhhmm 12
             # - Note that clock time still works, e.g., `1000` will be interpreted
             #   as 10 AM. And `100` as 1 AM.
-            pattern = r''
-            replace = r''
+            pattern = r""
+            replace = r""
             n_digits = len(numberless)
             if n_digits >= 4:
-                pattern += r'(....)'
-                replace += r'\1'
+                pattern += r"(....)"
+                replace += r"\1"
             if n_digits >= 6:
-                pattern += r'(..)'
-                replace += r'-\2'
+                pattern += r"(..)"
+                replace += r"-\2"
             if n_digits >= 8:
-                pattern += r'(..)'
-                replace += r'-\3'
+                pattern += r"(..)"
+                replace += r"-\3"
             if n_digits >= 10:
-                pattern += r'(..)'
-                replace += r' \4'
+                pattern += r"(..)"
+                replace += r" \4"
             if n_digits >= 12:
-                pattern += r'(..)'
-                replace += r':\5'
+                pattern += r"(..)"
+                replace += r":\5"
             reformatted = re.sub(pattern, replace, numberless)
-            self.debug('reformatted: {}'.format(reformatted))
+            self.debug("reformatted: {}".format(reformatted))
             return reformatted
 
         return _parse_dated()
@@ -893,4 +914,3 @@ class ZoneDetails(
         # We could restore the edited time that the user undid.
         # But there's not much utility in that.
         pass
-

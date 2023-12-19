@@ -62,8 +62,8 @@ from prompt_toolkit.layout.dimension import D
 from prompt_toolkit.widgets import Button, Dialog, Label
 
 __all__ = (
-    'alert_and_question',
-    'show_message',
+    "alert_and_question",
+    "show_message",
     # Private:
     #   'AlertResponseDialog',
     #   'MessageDialog',
@@ -81,6 +81,7 @@ def show_message(root_container, title, text):
 
 # ***
 
+
 class MessageDialog(object):
     def __init__(self, title, text):
         self.future = Future()
@@ -88,13 +89,15 @@ class MessageDialog(object):
         def set_done():
             self.future.set_result(None)
 
-        ok_button = Button(text=_('OK'), handler=(lambda: set_done()))
+        ok_button = Button(text=_("OK"), handler=(lambda: set_done()))
 
         self.dialog = Dialog(
             title=title,
-            body=HSplit([
-                Label(text=text),
-            ]),
+            body=HSplit(
+                [
+                    Label(text=text),
+                ]
+            ),
             buttons=[ok_button],
             width=D(preferred=80),
             modal=True,
@@ -105,7 +108,7 @@ class MessageDialog(object):
 
 
 async def show_dialog_as_float(root_container, dialog):
-    " Coroutine. "
+    "Coroutine."
     float_ = Float(content=dialog)
     root_container.floats.insert(0, float_)
 
@@ -124,8 +127,9 @@ async def show_dialog_as_float(root_container, dialog):
 
 # ***
 
+
 class AlertResponseDialog(object):
-    def __init__(self, title='', label_text='', prompt_ok='', prompt_no=''):
+    def __init__(self, title="", label_text="", prompt_ok="", prompt_no=""):
         # MAGIC_NUMBER: 4: Pad button label so appears padded ``< LIKE SO >``
         BUTTON_PADDING = 4
 
@@ -154,9 +158,11 @@ class AlertResponseDialog(object):
 
         self.dialog = Dialog(
             title=title,
-            body=HSplit([
-                Label(text=label_text),
-            ]),
+            body=HSplit(
+                [
+                    Label(text=label_text),
+                ]
+            ),
             buttons=[button_ok, button_no],
             width=D(preferred=80),
             modal=True,
@@ -168,10 +174,10 @@ class AlertResponseDialog(object):
 
 def alert_and_question(
     root_container,
-    title='',
-    label_text='',
-    prompt_ok=_('OK'),
-    prompt_no=_('Cancel'),
+    title="",
+    label_text="",
+    prompt_ok=_("OK"),
+    prompt_no=_("Cancel"),
     on_close=lambda x: None,
 ):
     async def coroutine():
@@ -185,4 +191,3 @@ def alert_and_question(
         on_close(result)
 
     ensure_future(coroutine())
-

@@ -17,22 +17,21 @@
 
 """FactsManager_RiftDec"""
 
-__all__ = (
-    'FactsManager_RiftDec',
-)
+__all__ = ("FactsManager_RiftDec",)
 
 
 class FactsManager_RiftDec(object):
     """"""
+
     def jump_rift_dec(self):
         """"""
         # find_rift_fact calls jump_to_fact_nearest (which calls fulfill_jump).
         prev_fact = self.find_rift_fact(is_prev=True)
         if prev_fact is None:
-            return self.jump_to_oldest_fact(reason='rift-dec')
+            return self.jump_to_oldest_fact(reason="rift-dec")
         return prev_fact
 
-    def jump_fact_first(self, reason='fact-first'):
+    def jump_fact_first(self, reason="fact-first"):
         """"""
         return self.jump_to_oldest_fact(reason, include_edge_gap=True)
 
@@ -40,6 +39,7 @@ class FactsManager_RiftDec(object):
 
     def jump_to_oldest_fact(self, reason, include_edge_gap=False):
         """"""
+
         def _jump_to_oldest_fact():
             first_group = self.groups[0] if include_edge_gap else floor_groups()
             _first_group, first_fact = group_oldest(first_group)
@@ -52,10 +52,7 @@ class FactsManager_RiftDec(object):
             return prev_fact
 
         def floor_groups():
-            if (
-                (self.curr_group is self.groups[-1])
-                and (self.curr_index > 0)
-            ):
+            if (self.curr_group is self.groups[-1]) and (self.curr_index > 0):
                 # Looking at new, next Facts, and not the first new
                 # Fact, so scroll back to the first new, next Fact.
                 first_group = self.groups[-1]
@@ -64,12 +61,8 @@ class FactsManager_RiftDec(object):
                 # If new, prev Facts, scroll to oldest Fact, then to first
                 # new, prev Fact. (Note: If there are new, prev Facts, the
                 # oldest Fact is already established at self.groups[1][0].)
-                if (
-                    (self.curr_group is not self.groups[0])
-                    and (
-                        (self.curr_group is not self.groups[1])
-                        or (self.curr_index > 0)
-                    )
+                if (self.curr_group is not self.groups[0]) and (
+                    (self.curr_group is not self.groups[1]) or (self.curr_index > 0)
                 ):
                     first_group = self.groups[1]
             return first_group
@@ -116,4 +109,3 @@ class FactsManager_RiftDec(object):
             return first_group, first_fact
 
         return _jump_to_oldest_fact()
-

@@ -19,13 +19,12 @@
 
 from functools import update_wrapper
 
-__all__ = (
-    'KeyActionMap',
-)
+__all__ = ("KeyActionMap",)
 
 
 class KeyActionMap(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
 
@@ -50,11 +49,11 @@ class KeyActionMap(object):
                 # yeah, this code has little utility to the end consumer, other
                 # than to make the developer more comfortable in the code jungle.
                 debug = obj.carousel.controller.client_logger.debug
-                debug('🚿 🐎 ENTER 👋 🍩 “{}”'.format(func.__name__))
+                debug("🚿 🐎 ENTER 👋 🍩 “{}”".format(func.__name__))
                 func(obj, event, *args, **kwargs)
                 # Include a visual delimiter to make it easy to scan log trace
                 # and see groups of messages belonging to each command.
-                debug('🍖 🛀 LEAVE 🐵 🍌 “{}”'.format(func.__name__))
+                debug("🍖 🛀 LEAVE 🐵 🍌 “{}”".format(func.__name__))
 
             return update_wrapper(trace_enter_leave_wrapper, func)
 
@@ -80,6 +79,7 @@ class KeyActionMap(object):
 
             Also resets the command modifier if indicatd by the command being
             decorated."""
+
             def _intercept_modifier(func):
                 def wrapper(obj, event, *args, **kwargs):
                     command_modifier = obj.carousel.update_handler.command_modifier
@@ -89,25 +89,22 @@ class KeyActionMap(object):
                     #   with a user command mapped to '.'. I.e., if no modifier
                     #   and user presses '.', execute the mapped command. But
                     #   if modifier started and '.', treat as decimal point.
-                    if (
-                        command_modifier
-                        and (
-                            (
-                                event.data == '.'
-                                # Can only be one '.' in modifier, so check not seen.
-                                # (lb): This is somewhat awkward behavior, e.g., if
-                                # user tries typing a date prefix (e.g., for the 'G'
-                                # command) using periods, say, `2020.01.` on the
-                                # second dot, it'll execute the '.' command. Oh well.
-                                and '.' not in command_modifier
-                            )
-                            or (
-                                # Note that date separators are allowed more than once,
-                                # meaning any command mapped to a key also used as a
-                                # date separator will be shadowed by this code and
-                                # therefore cannot be called with a command modifier.
-                                re_date_seps.match(event.data)
-                            )
+                    if command_modifier and (
+                        (
+                            event.data == "."
+                            # Can only be one '.' in modifier, so check not seen.
+                            # (lb): This is somewhat awkward behavior, e.g., if
+                            # user tries typing a date prefix (e.g., for the 'G'
+                            # command) using periods, say, `2020.01.` on the
+                            # second dot, it'll execute the '.' command. Oh well.
+                            and "." not in command_modifier
+                        )
+                        or (
+                            # Note that date separators are allowed more than once,
+                            # meaning any command mapped to a key also used as a
+                            # date separator will be shadowed by this code and
+                            # therefore cannot be called with a command modifier.
+                            re_date_seps.match(event.data)
                         )
                     ):
                         obj.carousel.update_handler.command_modifier_any_key(event)
@@ -627,4 +624,3 @@ class KeyActionMap(object):
     @Decorators.refresh_now
     def final_delta_time_hours(self, event):
         self.update_handler.final_delta_time_hours(event)
-

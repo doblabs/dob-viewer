@@ -22,20 +22,20 @@ import re
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.widgets import Label
 
-__all__ = (
-    'ZoneStreamer',
-)
+__all__ = ("ZoneStreamer",)
 
 
 class ZoneStreamer(object):
     """"""
+
     def __init__(self, carousel):
         self.carousel = carousel
 
     def standup(self):
         """"""
+
         def _standup():
-            self.streamer_style = self.carousel.style_classes['streamer']
+            self.streamer_style = self.carousel.style_classes["streamer"]
             self.zone_manager = self.carousel.zone_manager
             assemble_children()
             self.streamer_container = build_container()
@@ -50,7 +50,7 @@ class ZoneStreamer(object):
         # ***
 
         def add_interval_banner():
-            self.interval_banner = Label(text='')
+            self.interval_banner = Label(text="")
             self.children.append(self.interval_banner)
 
         # ***
@@ -82,9 +82,9 @@ class ZoneStreamer(object):
 
     # ***
 
-    STREAMER_LINE_CLASS = 'class:streamer-line'
+    STREAMER_LINE_CLASS = "class:streamer-line"
 
-    RE_STYLE_HAS_CLASS = re.compile(r'\b{}\b'.format(STREAMER_LINE_CLASS))
+    RE_STYLE_HAS_CLASS = re.compile(r"\b{}\b".format(STREAMER_LINE_CLASS))
 
     def refresh_interval(self):
         tod_humanize = self.zone_manager.facts_diff.edit_fact.time_of_day_humanize
@@ -97,15 +97,17 @@ class ZoneStreamer(object):
         # that classes are properly ordered. (The first element added is
         # 'class:label', which we want more specific classes to override.)
         # (lb): Reminder that match() starts at string beginning, so use search().
-        match = ZoneStreamer.RE_STYLE_HAS_CLASS.search(self.interval_banner.window.style)
+        match = ZoneStreamer.RE_STYLE_HAS_CLASS.search(
+            self.interval_banner.window.style
+        )
         if match is None:
-            self.interval_banner.window.style += ' ' + ZoneStreamer.STREAMER_LINE_CLASS
+            self.interval_banner.window.style += " " + ZoneStreamer.STREAMER_LINE_CLASS
         self.process_style_rules()
 
     def process_style_rules(self):
         # Register class:streamer[-line] styles.
-        friendly_name = 'streamer'
-        for suffix in ('', '-line'):
+        friendly_name = "streamer"
+        for suffix in ("", "-line"):
             # The label itself, 'streamer', includes the '╭─...' border,
             # so 3 rows of output are styled. If you specify the whole container,
             # 'streamer-line', the style will include the blank lines, one
@@ -118,7 +120,7 @@ class ZoneStreamer(object):
     # ***
 
     # Interval as currently formatted has max 53 chars, e.g.,
-    MAX_INTERVAL_WIDTH = len('Fri 13 Jul 2018 ◐ 11:40 PM — 12:29 AM Sat 14 Jul 2018')
+    MAX_INTERVAL_WIDTH = len("Fri 13 Jul 2018 ◐ 11:40 PM — 12:29 AM Sat 14 Jul 2018")
 
     def bannerize(self, text):
         def _bannerize():
@@ -133,23 +135,24 @@ class ZoneStreamer(object):
             parts = []
             # Inline style only applies to parts with text, so
             # using 'blank-line' style here would be fruitless.
-            parts += [('', '\n')]
+            parts += [("", "\n")]
             parts += [(self.streamer_style, bannerful)]
-            parts += [('', '\n')]
+            parts += [("", "\n")]
             return parts
 
         def colorful_banner_town(text):
             # MAYBE: (lb): We could go to the trouble of styling the ANSI border
             # separately than the text... but that seems a wee bit tedious to code.
             reps = self.carousel.avail_width - 1
-            padded_text = '{0:<{1}}'.format(text, ZoneStreamer.MAX_INTERVAL_WIDTH)
-            centered_text = '{0:^{1}}'.format(padded_text, reps)
-            padded_hrule_top = '╭' + '─' * reps + '╮'
-            padded_hrule_bot = '╰' + '─' * reps + '╯'
-            banner = '{0}\n│{1}│\n{2}'.format(
-                padded_hrule_top, centered_text, padded_hrule_bot,
+            padded_text = "{0:<{1}}".format(text, ZoneStreamer.MAX_INTERVAL_WIDTH)
+            centered_text = "{0:^{1}}".format(padded_text, reps)
+            padded_hrule_top = "╭" + "─" * reps + "╮"
+            padded_hrule_bot = "╰" + "─" * reps + "╯"
+            banner = "{0}\n│{1}│\n{2}".format(
+                padded_hrule_top,
+                centered_text,
+                padded_hrule_bot,
             )
             return banner
 
         return _bannerize()
-

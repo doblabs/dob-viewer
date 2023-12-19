@@ -19,9 +19,7 @@
 
 from functools import update_wrapper
 
-__all__ = (
-    'catch_action_exception',
-)
+__all__ = ("catch_action_exception",)
 
 
 def catch_action_exception(func):
@@ -31,20 +29,22 @@ def catch_action_exception(func):
         except Exception as err:  # noqa: F841
             # F841 local variable '...' is assigned to but never used
 
-            if not self.carousel.controller.config['dev.catch_errors']:
+            if not self.carousel.controller.config["dev.catch_errors"]:
                 # MAYBE/2019-01-21: Display warning and silently recover.
                 #  But really, harden the code, and do not expect this path.
                 raise
 
             import traceback
+
             traceback.print_stack()
             traceback.print_exc()
             # We're gonna die anyway, so undo terminal raw mode, if PPT did so.
             import os
-            os.system('stty sane')
+
+            os.system("stty sane")
             import pdb
+
             pdb.set_trace()
             raise
 
     return update_wrapper(wrapper, func)
-

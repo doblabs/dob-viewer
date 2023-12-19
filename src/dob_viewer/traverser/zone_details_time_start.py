@@ -21,9 +21,7 @@ from datetime import timedelta
 
 from .exceptions import catch_action_exception
 
-__all__ = (
-    'ZoneDetails_TimeStart',
-)
+__all__ = ("ZoneDetails_TimeStart",)
 
 
 class ZoneDetails_TimeStart(object):
@@ -34,7 +32,9 @@ class ZoneDetails_TimeStart(object):
 
     def add_header_start_time(self):
         self.widgets_start = self.add_header_section(
-            'start', 'start_fmt_local', editable=True,
+            "start",
+            "start_fmt_local",
+            editable=True,
             mouse_handler=self.header_time_start_mouse_handler,
         )
 
@@ -101,7 +101,7 @@ class ZoneDetails_TimeStart(object):
         best_time = edit_time
         if edit_prev and edit_prev.start and (best_time < edit_prev.start):
             # Adjust adjacent fact's time width to be no less that fact_min_delta.
-            min_delta = int(self.carousel.controller.config['time.fact_min_delta'])
+            min_delta = int(self.carousel.controller.config["time.fact_min_delta"])
             # We do not want to make momentaneous facts, so use at least 1 minute.
             min_delta = max(1, min_delta)
             best_time = edit_prev.start + timedelta(minutes=min_delta)
@@ -116,10 +116,7 @@ class ZoneDetails_TimeStart(object):
         # If the edited time encroached on the neighbor, or if the neighbor
         # is an unedited gap fact, edit thy neighbor.
         if edit_prev:
-            if (
-                (edit_fact.start < edit_prev.end)
-                or edit_prev.is_gap
-            ):
+            if (edit_fact.start < edit_prev.end) or edit_prev.is_gap:
                 undoable_facts.append(edit_prev.copy())
                 edit_prev.end = edit_fact.start
                 edited_facts.append(edit_prev)
@@ -131,7 +128,6 @@ class ZoneDetails_TimeStart(object):
                 edit_prev.next_fact = None
         else:
             edit_fact.prev_fact = None
-        edits_manager.add_undoable(undoable_facts, what='header-edit')
+        edits_manager.add_undoable(undoable_facts, what="header-edit")
         edits_manager.apply_edits(*edited_facts)
         return True
-
