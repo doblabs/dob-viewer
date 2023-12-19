@@ -326,9 +326,8 @@ class KeyBonder(object):
             if not custom_factoid:
                 self.errors.append(
                     _(
-                        "ERROR: Custom key mapping ‘{}’ has no matching factoid: “{}”".format(
-                            mapping_name, factoid_name
-                        )
+                        f"ERROR: Custom key mapping ‘{mapping_name}’ "
+                        f"has no matching factoid: “{factoid_name}”"
                     )
                 )
             else:

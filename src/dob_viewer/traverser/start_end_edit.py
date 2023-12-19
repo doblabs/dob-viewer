@@ -148,10 +148,10 @@ class StartEndEdit(object):
             # specially here (possibly removing the latest undo, and squishing it
             # with the new edits), we do not want to call edits_manager.apply_edits,
             # which calls update_redo_undo_and_conjoined, which fiddles with redo_undo.
-            # Instead, do things piecemeal: pop the latest undo; squish it; push it back;
-            # clear the redo; and use the restore_facts method to fix wiring (update the
-            # edits_manager.edit_facts and facts_manager.by_pk lookups, and update the
-            # facts_manager fact-groups).
+            # Instead, do things piecemeal: pop the latest undo; squish it; push it
+            # back; clear the redo; and use the restore_facts method to fix wiring
+            # (update the edits_manager.edit_facts and facts_manager.by_pk lookups,
+            # and update the facts_manager fact-groups).
 
             # If same Facts edited with same tool within DISTINCT_CHANGES_THRESHOLD
             # time, pop the previous undo.

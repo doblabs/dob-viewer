@@ -49,7 +49,8 @@ class DobViewerConfigEditorKeys(object):
     @property
     @ConfigRoot.setting(
         _(
-            "Switch to Previous Widget (description → end time → start time → [repeats])"
+            "Switch to Previous Widget "
+            "(description → end time → start time → [repeats])"
         ),
     )
     def focus_previous(self):

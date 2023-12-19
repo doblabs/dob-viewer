@@ -318,7 +318,7 @@ class FactsManager(
             self.by_pk[some_fact.pk] = some_fact
 
     def new_fact_wire_links(self, some_fact):
-        # 2019-02-13: (lb): Just a *momentaneous* FYI. (Feature should be all wired now.)
+        # 2019-02-13: (lb): Just a *momentaneous* FYI (Feature should be all wired now)
         if some_fact.start == some_fact.end:
             self.controller.client_logger.warning(
                 "Found MOMENTANEOUS: {}".format(some_fact.short),

@@ -31,7 +31,7 @@ def render_carousel_help():
     #   is used outside dob (h. unlikely), the blowup will be localised.
     from dob import get_version as get_version_dob
 
-    # FIXME/2020-04-01: Revisit this. Some commands changed; some were never implemented!
+    # FIXME/2020-04-01: Revisit this. Some commands changed; some never implemented.
     carousel_help = (
         _(
             """ ┏━━━━━━━━━ NAVIGATION ━━━━━━━━┳━━━━ PROMPTS ━━━━┳━━━━━━━ NUDGE TIME ━━━━━━━┓
@@ -59,7 +59,7 @@ def render_carousel_help():
  ┃     Learn more tricks at       ┃  Copyright © 2018-2020 Landon Bouma     ┃
  ┃   https://dob.readthedocs.io   ┃  dob v.{dob_vers: <32} ┃
  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-        """
+        """  # noqa: E501
         )
         .format(
             dob_vers=get_version_dob()[:34],
