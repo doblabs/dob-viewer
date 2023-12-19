@@ -1,5 +1,5 @@
-dob_viewer
-==========
+src
+===
 
 .. toctree::
    :maxdepth: 4
