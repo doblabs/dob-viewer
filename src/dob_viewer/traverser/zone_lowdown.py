@@ -18,7 +18,6 @@
 """Facts Carousel Status line (footer)"""
 
 import time
-
 from gettext import gettext as _
 
 from prompt_toolkit.layout.containers import to_container

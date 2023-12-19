@@ -15,11 +15,10 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
-from dob_bright.styling.load_styling import load_style_classes, load_style_rules
 from dob_bright.styling.load_ignore import load_no_completion
+from dob_bright.styling.load_styling import load_style_classes, load_style_rules
 
 from .content_lexer import load_content_lexer
-
 
 __all__ = ("prompt_and_save_confirmer",)
 

@@ -20,9 +20,7 @@
 from prompt_toolkit.application.application import _CombinedRegistry
 from prompt_toolkit.key_binding.key_processor import KeyProcessor
 
-from .interface_keys import (
-    KeyBonder,
-)
+from .interface_keys import KeyBonder
 from .key_action_map import KeyActionMap
 
 __all__ = ("ActionManager",)

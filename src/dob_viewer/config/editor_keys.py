@@ -18,7 +18,6 @@
 """Defines dob command key mappings."""
 
 import json
-
 from gettext import gettext as _
 
 from nark.config import ConfigRoot

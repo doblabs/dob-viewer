@@ -20,7 +20,6 @@
 import re
 import time
 from datetime import timedelta
-
 from gettext import gettext as _
 
 from .exceptions import catch_action_exception

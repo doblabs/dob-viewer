@@ -20,10 +20,10 @@
 from gettext import gettext as _
 
 # Add our settings to the config.
+from nark.config import ConfigRoot
+
 from .custom_paste import DobViewerConfigCustomPaste  # noqa: F401 '<>' imported ...
 from .editor_keys import DobViewerConfigEditorKeys  # noqa: F401  ... but unused
-
-from nark.config import ConfigRoot
 
 __all__ = ("DobConfigurableDev",)
 

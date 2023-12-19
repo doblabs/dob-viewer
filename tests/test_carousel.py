@@ -16,11 +16,9 @@
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
 import pytest
-
+from dob_bright.crud.parse_input import parse_input
 from prompt_toolkit.input.defaults import create_pipe_input
 from prompt_toolkit.output import DummyOutput
-
-from dob_bright.crud.parse_input import parse_input
 
 from dob_viewer.ptkui import re_confirm
 from dob_viewer.traverser.save_confirmer import prompt_and_save_confirmer

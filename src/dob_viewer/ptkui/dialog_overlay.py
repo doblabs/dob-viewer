@@ -52,9 +52,8 @@
 
 """"""
 
+from asyncio import Future, ensure_future
 from gettext import gettext as _
-
-from asyncio import ensure_future, Future
 
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.layout.containers import Float, HSplit

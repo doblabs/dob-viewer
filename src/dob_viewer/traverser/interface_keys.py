@@ -19,12 +19,10 @@
 
 from gettext import gettext as _
 
+from dob_prompt.prompters.interface_bonds import KeyBond
+from easy_as_pypi_termio.errors import echo_warning
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
-
-from easy_as_pypi_termio.errors import echo_warning
-
-from dob_prompt.prompters.interface_bonds import KeyBond
 
 from ..config.custom_paste import DobViewerConfigCustomPaste
 from ..config.json_sublist import json_load_sublisted

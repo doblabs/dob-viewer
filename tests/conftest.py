@@ -16,7 +16,6 @@
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
 import pytest
-
 from dob_bright.crud.fact_dressed import FactDressed
 
 # When dob was split into Packages of Four, all the fixtures were sent to

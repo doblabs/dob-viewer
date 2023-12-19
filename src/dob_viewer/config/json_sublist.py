@@ -18,7 +18,6 @@
 """dob_viewer.config sub.package provides Carousel UX user configuration settings."""
 
 import json
-
 from gettext import gettext as _
 
 __all__ = ("json_load_sublisted",)

@@ -17,28 +17,21 @@
 
 """Facts Carousel"""
 
-from gettext import gettext as _
-
 import asyncio
 import time
-
-from inflector import English, Inflector
+from gettext import gettext as _
 
 import click_hotoffthehamster as click
-
-from easy_as_pypi_termio.errors import echoed_warnings_reset
-
-from nark.helpers.dev.profiling import profile_elapsed
-
 from dob_bright.styling.style_conf import color as styling_color
 from dob_bright.styling.style_engine import StyleEngine
-
 from dob_prompt.prompters.triple_prompter import ask_user_for_edits
+from easy_as_pypi_termio.errors import echoed_warnings_reset
+from inflector import English, Inflector
+from nark.helpers.dev.profiling import profile_elapsed
 
 from dob_viewer.ptkui.re_confirm import confirm
 
 from ..ptkui.dialog_overlay import show_message
-
 from .action_manager import ActionManager
 from .edits_manager import EditsManager
 from .exceptions import catch_action_exception

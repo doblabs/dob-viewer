@@ -17,14 +17,14 @@
 
 """Zone Manager"""
 
+import os
 from gettext import gettext as _
 
-import os
+import click_hotoffthehamster as click
 from inflector import English, Inflector
 
-import click_hotoffthehamster as click
-
 # Profiling: load prompt_toolkit. ~ 0.040 secs.
+from dob_bright.crud.facts_diff import FactsDiff
 from prompt_toolkit.application import Application
 from prompt_toolkit.layout import Layout
 from prompt_toolkit.layout.containers import (
@@ -37,10 +37,7 @@ from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from prompt_toolkit.widgets import Box, Label
 
-from dob_bright.crud.facts_diff import FactsDiff
-
 from ..ptkui.dialog_overlay import alert_and_question
-
 from .exceptions import catch_action_exception
 from .zone_content import ZoneContent
 from .zone_details import ZoneDetails

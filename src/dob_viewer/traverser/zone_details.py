@@ -17,23 +17,19 @@
 
 """Facts Carousel Header (Fact meta and diff)"""
 
+import re
+from datetime import datetime
 from gettext import gettext as _
 
-from datetime import datetime
-import re
-
+from dob_bright.crud.fix_times import must_complete_times
+from nark.helpers.parse_errors import ParserInvalidDatetimeException
+from nark.helpers.parse_time import parse_dated
 from prompt_toolkit.application.current import get_app
 from prompt_toolkit.layout.containers import HSplit, VSplit, to_container
 from prompt_toolkit.lexers import SimpleLexer
 from prompt_toolkit.widgets import Label, TextArea
 
-from nark.helpers.parse_errors import ParserInvalidDatetimeException
-from nark.helpers.parse_time import parse_dated
-
-from dob_bright.crud.fix_times import must_complete_times
-
 from ..ptkui.dialog_overlay import show_message
-
 from .exceptions import catch_action_exception
 from .zone_details_time_end import ZoneDetails_TimeEnd
 from .zone_details_time_start import ZoneDetails_TimeStart

@@ -17,16 +17,13 @@
 
 """Manages loading custom Lexer specified by user's config."""
 
+import inspect
 from gettext import gettext as _
 
-import inspect
-
 import pygments.lexers
-from prompt_toolkit.lexers import Lexer, PygmentsLexer
-
-from easy_as_pypi_termio.errors import echo_warning
-
 from dob_bright.styling import load_obj_from_internal
+from easy_as_pypi_termio.errors import echo_warning
+from prompt_toolkit.lexers import Lexer, PygmentsLexer
 
 from ..ptkui import various_lexers
 
