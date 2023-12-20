@@ -163,9 +163,16 @@ class Carousel(object):
 
     def gallop(self, **kwargs):
         self.standup_once()
-        if self.async_enable:
-            # Get the OS thread's event loop.
-            self.event_loop = asyncio.get_event_loop()
+        #  if self.async_enable:
+        #      # Get the OS thread's event loop.
+        #      # 3.0.37: 2023-02-21
+        #      #  * Use `get_running_loop()` instead of `get_event_loop()`.
+        #      # FIXME/2023-12-19 21:26: asyncio.get_event_loop deprecated 3.10
+        #      # - Though maybe I should bother looking for this?
+        #      self.event_loop = asyncio.get_event_loop()
+        #      # - REFER: https://stackoverflow.com/questions/65206110/
+        #      # FIXME/2023-12-19 21:25: It's not running yet....
+        #      #  self.event_loop = asyncio.get_running_loop()
         confirmed_facts = self.run_edit_loop(**kwargs)
 
         # (lb): We did not start the event loop, so we should not stop it, e.g.,:
@@ -407,78 +414,108 @@ class Carousel(object):
             self.zone_manager.application.run()
             return False
 
+    # ***
+
+    # Our main asyncio event loop follows.
+    #
+    # - But first, a few longs comments.
+
+    # SAVVY/2019-01-27: Here's why we use `rerun` in following coroutine.
+    #
+    # - Aka, CPR_ISSUE: (lb): A Funky Business upon Rerunning Carousel.
+    #
+    # After the user edits the description, or the act@gory, or tags, the
+    # application returns to the Carousel. But sometimes the Carousel
+    # completes immediately. Then our code, not seeing enduring_edit,
+    # exits, though the user was expecting to see the Carousel again.
+    #
+    # The user also sees what looks like CPR (cursor position request)
+    # input on the terminal, for instance,
+    #
+    #     ^[[12;1R>
+    #
+    # I cannot deterministically reproduce the behavior other than to
+    # cycle between the Carousel and editing, mashing keys to jump
+    # quickly between states, and occasionally saving.
+    #
+    # We can kludge around the behavior by rerunning the Carousel if
+    # it completed quickly (i.e., in less time then then use could have
+    # interacted with it). (Though this introduces additional pitfalls,
+    # like falling into an infinite feedback loop. Just be careful!)
+    #
+    # - CPR TMI / CPR_ISSUE: (lb): Look in PPT for ask_for_cpr:
+    #   this sends the CPR:
+    #     Query Cursor Position: <ESC>[6n
+    # The other junk you see on the terminal are cursor positions:
+    #     Report Cursor Position: <ESC>[{ROW};{COLUMN}R
+    # If code gets stuck in a loop, the request acts like Schrödinger's
+    # cat and changes value each time it prints to the terminal, e.g.,
+    #     ^[[11;1R^[[11;9R^[[11;17R^[[11;26R^[[11;35R
+    #             ^[[12;9R^[[12;17R^...
+    # (In other cases, you might see `;226R;226R;226R...` instead).
+    # - REFER:
+    #     prompt_toolkit/renderer.py
+    #       request_absolute_cursor_position
+
+    # ALTLY/2023-12-19: There are two alternative approaches for the
+    #                   asyncio code below:
+    #
+    # - First, we could choose to manage the clock task ourselves.
+    #
+    #   - E.g., instead of using create_background_task, use create_task:
+    #
+    #       tck_coro = self.tick_tock_now()
+    #       tck_task = asyncio.create_task(tck_coro)
+    #
+    #   - The two paths are essentially the same; both call create_task
+    #     (though PPT currently calls get_running_loop().create_task).
+    #
+    #   - But prefer PPT's wrapper. PPT is more likely to maintain
+    #     proper Python compatibility, and they have a clear roadmap.
+    #     - E.g., they plan to switch to TaskGroup after Py 3.10 EOLs.
+    #
+    # - Second, we use the simplest wait on the PPT task:
+    #
+    #       result = await self.zone_manager.application.run_async()
+    #
+    #   - But if we wanted to wait on more than one task, or to use a
+    #     timeout, it's just a create_task and asyncio.wait away, e.g.,
+    #
+    #       # Fetch the PPT coroutine, and run the PPT app.
+    #       ppt_coro = self.zone_manager.application.run_async()
+    #       ppt_task = asyncio.create_task(ppt_coro)
+    #
+    #       done, pending = await asyncio.wait(
+    #         {ppt_task},
+    #         timeout=None,
+    #         # Also: FIRST_COMPLETED, FIRST_EXCEPTION
+    #         return_when=asyncio.ALL_COMPLETED,
+    #       )
+
     def runloop_async(self):
-        # CPR_ISSUE: (lb): A Funky Business upon Rerunning Carousel.
-        #
-        # After the user edits the description, or the act@gory, or tags, the
-        # application returns to the Carousel. But sometimes the Carousel
-        # completes immediately. Then our code, not seeing enduring_edit,
-        # exits, though the user was expecting to see the Carousel again.
-        #
-        # The user also sees what looks like CPR (cursor position request)
-        # input on the terminal, for instance,
-        #
-        #     ^[[12;1R>
-        #
-        # I cannot deterministically reproduce the behavior other than to
-        # cycle between the Carousel and editing, mashing keys to jump
-        # quickly between states, and occasionally saving.
-        #
-        # We can kludge around the behavior by rerunning the Carousel if
-        # it completely quickly (i.e., in less time then then use could have
-        # interacted with it). (Though this introduces additional pitfalls,
-        # like falling into an infinite feedback loop. Just be careful!)
-        rerun = False
+        async def run_main():
+            # See comment above for why `rerun`.
+            rerun = False
 
-        # 2020-03-31: (lb): In earlier PTK, calling run_async() would draw the
-        # app, but not run its event loop (so some Carousel code would run).
-        # But now, this is truly async and nothing is invoked, just a coroutine
-        # is returned.
-        run_async = self.zone_manager.application.run_async()
+            # Fetch the Clock tick coroutine, and start ticking.
+            tck_coro = self.tick_tock_now()
+            tck_task = self.zone_manager.application.create_background_task(tck_coro)
 
-        # Create the tick-tock task.
-        # MAYBE/2020-01-30: See (new?) in PTK3: create_background_task.
-        # - Maybe have PTK3 manage tick-tock, not us. (This works fine, though).
-        tck_task = self.event_loop.create_task(self.tick_tock_now())
+            # Run the carousel and wait for it to exit.
+            await self.zone_manager.application.run_async()
 
-        # Leave tck_task out of tasks and manage separately.
-        tasks = [
-            run_async,
-        ]
+            # Check if the Carousel exited deliberately or not.
+            if self.enduring_edit is None:
+                rerun = True
+                self.controller.client_logger.warning("KLUDGE! Re-running Carousel.")
 
-        # Run the Carousel!
-        self.event_loop.run_until_complete(asyncio.wait(tasks))
+            # Cleanup the Clock tick.
+            tck_task.cancel()
+            await tck_task
 
-        # Check if the Carousel exited deliberately or not.
-        if self.enduring_edit is None:
-            # CPR_ISSUE: (lb): Look in PPT for ask_for_cpr: this sends the CPR:
-            #   Query Cursor Position: <ESC>[6n
-            # The other junk you see on the terminal are cursor positions:
-            #   Report Cursor Position: <ESC>[{ROW};{COLUMN}R
-            # If code gets stuck in a loop, the request acts like Schrödinger's
-            # cat and changes value each time it prints to the terminal, e.g.,
-            #   ^[[11;1R^[[11;9R^[[11;17R^[[11;26R^[[11;35R
-            #           ^[[12;9R^[[12;17R^...
-            # (In other cases, you might see `;226R;226R;226R...` instead).
-            # Ref:
-            #   prompt_toolkit/renderer.py
-            #       request_absolute_cursor_position
-            self.controller.client_logger.warning("KLUDGE! Re-running Carousel.")
-            rerun = True
+            return rerun
 
-        tck_task.cancel()
-        # Similar to `await tck_task`, but this method not async function, so
-        # go through the event loop. -In past, (lb)'s seen warning if skipped:
-        #   RuntimeWarning: coroutine 'wait' was never    awaited
-        self.event_loop.run_until_complete(
-            asyncio.wait(
-                [
-                    tck_task,
-                ]
-            )
-        )
-
-        return rerun
+        return asyncio.run(run_main())
 
     # ***
 
