@@ -18,6 +18,7 @@
 """Zone Manager"""
 
 import os
+import shutil
 from gettext import gettext as _
 
 import click_hotoffthehamster as click
@@ -104,13 +105,13 @@ class ZoneManager(object):
 
         if self.carousel.style_classes["editor-align"] == "LEFT":
             app_align = HorizontalAlign.LEFT
-            app_width = click.get_terminal_size()[0]
+            app_width = shutil.get_terminal_size()[0]
         elif self.carousel.style_classes["editor-align"] == "CENTER":
             app_align = HorizontalAlign.CENTER
             app_width = None
         elif self.carousel.style_classes["editor-align"] == "RIGHT":
             app_align = HorizontalAlign.RIGHT
-            app_width = click.get_terminal_size()[0]
+            app_width = shutil.get_terminal_size()[0]
         else:
             # self.carousel.style_classes['editor-align'] == 'JUSTIFY'
             app_align = HorizontalAlign.JUSTIFY

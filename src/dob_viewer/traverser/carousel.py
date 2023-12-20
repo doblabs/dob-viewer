@@ -18,6 +18,7 @@
 """Facts Carousel"""
 
 import asyncio
+import shutil
 import time
 from gettext import gettext as _
 
@@ -94,7 +95,7 @@ class Carousel(object):
     def calculate_available_width(self):
         # NOTE: Without the - 2, to account for the '|' borders,
         #       app apparently hangs.
-        full_width = click.get_terminal_size()[0] - 2
+        full_width = shutil.get_terminal_size()[0] - 2
         if not self.style_classes["content-width"]:
             return full_width
         avail_width = min(self.style_classes["content-width"], full_width)
