@@ -15,6 +15,8 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
+from contextlib import closing
+
 import pytest
 from dob_bright.crud.parse_input import parse_input
 from prompt_toolkit.input.defaults import create_pipe_input
@@ -60,8 +62,8 @@ class TestBasicCarousel(object):
         # The Carousel will prompt for confirmation on quit without having saved.
         mocker.patch.object(re_confirm, "confirm", return_value=True)
 
-        inp = create_pipe_input()
-        try:
+        inp_gen = create_pipe_input()
+        with closing(next(inp_gen.gen)) as inp:
             inp.send_text(key_sequence)
             # Ignoring return value: saved_facts.
             prompt_and_save_confirmer(
@@ -71,8 +73,6 @@ class TestBasicCarousel(object):
                 input=inp,
                 output=DummyOutput(),
             )
-        finally:
-            inp.close()
 
     # ***
 
