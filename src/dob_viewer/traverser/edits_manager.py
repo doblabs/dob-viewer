@@ -494,6 +494,8 @@ class EditsManager(object):
                 self.controller,
                 factoid,
                 time_hint="verify_none",
+                # CRUMB: For tracking lenient usage across projects.
+                # lenient=False,
             )
             return user_fact
 
