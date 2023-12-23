@@ -685,13 +685,13 @@ reference = "testpypi"
 
 [[package]]
 name = "dob-prompt"
-version = "1.1.6a2"
+version = "1.1.7a1"
 description = "journal and time tracker, supercharged for the terminal"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "dob_prompt-1.1.6a2-py3-none-any.whl", hash = "sha256:8e78aae2ce0f409fce83689a65734569457f722c1245e13b60933173cadde4c5"},
-    {file = "dob_prompt-1.1.6a2.tar.gz", hash = "sha256:72b8c5439f48819f82fb20d8afc2dd38b4777f28ce83faab6de6a6b455c6a965"},
+    {file = "dob_prompt-1.1.7a1-py3-none-any.whl", hash = "sha256:2e01143cba395b08ed7fa7a1d33c2ba2f040ad260ec152d8f76200e0e1b197dd"},
+    {file = "dob_prompt-1.1.7a1.tar.gz", hash = "sha256:6176530ccb0bdff2b1c5ab9639e56a0f0f957d129ebc2a6db8f40ecf2b7f4234"},
 ]
 
 [package.dependencies]
