@@ -675,13 +675,13 @@ readthedocs = ["sphinx (>=6.2.1,<7.0.0)", "sphinx (>=7.2.6,<8.0.0)", "sphinx-rtd
 
 [[package]]
 name = "dob-prompt"
-version = "1.1.6"
+version = "1.1.7"
 description = "journal and time tracker, supercharged for the terminal"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "dob_prompt-1.1.6-py3-none-any.whl", hash = "sha256:c9ceb1b84123130fae4eb986e0daa3bb6a5f5aecc80a7fb63082455b6118d4b3"},
-    {file = "dob_prompt-1.1.6.tar.gz", hash = "sha256:1b565b5832abaf3e7459d632a5724c0b5e3f766f7448565997e47fac6263f2b6"},
+    {file = "dob_prompt-1.1.7-py3-none-any.whl", hash = "sha256:6ce04a1944d474ede9ad81e19cde32bd1330434a9642635a9821b339dc79ad53"},
+    {file = "dob_prompt-1.1.7.tar.gz", hash = "sha256:a259e4d7d90c8bd4cd2fe561c4b756b6ef1335eb275dba032e780bd4717e9a5b"},
 ]
 
 [package.dependencies]
