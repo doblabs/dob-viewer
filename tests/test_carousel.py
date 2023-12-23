@@ -15,6 +15,7 @@
 # If you lost the GNU General Public License that ships with this software
 # repository (read the 'LICENSE' file), see <http://www.gnu.org/licenses/>.
 
+import sys
 from contextlib import closing
 
 import pytest
@@ -28,7 +29,14 @@ from dob_viewer.traverser.save_confirmer import prompt_and_save_confirmer
 
 @pytest.fixture
 def new_facts(controller_with_logging):
-    input_stream = open(IMPORT_PATH, "r")
+    if sys.platform.startswith("win32"):
+        # Something about the line containing: Act!i∷vi“@”tyyyy
+        # causes `UnicodeDecodeError: 'charmap' codec can't decode
+        # byte 0x9d in position 546: character maps to <undefined>`.
+        # - Possibly the right double (curly) quote mark...
+        input_stream = open(IMPORT_PATH, "r", encoding="utf8")
+    else:
+        input_stream = open(IMPORT_PATH, "r")
     new_facts = parse_input(
         controller_with_logging,
         file_in=input_stream,
