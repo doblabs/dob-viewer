@@ -1038,6 +1038,7 @@ sphinx-rtd-theme = { version = "^2.0.0rc4", optional = true }
 # *** App deps
 
 # Vocabulary word pluralizer.
+#  https://pypi.org/project/Inflector/
 #  https://github.com/ixmatus/inflector
 Inflector = "^3.0.1"
 # Amazing prompt library.
