@@ -230,25 +230,25 @@ jobs:
       #   https://github.com/snok/install-poetry/
       #   https://github.com/actions/cache
       # USYNC_PIP_CACHE: Multiple jobs in this Yaml share the following steps.
-      - name: Set pip wheels path (Ubuntu/macOS)
-        run: echo "PIP_CACHE=~/.local" >> $GITHUB_ENV
-        shell: bash
-        if: ${{ (runner.os == 'Linux') || (runner.os == 'macOS')
-          && steps.check-disablement.outputs.inhibit_test == 'false' }}
-      - name: Set pip wheels path (Windows)
-        run: echo "PIP_CACHE=~/AppData/Local/pip/cache" >> $GITHUB_ENV
-        shell: bash
-        if: ${{ runner.os == 'Windows'
-          && steps.check-disablement.outputs.inhibit_test == 'false' }}
-      - name: Load cached $HOME/.local
-        if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.PIP_CACHE }}
-          key: dotlocal-${{ runner.os
-            }}-${{ steps.setup-python.outputs.python-version
-            }}-${{ hashFiles('.github/workflows/checks.yml')
-            }}
+      # - name: Set pip wheels path (Ubuntu/macOS)
+      #   run: echo "PIP_CACHE=~/.local" >> $GITHUB_ENV
+      #   shell: bash
+      #   if: ${{ (runner.os == 'Linux') || (runner.os == 'macOS')
+      #     && steps.check-disablement.outputs.inhibit_test == 'false' }}
+      # - name: Set pip wheels path (Windows)
+      #   run: echo "PIP_CACHE=~/AppData/Local/pip/cache" >> $GITHUB_ENV
+      #   shell: bash
+      #   if: ${{ runner.os == 'Windows'
+      #     && steps.check-disablement.outputs.inhibit_test == 'false' }}
+      # - name: Load cached $HOME/.local
+      #   if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: ${{ env.PIP_CACHE }}
+      #     key: dotlocal-${{ runner.os
+      #       }}-${{ steps.setup-python.outputs.python-version
+      #       }}-${{ hashFiles('.github/workflows/checks.yml')
+      #       }}
       - name: Install Poetry
         if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
         uses: snok/install-poetry@v1
@@ -286,24 +286,25 @@ jobs:
       #               Also checks only use the one lock file (and I think
       #               I saw the '**/poetry.lock' in an example, but don't
       #               remember if it was useful in some other way; doubt it.)
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ runner.os
-            }}-${{ steps.setup-python.outputs.python-version
-            }}-${{ github.job
-            }}-${{ hashFiles('.github/workflows/checks.yml')
-            }}-${{ hashFiles('Makefile')
-            }}-${{ hashFiles('Maketasks.sh')
-            }}-${{ hashFiles('poetry.lock')
-            }}
+      # - name: Load cached venv
+      #   id: cached-poetry-dependencies
+      #   if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: .venv
+      #     key: venv-${{ runner.os
+      #       }}-${{ steps.setup-python.outputs.python-version
+      #       }}-${{ github.job
+      #       }}-${{ hashFiles('.github/workflows/checks.yml')
+      #       }}-${{ hashFiles('Makefile')
+      #       }}-${{ hashFiles('Maketasks.sh')
+      #       }}-${{ hashFiles('poetry.lock')
+      #       }}
       - name: Install dependencies
         if: ${{ steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
           && steps.check-disablement.outputs.inhibit_test == 'false' }}
-        run: poetry install --no-interaction --with test,project_test
+        run: |
+          poetry install -vvv --no-interaction --with test,project_test
 
       - name: Test
         if: ${{ steps.check-disablement.outputs.inhibit_test == 'false' }}
