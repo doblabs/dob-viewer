@@ -29,14 +29,8 @@ from dob_viewer.traverser.save_confirmer import prompt_and_save_confirmer
 
 @pytest.fixture
 def new_facts(controller_with_logging):
-    if sys.platform.startswith("win32"):
-        # Something about the line containing: Act!i∷vi“@”tyyyy
-        # causes `UnicodeDecodeError: 'charmap' codec can't decode
-        # byte 0x9d in position 546: character maps to <undefined>`.
-        # - Possibly the right double (curly) quote mark...
-        input_stream = open(IMPORT_PATH, "r", encoding="utf8")
-    else:
-        input_stream = open(IMPORT_PATH, "r")
+    # Linux & macOS default UTF-8. Windows defaults cp1252 and dies on '”'.
+    input_stream = open(IMPORT_PATH, "r", encoding="utf8")
     new_facts = parse_input(
         controller_with_logging,
         file_in=input_stream,
