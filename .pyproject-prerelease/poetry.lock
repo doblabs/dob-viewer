@@ -656,13 +656,13 @@ files = [
 
 [[package]]
 name = "dob-bright"
-version = "1.2.8a1"
+version = "1.2.9a1"
 description = "journal and time tracker, supercharged for the terminal"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "dob_bright-1.2.8a1-py3-none-any.whl", hash = "sha256:c393679fe956d32e8f67efefb0c60a063c61e3387f509c37d6b4693f7050b4d1"},
-    {file = "dob_bright-1.2.8a1.tar.gz", hash = "sha256:a86c538ff1512e700c14e4c5c5182f001ebeed3d4188fc618a8de94566e75f78"},
+    {file = "dob_bright-1.2.9a1-py3-none-any.whl", hash = "sha256:ad09ec73ee954bd104091f12725280ef460be3928ebd2edac60ce2b741425ff2"},
+    {file = "dob_bright-1.2.9a1.tar.gz", hash = "sha256:a4c786ed5db68885a89f832ad205831f4b43f738de335b1e18b85cdcb97c12cd"},
 ]
 
 [package.dependencies]
@@ -816,13 +816,13 @@ readthedocs = ["sphinx (>=6.2.1,<7.0.0)", "sphinx (>=7.2.6,<8.0.0)", "sphinx-rtd
 
 [[package]]
 name = "easy-as-pypi-getver"
-version = "1.0.4a2"
+version = "1.0.5a1"
 description = "Determine package version from what pip last installed and what Git says"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "easy_as_pypi_getver-1.0.4a2-py3-none-any.whl", hash = "sha256:0a4b9da1dd4b16e9d1e2f872d468e520ae0068cad3adee81a93971ff7a0cf1e0"},
-    {file = "easy_as_pypi_getver-1.0.4a2.tar.gz", hash = "sha256:f5cd5354294098734372a0bbd706c418cf66b910015677869175a5f1aaade9c9"},
+    {file = "easy_as_pypi_getver-1.0.5a1-py3-none-any.whl", hash = "sha256:5aaa7f516d8542cb068718c94e939217dc7f4c82028c7796ac391a6e002567be"},
+    {file = "easy_as_pypi_getver-1.0.5a1.tar.gz", hash = "sha256:a2064b67f06cca394280cb9e32c4913730e9ba0c90b3d902afd859547abe3af3"},
 ]
 
 [package.extras]
@@ -835,13 +835,13 @@ reference = "testpypi"
 
 [[package]]
 name = "easy-as-pypi-termio"
-version = "1.0.3a3"
+version = "1.0.4a1"
 description = "Click CLI conveniences for your next Python CLI based on easy-as-pypi"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "easy_as_pypi_termio-1.0.3a3-py3-none-any.whl", hash = "sha256:c230bf8e093bbc44b383112a4188c9bc6f3fe792af535883aa10c69947c12055"},
-    {file = "easy_as_pypi_termio-1.0.3a3.tar.gz", hash = "sha256:53d90df17f9ac58ee2f8301289df9069220297019997fa5a79cf3a145048310a"},
+    {file = "easy_as_pypi_termio-1.0.4a1-py3-none-any.whl", hash = "sha256:7a43c5258620f36856f5443cc190e03c630af5b9fb6c18317bcf50b0e04bde70"},
+    {file = "easy_as_pypi_termio-1.0.4a1.tar.gz", hash = "sha256:cee70e027f033e9282a8626217f4acf86839c28d7d06c6e4df3eeef025085260"},
 ]
 
 [package.dependencies]
@@ -1540,13 +1540,13 @@ files = [
 
 [[package]]
 name = "nark"
-version = "3.2.6a4"
+version = "3.2.7a1"
 description = "Back end framework for journaling and time tracking apps (like `dob`!)"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "nark-3.2.6a4-py3-none-any.whl", hash = "sha256:b504bde19bea7af1016b371a4abee97a414548d1bb60f3d84a0640d5d751bb30"},
-    {file = "nark-3.2.6a4.tar.gz", hash = "sha256:e29745cb376f7d4c562ba6788487742059ba5c09dc1d574b200fb08b4cf44965"},
+    {file = "nark-3.2.7a1-py3-none-any.whl", hash = "sha256:f30b7971834214a2825715318b50ab76e885a03bf0ce443e87c8b2adf7a521fb"},
+    {file = "nark-3.2.7a1.tar.gz", hash = "sha256:c76906325f8e36b6028afaeab62a3e886e67667a12b86cf234a250f67e206af4"},
 ]
 
 [package.dependencies]
