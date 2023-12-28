@@ -642,13 +642,13 @@ files = [
 
 [[package]]
 name = "dob-bright"
-version = "1.2.9a2"
+version = "1.2.10a1"
 description = "journal and time tracker, supercharged for the terminal"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "dob_bright-1.2.9a2-py3-none-any.whl", hash = "sha256:4fcd0683222c134173005993bc891b18c392ba49aad351da2ad81a959c2afb0f"},
-    {file = "dob_bright-1.2.9a2.tar.gz", hash = "sha256:2cc8e5d663c32cb89c55403cf722a958032148c8f50d7751fb628d72cb13bd0c"},
+    {file = "dob_bright-1.2.10a1-py3-none-any.whl", hash = "sha256:7942f6a9d5b870259e6b050b63d5c6d75aa796dfe80d9f76d3c71430ef443605"},
+    {file = "dob_bright-1.2.10a1.tar.gz", hash = "sha256:6d6f5da236847e7ddd35999c2b89111d96ef0777f0680d65eda48f7d96ecf6d6"},
 ]
 
 [package.dependencies]
@@ -671,13 +671,13 @@ reference = "testpypi"
 
 [[package]]
 name = "dob-prompt"
-version = "1.1.8a2"
+version = "1.1.9a1"
 description = "journal and time tracker, supercharged for the terminal"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "dob_prompt-1.1.8a2-py3-none-any.whl", hash = "sha256:8e9393863a84aa457a0c3a38545a9203320a19bb0f4f68f6773c726a7241a763"},
-    {file = "dob_prompt-1.1.8a2.tar.gz", hash = "sha256:c467cc26c51029621d18926a481f6b433ec31e087454c690ec4a7b525290aa4a"},
+    {file = "dob_prompt-1.1.9a1-py3-none-any.whl", hash = "sha256:c648dd173c2b230e231a576c09f4066213f07847dce1389a712be76e20b70ee4"},
+    {file = "dob_prompt-1.1.9a1.tar.gz", hash = "sha256:65b0c4daeee6aaa3c9ce6d867c2bd54a9732edbf9730bb4e7c9f99dfe96cac5e"},
 ]
 
 [package.dependencies]
@@ -802,13 +802,13 @@ readthedocs = ["sphinx (>=6.2.1,<7.0.0)", "sphinx (>=7.2.6,<8.0.0)", "sphinx-rtd
 
 [[package]]
 name = "easy-as-pypi-getver"
-version = "1.0.5a1"
+version = "1.0.5a2"
 description = "Determine package version from what pip last installed and what Git says"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "easy_as_pypi_getver-1.0.5a1-py3-none-any.whl", hash = "sha256:5aaa7f516d8542cb068718c94e939217dc7f4c82028c7796ac391a6e002567be"},
-    {file = "easy_as_pypi_getver-1.0.5a1.tar.gz", hash = "sha256:a2064b67f06cca394280cb9e32c4913730e9ba0c90b3d902afd859547abe3af3"},
+    {file = "easy_as_pypi_getver-1.0.5a2-py3-none-any.whl", hash = "sha256:c28447a642332648a509f9238766fa4b18dc31de88f8565a24a7c764a8bd47c9"},
+    {file = "easy_as_pypi_getver-1.0.5a2.tar.gz", hash = "sha256:0995c6ae5e341302aa0dab6fd6aadb5b39484bbbfaea0ec8fda17f815a15800b"},
 ]
 
 [package.extras]
@@ -821,13 +821,13 @@ reference = "testpypi"
 
 [[package]]
 name = "easy-as-pypi-termio"
-version = "1.0.4a1"
+version = "1.0.4a2"
 description = "Click CLI conveniences for your next Python CLI based on easy-as-pypi"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "easy_as_pypi_termio-1.0.4a1-py3-none-any.whl", hash = "sha256:7a43c5258620f36856f5443cc190e03c630af5b9fb6c18317bcf50b0e04bde70"},
-    {file = "easy_as_pypi_termio-1.0.4a1.tar.gz", hash = "sha256:cee70e027f033e9282a8626217f4acf86839c28d7d06c6e4df3eeef025085260"},
+    {file = "easy_as_pypi_termio-1.0.4a2-py3-none-any.whl", hash = "sha256:e4991e22bdd2a08fc65303df330f1852d09e66493159714288207ba4a551609c"},
+    {file = "easy_as_pypi_termio-1.0.4a2.tar.gz", hash = "sha256:7ba238c59045d97cb7cf90123b1bf2aa81d918afb8d139ef7818be83b2dbdb32"},
 ]
 
 [package.dependencies]
@@ -1511,13 +1511,13 @@ files = [
 
 [[package]]
 name = "nark"
-version = "3.2.7a1"
+version = "3.2.7a2"
 description = "Back end framework for journaling and time tracking apps (like `dob`!)"
 optional = false
 python-versions = ">=3.8.1,<4.0.0"
 files = [
-    {file = "nark-3.2.7a1-py3-none-any.whl", hash = "sha256:f30b7971834214a2825715318b50ab76e885a03bf0ce443e87c8b2adf7a521fb"},
-    {file = "nark-3.2.7a1.tar.gz", hash = "sha256:c76906325f8e36b6028afaeab62a3e886e67667a12b86cf234a250f67e206af4"},
+    {file = "nark-3.2.7a2-py3-none-any.whl", hash = "sha256:736efed025866e6f133b24a6781465852de2aebed8149ed3af1b33aa29ae67d9"},
+    {file = "nark-3.2.7a2.tar.gz", hash = "sha256:eadc58fba22653695d762faa9f7e47b5a50b1db28f8cd686b0b7ed6ba074e161"},
 ]
 
 [package.dependencies]
